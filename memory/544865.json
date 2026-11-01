@@ -1,4 +1,76 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-10-15T12:26:13+05:30",
@@ -87,9 +159,597 @@
   "source_news_id": "nse-106818390",
   "text": "LEAP India, incorporated in 2013 and promoted by Sunu Mathew, provides pan-India returnable and customised packaging solutions — pallet pooling, foldable large containers/crates and material handling equipment — used for storing and moving products across the supply chain."
  },
+ "call_memory": [
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-31",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_b367f298",
+   "lab": {
+    "at": "2026-10-31T13:08:36+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 17,
+    "quote": "So, this is this is something that we have actually shared with our investors, which is INR918 crores, INR920 crores of top line, and again a 50% EBITDA to that, and a PAT margin, which is -- and a PAT of around INR90 crores."
+   },
+   "metric": "revenue",
+   "news_id": "nse-106837848",
+   "page": 17,
+   "pages": [
+    17
+   ],
+   "period": "FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "So, this is this is something that we have actually shared with our investors, which is INR918 crores, INR920 crores of top line, and again a 50% EBITDA to that, and a PAT margin, which is -- and a PAT of around INR90 crores.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "Management targets top line revenue of INR 918 crore to INR 920 crore with a 50% EBITDA margin and a PAT of around INR 90 crore for FY27.",
+   "topic": "fy27_guidance",
+   "type": "guidance",
+   "unit": "INR_CR",
+   "value": 918.0,
+   "value_base": 9180000000.0,
+   "value_high": 920.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-31",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_55a7fc20",
+   "lab": {
+    "at": "2026-10-31T13:08:36+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 17,
+    "quote": "So, that is the guidance that I can give you as far as PAT is concerned."
+   },
+   "metric": "pat_growth",
+   "news_id": "nse-106837848",
+   "page": 17,
+   "pages": [
+    17
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "So, that is the guidance that I can give you as far as PAT is concerned.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "Management expects PAT to grow by 60% to 80% in FY27.",
+   "topic": "pat_growth_guidance",
+   "type": "guidance",
+   "unit": "PERCENT",
+   "value": 60.0,
+   "value_high": 80.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-31",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_fcfd027e",
+   "lab": {
+    "at": "2026-10-31T13:08:36+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 18,
+    "quote": "So, if you look at it, we have given a guideline that this year we will be doing round about INR450 crores of capex overall. So, this year we have done INR213 crores in the first half"
+   },
+   "metric": "capex",
+   "news_id": "nse-106837848",
+   "page": 18,
+   "pages": [
+    18
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "So, if you look at it, we have given a guideline that this year we will be doing round about INR450 crores of capex overall. So, this year we have done INR213 crores in the first half",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The company expects to spend around INR 450 crore on overall capex in FY27, having completed INR 213 crore in H1 FY27.",
+   "topic": "fy27_capex",
+   "type": "capex_capacity",
+   "unit": "INR_CR",
+   "value": 450.0,
+   "value_base": 4500000000.0
+  },
+  {
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-31",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_6ea024ad",
+   "lab": {
+    "at": "2026-10-31T13:08:36+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 19,
+    "quote": "Now it has jumped to INR1.54 paise. So, if you look at INR1.54 paise, you multiply by 365 days, we generate round about INR562 to INR565 per annum with a 50% EBITDA, yes."
+   },
+   "metric": "pallet_yield",
+   "news_id": "nse-106837848",
+   "page": 19,
+   "pages": [
+    19
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "Now it has jumped to INR1.54 paise. So, if you look at INR1.54 paise, you multiply by 365 days, we generate round about INR562 to INR565 per annum with a 50% EBITDA, yes.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The per-pallet yield reached INR 1.54 per day, generating around INR 562 to INR 565 per annum at a 50% EBITDA margin.",
+   "topic": "pallet_yield_and_revenue",
+   "type": "kpi",
+   "unit": "INR",
+   "value": 1.54
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-31",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_7738d599",
+   "lab": {
+    "at": "2026-10-31T13:08:36+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 19,
+    "quote": "This year, we have said that we will do 3.6 million to 3.7 million movement."
+   },
+   "metric": "pallet_movements",
+   "news_id": "nse-106837848",
+   "page": 19,
+   "pages": [
+    19
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "This year, we have said that we will do 3.6 million to 3.7 million movement.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The company targets completing 3.6 million to 3.7 million pallet movements in FY27, compared to 2.8 million movements in the previous year.",
+   "topic": "pallet_movements_target",
+   "type": "guidance",
+   "unit": "MILLION",
+   "value": 3.6,
+   "value_base": 3600000.0,
+   "value_high": 3.7
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-31",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_78228ab6",
+   "lab": {
+    "at": "2026-10-31T13:08:36+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 21,
+    "quote": "So, we are very confident that we will surpass these 900,000 numbers in this financial year also. We will end somewhere at somewhere at 1 million or 1.2 million."
+   },
+   "metric": "pallet_addition",
+   "news_id": "nse-106837848",
+   "page": 21,
+   "pages": [
+    21
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "So, we are very confident that we will surpass these 900,000 numbers in this financial year also. We will end somewhere at somewhere at 1 million or 1.2 million.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The company expects to add between 1 million and 1.2 million net allotted pallets in FY27.",
+   "topic": "net_pallet_addition",
+   "type": "guidance",
+   "unit": "MILLION",
+   "value": 1.0,
+   "value_base": 1000000.0,
+   "value_high": 1.2
+  }
+ ],
+ "call_points": [
+  {
+   "category": "Demand & orders",
+   "date": "2026-10-31",
+   "lab": {
+    "at": "2026-10-31T11:54:14+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106837848",
+   "text": "Targeting 3.6 to 3.7 million movement hire transfers in FY27, having completed 1.5 million in H1."
+  },
+  {
+   "category": "Margins & costs",
+   "date": "2026-10-31",
+   "lab": {
+    "at": "2026-10-31T11:54:14+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106837848",
+   "text": "Per-pallet yield improved from ₹1.46-1.48 to ₹1.54 per day, generating ₹562-565 revenue per annum at 50% EBITDA."
+  },
+  {
+   "category": "Other",
+   "date": "2026-10-31",
+   "lab": {
+    "at": "2026-10-31T11:54:14+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106837848",
+   "text": "Wholly owned subsidiaries established in Saudi Arabia and UAE; actively evaluating GCC acquisition opportunities."
+  }
+ ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -13.564,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -7.986,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -9.235,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 114.054,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 52.992,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 98.921,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 19.454,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.495,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 252.6,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 181.536,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 84.98,
+    "CashFlowsFromUsedInInvestingActivities": -223.562,
+    "CashFlowsFromUsedInOperatingActivities": 313.979,
+    "CashFlowsFromUsedInOperations": 309.443,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -4.536,
+    "IncreaseDecreaseInCashAndCashEquivalents": 175.397,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 175.397,
+    "InterestPaidClassifiedAsFinancingActivities": 68.001,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.486,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -1.541,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.163,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 32.63,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 142.013,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 458.288,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 33.713,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 257.924,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 414.69,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -12.811,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -0.199,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -0.575,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 104.948,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -9.175,
+    "AdjustmentsForFinanceCosts": 47.524,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 93.671,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 14.707,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.473,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 240.569,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 173.964,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 63.025,
+    "CashFlowsFromUsedInInvestingActivities": -195.976,
+    "CashFlowsFromUsedInOperatingActivities": 301.48,
+    "CashFlowsFromUsedInOperations": 297.399,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 2.106,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -4.081,
+    "IncreaseDecreaseInCashAndCashEquivalents": 168.529,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 168.529,
+    "InterestPaidClassifiedAsFinancingActivities": 56.651,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.473,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 2.952,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.184,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 32.044,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 96.672,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 458.286,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 31.785,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 226.312,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 403.238,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "LEAP India Limited",
- "deals": [],
+ "deals": [
+  {
+   "amount_cr": 142.0,
+   "as_of": "2026-10-31T11:49:14+05:30",
+   "counterparty": "Vimprotech and TIPS",
+   "discount_pct": null,
+   "execution_by": null,
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 142.0,
+     "as_of": "2026-10-31T11:49:14+05:30",
+     "lab": {
+      "at": "2026-10-31T11:50:07+05:30",
+      "by": "ai",
+      "doc": "call",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106837848",
+     "stage": "CONTRACT"
+    }
+   ],
+   "id": "d_d7dd1389",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "ACQUISITION",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "Plastic manufacturing and container pooling",
+   "seller": null,
+   "source_news_id": "nse-106837848",
+   "stage": "CONTRACT",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-31T11:49:14+05:30",
+   "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 120.73
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 120.73
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2026-08-31T18:00:00+05:30",
@@ -4783,7 +5443,44 @@
    }
   ]
  },
- "guidance": [],
+ "guidance": [
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-10-31T11:49:14+05:30",
+   "id": "g_a82b39a7",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "revenue",
+   "source_news_id": "nse-106837848",
+   "source_type": "CONCALL",
+   "statement": "which is INR918 crores, INR920 crores of top line, and again a 50% EBITDA to that, and a PAT of around INR90 crores.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "₹918-920 Cr"
+  },
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-10-31T11:49:14+05:30",
+   "id": "g_e7e9a170",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "capex",
+   "source_news_id": "nse-106837848",
+   "source_type": "CONCALL",
+   "statement": "Overall, this year, we will be having a capex of INR450 crores",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "₹450 Cr"
+  }
+ ],
  "identity": {
   "entities": [
    {
@@ -4858,7 +5555,58 @@
   ]
  },
  "industry": "Services > Commercial Services & Supplies > Diversified Commercial Services",
- "last_filed_at": "2026-10-27T14:00:55+05:30",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 0.03,
+    "after_qty": 122729.0,
+    "as_of": "2026-08-17T23:59:00+05:30",
+    "before_pct": 0.05,
+    "before_qty": 209332.0,
+    "category": "Promoter Group",
+    "exchange": "NSE",
+    "filed": "2026-08-17",
+    "filing_id": "2293",
+    "from": "2026-08-12",
+    "instrument": "Equity",
+    "mode": "Others",
+    "person": "KIA EBT Scheme 3 (through Catalyst Trusteeship limited)",
+    "qty": 86603.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "LEAPIND",
+    "to": "2026-08-12",
+    "value_cr": 1.377
+   },
+   {
+    "after_pct": 34.98,
+    "after_qty": 154687377.0,
+    "as_of": "2026-08-17T23:59:00+05:30",
+    "before_pct": 68.06,
+    "before_qty": 280386936.0,
+    "category": "Promoter",
+    "exchange": "NSE",
+    "filed": "2026-08-17",
+    "filing_id": "2293",
+    "from": "2026-08-12",
+    "instrument": "Equity",
+    "mode": "Others",
+    "person": "Vertical Holdings II Pte. Ltd",
+    "qty": 125699559.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "LEAPIND",
+    "to": "2026-08-12",
+    "value_cr": 1998.623
+   }
+  ],
+  "filings": [
+   "2293"
+  ]
+ },
+ "last_filed_at": "2026-10-31T11:49:14+05:30",
  "market_deals": {
   "events": [
    {
@@ -4971,6 +5719,132 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.091,
+     "description": "'- (Loss) / gain on re-measurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.091,
+    "oci_net_cr": 0.068,
+    "profit_cr": 24.733,
+    "tax_not_reclassified_cr": 0.023,
+    "total_comprehensive_cr": 24.801,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 24.801
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.142,
+     "description": "(Loss) / gain on re-measurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.142,
+    "oci_net_cr": -0.106,
+    "profit_cr": 24.47,
+    "tax_not_reclassified_cr": -0.036,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 24.364
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.592,
+     "description": "- Remeasurements of the defined benefit plan",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "oci_net_cr": -0.445,
+    "profit_cr": 17.804,
+    "reclassified_cr": -0.592,
+    "tax_not_reclassified_cr": -0.147,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 17.359,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 17.359
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.444,
+     "description": "- Remeasurements of the defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.444,
+    "oci_net_cr": -0.332,
+    "profit_cr": 18.057,
+    "reclassified_cr": 0.0,
+    "tax_not_reclassified_cr": -0.112,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 17.725
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-15T12:26:13+05:30",
@@ -5011,6 +5885,26 @@
    },
    "source_news_id": "nse-106829159",
    "text": "Incorporated Vimprotech Private Limited and Total Integrated Packaging Solutions Limited as wholly owned subsidiaries in October 2026."
+  },
+  {
+   "as_of": "2026-10-31T11:49:14+05:30",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106837848",
+   "text": "Pallet pool reached 15.5 million assets valued at over ₹1,820 Cr as of H1FY27."
+  },
+  {
+   "as_of": "2026-10-31T11:49:14+05:30",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106837848",
+   "text": "Per-pallet yield stands at ₹1.54 per day, generating ₹562-565 per annum at 50% EBITDA."
   }
  ],
  "ownership": [
@@ -5177,6 +6071,260 @@
    "source_news_id": "nse-106829159",
    "status": "OPEN",
    "value": 49.72
+  },
+  {
+   "comparison": ">=",
+   "created_on": "2026-10-31T11:49:14+05:30",
+   "id": "p_fac50312",
+   "kpi": "Full year FY27 revenue",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "revenue",
+   "period": "FY27",
+   "source_news_id": "nse-106837848",
+   "status": "OPEN",
+   "value": 918.0
+  }
+ ],
+ "related_parties": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 59.397,
+     "approved_cr": 0.0,
+     "closing_cr": 14.241,
+     "counterparty": "Plenova Supply Chain Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 5.158,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Closing balance mentioned in the field viz. in case monies are due to either party as a result of the transaction,for Sr. No. 08 represents the aggregate closing balance for transactions of Sr. No. 07 to 08.  In case monies are due to either party as a result of the transaction, negative balance ind"
+     },
+     "other_details": "Purchase of property, plant and equipment",
+     "relationship": "Promoter Group",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.673,
+     "approved_cr": 150.0,
+     "closing_cr": 0.0,
+     "counterparty": "Plenova Supply Chain Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Amount mentioned in field 'Value of Transaction approved by Audit Committee' i.e. For Sr. 07 represents aggregare value of transaction approved by Audit Committee for transactions from Sr. 07 to Sr. 09"
+     },
+     "other_details": "Purchase of stock-in-trade",
+     "relationship": "Promoter Group",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.895,
+     "closing_cr": 0.0,
+     "counterparty": "Taron Material Handling Equipments Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 20.1,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "In case monies are due to either party as a result of the transaction, negative balance indicates Amount Payable and positive balance indicates Amount Receivable\n\n\n'Value of Transaction approved by Audit Committee' is Not Applicable since transaction is with Wholly Owned Subsidiary."
+     },
+     "other_details": "Corporate guarantee",
+     "relationship": "Subsidiary company",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.722,
+     "closing_cr": 141.06,
+     "counterparty": "Taron Material Handling Equipments Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 135.544,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Manage subsidiary Operations",
+      "RelatedPartyTransactionExplanatory": "In case monies are due to either party as a result of the transaction, negative balance indicates Amount Payable and positive balance indicates Amount Receivable\n\n\n'Value of Transaction approved by Audit Committee' is Not Applicable since transaction is with Wholly Owned Subsidiary.",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5 years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Interest income on loan",
+     "relationship": "Subsidiary company",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.655,
+     "closing_cr": 0.0,
+     "counterparty": "Taron Material Handling Equipments Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "'Value of Transaction approved by Audit Committee' is Not Applicable since transaction is with Wholly Owned Subsidiary."
+     },
+     "other_details": "Share based payment expense (net)",
+     "relationship": "Subsidiary company",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.469,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Plenova Supply Chain Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of servcies",
+     "relationship": "Promoter Group",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.106,
+     "closing_cr": 2.106,
+     "counterparty": "LEAP GULF Company",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "LEAP India Limited has subscribed to Share Capital of LEAP Gulf Company\n\n\n'Value of Transaction approved by Audit Committee' is Not Applicable since transaction is with Wholly Owned Subsidiary."
+     },
+     "relationship": "Subsidiary company",
+     "remarks": "NONE",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 1.824,
+     "approved_cr": 3.5,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Sunu Mathew",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director, Chairperson and CEO and Promoter",
+     "remarks": "NONE",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.61,
+     "closing_cr": 2.951,
+     "counterparty": "Taron Material Handling Equipments Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 1.881,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "In case monies are due to either party as a result of the transaction, negative balance indicates Amount Payable and positive balance indicates Amount Receivable.\n\n'Value of Transaction approved by Audit Committee' is Not Applicable since transaction is with Wholly Owned Subsidiary."
+     },
+     "other_details": "Rent expense",
+     "relationship": "Subsidiary company",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.19,
+     "approved_cr": 1.111,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Akshat Mathew",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group",
+     "remarks": "NONE",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.146,
+     "closing_cr": 0.472,
+     "counterparty": "Taron Material Handling Equipments Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 1.345,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "In case monies are due to either party as a result of the transaction, negative balance indicates Amount Payable and positive balance indicates Amount Receivable\n\n\n'Value of Transaction approved by Audit Committee' is Not Applicable since transaction is with Wholly Owned Subsidiary."
+     },
+     "other_details": "Rent income",
+     "relationship": "Subsidiary company",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.13,
+     "approved_cr": 0.195,
+     "closing_cr": 13.89,
+     "counterparty": "Plenova Supply Chain Private Limited",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 12.947,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "In case monies are due to either party as a result of the transaction, negative balance indicates Amount Payable and positive balance indicates Amount Receivable"
+     },
+     "other_details": "Rent paid",
+     "relationship": "Promoter Group",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.102,
+     "closing_cr": 0.018,
+     "counterparty": "Plenova Supply Chain Private Limited",
+     "entity": "Taron Material Handling Equipments Private Limited",
+     "opening_cr": 0.011,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "'Value of Transaction approved by Audit Committee' is Not Applicable is Approval of Audit Committee of LEAP India Limited is Not Required"
+     },
+     "other_details": "Rent Received",
+     "relationship": "Enterprise over which Directors are able to exercise significant influence",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.094,
+     "approved_cr": 0.2,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Sunu Mathew",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses on behalf of the Company",
+     "relationship": "Managing Director, Chairperson and CEO and Promoter",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.055,
+     "approved_cr": 0.264,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Sunu Mathew",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Managing Director, Chairperson and CEO and Promoter",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.055,
+     "approved_cr": 0.264,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Bindu Mathew",
+     "entity": "LEAP INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Promoter Group",
+     "remarks": "NONE",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 16,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
   }
  ],
  "schema_version": 3,
@@ -5192,6 +6340,11 @@
    "by": "file",
    "doc": "other"
   },
+  "insider_trades": {
+   "at": "2026-11-01T13:56:59+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "market_deals": {
    "at": "2026-08-19T15:30:00+05:30",
    "by": "file",
@@ -5204,7 +6357,40 @@
   }
  },
  "sector": "default",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Asset Pooling and Supply chain solutions",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY27",
+   "segment": "Asset Pooling and Supply chain solutions",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -6716,6 +7902,202 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 56.489,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 99.292,
+    "Interest": 24.665,
+    "Minority share": 0.0,
+    "Net Profit": 24.733,
+    "Net Profit (owners)": 24.7329,
+    "OPM %": 51.18699394827272,
+    "Operating Profit": 104.12100000000001,
+    "Other Income": 10.025999999999982,
+    "Profit before tax": 32.993,
+    "Profit for PE": 24.7329,
+    "Sales": 203.413,
+    "Tax": 8.26,
+    "Tax %": 25.035613615009243
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 52.056,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 74.563,
+    "Interest": 22.023,
+    "Net Profit": 24.47,
+    "Net Profit (owners)": 24.47,
+    "OPM %": 55.83100827542902,
+    "Operating Profit": 94.24999999999999,
+    "Other Income": 12.470000000000013,
+    "Profit before tax": 32.641,
+    "Profit for PE": 24.47,
+    "Sales": 168.813,
+    "Tax": 8.171,
+    "Tax %": 25.03293404001103
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 57.565,
+    "Exceptional items": -6.849,
+    "Exceptional items AT": -5.112771320754717,
+    "Expenses": 106.18299999999999,
+    "Interest": 21.478,
+    "Minority share": 0.0,
+    "Net Profit": 17.804,
+    "Net Profit (owners)": 17.804,
+    "OPM %": 49.72133965310694,
+    "Operating Profit": 105.006,
+    "Other Income": -2.1129999999999995,
+    "Profit before tax": 23.85,
+    "Profit for PE": 22.916771320754716,
+    "Sales": 211.189,
+    "Tax": 6.046,
+    "Tax %": 25.350104821802933
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 835.486,
+    "CWIP": 1.156,
+    "Equity Capital": 44.054,
+    "Fixed Assets": 1930.939,
+    "Investments": 110.011,
+    "Other Assets": 751.7259999999999,
+    "Other Liabilities": 447.2139999999998,
+    "Reserves": 1467.078,
+    "Total Assets": 2793.832,
+    "Total Liabilities": 2793.832
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 52.892,
+    "Exceptional items": -6.849,
+    "Exceptional items AT": -5.11275344164703,
+    "Expenses": 77.79200000000003,
+    "Interest": 18.652,
+    "Net Profit": 18.057,
+    "Net Profit (owners)": 18.057,
+    "OPM %": 55.09737598559273,
+    "Operating Profit": 95.45399999999998,
+    "Other Income": 0.2790000000000248,
+    "Profit before tax": 24.189,
+    "Profit for PE": 23.16975344164703,
+    "Sales": 173.246,
+    "Tax": 6.132,
+    "Tax %": 25.350365868783328
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 703.4839999999999,
+    "CWIP": 0.0,
+    "Equity Capital": 44.054,
+    "Fixed Assets": 1694.501,
+    "Investments": 119.615,
+    "Other Assets": 823.0549999999998,
+    "Other Liabilities": 418.05499999999984,
+    "Reserves": 1471.578,
+    "Total Assets": 2637.171,
+    "Total Liabilities": 2637.171
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "LEAPIND",
  "timeline": [
   {
@@ -6774,10 +8156,24 @@
    "pdf_url": "https://nsearchives.nseindia.com/corporate/LEAPINDIA_27102026183039_Audio_Recording_of_Conference_Call.pdf",
    "summary": "LEAP India Limited informs BSE and NSE that the audio recording of the Q2 FY2026-27 earnings conference call held on October 27, 2026 is available on its website.",
    "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-10-31T11:49:14+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_d7dd1389",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106837848",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/LEAPINDIA_31102026114805_Disclosure_-_Earnings_Call_Transcript.pdf",
+   "summary": "Held Q2FY27 earnings conference call: guided FY27 revenue of ₹918-920 Cr with ~50% EBITDA margin and discussed ₹142 Cr acquisitions of Vimprotech and TIPS."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T20:52:38+05:30",
+ "updated_at": "2026-10-31T11:50:07+05:30",
  "watchlist": [
   {
    "check_by": "2027-03-31",
@@ -6833,21 +8229,58 @@
   {
    "check_by": "2027-03-31",
    "check_in": "FY27 annual results",
-   "created_on": "2026-10-27T14:00:55+05:30",
-   "id": "w_30149fc1",
+   "created_on": "2026-10-31T11:49:14+05:30",
+   "id": "w_87572c6a",
    "kind": "KPI",
    "lab": {
-    "at": "2026-10-27T14:26:43+05:30",
+    "at": "2026-10-31T11:50:07+05:30",
     "by": "ai",
-    "doc": "other"
+    "doc": "call"
+   },
+   "metric": "revenue",
+   "period": "FY27",
+   "source_news_id": "nse-106837848",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "₹918-920 Cr",
+   "text": "Full year FY27 revenue"
+  },
+  {
+   "check_by": "2027-03-31",
+   "check_in": "FY27 annual results",
+   "created_on": "2026-10-31T11:49:14+05:30",
+   "id": "w_d21b17e1",
+   "kind": "KPI",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
    },
    "metric": "net_leverage",
    "period": "FY27",
-   "source_news_id": "nse-106830052",
+   "source_news_id": "nse-106837848",
    "status": "OPEN",
    "status_history": [],
-   "target": "2.25",
-   "text": "Consolidated Net Leverage"
+   "target": "<= 2.25x",
+   "text": "Net leverage (net debt to EBITDA)"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-10-31T11:49:14+05:30",
+   "id": "w_a31fe2bd",
+   "kind": "CONCERN",
+   "lab": {
+    "at": "2026-10-31T11:50:07+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "response": "Management stated SAP S/4HANA implementation and centralized PO negotiations with key clients will reduce DSO below 90 days by end-FY27.",
+   "source_news_id": "nse-106837848",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Elevated receivable days (DSO) at 122 days at end of H1FY27."
   }
  ]
 }

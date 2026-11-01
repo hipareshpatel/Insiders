@@ -1,4 +1,109 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-09-30",
+     "name": "M/s Nag & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-09-30",
+     "name": "Nag & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-09-30",
+     "name": "M/s Nag & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "HCO & CO.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-04-22T18:00:00+05:30",
@@ -60,26 +165,6 @@
    "total_liabilities_cr": 14806.55
   },
   {
-   "as_of": "2026-04-30T11:16:39+05:30",
-   "lab": {
-    "at": "2026-04-30T11:16:39+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q4FY26",
-   "source_news_id": "nse-106605123"
-  },
-  {
-   "as_of": "2026-10-14T16:41:28+05:30",
-   "lab": {
-    "at": "2026-10-14T16:41:28+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106817363"
-  },
-  {
    "as_of": "2026-10-25T14:19:42+05:30",
    "cash_cr": 255.34,
    "current_assets_cr": 8963.36,
@@ -107,16 +192,6 @@
    "source_news_id": "nse-106827835",
    "total_assets_cr": 20710.6,
    "total_liabilities_cr": 14887.35
-  },
-  {
-   "as_of": "2026-10-25T14:34:30+05:30",
-   "lab": {
-    "at": "2026-10-25T14:34:30+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106827839"
   },
   {
    "as_of": "2026-10-25T18:00:00+05:30",
@@ -152,8 +227,376 @@
  "business_summary": null,
  "call_points": [],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -1003.96,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 33.31,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -1015.42,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 477.56,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 158.64,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 666.95,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 1520.47,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -387.3,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 155.8,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": -88.17,
+    "AdjustmentsForReconcileProfitLoss": -973.28,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 367.09,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1149.78,
+    "CashFlowsFromUsedInInvestingActivities": -309.59,
+    "CashFlowsFromUsedInOperatingActivities": -640.64,
+    "CashFlowsFromUsedInOperations": -824.1,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 844.22,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -183.46,
+    "IncreaseDecreaseInCashAndCashEquivalents": 199.55,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 199.55,
+    "InterestPaidClassifiedAsFinancingActivities": 84.48,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -1341.54,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -139.53,
+    "OtherAdjustmentsToReconcileProfitLoss": -10.09,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 288.69,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": -78.48,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 2000.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 20.37,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 618.65,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 405.13,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 106.94,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 757.8,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 250.59,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 97.07,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 309.59,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -340.59,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 97.92,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 93.17,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": -235.62,
+    "AdjustmentsForReconcileProfitLoss": 621.17,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 255.34,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 215.26,
+    "CashFlowsFromUsedInInvestingActivities": -1104.17,
+    "CashFlowsFromUsedInOperatingActivities": 777.16,
+    "CashFlowsFromUsedInOperations": 703.88,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -73.28,
+    "IncreaseDecreaseInCashAndCashEquivalents": -111.75,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -111.75,
+    "InterestPaidClassifiedAsFinancingActivities": 61.17,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 124.55,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -797.4,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -124.55,
+    "OtherAdjustmentsToReconcileProfitLoss": 1.12,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -551.69,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": -24.04,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 252.39,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.22,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 678.25,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Bharat Coking Coal Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0036,
+    "DebtServiceCoverageRatio": 0.0025,
+    "InterestServiceCoverageRatio": 0.0222
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0035,
+    "DebtServiceCoverageRatio": 0.0011,
+    "InterestServiceCoverageRatio": 0.0136
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.4077,
+    "DebtServiceCoverageRatio": 0.0465,
+    "InterestServiceCoverageRatio": -1.1326
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.3868,
+    "DebtServiceCoverageRatio": 0.3444,
+    "InterestServiceCoverageRatio": 1.8521
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-02-03T18:00:00+05:30",
@@ -8939,28 +9382,18 @@
  "fy_end_month": 3,
  "governance": {
   "auditor": {
-   "as_of": "2026-10-25T14:34:30+05:30",
+   "as_of": "2026-11-01T12:41:52+05:30",
    "lab": {
-    "at": "2026-10-25T14:34:30+05:30",
+    "at": "2026-11-01T12:46:24+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "other"
    },
    "name": "HCO & Co",
    "note": "Draft Review Report with Un-qualified opinion presented to Board.",
    "opinion": "UNMODIFIED",
-   "source_news_id": "nse-106827839"
+   "source_news_id": "nse-106838769"
   },
   "auditor_history": [
-   {
-    "as_of": "2026-05-29T22:06:40+05:30",
-    "lab": {
-     "at": "2026-05-29T22:06:40+05:30",
-     "by": "unknown",
-     "doc": "other"
-    },
-    "opinion": "UNMODIFIED",
-    "source_news_id": "nse-106648431"
-   },
    {
     "as_of": "2026-06-05T08:51:55+05:30",
     "lab": {
@@ -9014,6 +9447,18 @@
     "note": "Draft Review Report with Un-qualified opinion presented to Board.",
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106827839"
+   },
+   {
+    "as_of": "2026-11-01T12:41:52+05:30",
+    "lab": {
+     "at": "2026-11-01T12:46:24+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "HCO & Co",
+    "note": "Draft Review Report with Un-qualified opinion presented to Board.",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106838769"
    }
   ],
   "quarters": [
@@ -10162,6 +10607,385 @@
       "status": "Pending before NFAC, Tax- 0.03 cr"
      }
     ]
+   },
+   {
+    "as_of": "2026-10-28T17:33:16+05:30",
+    "board": [
+     {
+      "appointed": "2025-01-27",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MANOJ KUMAR AGARWAL",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-05-01",
+      "category": "Non-Executive - Nominee Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SANOJ KUMAR JHA",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-07-17",
+      "category": "Non-Executive - Nominee Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MUKESH CHOUDHARY",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-02-23",
+      "category": "Executive Director",
+      "ceased": "2026-08-31",
+      "cessation_reason": "Tenure Completion",
+      "name": "MURLIKRISHNA RAMAIAH",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-10-10",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SANJAY KUMAR SINGH",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-02-10",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RAJESH KUMAR",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-05-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RAJEEV KUMAR SINHA",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "MUKESH CHOUDHARY",
+      "SANJAY KUMAR SINGH",
+      "RAJEEV KUMAR SINHA",
+      "SANOJ KUMAR JHA",
+      "RAJESH KUMAR"
+     ],
+     "corporate social responsibility committee": [
+      "RAJEEV KUMAR SINHA",
+      "SANOJ KUMAR JHA",
+      "RAJESH KUMAR"
+     ],
+     "nomination and remuneration committee": [
+      "SANOJ KUMAR JHA",
+      "MANOJ KUMAR AGARWAL",
+      "MUKESH CHOUDHARY"
+     ],
+     "risk management committee": [
+      "SANJAY KUMAR SINGH",
+      "RAJESH KUMAR",
+      "RAJEEV KUMAR SINHA"
+     ],
+     "stakeholders relationship committee": [
+      "SANOJ KUMAR JHA",
+      "SANJAY KUMAR SINGH",
+      "RAJESH KUMAR",
+      "RAJEEV KUMAR SINHA"
+     ]
+    },
+    "complaints": {
+     "disposed": 1.0,
+     "pending": 2.0,
+     "received": 3.0
+    },
+    "compliance": {
+     "audit committee": false,
+     "board": false,
+     "meetings": true,
+     "nomination and remuneration committee": false,
+     "stakeholders relationship committee": false
+    },
+    "cyber_incident": false,
+    "exceptions": [
+     "board composition not in terms of SEBI's rules",
+     "audit committee composition not in terms of SEBI's rules",
+     "nomination and remuneration committee composition not in terms of SEBI's rules",
+     "stakeholders relationship committee composition not in terms of SEBI's rules",
+     "fine or penalty: BSE Limited (Fines as per SEBI Master Circular No. HO/49/14/14(7)2025-CFD-POD2/I/3762/2026 issued on July 11, 2023 and lastupdated on)",
+     "fine or penalty: National Stock Exchange of India Limited (Notice for non-compliance with SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015)",
+     "fine or penalty: Central Ground Water Authority (CGWA) (Non-compliance Penalty)"
+    ],
+    "gaps": {
+     "audit committee": 37.0,
+     "board": 37.0
+    },
+    "independent_directors": 0,
+    "material_floor_cr": 3.0025,
+    "parser": 4,
+    "penalties": [
+     {
+      "amount_rupees": null,
+      "authority": "BSE Limited",
+      "details": "Fines as per SEBI Master Circular No. HO/49/14/14(7)2025-CFD-POD2/I/3762/2026 issued on July 11, 2023 and lastupdated on January 30,2026 (Chapter VII (A)-Penal Action for Non-Compliance).",
+      "impact": "1112740",
+      "received": "2026-08-25"
+     },
+     {
+      "amount_rupees": null,
+      "authority": "National Stock Exchange of India Limited",
+      "details": "Notice for non-compliance with SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015",
+      "impact": "1112740",
+      "received": "2026-08-25"
+     },
+     {
+      "amount_rupees": null,
+      "authority": "Central Ground Water Authority (CGWA)",
+      "details": "Non-compliance Penalty",
+      "impact": "650000",
+      "received": "2026-08-08"
+     }
+    ],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1747887_28102026053316_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Pending before Jharkhand High Court Tax- 252.23 Cr,",
+      "initiated": "2020-03-16",
+      "opposing_party": "Dhanbad Municipal Corporation",
+      "status": "Pending before Jharkhand High Court Tax- 252.23 Cr,"
+     },
+     {
+      "as_last_disclosed": "Pending before Jharkhand High Court Tax- 90 cr,",
+      "initiated": "2023-10-17",
+      "opposing_party": "Asst. Commissioner, CGST & C.Ex",
+      "status": "Pending before Jharkhand High Court Tax- 90 cr,"
+     },
+     {
+      "as_last_disclosed": "Pending before First Appellate Authority, Dhanbad Tax- 44.44 cr",
+      "initiated": "2025-07-05",
+      "opposing_party": "Asst. Commissioner of State Tax",
+      "status": "Appeal filing before GSTAT is in process, Tax- 44.44 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before First Appellate Authority, Dhanbad Tax- 61.93 cr",
+      "initiated": "2025-07-05",
+      "opposing_party": "Asst. Commissioner of State Tax",
+      "status": "Appeal filing before GSTAT is in process, Dhanbad Tax- 61.93 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 1.53cr",
+      "initiated": "2022-04-06",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 1.53cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.82 cr",
+      "initiated": "2022-04-06",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.82 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.25 cr",
+      "initiated": "2022-04-06",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.25 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.34 cr",
+      "initiated": "2022-04-06",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.34 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.56 cr",
+      "initiated": "2022-04-06",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.56 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.33 cr",
+      "initiated": "2022-04-06",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.33 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 1.10 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 1.10 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.37 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.37 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.17 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.17 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.60 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.60 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 1.15 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 1.15 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.04 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.04 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 9.58 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 9.58 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 7.59 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 7.59 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 3.74 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 3.74 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.78 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.78 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 3.41 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 3.41 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 1.93 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 1.93 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 3.51 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 3.51 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.78 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.78 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 2.71 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 2.71 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 6.14 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 6.14 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 10.46 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 10.46 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 7.01 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 7.01 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.19 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.19 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.42 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.42 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.22 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.22 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.14 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.14 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.75 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.75 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.93 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.93 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.03 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.03 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.12 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.12 cr"
+     },
+     {
+      "as_last_disclosed": "Pending before NFAC, Tax- 0.03 cr",
+      "initiated": "2022-04-07",
+      "opposing_party": "ACIT, Income Tax Dept.",
+      "status": "Pending before NFAC, Tax- 0.03 cr"
+     }
+    ]
    }
   ]
  },
@@ -10235,7 +11059,126 @@
   "former_names": []
  },
  "industry": "Energy > Oil, Gas & Consumable Fuels > Consumable Fuels > Coal",
- "last_filed_at": "2026-10-25T18:00:00+05:30",
+ "last_filed_at": "2026-11-01T12:41:52+05:30",
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 18.55,
+     "description": "OCI on Gratuity & PRMB",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 18.55,
+    "oci_net_cr": 13.89,
+    "profit_cr": -22.88,
+    "tax_not_reclassified_cr": 4.66,
+    "total_comprehensive_cr": -8.99
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 129.62,
+     "description": "OCI on Gratuity & PRMB",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 129.62,
+    "oci_net_cr": 96.99,
+    "profit_cr": 27.28,
+    "tax_not_reclassified_cr": 32.63,
+    "total_comprehensive_cr": 124.27
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 36.61,
+     "description": "OCI on Gratuity & PRMB",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 36.61,
+    "oci_net_cr": 27.4,
+    "profit_cr": -68.09,
+    "tax_not_reclassified_cr": 9.21,
+    "total_comprehensive_cr": -40.69
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -51.58,
+     "description": "OCI on Gratuity & PRMB",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -51.58,
+    "oci_net_cr": -38.6,
+    "profit_cr": 123.74,
+    "tax_not_reclassified_cr": -12.98,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 85.14
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-22T22:19:24+05:30",
@@ -10443,22 +11386,706 @@
    "value": 1000.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1100.59,
+     "closing_cr": 414.0,
+     "counterparty": "Coal India Limited",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 367.15,
+     "other_details": "Management Services",
+     "relationship": "Holding Company",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 104.96,
+     "closing_cr": 2170.15,
+     "counterparty": "Group Gratuity Cash Accumulation Plan with LICI.",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 2275.11,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 47.51,
+     "closing_cr": 51.45,
+     "counterparty": "CMPDIL",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 44.31,
+     "other_details": "Purchase of Services",
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 16.29,
+     "closing_cr": 178.88,
+     "counterparty": "New Group Leave Encashment Scheme with LICI.",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 162.59,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 11.51,
+     "closing_cr": 0.0,
+     "counterparty": "CIL Executive Defined Contribution Pension Scheme-2007",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.57,
+     "closing_cr": 135.0,
+     "counterparty": "Contributory Post-Retirement Medical Scheme for Executive Trust",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 141.57,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4,
+     "closing_cr": 0.0,
+     "counterparty": "Shri Muralikrishna Ramaiah",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director (Personnel)",
+     "remarks": "Noted",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.4,
+     "closing_cr": 18.09,
+     "counterparty": "New Group Gratuity Cash Accumulation Plan with LICI",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 18.49,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.33,
+     "closing_cr": 0.0,
+     "counterparty": "Shri Manoj Kumar Agarwal",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Chairman cum Managing Director",
+     "remarks": "Noted",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.28,
+     "closing_cr": 0.0,
+     "counterparty": "Shri B. K. Parui",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Company Secretary",
+     "remarks": "Noted",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.23,
+     "closing_cr": 0.0,
+     "counterparty": "Shri Sanjay Kumar Singh",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director (Technical)",
+     "remarks": "Noted",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.07,
+     "closing_cr": 0.0,
+     "counterparty": "Dr. Arun Kumar Oraon",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.05,
+     "closing_cr": 0.0,
+     "counterparty": "Shri Rajesh Kumar",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director (Finance)",
+     "remarks": "Noted",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Shri Sanjay Kumar",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees 0.004 crore",
+     "relationship": "Independent Director",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.44,
+     "counterparty": "IICM",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 1.44,
+     "other_details": "Training Services",
+     "relationship": "Part of Holding Company",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Coal Mines Provident Fund (CMPF).",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "Noted",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 16,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 394.19,
+     "closing_cr": 0.0,
+     "counterparty": "Coal Mines Provident Fund (CMPF).",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 38.03,
+     "closing_cr": -54.55,
+     "counterparty": "CMPDIL",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": -51.45,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 23.68,
+     "closing_cr": -393.46,
+     "counterparty": "Coal India Limited",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": -414.0,
+     "other_details": "Apex and Rehabilitation Charges",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.39,
+     "closing_cr": 0.0,
+     "counterparty": "CIL Executive Defined Contribution Pension Scheme-2007",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.5,
+     "closing_cr": 2178.39,
+     "counterparty": "Group Gratuity Cash Accumulation Plan with LICI.",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 2170.15,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.3,
+     "closing_cr": 147.04,
+     "counterparty": "Coal India Superannuation Benefit Fund Trust (PRMB-Executive)",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 135.0,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.5,
+     "closing_cr": 18.4,
+     "counterparty": "New Group Gratuity Cash Accumulation Plan with LICI",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 18.09,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.18,
+     "closing_cr": 0.0,
+     "counterparty": "Eastern Coalfields Limited",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.01,
+     "closing_cr": -0.44,
+     "counterparty": "Coal India Sports Promotion Association (CISPA)",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": -1.01,
+     "other_details": "Management Services",
+     "relationship": "Registered Society",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.42,
+     "closing_cr": 0.0,
+     "counterparty": "CMPDIL",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.41,
+     "closing_cr": 0.0,
+     "counterparty": "Central Coalfields Limited",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.07,
+     "closing_cr": 0.0,
+     "counterparty": "Northern Coalfields Limited",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.06,
+     "closing_cr": 0.0,
+     "counterparty": "South Eastern Coalfields Limited",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Western Coalfields Limited",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 336.03,
+     "counterparty": "Contributory Post Retirement Medicare Scheme for Non- Executives Modified",
+     "entity": "Bharat Coking Coal Limited",
+     "opening_cr": 372.39,
+     "other_details": "Employees Retirement Funds",
+     "relationship": "Trust for Employee Benefit",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 15,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544678",
  "section_lab": {
   "governance_quarters": {
-   "at": "2026-07-28T19:49:27+05:30",
+   "at": "2026-10-28T17:33:16+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "oil_gas",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Mining",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Mining",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Mining",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY27",
+   "segment": "Mining",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q3FY26",
   "Q4FY26",
   "Q1FY27",
   "Q2FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 126.9,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2749.08,
+    "Interest": 46.36,
+    "Net Profit": -22.88,
+    "Net Profit (owners)": -22.88,
+    "OPM %": 1.2117291936179477,
+    "Operating Profit": 33.720000000000255,
+    "Other Income": 70.43999999999976,
+    "Profit before tax": -69.1,
+    "Profit for PE": -22.88,
+    "Sales": 2782.8,
+    "Tax": -46.22,
+    "Tax %": -66.88856729377714
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 150.12,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 3618.21,
+    "Interest": 52.23,
+    "Net Profit": 27.28,
+    "Net Profit (owners)": 27.28,
+    "OPM %": -10.21215674926515,
+    "Operating Profit": -335.2600000000002,
+    "Other Income": 556.5500000000002,
+    "Profit before tax": 18.94,
+    "Profit for PE": 27.28,
+    "Sales": 3282.95,
+    "Tax": -8.34,
+    "Tax %": -44.0337909186906
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 2241.74,
+    "CWIP": 1874.27,
+    "Equity Capital": 4657.0,
+    "Fixed Assets": 5273.41,
+    "Investments": 0.0,
+    "Other Assets": 13437.669999999998,
+    "Other Liabilities": 12564.81,
+    "Reserves": 1121.8,
+    "Total Assets": 20585.35,
+    "Total Liabilities": 20585.35
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 477.56,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 14138.880000000001,
+    "Interest": 158.64,
+    "Net Profit": 128.28,
+    "Net Profit (owners)": 128.28,
+    "OPM %": -3.62116501695154,
+    "Operating Profit": -494.10000000000036,
+    "Other Income": 1279.4800000000005,
+    "Profit before tax": 149.18,
+    "Profit for PE": 128.28,
+    "Sales": 13644.78,
+    "Tax": 20.9,
+    "Tax %": 14.009920900925056
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1149.78,
+    "Cash from Investing Activity": -309.59,
+    "Cash from Operating Activity": -640.64,
+    "Net Cash Flow": 199.55
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 126.24,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 3651.7400000000002,
+    "Interest": 48.33,
+    "Net Profit": -68.09,
+    "Net Profit (owners)": -68.09,
+    "OPM %": -1.797188391172124,
+    "Operating Profit": -64.47000000000025,
+    "Other Income": 135.97000000000025,
+    "Profit before tax": -103.07,
+    "Profit for PE": -68.09,
+    "Sales": 3587.27,
+    "Tax": -34.98,
+    "Tax %": -33.938100320170754
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 124.35,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 4212.28,
+    "Interest": 48.74,
+    "Net Profit": 123.74,
+    "Net Profit (owners)": 123.74,
+    "OPM %": 4.539294471714965,
+    "Operating Profit": 200.30000000000018,
+    "Other Income": 158.56999999999982,
+    "Profit before tax": 185.78,
+    "Profit for PE": 123.74,
+    "Sales": 4412.58,
+    "Tax": 62.04,
+    "Tax %": 33.39433738830875
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 2477.74,
+    "CWIP": 1681.26,
+    "Equity Capital": 4657.0,
+    "Fixed Assets": 6166.64,
+    "Investments": 0.0,
+    "Other Assets": 12862.699999999999,
+    "Other Liabilities": 12409.609999999999,
+    "Reserves": 1166.25,
+    "Total Assets": 20710.6,
+    "Total Liabilities": 20710.6
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "BHARATCOAL",
  "timeline": [
@@ -10657,10 +12284,24 @@
    "news_id": "nse-106827839",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/BCCL_25102026143413_FInancials_PPT_Signed.pdf",
    "summary": "Bharat Coking Coal reported a Q2FY27 turnaround with PBT of ₹185.78 Cr and record H1 sales realizations of ₹10,260 Cr."
+  },
+  {
+   "date": "2026-11-01T12:41:52+05:30",
+   "event_type": "MONTHLY_BUSINESS_UPDATE",
+   "id": "t_1b377532",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T12:46:24+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106838769",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/BCCL_01112026124118_Production_Report_Signed.pdf",
+   "summary": "BCCL reported October 2026 provisional production: raw coal"
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T09:53:31+05:30",
+ "updated_at": "2026-11-01T12:46:24+05:30",
  "watchlist": [
   {
    "check_by": "2026-05-31",

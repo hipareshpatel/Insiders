@@ -1,4 +1,102 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "M/s B S R & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-05-12T18:00:00+05:30",
@@ -296,6 +394,115 @@
    "new_shares": null,
    "ratio": null,
    "source_news_id": "nse-106797617"
+  }
+ ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 13.421,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -367.342,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -81.425,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 379.912,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 785.667,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 205.974,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 862.916,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 50.441,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -60.233,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 5.454,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 1677.81,
+    "AdjustmentsForSharebasedPayments": 25.943,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 55.417,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 48.035,
+    "CashAndCashEquivalentsCashFlowStatement": 1201.96,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 5095.398,
+    "CashFlowsFromUsedInInvestingActivities": -5957.355,
+    "CashFlowsFromUsedInOperatingActivities": 1731.237,
+    "CashFlowsFromUsedInOperations": 1806.539,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 35.931,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 3.462,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 4.095,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 75.302,
+    "IncreaseDecreaseInCashAndCashEquivalents": 873.375,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 869.28,
+    "InterestPaidClassifiedAsFinancingActivities": 1152.678,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 48.145,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -97.453,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 6.38,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.83,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 343.261,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -258.61,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 97.83,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 5291.555,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 523.411,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 1440.738,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 73.732,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 19.75,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 67.131,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 5687.187,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 1253.059,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
   }
  ],
  "company_name": "Clean Max Enviro Energy Solutions Limited",
@@ -615,6 +822,239 @@
    "tranches": [],
    "updated_as_of": "2026-09-30T17:50:35+05:30",
    "usage": null
+  },
+  {
+   "amount_cr": 0.0026,
+   "as_of": "2026-10-30T19:59:19+05:30",
+   "counterparty": "Bayer Vapi Private Limited",
+   "discount_pct": null,
+   "execution_by": "31 December 2026",
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 0.0026,
+     "as_of": "2026-10-30T19:59:19+05:30",
+     "lab": {
+      "at": "2026-10-30T22:34:10+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106837437",
+     "stage": "BOARD_APPROVED"
+    }
+   ],
+   "id": "d_66fdb09d",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "DIVESTMENT",
+   "lab": {
+    "at": "2026-10-30T22:34:10+05:30",
+    "by": "ai",
+    "doc": "other",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "renewable energy generation",
+   "seller": null,
+   "source_news_id": "nse-106837437",
+   "stage": "BOARD_APPROVED",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-30T19:59:19+05:30",
+   "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 3.19,
+    "DebtServiceCoverageRatio": 1.16,
+    "InterestServiceCoverageRatio": 1.77
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.6,
+    "DebtServiceCoverageRatio": 5.97,
+    "InterestServiceCoverageRatio": 7.77
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0225,
+    "DebtServiceCoverageRatio": 0.0247,
+    "InterestServiceCoverageRatio": 0.0205
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0237,
+    "DebtServiceCoverageRatio": 0.0142,
+    "InterestServiceCoverageRatio": 0.0228
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0028,
+    "DebtServiceCoverageRatio": 0.112,
+    "InterestServiceCoverageRatio": 0.1672
+   }
   }
  ],
  "financial_metrics": [
@@ -7430,14 +7870,14 @@
  "fy_end_month": 3,
  "governance": {
   "auditor": {
-   "as_of": "2026-10-07T22:48:05+05:30",
+   "as_of": "2026-10-30T19:59:19+05:30",
    "lab": {
-    "at": "2026-10-07T22:48:05+05:30",
-    "by": "unknown",
+    "at": "2026-10-30T22:34:10+05:30",
+    "by": "ai",
     "doc": "other"
    },
    "opinion": "UNMODIFIED",
-   "source_news_id": "nse-106810425"
+   "source_news_id": "nse-106837437"
   },
   "auditor_history": [
    {
@@ -7489,6 +7929,16 @@
     },
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106810425"
+   },
+   {
+    "as_of": "2026-10-30T19:59:19+05:30",
+    "lab": {
+     "at": "2026-10-30T22:34:10+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106837437"
    }
   ],
   "quarters": [
@@ -7823,6 +8273,177 @@
       "status": "FY - 2021-22 With respect to the litigation of Surya Energy Photovoltaic India Private Limited ('Surya'), a subsidiary of CMES, submissions were made before the AO requesting for a complete stay of demand amounting to INR 65,44,53,680 till disposal of the appeal before the CIT(A). Pursuant to which stay on collection of the entire demand were granted through multiple orders. A stay order dated 20 April 2026 was granted till 30 June 2026. Subsequently, an application for extension for stay of demand was filed on 30 June 2026."
      }
     ]
+   },
+   {
+    "as_of": "2026-10-28T18:14:43+05:30",
+    "board": [
+     {
+      "appointed": "2012-04-03",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "PRATAP JAIN",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2010-09-29",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "KULDEEP JAIN",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-10-26",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MURZASH MANEKSHANA",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-08-14",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "AJAY KAUL",
+      "role": null,
+      "tenure_months": 13.18
+     },
+     {
+      "appointed": "2025-07-09",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SHILPA DIVEKAR NIRULA",
+      "role": null,
+      "tenure_months": 14.23
+     },
+     {
+      "appointed": "2025-07-09",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SANTOSH JANAKIRAM IYER",
+      "role": null,
+      "tenure_months": 14.23
+     },
+     {
+      "appointed": "2023-05-25",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "NAWAL SAINI",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-03-17",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "DINESH KUMAR KHARA",
+      "role": null,
+      "tenure_months": 6.15
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "SHILPA DIVEKAR NIRULA",
+      "SANTOSH JANAKIRAM IYER",
+      "KULDEEP JAIN"
+     ],
+     "corporate social responsibility committee": [
+      "KULDEEP JAIN",
+      "AJAY KAUL",
+      "DINESH KUMAR KHARA",
+      "PRATAP JAIN"
+     ],
+     "nomination and remuneration committee": [
+      "AJAY KAUL",
+      "DINESH KUMAR KHARA",
+      "MURZASH MANEKSHANA"
+     ],
+     "other committee": [
+      "AJAY KAUL",
+      "SANTOSH JANAKIRAM IYER",
+      "DINESH KUMAR KHARA",
+      "SHILPA DIVEKAR NIRULA"
+     ],
+     "risk management committee": [
+      "KULDEEP JAIN",
+      "DINESH KUMAR KHARA",
+      "MURZASH MANEKSHANA"
+     ],
+     "stakeholders relationship committee": [
+      "SANTOSH JANAKIRAM IYER",
+      "KULDEEP JAIN",
+      "NAWAL SAINI"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 40.0,
+     "board": 47.0,
+     "corporate social responsibility committee": 79.0,
+     "nomination and remuneration committee": 79.0,
+     "risk management committee": 34.0
+    },
+    "independent_directors": 7,
+    "material_floor_cr": 4.279,
+    "parser": 4,
+    "penalties": [
+     {
+      "amount_rupees": 500000.0,
+      "authority": "Regional Director, Western Region-I, Ministry of Corporate Affairs, Mumbai",
+      "details": "Interim Order under Section 441 of the Companies Act, 2013 on the suo-moto compounding application (Form GNL-1, SRN AC4104348 dated 26 June 2026). The total compounding fee levied is INR 5,00,000, being INR 1,25,000 each on the Company, Kuldeep Jain (MD), Nikunj Gopal Ghodawat (CFO) and Ullash Parida (CS). Payment is due within 15 days.",
+      "impact": "The order relates to a procedural, unintentional non-compliance that was voluntarily compounded and has since been made good. It has no material impact on the financial position, operations or other activities of the Company.",
+      "received": "2026-09-28"
+     }
+    ],
+    "quarter_end": "2026-09-30",
+    "related_finance": [
+     {
+      "given_cr": 0.0,
+      "kind": "loan",
+      "outstanding_cr": 0.6729,
+      "party": "KMP"
+     }
+    ],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1748014_28102026061507_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "FY - 2021-22 With respect to the litigation of Surya Energy Photovoltaic India Private Limited ('Surya'), a subsidiary of CMES, submissions were made before the AO requesting for a complete stay of demand amounting to INR 65,44,53,680 till disposal of the appeal before the CIT(A). Pursuant to which stay on collection of the entire demand were granted through multiple orders. A stay order dated 20 April 2026 was granted till 30 June 2026. Subsequently, an application for extension for stay of demand was filed on 30 June 2026.",
+      "initiated": "2025-03-26",
+      "opposing_party": "AO and CIT(A)",
+      "status": "FY - 2021-22 With respect to the litigation of Surya Energy Photovoltaic India Private Limited ('Surya'), a subsidiary of CMES, submissions were made before the AO requesting for a complete stay of demand amounting to INR 65,44,53,680 till disposal of the appeal before the CIT(A). Pursuant to which stay on collection of the entire demand were granted through multiple orders. An application for extention for stay of demand was filed on 30 June 2026 after expiry of stay order which was granted till 30 June 2026. Subsequently, an application for extension of stay of demand was filed on 30 June 2026 after which a stay of demand was granted till 30 December 2026"
+     },
+     {
+      "as_last_disclosed": "An adjudication order dated February 12, 2025 (“Adjudication Order”) was issued to our Company by the Office of the State Tax Officer, Department of Goods and Services Tax, Government of Maharashtra, for an aggregate amount of INR 52.91 million. The order alleges (i) excess claim of input tax credit, (ii) failure to discharge tax liability on corporate guarantees extended by the Company to its subsidiaries, and (iii) interest on delayed payment of tax for the period from April 2020 to March 2021. Our company filed an appeal dated May 6, 2025 (“Appeal”) before the Deputy Commissioner of State Tax (Appeal), seeking to quash the Adjudication Order. Our company has received the personal hearing notice on March 24, 2026. The personal hearing is scheduled on April 8,2026. The matter is currently pending.",
+      "initiated": "2025-02-12",
+      "opposing_party": "State Tax Officer Jurisdiction : KALBADEVI_711:FORT:MUMBAI_SOUTH_",
+      "status": "An appeal order March 27, 2026 (“Order-in-Appeal”) was issued to the Company by the Deputy Commissioner of State Tax (Appeal), Department of Goods and Services Tax, Government of Maharashtra, for an aggregate amount of INR 52.91 million. The order alleges (i) excess claim of input tax credit, (ii) failure to discharge tax liability on corporate guarantees extended by the Company to its subsidiaries, and (iii) interest on delayed payment of tax for the period from April 2020 to March 2021. The Company filed an appeal dated July 30, 2026 (“GSTAT Appeal”) before the Goods and Services Tax Appellate Tribunal, seeking to quash the Adjudication Order. The matter is currently pending."
+     }
+    ]
    }
   ]
  },
@@ -7914,17 +8535,6 @@
  ],
  "identity": {
   "entities": [
-   {
-    "as_of": "2026-05-12T20:55:33+05:30",
-    "lab": {
-     "at": "2026-05-12T20:55:33+05:30",
-     "by": "ai",
-     "doc": "call"
-    },
-    "name": "Clean Max Taurus Private Limited",
-    "source_news_id": "nse-106619424",
-    "type": "JV (51%)"
-   },
    {
     "as_of": "2026-04-28T22:17:03+05:30",
     "lab": {
@@ -8133,6 +8743,17 @@
     "name": "Cleanmax Solar MENA FZCO",
     "source_news_id": "nse-106812992",
     "type": "wholly owned subsidiary"
+   },
+   {
+    "as_of": "2026-10-30T19:59:19+05:30",
+    "lab": {
+     "at": "2026-10-30T22:34:10+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "Clean Max Alps Private Limited",
+    "source_news_id": "nse-106837437",
+    "type": "subsidiary (74%)"
    }
   ],
   "former_names": [
@@ -8458,7 +9079,346 @@
    "379"
   ]
  },
- "last_filed_at": "2026-10-19T08:19:10+05:30",
+ "last_filed_at": "2026-10-30T19:59:19+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "DSDG HOLDING APS",
+    "date": "2026-09-03",
+    "kind": "BLOCK",
+    "price": 1220.0,
+    "qty": 1633727.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CLEANMAX",
+    "value_cr": 199.31
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "DSP INDIA FUND INDIA LONG SHORT STRATEGY FUND WITH CASH MANAGEMENT OPTION",
+    "date": "2026-09-03",
+    "kind": "BLOCK",
+    "price": 1220.0,
+    "qty": 204919.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL LIFE INSURANCE COMPANY LTD",
+    "date": "2026-09-03",
+    "kind": "BLOCK",
+    "price": 1220.0,
+    "qty": 509485.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 62.16
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "MAHINDRA MANULIFE MUTUAL FUND",
+    "date": "2026-09-03",
+    "kind": "BLOCK",
+    "price": 1220.0,
+    "qty": 204919.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "SBI LIFE INSURANCE COMPANY LTD.",
+    "date": "2026-09-03",
+    "kind": "BLOCK",
+    "price": 1220.0,
+    "qty": 509485.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 62.16
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "WHITEOAK CAPITAL MUTUAL FUND",
+    "date": "2026-09-03",
+    "kind": "BLOCK",
+    "price": 1220.0,
+    "qty": 204919.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "DSDG HOLDING APS",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 1220.0,
+    "qty": 1633727.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CLEANMAX",
+    "value_cr": 199.31
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "AUGMENT INDIA I HOLDINGS LLC",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 1288.4,
+    "qty": 869152.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CLEANMAX",
+    "value_cr": 111.98
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "AUGMENT INDIA I HOLDINGS LLC",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 1289.01,
+    "qty": 7633385.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CLEANMAX",
+    "value_cr": 983.95
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "GOLDMAN SACHS INVESTMENTS MAURITIUS I LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 1289.04,
+    "qty": 718539.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 92.62
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "HSBC INDIA INFRASTRUCTURE EQUITY MOTHER FUND",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 1288.4,
+    "qty": 788000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 101.53
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 1288.4,
+    "qty": 1115384.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CLEANMAX",
+    "value_cr": 143.71
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.001,
+     "description": "(a) Re-measurement (losses)/gain of the defined benefit obligation",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.308,
+     "description": "Foreign currency translation gain/(loss)",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 81.314,
+     "description": "Effective portion of gains in a cash flow hedge",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.001,
+    "oci_net_cr": 60.54,
+    "profit_cr": 21.177,
+    "reclassified_cr": 81.006,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 20.467,
+    "total_comprehensive_cr": 81.717,
+    "total_comprehensive_nci_cr": -6.472,
+    "total_comprehensive_owners_cr": 88.189
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.001,
+     "description": "Re-measurement gains/(losses) of the defined benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.001,
+    "oci_net_cr": 0.001,
+    "profit_cr": 270.278,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 270.279
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.138,
+     "description": "Re-measurement gain/(losses) of the defined benefit obligation",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 13.217,
+     "description": "Foreign currency translation gain/(loss)",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 414.79,
+     "description": "Effective portion of gains in a cash flow hedge",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.138,
+    "oci_net_cr": 323.708,
+    "profit_cr": 45.396,
+    "reclassified_cr": 428.007,
+    "tax_not_reclassified_cr": 0.035,
+    "tax_reclassified_cr": 104.402,
+    "total_comprehensive_cr": 369.104,
+    "total_comprehensive_nci_cr": -10.024,
+    "total_comprehensive_owners_cr": 379.128
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.157,
+     "description": "Re-measurement (losses)/gain of the defined benefit obligation",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 21.553,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 11.098,
+     "description": "Effective portion of gains in a cash flow hedge",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.157,
+    "oci_net_cr": 29.74,
+    "profit_cr": 55.174,
+    "reclassified_cr": 32.651,
+    "tax_not_reclassified_cr": -0.039,
+    "tax_reclassified_cr": 2.793,
+    "total_comprehensive_cr": 84.914,
+    "total_comprehensive_nci_cr": 6.657,
+    "total_comprehensive_owners_cr": 78.257
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.157,
+     "description": "Re-measurement (losses)/gains of the defined benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.157,
+    "oci_net_cr": -0.117,
+    "profit_cr": 350.199,
+    "tax_not_reclassified_cr": -0.04,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 350.082
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-21T08:42:37+05:30",
@@ -8799,6 +9759,16 @@
    },
    "source_news_id": "nse-106812992",
    "text": "Massmunch Company Limited, incorporated in Thailand on 27 March 2025, had nil turnover at 31 December 2025 and net worth of Thai Baht 1,213,300."
+  },
+  {
+   "as_of": "2026-10-30T19:59:19+05:30",
+   "lab": {
+    "at": "2026-10-30T22:34:10+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106837437",
+   "text": "Approved sale of 26% stake in Clean Max Alps Private Limited to Bayer Vapi Private Limited for ₹26,000."
   }
  ],
  "ownership": [
@@ -8927,7 +9897,7 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-30T21:43:34+05:30",
+   "at": "2026-10-28T18:14:43+05:30",
    "by": "file",
    "doc": "other"
   },
@@ -8935,10 +9905,233 @@
    "at": "2026-05-22T23:59:00+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:37:05+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "power",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 18061.138,
+     "liabilities_cr": 14573.405,
+     "segment": "Segment A - Renewable Energy Power Sales"
+    },
+    {
+     "assets_cr": 267.877,
+     "liabilities_cr": 323.262,
+     "segment": "Segment B - Renewable Energy Services"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "totals": {
+    "assets_cr": 18329.015,
+    "liabilities_cr": 14896.667,
+    "net_assets_cr": 19303.012,
+    "net_liabilities_cr": 15724.685
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 19673.4,
+     "liabilities_cr": 16395.312,
+     "segment": "Segment A - Renewable Energy Power Sales"
+    },
+    {
+     "assets_cr": 1948.898,
+     "liabilities_cr": 859.996,
+     "segment": "Other unallocable"
+    },
+    {
+     "assets_cr": 1475.98,
+     "liabilities_cr": 319.435,
+     "segment": "Segment B - Renewable Energy Services"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "totals": {
+    "assets_cr": 23098.278,
+    "liabilities_cr": 17574.743,
+    "net_assets_cr": 23098.278,
+    "net_liabilities_cr": 17574.743
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 21033.069,
+     "liabilities_cr": 17480.057,
+     "segment": "Segment A - Renewable Energy Power Sales"
+    },
+    {
+     "assets_cr": 1827.723,
+     "liabilities_cr": 455.573,
+     "segment": "Segment B - Renewable Energy Services"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 22860.792,
+    "liabilities_cr": 17935.63,
+    "net_assets_cr": 24691.954,
+    "net_liabilities_cr": 18860.318
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 111.62,
+   "period": "Q3FY26",
+   "revenue_cr": 310.87,
+   "segment": "Segment A - Renewable Energy Power Sales",
+   "share_pct": 74.4,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 18.36,
+   "period": "Q3FY26",
+   "revenue_cr": 107.14,
+   "segment": "Segment B - Renewable Energy Services",
+   "share_pct": 25.6,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 181.47,
+   "period": "Q4FY26",
+   "revenue_cr": 369.37,
+   "segment": "Segment A - Renewable Energy Power Sales",
+   "share_pct": 66.6,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 21.76,
+   "period": "Q4FY26",
+   "revenue_cr": 185.19,
+   "segment": "Segment B - Renewable Energy Services",
+   "share_pct": 33.4,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 257.74,
+   "period": "Q1FY27",
+   "revenue_cr": 528.26,
+   "segment": "Segment A - Renewable Energy Power Sales",
+   "share_pct": 63.8,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 15.27,
+   "period": "Q1FY27",
+   "revenue_cr": 300.15,
+   "segment": "Segment B - Renewable Energy Services",
+   "share_pct": 36.2,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -10300,6 +11493,270 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.312,
+    "Depreciation": 110.975,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 159.319,
+    "Interest": 189.669,
+    "Minority share": -6.472,
+    "Net Profit": 21.177,
+    "Net Profit (owners)": 27.649,
+    "OPM %": 62.287522753795066,
+    "Operating Profit": 263.13800000000003,
+    "Other Income": 44.136999999999944,
+    "PBT as filed": 6.319,
+    "Profit before tax": 6.631,
+    "Profit for PE": 27.649,
+    "Sales": 422.457,
+    "Tax": -14.546,
+    "Tax %": -219.36359523450457
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.027,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1145.5939999999998,
+    "Interest": 95.016,
+    "Net Profit": 270.278,
+    "Net Profit (owners)": 270.278,
+    "OPM %": 24.681921462609022,
+    "Operating Profit": 375.4140000000002,
+    "Other Income": 90.91099999999977,
+    "Profit before tax": 357.282,
+    "Profit for PE": 270.278,
+    "Sales": 1521.008,
+    "Tax": 87.004,
+    "Tax %": 24.351632603937507
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 2.371,
+    "Depreciation": 96.68,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 289.84499999999997,
+    "Interest": 180.178,
+    "Minority share": -10.024,
+    "Net Profit": 45.396,
+    "Net Profit (owners)": 55.42,
+    "OPM %": 48.00641477550977,
+    "Operating Profit": 267.618,
+    "Other Income": 84.495,
+    "PBT as filed": 72.884,
+    "Profit before tax": 75.255,
+    "Profit for PE": 55.42,
+    "Sales": 557.463,
+    "Tax": 29.859,
+    "Tax %": 39.67709786725135
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 12684.311000000002,
+    "CWIP": 5342.771000000001,
+    "Equity Capital": 11.708,
+    "Fixed Assets": 11953.848,
+    "Investments": 136.748,
+    "Other Assets": 5121.669999999996,
+    "Other Liabilities": 5232.4599999999955,
+    "Reserves": 4626.558,
+    "Total Assets": 22555.036999999997,
+    "Total Liabilities": 22555.036999999997
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 6.252,
+    "Depreciation": 379.912,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 780.6509999999998,
+    "Interest": 785.922,
+    "Minority share": -8.555,
+    "Net Profit": 85.577,
+    "Net Profit (owners)": 94.132,
+    "OPM %": 59.18960641924478,
+    "Operating Profit": 1132.2220000000002,
+    "Other Income": 168.59299999999985,
+    "PBT as filed": 128.729,
+    "Profit before tax": 134.98100000000002,
+    "Profit for PE": 94.132,
+    "Sales": 1912.873,
+    "Tax": 49.404,
+    "Tax %": 36.600706766137456
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 5095.398,
+    "Cash from Investing Activity": -5953.259999999999,
+    "Cash from Operating Activity": 1731.237,
+    "Net Cash Flow": 873.375
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.479,
+    "Depreciation": 114.634,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 411.24,
+    "Interest": 254.711,
+    "Minority share": 6.657,
+    "Net Profit": 55.174,
+    "Net Profit (owners)": 48.517,
+    "OPM %": 50.58138137560745,
+    "Operating Profit": 420.91599999999994,
+    "Other Income": 42.42500000000007,
+    "PBT as filed": 93.517,
+    "Profit before tax": 93.996,
+    "Profit for PE": 48.517,
+    "Sales": 832.156,
+    "Tax": 38.822,
+    "Tax %": 41.30175752159667
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 13.738,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1707.142,
+    "Interest": 108.178,
+    "Net Profit": 350.199,
+    "Net Profit (owners)": 350.199,
+    "OPM %": 19.677022152147394,
+    "Operating Profit": 418.20500000000015,
+    "Other Income": 171.92799999999988,
+    "Profit before tax": 468.217,
+    "Profit for PE": 350.199,
+    "Sales": 2125.347,
+    "Tax": 118.018,
+    "Tax %": 25.205834047033747
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "CLEANMAX",
  "timeline": [
   {
@@ -10814,6 +12271,20 @@
    "news_id": "nse-106812992",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/CLEANMAX_09102026185623_Reg_30_Massmunch.pdf",
    "summary": "Clean Max's Thai step-down subsidiaries signed a share purchase agreement on 9 October 2026 to buy 100% of Massmunch Company Limited, a Thai renewable-energy company with nil turnover, for an enterprise value of Thai Baht 1,250,000, with completion indicated for 31 October 2026."
+  },
+  {
+   "date": "2026-10-30T19:59:19+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_66fdb09d",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-10-30T22:34:10+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106837437",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/CLEANMAX_30102026195909_Alps.pdf",
+   "summary": "Clean Max Enviro Energy Solutions approved the sale of a 26% stake in its subsidiary Clean Max Alps Private Limited to Bayer Vapi Private Limited for ₹26,000."
   }
  ],
  "upcoming_events": [
@@ -10866,19 +12337,19 @@
    "source_news_id": "nse-106812992"
   },
   {
-   "as_of": "2026-09-09T15:46:18+05:30",
+   "as_of": "2026-10-30T19:59:19+05:30",
    "date": "2026-12-31",
-   "description": "Expected completion of sale of shares in Clean Max Dynamis",
+   "description": "Indicative completion of sale of shares in Clean Max Alps Private Limited",
    "event_type": "OTHER",
    "lab": {
-    "at": "2026-09-09T15:46:18+05:30",
-    "by": "unknown",
+    "at": "2026-10-30T22:34:10+05:30",
+    "by": "ai",
     "doc": "other"
    },
-   "source_news_id": "nse-106776422"
+   "source_news_id": "nse-106837437"
   }
  ],
- "updated_at": "2026-10-27T09:57:33+05:30",
+ "updated_at": "2026-10-30T22:34:10+05:30",
  "watchlist": [
   {
    "check_by": "2027-03-31",

@@ -1,4 +1,160 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "S.R. Batliboi & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "S.R. Batliboi & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-12-08T18:00:00+05:30",
@@ -61,17 +217,6 @@
    "source_news_id": "xbrl:res:544609:Q4FY26",
    "total_assets_cr": 7676.8,
    "total_liabilities_cr": 3106.04
-  },
-  {
-   "as_of": "2026-06-03T16:28:32+05:30",
-   "cash_cr": 5027.0,
-   "lab": {
-    "at": "2026-06-03T16:28:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Mar-2026",
-   "source_news_id": "nse-106653717"
   },
   {
    "as_of": "2026-08-20T14:42:22+05:30",
@@ -146,6 +291,436 @@
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -11.251,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -58.74,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -9.107,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 202.321,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 6.771,
+    "AdjustmentsForFinanceCosts": 54.516,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 741.918,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 33.906,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 32.307,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 26.401,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -11.072,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 14.623,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 984.603,
+    "AdjustmentsForSharebasedPayments": 82.356,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 5.158,
+    "CashAndCashEquivalentsCashFlowStatement": 59.871,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -127.327,
+    "CashFlowsFromUsedInInvestingActivities": -794.06,
+    "CashFlowsFromUsedInOperatingActivities": 927.549,
+    "CashFlowsFromUsedInOperations": 931.385,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 56.7,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 3.836,
+    "IncreaseDecreaseInCashAndCashEquivalents": 6.162,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 6.162,
+    "InterestPaidClassifiedAsFinancingActivities": 12.199,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 19.547,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 1.856,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -57.588,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 121.747,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 6.529,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.09,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1125.692,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 2.619,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 3.461,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1772.4,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 104.199,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -8.834,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -21.284,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -14.963,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 158.074,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 11.924,
+    "AdjustmentsForFinanceCosts": 50.611,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.884,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 653.54,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 32.226,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 33.344,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 19.821,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 19.659,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 14.402,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 908.769,
+    "AdjustmentsForSharebasedPayments": 76.4,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 8.449,
+    "CashAndCashEquivalentsCashFlowStatement": 10.857,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -117.9,
+    "CashFlowsFromUsedInInvestingActivities": -791.228,
+    "CashFlowsFromUsedInOperatingActivities": 897.918,
+    "CashFlowsFromUsedInOperations": 901.257,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 145.005,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 8.56,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 3.339,
+    "IncreaseDecreaseInCashAndCashEquivalents": -11.21,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -11.21,
+    "InterestPaidClassifiedAsFinancingActivities": 12.127,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 15.017,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 4.303,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -54.65,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 105.864,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.091,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1104.668,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.069,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 3.41,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1670.513,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 92.165,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -33.54,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -17.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -45.11,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 437.39,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 10.77,
+    "AdjustmentsForFinanceCosts": 85.77,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 282.86,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 60.82,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 115.06,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 33.8,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 37.97,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 854.06,
+    "AdjustmentsForSharebasedPayments": 171.15,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 8.89,
+    "CashAndCashEquivalentsCashFlowStatement": 359.5,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 2755.05,
+    "CashFlowsFromUsedInInvestingActivities": -3282.5,
+    "CashFlowsFromUsedInOperatingActivities": 833.24,
+    "CashFlowsFromUsedInOperations": 863.72,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 56.7,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 30.48,
+    "IncreaseDecreaseInCashAndCashEquivalents": 305.79,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 305.79,
+    "InterestPaidClassifiedAsFinancingActivities": 0.49,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 93.89,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 39.95,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -82.8,
+    "OtherAdjustmentsToReconcileProfitLoss": -12.91,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -2037.21,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 251.99,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 10.17,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.61,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 2996.75,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 2034.53,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 4.08,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 21.36,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 2969.13,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 321.71,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -36.81,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -15.81,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -27.48,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 337.19,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 78.54,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 315.93,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 67.49,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 119.15,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 11.09,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 32.84,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 857.77,
+    "AdjustmentsForSharebasedPayments": 160.75,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 309.06,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 2775.72,
+    "CashFlowsFromUsedInInvestingActivities": -3309.59,
+    "CashFlowsFromUsedInOperatingActivities": 820.86,
+    "CashFlowsFromUsedInOperations": 842.0,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 776.99,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 10.54,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 21.14,
+    "IncreaseDecreaseInCashAndCashEquivalents": 286.99,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 286.99,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 90.77,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 77.33,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -17.67,
+    "OtherAdjustmentsToReconcileProfitLoss": -6.47,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1860.41,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 221.61,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.67,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 2996.66,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 1721.03,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.42,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 3.92,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 2316.89,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 174.14,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Physicswallah Limited",
  "deals": [
   {
@@ -235,6 +810,152 @@
    "tranches": [],
    "updated_as_of": "2026-05-27T13:11:32+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
   }
  ],
  "financial_metrics": [
@@ -5023,6 +5744,160 @@
       "status": "Subsequent to filing the appeal on April 13, 2026, the Company filed an application for stay of the demand before the Principal Commissioner of Income Tax (PCIT) on April 20, 2026. Pursuant to the stay order, the Company has complied with the conditions prescribed therein. The appeal is currently pending and has not yet been listed for hearing."
      }
     ]
+   },
+   {
+    "as_of": "2026-10-29T17:00:31+05:30",
+    "board": [
+     {
+      "appointed": "2025-02-12",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Deepak Amitabh",
+      "role": "Chairperson",
+      "tenure_months": 19.17
+     },
+     {
+      "appointed": "2025-02-12",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Nitin Savara",
+      "role": null,
+      "tenure_months": 19.17
+     },
+     {
+      "appointed": "2025-02-12",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rachna Dikshit",
+      "role": null,
+      "tenure_months": 19.17
+     },
+     {
+      "appointed": "2026-08-14",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Anoop Kumar Mittal",
+      "role": null,
+      "tenure_months": 1.18
+     },
+     {
+      "appointed": "2020-06-06",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Alakh Pandey",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2020-07-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Prateek Boob",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-03-01",
+      "category": "Non-Executive - Nominee Director",
+      "ceased": "2026-08-20",
+      "cessation_reason": "Others",
+      "name": "Sandeep Singhal",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Nitin Savara",
+      "Deepak Amitabh",
+      "Prateek Boob"
+     ],
+     "corporate social responsibility committee": [
+      "Rachna Dikshit",
+      "Alakh Pandey",
+      "Prateek Boob"
+     ],
+     "nomination and remuneration committee": [
+      "Rachna Dikshit",
+      "Nitin Savara",
+      "Deepak Amitabh"
+     ],
+     "risk management committee": [
+      "Rachna Dikshit",
+      "Nitin Savara",
+      "Prateek Boob"
+     ],
+     "stakeholders relationship committee": [
+      "Deepak Amitabh",
+      "Nitin Savara",
+      "Prateek Boob"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 49.0,
+     "board": 49.0,
+     "nomination and remuneration committee": 28.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.728,
+    "parser": 4,
+    "penalties": [
+     {
+      "amount_rupees": 5000.0,
+      "authority": "Municipal Corporation Office, Raipur (Chhattisgarh)",
+      "details": "Municipal Corporation Office, Raipur has imposed a penalty of Rs. 5,000 and a mandate to submit an affidavit confirming future compliance.",
+      "impact": "There is no material impact on financials, operations or other activities of the Company",
+      "received": "2026-07-22"
+     },
+     {
+      "amount_rupees": 2360.0,
+      "authority": "National Stock Exchange of India Limited",
+      "details": "NSE imposed fine of Rs. 2360/- which was subsequently waived vide letter dated 19.10.2026.",
+      "impact": "There is no material impact on financials, operations or other activities of the Company",
+      "received": "2026-08-31"
+     },
+     {
+      "amount_rupees": 4882.0,
+      "authority": "GST Authority- Uttar pradesh",
+      "details": "Order passed by the GST Authority, Uttar Pradesh, demanding tax of INR 48,801, along with applicable interest and penalty of INR 4,882, which has been discharged by the Company through Form GST DRC-03.",
+      "impact": "There is no material impact on financials, operations or other activities of the Company",
+      "received": "2026-08-13"
+     }
+    ],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1748944_29102026050312_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "The Company received an Assessment Order and Demand Order from Income Tax Department on March 13, 2026, raising a tax demand of ₹263.34 crore, which was reduced to ₹192.76 crore pursuant to a rectification order under Section 154 of the Income-tax Act, 1961. The Company filed an appeal against the rectification order on April 13, 2026, and an application for stay of the demand before the Principal Commissioner of Income Tax (PCIT) on April 20, 2026. The Company has complied with the conditions prescribed under the stay order. The appeal is pending and has not yet been listed for hearing.",
+      "initiated": "2026-04-13",
+      "opposing_party": "Assistant Commissioner of Income Tax, Circle5(2)(1), Noida, Income Tax Department",
+      "status": "Subsequently, the Company received a notice under Section 250 of the Income-tax Act, 1961, for which the Company filed its written submissions vide letter dated 25.09.2026. The matter is currently pending hearing."
+     }
+    ]
    }
   ]
  },
@@ -5273,6 +6148,509 @@
  },
  "industry": "Consumer Discretionary > Consumer Services > Other Consumer Services > E-Learning",
  "last_filed_at": "2026-10-20T12:31:05+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "CITIGROUP GLOBAL MARKETS MAURITIUS PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 2352677.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 27.7
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GHISALLO MASTER FUND LP",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 2123694.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GOLDMAN SACHS ETF TRUST - GOLDMAN SACHS INDIA EQUITY ETF",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 272929.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 3.21
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GOLDMAN SACHS FUNDS - GOLDMAN SACHS INDIA EQUITY PORTFOLIO",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 6123236.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 72.08
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GOLDMAN SACHS FUNDS-GOLDMAN SACHS ASIA EQUITY PORTFOLIO",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 164286.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 1.93
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GOLDMAN SACHS INVESTMENTS MAURITIUS I LIMITED",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 2123686.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GS INDIA EQUITY",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 283535.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 3.34
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL MUTUAL FUND",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 22000003.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 258.98
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "JSS INVESTMENTFONDS II - JSS RESPONSIBLE EQUITY - INDIA",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 60084.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 0.71
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "LIGHTSPEED OPPORTUNITY FUND II L.P.",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 46698120.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PWL",
+    "value_cr": 549.73
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "MEDIOLANUM BEST BRANDS- MEDIOLANUM INDIA OPPORTUNITIES",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 567357.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 6.68
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "MORGAN STANLEY ASIA SINGAPORE PTE",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 2123689.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "NEW YORK STATE TEACHERS RETIREMENT SYSTEM",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 442432.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 5.21
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "OP-INDIA FUND",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 186143.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 2.19
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "SOCIETE GENERALE",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 2123692.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "TATA AIA LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 3397894.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 40.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "VIRIDIAN ASIA OPPORTUNITIES MASTER FUND",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 117.72,
+    "qty": 2352783.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 27.7
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL MUTUAL FUND",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 117.72,
+    "qty": 22000003.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PWL",
+    "value_cr": 258.98
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "LIGHTSPEED OPPORTUNITY FUND II L.P.",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 117.72,
+    "qty": 46698120.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PWL",
+    "value_cr": 549.73
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.572,
+     "description": "Re-measurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 1.377,
+     "description": "Exchange differences on translation of Foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.572,
+    "oci_net_cr": 2.639,
+    "profit_cr": 69.711,
+    "reclassified_cr": 1.377,
+    "tax_not_reclassified_cr": -0.037,
+    "tax_reclassified_cr": 0.347,
+    "total_comprehensive_cr": 72.35,
+    "total_comprehensive_nci_cr": -2.5043,
+    "total_comprehensive_owners_cr": 74.8538
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.244,
+     "description": "Re-measurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 1.244,
+    "oci_net_cr": 0.931,
+    "profit_cr": 89.111,
+    "tax_not_reclassified_cr": 0.313,
+    "total_comprehensive_cr": 90.042
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.035,
+     "description": "Re-measurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -2.282,
+     "description": "Exchange differences on translation of Foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.035,
+    "oci_net_cr": -2.361,
+    "profit_cr": 102.272,
+    "reclassified_cr": -2.282,
+    "tax_not_reclassified_cr": 0.044,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 99.911,
+    "total_comprehensive_nci_cr": 1.702,
+    "total_comprehensive_owners_cr": 98.209
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.179,
+     "description": "Re-measurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.179,
+    "oci_net_cr": 0.134,
+    "profit_cr": 100.365,
+    "tax_not_reclassified_cr": 0.045,
+    "total_comprehensive_cr": 100.499
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.91,
+     "description": "Re-measurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.4,
+     "description": "Exchange differences on translation of Foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.91,
+    "oci_net_cr": 1.51,
+    "profit_cr": -69.14,
+    "reclassified_cr": -0.4,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -67.63,
+    "total_comprehensive_nci_cr": 0.57,
+    "total_comprehensive_owners_cr": 0.94
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.06,
+     "description": "Re-measurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.06,
+    "oci_net_cr": -0.05,
+    "profit_cr": -131.76,
+    "tax_not_reclassified_cr": -0.01,
+    "total_comprehensive_cr": -131.81
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.47,
+     "description": "Re-measurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.2,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.47,
+    "oci_net_cr": -0.5,
+    "profit_cr": -88.28,
+    "reclassified_cr": -0.2,
+    "tax_not_reclassified_cr": -0.17,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -88.78,
+    "total_comprehensive_nci_cr": -10.66,
+    "total_comprehensive_owners_cr": -78.12
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.71,
+     "description": "Re-measurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.71,
+    "oci_net_cr": -0.53,
+    "profit_cr": -26.34,
+    "tax_not_reclassified_cr": -0.18,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -26.87
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-15T18:02:17+05:30",
@@ -5410,6 +6788,1450 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 95.0,
+     "approved_cr": 95.0,
+     "closing_cr": 0.0,
+     "counterparty": "Guiding Light Education Technologies Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 28.0,
+     "approved_cr": 28.0,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 20.006,
+     "approved_cr": 20.006,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 8.538,
+     "approved_cr": 8.538,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.0,
+     "approved_cr": 8.0,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 5.119,
+     "approved_cr": 5.119,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.0,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 4.0,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Loan Repaid",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.632,
+     "approved_cr": 3.632,
+     "closing_cr": 21.308,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 17.676,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.023,
+     "approved_cr": 3.023,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.769,
+     "approved_cr": 2.769,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.07,
+     "approved_cr": 2.07,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.067,
+     "approved_cr": 2.067,
+     "closing_cr": 5.933,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Loan Repaid",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.0,
+     "approved_cr": 2.0,
+     "closing_cr": 2.0,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 2.0,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kay Lifestyle and Wellness",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 1.94,
+     "approved_cr": 1.94,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.617,
+     "approved_cr": 1.617,
+     "closing_cr": 0.0,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Donation Given",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.525,
+     "approved_cr": 1.525,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.984,
+     "approved_cr": 0.984,
+     "closing_cr": 2.686,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 1.701,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.887,
+     "approved_cr": 0.887,
+     "closing_cr": 4.97,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 4.083,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.846,
+     "approved_cr": 0.846,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Center LLC",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.815,
+     "approved_cr": 0.815,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.75,
+     "approved_cr": 0.75,
+     "closing_cr": 2.984,
+     "counterparty": "Ineuron Intelligence Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 2.234,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.729,
+     "approved_cr": 0.729,
+     "closing_cr": 0.0,
+     "counterparty": "Kay Lifestyle and Wellness",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.714,
+     "approved_cr": 0.714,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.677,
+     "approved_cr": 0.677,
+     "closing_cr": 0.677,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.543,
+     "approved_cr": 0.543,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.378,
+     "approved_cr": 0.378,
+     "closing_cr": 0.402,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.024,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.364,
+     "approved_cr": 0.364,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.351,
+     "approved_cr": 0.351,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.343,
+     "approved_cr": 0.343,
+     "closing_cr": 0.021,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest received",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.314,
+     "approved_cr": 0.314,
+     "closing_cr": 0.0,
+     "counterparty": "Preponline Furturiest Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.3,
+     "approved_cr": 0.3,
+     "closing_cr": 0.0,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.289,
+     "approved_cr": 0.289,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.238,
+     "approved_cr": 0.238,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Serveices Received",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.154,
+     "approved_cr": 0.154,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.153,
+     "approved_cr": 0.153,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.149,
+     "approved_cr": 0.149,
+     "closing_cr": 0.0,
+     "counterparty": "Ineuron Intelligence Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.135,
+     "approved_cr": 0.135,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of fixed assets"
+    },
+    {
+     "amount_cr": 0.103,
+     "approved_cr": 0.103,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.075,
+     "approved_cr": 0.075,
+     "closing_cr": 0.075,
+     "counterparty": "Finz Finance Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.07,
+     "approved_cr": 0.07,
+     "closing_cr": 0.0,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.055,
+     "approved_cr": 0.055,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.041,
+     "approved_cr": 0.041,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.041,
+     "approved_cr": 0.041,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest received",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.033,
+     "approved_cr": 0.033,
+     "closing_cr": 0.0,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.009,
+     "approved_cr": 0.009,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.007,
+     "approved_cr": 0.007,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.007,
+     "approved_cr": 0.007,
+     "closing_cr": 0.0,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.006,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.006,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.004,
+     "approved_cr": 0.004,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Finance Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.004,
+     "approved_cr": 0.004,
+     "closing_cr": 0.0,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 12.155,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 7.548,
+     "other_details": "Interest Receivable",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.07,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest Receivable",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.029,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest Receivable",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.149,
+     "counterparty": "Ineuron Intelligence Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest Receivable",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 8.893,
+     "other_details": "Trade payables",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 3.252,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 2.287,
+     "other_details": "Trade payables",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.037,
+     "other_details": "Trade payables",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 88,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 414.87,
+     "approved_cr": 414.87,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 122.9,
+     "approved_cr": 122.9,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 50.0,
+     "approved_cr": 50.0,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Finance Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 26.5,
+     "approved_cr": 26.5,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 20.25,
+     "approved_cr": 20.25,
+     "closing_cr": 20.25,
+     "counterparty": "Nextseed Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 20.0,
+     "approved_cr": 20.0,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 17.71,
+     "approved_cr": 17.71,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 7.47,
+     "approved_cr": 7.47,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses incurred by Company on behalf of others",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.93,
+     "approved_cr": 5.93,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Loan Repaid",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.61,
+     "approved_cr": 5.61,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.09,
+     "approved_cr": 5.09,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.49,
+     "approved_cr": 4.49,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.11,
+     "approved_cr": 3.11,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.92,
+     "approved_cr": 2.92,
+     "closing_cr": 0.0,
+     "counterparty": "Amit Sachdeva",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Short-term employee benefits",
+     "relationship": "Key management personnel (KMP) of entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.79,
+     "approved_cr": 2.79,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.71,
+     "approved_cr": 2.71,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.65,
+     "approved_cr": 2.65,
+     "closing_cr": 0.0,
+     "counterparty": "Amit Sachdeva",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Share based payment expenses",
+     "relationship": "Key management personnel (KMP) of entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.17,
+     "approved_cr": 2.17,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.61,
+     "approved_cr": 1.61,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Serveices Received",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "Kay Lifestyle and Wellness",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.77,
+     "approved_cr": 0.77,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.74,
+     "approved_cr": 0.74,
+     "closing_cr": 0.0,
+     "counterparty": "Ajinkya Rajendra Jain",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Share based payment expenses",
+     "relationship": "Key management personnel (KMP) of entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.65,
+     "approved_cr": 0.65,
+     "closing_cr": 0.0,
+     "counterparty": "Neha Boob",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Short-term employee benefits",
+     "relationship": "Relative of KMP",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.65,
+     "approved_cr": 0.65,
+     "closing_cr": 0.0,
+     "counterparty": "Ajinkya Rajendra Jain",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Short-term employee benefits",
+     "relationship": "Key management personnel (KMP) of entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.53,
+     "approved_cr": 0.53,
+     "closing_cr": 0.0,
+     "counterparty": "Sonal Mundhra",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Short-term employee benefits",
+     "relationship": "Relative of KMP",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.39,
+     "approved_cr": 0.39,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Finance Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.39,
+     "approved_cr": 0.39,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.38,
+     "approved_cr": 0.38,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.31,
+     "approved_cr": 0.31,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.31,
+     "approved_cr": 0.31,
+     "closing_cr": 0.0,
+     "counterparty": "Alakh Pandey",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Short-term employee benefits",
+     "relationship": "Key management personnel (KMP) of entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.31,
+     "approved_cr": 0.31,
+     "closing_cr": 0.0,
+     "counterparty": "Prateek Boob",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Short-term employee benefits",
+     "relationship": "Key management personnel (KMP) of entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.25,
+     "approved_cr": 0.25,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses incurred on behalf of the Company",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.24,
+     "approved_cr": 0.24,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Serveices Received",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.22,
+     "approved_cr": 0.22,
+     "closing_cr": 0.0,
+     "counterparty": "Kay Lifestyle and Wellness",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.21,
+     "approved_cr": 0.21,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.19,
+     "approved_cr": 0.19,
+     "closing_cr": 0.0,
+     "counterparty": "Nextseed Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.18,
+     "approved_cr": 0.18,
+     "closing_cr": 0.0,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.16,
+     "approved_cr": 0.16,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.02,
+     "other_details": "Interest Receivable",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.15,
+     "approved_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "Ineuron Intelligence Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.13,
+     "approved_cr": 0.13,
+     "closing_cr": 0.0,
+     "counterparty": "Knowledge Planet Holding Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 0.12,
+     "closing_cr": 0.0,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Cross Charge Services Provided",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 0.12,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.11,
+     "approved_cr": 0.11,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses incurred on behalf of the Company",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1,
+     "approved_cr": 0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.09,
+     "approved_cr": 0.09,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.08,
+     "approved_cr": 0.08,
+     "closing_cr": 0.0,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses incurred by Company on behalf of others",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.05,
+     "approved_cr": 0.05,
+     "closing_cr": 0.0,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Donation Given",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.04,
+     "approved_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "Amit Sachdeva",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.04,
+     "other_details": "Loan Repaid",
+     "relationship": "Key management personnel (KMP) of entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.03,
+     "approved_cr": 0.03,
+     "closing_cr": 0.0,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Loan",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.03,
+     "approved_cr": 0.03,
+     "closing_cr": 0.0,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP Cost Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Fintech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Penpencil Edu Services Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Bharat Innovation Global Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Nextseed Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Finance Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Finz Finance Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses incurred by Company on behalf of others",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 6.26,
+     "counterparty": "Utkarsh Classes & Edutech Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 3.25,
+     "other_details": "Trade payables",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.22,
+     "counterparty": "Xylem Learning Private Limited",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade payables",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "PW Foundation",
+     "entity": "Physicswallah Limited",
+     "opening_cr": 0.11,
+     "other_details": "Other payables",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 99,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544609",
  "section_lab": {
@@ -5419,12 +8241,58 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-28T17:32:18+05:30",
+   "at": "2026-10-29T17:00:31+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:27:09+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "default",
+ "segment_balance": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 1268.93,
+     "liabilities_cr": 2132.54,
+     "segment": "Offline"
+    },
+    {
+     "assets_cr": 440.42,
+     "liabilities_cr": 20.75,
+     "segment": "Others"
+    },
+    {
+     "assets_cr": 195.44,
+     "liabilities_cr": 1076.32,
+     "segment": "Online"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 1904.79,
+    "liabilities_cr": 3229.61,
+    "net_assets_cr": 8457.8,
+    "net_liabilities_cr": 3934.97
+   }
+  }
+ ],
  "segment_mix": [
   {
    "as_of": "2026-06-03T16:28:32+05:30",
@@ -5453,30 +8321,106 @@
    "source_news_id": "nse-106653717"
   },
   {
-   "as_of": "2026-08-20T14:42:22+05:30",
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-08-20T14:42:22+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q1FY27",
-   "revenue_cr": null,
-   "segment": "Online",
-   "share_pct": null,
-   "source_news_id": "nse-106750902"
+   "period": "Q2FY26",
+   "segment": "Edtech",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
   },
   {
-   "as_of": "2026-08-20T14:42:22+05:30",
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-08-20T14:42:22+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
+   "period": "Q3FY26",
+   "segment": "Ed-Tech",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Ed-Tech",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 69.83,
    "period": "Q1FY27",
-   "revenue_cr": null,
-   "segment": "Offline and other",
-   "share_pct": null,
-   "source_news_id": "nse-106750902"
+   "revenue_cr": 548.79,
+   "segment": "Online",
+   "share_pct": 52.1,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -104.75,
+   "period": "Q1FY27",
+   "revenue_cr": 489.9,
+   "segment": "Offline",
+   "share_pct": 46.5,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -6.05,
+   "period": "Q1FY27",
+   "revenue_cr": 15.26,
+   "segment": "Others",
+   "share_pct": 1.4,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -8947,6 +11891,514 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.006,
+    "Depreciation": 104.694,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 870.1030000000001,
+    "Interest": 24.757,
+    "Minority share": -2.6175,
+    "Net Profit": 69.711,
+    "Net Profit (owners)": 72.329,
+    "OPM %": 17.230479169282635,
+    "Operating Profit": 181.13300000000004,
+    "Other Income": 47.17799999999997,
+    "PBT as filed": 98.854,
+    "Profit before tax": 98.86,
+    "Profit for PE": 72.329,
+    "Sales": 1051.236,
+    "Tax": 29.149,
+    "Tax %": 29.485130487558163
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 6.856,
+    "CWIP": 0.117,
+    "Equity Capital": 1053.158,
+    "Fixed Assets": 809.6030000000001,
+    "Investments": 2326.058,
+    "Other Assets": 1814.304,
+    "Other Liabilities": 3545.596,
+    "Reserves": 344.472,
+    "Total Assets": 4950.082,
+    "Total Liabilities": 4950.082
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 81.343,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 724.2020000000001,
+    "Interest": 22.708,
+    "Net Profit": 89.111,
+    "Net Profit (owners)": 89.111,
+    "OPM %": 19.160079790410624,
+    "Operating Profit": 171.64499999999987,
+    "Other Income": 50.76900000000015,
+    "Profit before tax": 118.363,
+    "Profit for PE": 89.111,
+    "Sales": 895.847,
+    "Tax": 29.252,
+    "Tax %": 24.713804144876352
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 0.117,
+    "Equity Capital": 1053.159,
+    "Fixed Assets": 304.818,
+    "Investments": 2832.549,
+    "Other Assets": 1820.0029999999997,
+    "Other Liabilities": 2908.8450000000003,
+    "Reserves": 995.483,
+    "Total Assets": 4957.487,
+    "Total Liabilities": 4957.487
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.155,
+    "Depreciation": 113.191,
+    "Exceptional items": -23.558,
+    "Exceptional items AT": -16.77159706240646,
+    "Expenses": 846.02,
+    "Interest": 20.658,
+    "Minority share": 1.756,
+    "Net Profit": 102.272,
+    "Net Profit (owners)": 100.516,
+    "OPM %": 21.839879011732066,
+    "Operating Profit": 236.39900000000011,
+    "Other Income": 41.104999999999905,
+    "PBT as filed": 143.5,
+    "Profit before tax": 143.655,
+    "Profit for PE": 117.28759706240646,
+    "Sales": 1082.419,
+    "Tax": 41.383,
+    "Tax %": 28.807211722529672
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 87.252,
+    "Exceptional items": -21.289,
+    "Exceptional items AT": -15.473476565328856,
+    "Expenses": 723.3430000000001,
+    "Interest": 18.318,
+    "Net Profit": 100.365,
+    "Net Profit (owners)": 100.365,
+    "OPM %": 21.26381855943014,
+    "Operating Profit": 195.34899999999993,
+    "Other Income": 48.3070000000001,
+    "Profit before tax": 138.086,
+    "Profit for PE": 115.83847656532885,
+    "Sales": 918.692,
+    "Tax": 37.721,
+    "Tax %": 27.31703431195052
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.06,
+    "Depreciation": 121.88,
+    "Exceptional items": -29.01,
+    "Exceptional items AT": -24.897609235352533,
+    "Expenses": 890.0200000000001,
+    "Interest": 23.29,
+    "Minority share": 5.75,
+    "Net Profit": -69.14,
+    "Net Profit (owners)": -74.89,
+    "OPM %": 3.1323465389638505,
+    "Operating Profit": 28.77999999999986,
+    "Other Income": 35.830000000000126,
+    "PBT as filed": -80.62,
+    "Profit before tax": -80.56,
+    "Profit for PE": -49.99239076464747,
+    "Sales": 918.8,
+    "Tax": -11.42,
+    "Tax %": -14.175769612711022
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 1052.1100000000001,
+    "CWIP": 8.0,
+    "Equity Capital": 285.99,
+    "Fixed Assets": 1829.96,
+    "Investments": 2425.9799999999996,
+    "Other Assets": 3412.8600000000006,
+    "Other Liabilities": 2104.3000000000006,
+    "Reserves": 4234.4,
+    "Total Assets": 7676.8,
+    "Total Liabilities": 7676.8
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.26,
+    "Depreciation": 437.39,
+    "Exceptional items": -52.57,
+    "Exceptional items AT": -52.57,
+    "Expenses": 3529.53,
+    "Interest": 101.89,
+    "Minority share": -1.68,
+    "Net Profit": -24.17,
+    "Net Profit (owners)": -22.49,
+    "OPM %": 9.488555060340445,
+    "Operating Profit": 370.00999999999976,
+    "Other Income": 179.19000000000028,
+    "PBT as filed": 9.66,
+    "Profit before tax": 9.92,
+    "Profit for PE": 30.080000000000002,
+    "Sales": 3899.54,
+    "Tax": 34.09,
+    "Tax %": 343.64919354838713
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 2755.05,
+    "Cash from Investing Activity": -3282.5,
+    "Cash from Operating Activity": 833.24,
+    "Net Cash Flow": 305.79
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 91.86,
+    "Exceptional items": -66.45,
+    "Exceptional items AT": -59.829520295202954,
+    "Expenses": 770.36,
+    "Interest": 21.17,
+    "Net Profit": -131.76,
+    "Net Profit (owners)": -131.76,
+    "OPM %": -4.677011712911373,
+    "Operating Profit": -34.41999999999996,
+    "Other Income": 1.1099999999999568,
+    "Profit before tax": -146.34,
+    "Profit for PE": -71.93047970479704,
+    "Sales": 735.94,
+    "Tax": -14.58,
+    "Tax %": -9.96309963099631
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 985.34,
+    "CWIP": 7.89,
+    "Equity Capital": 285.97,
+    "Fixed Assets": 1189.01,
+    "Investments": 3191.9700000000003,
+    "Other Assets": 3395.0999999999995,
+    "Other Liabilities": 1686.9799999999996,
+    "Reserves": 4825.68,
+    "Total Assets": 7783.97,
+    "Total Liabilities": 7783.97
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 337.19,
+    "Exceptional items": -87.74,
+    "Exceptional items AT": -87.74,
+    "Expenses": 2993.61,
+    "Interest": 93.12,
+    "Net Profit": -39.92,
+    "Net Profit (owners)": -39.92,
+    "OPM %": 7.734484799171531,
+    "Operating Profit": 250.94999999999982,
+    "Other Income": 163.5900000000002,
+    "Profit before tax": -15.77,
+    "Profit for PE": 47.81999999999999,
+    "Sales": 3244.56,
+    "Tax": 24.15,
+    "Tax %": 153.13887127457198
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 2775.72,
+    "Cash from Investing Activity": -3309.59,
+    "Cash from Operating Activity": 820.86,
+    "Net Cash Flow": 286.99
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 84.55,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 950.75,
+    "Interest": 22.89,
+    "Net Profit": -26.34,
+    "Net Profit (owners)": -26.34,
+    "OPM %": -2.482430043547619,
+    "Operating Profit": -23.029999999999973,
+    "Other Income": 107.58999999999997,
+    "Profit before tax": -22.88,
+    "Profit for PE": -26.34,
+    "Sales": 927.72,
+    "Tax": 3.46,
+    "Tax %": 15.122377622377623
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": -0.11,
+    "Associates' share outside PBT": -0.11,
+    "Depreciation": 110.67,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1110.85,
+    "Interest": 25.5,
+    "Minority share": -10.71,
+    "Net Profit": -88.28,
+    "Net Profit (owners)": -77.57,
+    "OPM %": -5.398738080554093,
+    "Operating Profit": -56.899999999999864,
+    "Other Income": 108.85999999999987,
+    "Profit before tax": -84.21,
+    "Profit for PE": -77.57,
+    "Sales": 1053.95,
+    "Tax": 3.96,
+    "Tax %": 4.702529390808693
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  }
+ ],
  "symbol": "PWL",
  "timeline": [
   {
@@ -9005,10 +12457,25 @@
    "news_id": "nse-106653717",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/NEAPSPW_03062026162820_EarningscallMarch312026Signed.pdf",
    "summary": "Physicswallah's Q4/FY26 earnings call (May 27, 2026) reported FY26 revenue of ₹3,900 Cr (+35% YoY) and pre-Ind AS EBITDA of ₹300 Cr (3x YoY), with FY27 guidance of >30% revenue growth and >100% EBITDA improvement."
+  },
+  {
+   "date": "2026-10-30T14:19:08+05:30",
+   "event_type": "RESULTS",
+   "id": "t_cf3bd256",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-30T14:32:26+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "news_id": "nse-106836279",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/NEAPSPW_30102026141843_intimation.pdf",
+   "summary": "Physicswallah Limited will host an earnings conference call with analysts and investors on Wednesday, November 04, 2026, at 06:00 P.M. (IST) to discuss its unaudited financial results for the quarter and half year ended September 30, 2026.",
+   "tier": "TIMELINE"
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T09:55:11+05:30",
+ "updated_at": "2026-10-30T14:32:26+05:30",
  "watchlist": [
   {
    "check_by": "2026-06-30",

@@ -1,4 +1,57 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-04-30",
+     "name": "A Bafna & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-04-30",
+     "name": "A Bafna & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-10-15T16:46:11+05:30",
@@ -40,7 +93,7 @@
    "inventories_cr": 12.64,
    "investments_cr": 0.0,
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -69,6 +122,115 @@
   "text": "Swastika Infra Limited is a Power Transmission & Distribution (T&D) EPC company providing turnkey solutions across substations, underground cabling, and distribution lines with operations in 9 states."
  },
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -4.4908,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -7.3813,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -16.5546,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.4998,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 7.6853,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -0.0109,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -1.9095,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 3.9904,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -24.559,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -0.0204,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 2.5659,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -40.2077,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 113.1287,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 137.7002,
+    "CashFlowsFromUsedInInvestingActivities": -4.8839,
+    "CashFlowsFromUsedInOperatingActivities": -21.3553,
+    "CashFlowsFromUsedInOperations": -13.3618,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.9021,
+    "IncreaseDecreaseInCashAndCashEquivalents": 111.461,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 111.461,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.0914,
+    "InterestReceivedClassifiedAsOperatingActivities": -1.0914,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.0226,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -7.6853,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -5.1549,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 32.6979,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 113.0885,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0226,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0125,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.8555,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.4009,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Swastika Infra Limited",
  "deals": [
   {
@@ -109,6 +271,45 @@
    "usage": null
   }
  ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2026-10-21T15:39:24+05:30",
@@ -135,10 +336,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -180,10 +382,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -225,10 +428,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -270,10 +474,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "calc",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "from": [
        "pbt_before_exceptional:H1FY27",
        "finance_cost:H1FY27",
@@ -321,10 +526,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "calc",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "from": [
        "ebitda:H1FY27",
        "revenue:H1FY27"
@@ -370,10 +576,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -415,10 +622,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR"
      },
@@ -460,10 +668,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -505,10 +714,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -550,10 +760,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -595,10 +806,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -640,10 +852,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -685,10 +898,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -730,10 +944,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -775,10 +990,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -820,10 +1036,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -865,10 +1082,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -910,10 +1128,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -955,10 +1174,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -1000,10 +1220,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -1045,10 +1266,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -1090,10 +1312,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -1135,10 +1358,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -1159,10 +1383,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "from": [
      "pbt_before_exceptional:Q1FY27",
      "finance_cost:Q1FY27",
@@ -1184,10 +1409,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1203,10 +1429,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1222,10 +1449,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1241,10 +1469,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1260,10 +1489,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1279,10 +1509,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "from": [
      "ebitda:Q1FY27",
      "revenue:Q1FY27"
@@ -1302,10 +1533,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1321,10 +1553,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -1340,10 +1573,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1359,10 +1593,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1378,10 +1613,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1397,10 +1633,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1416,10 +1653,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1435,10 +1673,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1454,10 +1693,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1473,10 +1713,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1492,10 +1733,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1511,10 +1753,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1530,10 +1773,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1549,10 +1793,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1568,10 +1813,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1587,10 +1833,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1606,10 +1853,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1625,10 +1873,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -1644,10 +1893,11 @@
    "as_of": "2026-10-21T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:55+05:30",
+    "at": "2026-10-30T11:34:44+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1743647_21102026111921_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -1684,10 +1934,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "calc",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "from": [
        "pbt_before_exceptional:Q2FY27",
        "finance_cost:Q2FY27",
@@ -1735,10 +1986,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -1780,10 +2032,11 @@
      "as_of": "2026-10-24T18:00:00+05:30",
      "basis": "STANDALONE",
      "lab": {
-      "at": "2026-10-27T10:03:56+05:30",
+      "at": "2026-10-30T11:34:45+05:30",
       "basis": "STANDALONE",
       "by": "file",
       "doc": "results",
+      "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
       "ok": true,
       "unit": "INR_CR"
      },
@@ -1820,10 +2073,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1839,10 +2093,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1858,10 +2113,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1877,10 +2133,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "from": [
      "ebitda:Q2FY27",
      "revenue:Q2FY27"
@@ -1900,10 +2157,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1919,10 +2177,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -1938,10 +2197,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1957,10 +2217,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1976,10 +2237,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -1995,10 +2257,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2014,10 +2277,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2033,10 +2297,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2052,10 +2317,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2071,10 +2337,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2090,10 +2357,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2109,10 +2377,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2128,10 +2397,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2147,10 +2417,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2166,10 +2437,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2185,10 +2457,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2204,10 +2477,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2223,10 +2497,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -2242,10 +2517,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -2261,10 +2537,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2280,10 +2557,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2299,10 +2577,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2318,10 +2597,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2337,10 +2617,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2356,10 +2637,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2375,10 +2657,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2394,10 +2677,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR_CR"
    },
@@ -2413,10 +2697,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -2432,10 +2717,11 @@
    "as_of": "2026-10-24T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T10:03:56+05:30",
+    "at": "2026-10-30T11:34:45+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
+    "file_url": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_1745343_24102026042232_WEB.xml",
     "ok": true,
     "unit": "INR"
    },
@@ -2470,6 +2756,130 @@
     },
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106818773"
+   }
+  ],
+  "quarters": [
+   {
+    "as_of": "2026-10-30T22:21:15+05:30",
+    "board": [
+     {
+      "appointed": "2019-08-06",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "BABULAL GUPTA",
+      "role": "Chairperson",
+      "tenure_months": 86.3
+     },
+     {
+      "appointed": "2019-08-06",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "VINAY GUPTA",
+      "role": null,
+      "tenure_months": 86.3
+     },
+     {
+      "appointed": "2019-08-06",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RUCHIRA GUPTA",
+      "role": null,
+      "tenure_months": 86.3
+     },
+     {
+      "appointed": "2025-03-06",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "DILEEP KUMAR JAIN",
+      "role": null,
+      "tenure_months": 18.22
+     },
+     {
+      "appointed": "2025-03-06",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "AJAY GUPTA",
+      "role": null,
+      "tenure_months": 18.22
+     },
+     {
+      "appointed": "2025-03-06",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MADHVI SHARMA",
+      "role": null,
+      "tenure_months": 18.22
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "AJAY GUPTA",
+      "MADHVI SHARMA",
+      "VINAY GUPTA"
+     ],
+     "corporate social responsibility committee": [
+      "DILEEP KUMAR JAIN",
+      "VINAY GUPTA",
+      "MADHVI SHARMA"
+     ],
+     "nomination and remuneration committee": [
+      "MADHVI SHARMA",
+      "DILEEP KUMAR JAIN",
+      "BABULAL GUPTA"
+     ],
+     "other committee": [
+      "VINAY GUPTA",
+      "RUCHIRA GUPTA",
+      "AJAY GUPTA",
+      "BIREN PARNAMI",
+      "RUCHIRA GUPTA",
+      "MRS AYUSHI SAXSENA",
+      "MR BIREN PARNAMI",
+      "POOJA KUMARI AGARWAL"
+     ],
+     "stakeholders relationship committee": [
+      "MADHVI SHARMA",
+      "RUCHIRA GUPTA",
+      "VINAY GUPTA"
+     ]
+    },
+    "complaints": {
+     "disposed": 1.0,
+     "pending": 1.0,
+     "received": 2.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 54.0,
+     "board": 29.0,
+     "corporate social responsibility committee": 92.0,
+     "nomination and remuneration committee": 92.0,
+     "other committee": 114.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1750567_30102026102131_WEB.xml",
+    "tax_litigation": []
    }
   ]
  },
@@ -2537,6 +2947,395 @@
  },
  "industry": "Industrials > Construction > Civil Construction",
  "last_filed_at": "2026-10-27T12:33:00+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "ASHLAR SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 200.0,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 4.0
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NIVESH CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 200.0,
+    "qty": 220000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 4.4
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "S S SECURITIES",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 210.0,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 4.2
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "VARADA TRADING PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 200.0,
+    "qty": 174700.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 3.49
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "VARADA TRADING PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 203.17,
+    "qty": 172223.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 3.5
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 210.72,
+    "qty": 364467.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 7.68
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "S S SECURITIES",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 199.19,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 3.98
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 220.37,
+    "qty": 2656.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 0.06
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 220.63,
+    "qty": 198646.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 4.38
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "JYOTHI KAILASH KABRA",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 231.44,
+    "qty": 98896.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 2.29
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "JYOTHI KAILASH KABRA",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 234.91,
+    "qty": 188896.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 4.44
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "VAIBHAV RAJENDRA DOSHI",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 229.26,
+    "qty": 315639.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 7.24
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "VAIBHAV RAJENDRA DOSHI",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 228.15,
+    "qty": 315639.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 7.2
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 228.41,
+    "qty": 133503.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 3.05
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 228.41,
+    "qty": 248337.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 5.67
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "MERU INVESTMENT FUND PCC- CELL 1",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 231.44,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 4.63
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "MONEYMATRIX CAPITAL",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 231.45,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 4.63
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "VAIBHAV RAJENDRA DOSHI",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 231.93,
+    "qty": 257318.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 5.97
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "VAIBHAV RAJENDRA DOSHI",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 233.71,
+    "qty": 257318.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 6.01
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "VAIBHAV RAJENDRA DOSHI",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 244.85,
+    "qty": 233168.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 5.71
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "VAIBHAV RAJENDRA DOSHI",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 244.66,
+    "qty": 233168.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 5.7
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 242.59,
+    "qty": 367977.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 8.93
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 246.06,
+    "qty": 412664.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 10.15
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "MAHEVARSH FINCON PRIVATE LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 249.31,
+    "qty": 358083.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 8.93
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "MAHEVARSH FINCON PRIVATE LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 248.4,
+    "qty": 358083.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 8.89
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 250.61,
+    "qty": 287978.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 7.22
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "WEALTH 4 U HOSPITALITY CONSULTANCY PRIVATE LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 244.17,
+    "qty": 348160.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SWASTIKAIN",
+    "value_cr": 8.5
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.0291,
+     "description": "Remeasurement Gains/(Losses) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.0291,
+    "oci_net_cr": 0.0365,
+    "profit_cr": 3.604,
+    "tax_not_reclassified_cr": -0.0074,
+    "total_comprehensive_cr": 3.6405
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.0459,
+     "description": "Remeasurement Gains/(Losses) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.0459,
+    "oci_net_cr": 0.0574,
+    "profit_cr": 16.3815,
+    "tax_not_reclassified_cr": -0.0115,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 16.4389
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-22T09:34:12+05:30",
@@ -2642,6 +3441,198 @@
    "value": 14.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 2.0,
+     "approved_cr": 2.0,
+     "closing_cr": 0.6781,
+     "counterparty": "RUCHIRA GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.6781,
+     "relationship": "WHOLE TIME DIRECTOR",
+     "remarks": "APPROVED",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 2.0,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "RUCHIRA GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "REPAYMENT OF LOAN",
+     "relationship": "WHOLE TIME DIRECTOR",
+     "remarks": "APPROVED",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.96,
+     "approved_cr": 0.96,
+     "closing_cr": 0.1067,
+     "counterparty": "VINAY GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0985,
+     "other_details": "SALARY PAID",
+     "relationship": "MANAGING DIRECTOR",
+     "remarks": "APPROVED",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.84,
+     "approved_cr": 0.84,
+     "closing_cr": 0.0938,
+     "counterparty": "RUCHIRA GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.082,
+     "other_details": "SALARY PAID",
+     "relationship": "WHOLE TIME DIRECTOR",
+     "remarks": "APPROVED",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.576,
+     "approved_cr": 0.576,
+     "closing_cr": 0.0656,
+     "counterparty": "BIREN PARNAMI",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0575,
+     "relationship": "CHIEF FINANCIAL OFFICER",
+     "remarks": "APPROVED",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.576,
+     "approved_cr": 0.576,
+     "closing_cr": 0.0656,
+     "counterparty": "MANOJ MODI",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0025,
+     "relationship": "PROMOTER",
+     "remarks": "APPROVED",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0693,
+     "approved_cr": 0.0693,
+     "closing_cr": 0.0,
+     "counterparty": "RUCHIRA GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "RENT PAID",
+     "relationship": "WHOLE TIME DIRECTOR",
+     "remarks": "APPROVED",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.06,
+     "closing_cr": 0.0096,
+     "counterparty": "VATSALYA GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0091,
+     "relationship": "PROMOTER",
+     "remarks": "APPROVED",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.042,
+     "approved_cr": 0.042,
+     "closing_cr": 0.0,
+     "counterparty": "BABU LAL GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0126,
+     "other_details": "RENT PAID",
+     "relationship": "CHAIRMAN",
+     "remarks": "APPROVED",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0252,
+     "approved_cr": 0.0252,
+     "closing_cr": 0.0,
+     "counterparty": "SAMPAT GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "RENT PAID",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "APPROVED",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0173,
+     "approved_cr": 0.0173,
+     "closing_cr": 0.0058,
+     "counterparty": "SHIPRA GANDHI",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "COMPANY SECRETARY",
+     "remarks": "APPROVED",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.012,
+     "approved_cr": 0.012,
+     "closing_cr": 0.004,
+     "counterparty": "ARTI BANSAL",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.004,
+     "relationship": "COMPANY SECRETARY",
+     "remarks": "APPROVED",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.172,
+     "counterparty": "VINAY GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.172,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfFinancialIndebtedness": "12 MONTHS",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "12 months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "loan payable",
+     "relationship": "MANAGING DIRECTOR",
+     "remarks": "APPROVED",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.3773,
+     "counterparty": "BABU LAL GUPTA",
+     "entity": "SWASTIKA INFRA LIMITED",
+     "opening_cr": 0.3773,
+     "relationship": "CHAIRMAN",
+     "remarks": "APPROVED",
+     "type": "Loan"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 14,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544949",
  "section_lab": {
@@ -2649,53 +3640,149 @@
    "at": null,
    "by": "file",
    "doc": "other"
+  },
+  "governance_quarters": {
+   "at": "2026-10-30T22:21:15+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:43:51+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "construction",
  "segment_mix": [
   {
-   "as_of": "2026-10-22T09:34:12+05:30",
+   "as_of": "2026-10-21",
+   "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-22T09:34:12+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T11:34:46+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 0.0,
-   "segment": "Distribution",
-   "share_pct": 85.0,
-   "source_news_id": "nse-106824195"
+   "period": "Q1FY27",
+   "segment": "EPC",
+   "single": true,
+   "source_news_id": "xbrl:res:544949:Q1FY27"
   },
   {
-   "as_of": "2026-10-22T09:34:12+05:30",
+   "as_of": "2026-10-24",
+   "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-22T09:34:12+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T11:34:46+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "segment_note"
    },
    "period": "Q2FY27",
-   "revenue_cr": 0.0,
-   "segment": "Renewable",
-   "share_pct": 8.0,
-   "source_news_id": "nse-106824195"
-  },
-  {
-   "as_of": "2026-10-22T09:34:12+05:30",
-   "lab": {
-    "at": "2026-10-22T09:34:12+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q2FY27",
-   "revenue_cr": 0.0,
-   "segment": "Transmission",
-   "share_pct": 6.0,
-   "source_news_id": "nse-106824195"
+   "segment": "EPC",
+   "single": true,
+   "source_news_id": "xbrl:res:544949:Q2FY27"
   }
  ],
  "standalone_only": [
   "Q1FY27",
   "Q2FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-21",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T11:34:46+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.2413,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 49.8441,
+    "Interest": 4.3117,
+    "Net Profit": 3.604,
+    "Net Profit (owners)": 3.604,
+    "OPM %": 15.150602101994753,
+    "Operating Profit": 8.900100000000002,
+    "Other Income": 0.5844999999999985,
+    "Profit before tax": 4.9316,
+    "Profit for PE": 3.604,
+    "Sales": 58.7442,
+    "Tax": 1.3276,
+    "Tax %": 26.920269283802412
+   },
+   "source_news_id": "xbrl:res:544949:Q1FY27",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-24",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T11:34:46+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.2583,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 121.4041,
+    "Interest": 4.9383,
+    "Net Profit": 16.3815,
+    "Net Profit (owners)": 16.3815,
+    "OPM %": 17.90991086020611,
+    "Operating Profit": 26.4872,
+    "Other Income": 0.6235999999999962,
+    "Profit before tax": 21.9142,
+    "Profit for PE": 16.3815,
+    "Sales": 147.8913,
+    "Tax": 5.5327,
+    "Tax %": 25.247100053846363
+   },
+   "source_news_id": "xbrl:res:544949:Q2FY27",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-24",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T11:34:46+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 146.93699999999998,
+    "CWIP": 0.0,
+    "Equity Capital": 34.1202,
+    "Fixed Assets": 7.966399999999999,
+    "Investments": 0.0,
+    "Other Assets": 574.5187999999999,
+    "Other Liabilities": 145.39360000000002,
+    "Reserves": 256.0344,
+    "Total Assets": 582.4852,
+    "Total Liabilities": 582.4852
+   },
+   "source_news_id": "xbrl:res:544949:Q2FY27",
+   "table": "balance"
+  }
  ],
  "symbol": "SWASTIKAIN",
  "timeline": [
@@ -2787,7 +3874,7 @@
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T15:33:20+05:30",
+ "updated_at": "2026-10-30T11:34:45+05:30",
  "watchlist": [
   {
    "check_by": "2027-03-31",

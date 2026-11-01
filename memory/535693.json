@@ -1,9 +1,855 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-04-30",
+     "name": "ANSK & ASSOCIATES",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-04-30",
+     "name": "ANSK & ASSOCIATES",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -0.19,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -14.09,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -9.25,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.0,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -6.76,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.67,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -29.62,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 20.41,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -15.27,
+    "CashFlowsFromUsedInInvestingActivities": 6.33,
+    "CashFlowsFromUsedInOperatingActivities": 0.05,
+    "CashFlowsFromUsedInOperations": 4.99,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 4.94,
+    "IncreaseDecreaseInCashAndCashEquivalents": -8.89,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -8.89,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 6.33,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 15.27,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -0.19,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -14.09,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -9.25,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.0,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -6.76,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.67,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -29.62,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 20.41,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -15.27,
+    "CashFlowsFromUsedInInvestingActivities": 6.33,
+    "CashFlowsFromUsedInOperatingActivities": 0.05,
+    "CashFlowsFromUsedInOperations": 4.99,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 4.94,
+    "IncreaseDecreaseInCashAndCashEquivalents": -8.89,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -8.89,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 6.33,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 15.27,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -7.26,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -33.42,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 4.9,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.0,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -3.02,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.61,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -52.03,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 20.3,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -38.42,
+    "CashFlowsFromUsedInInvestingActivities": 21.86,
+    "CashFlowsFromUsedInOperatingActivities": 7.55,
+    "CashFlowsFromUsedInOperations": 16.55,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 8.05,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 9.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": -9.01,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -9.01,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -13.84,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 13.81,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 38.42,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -7.26,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -33.44,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 4.9,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.0,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -3.02,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.61,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -52.05,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 20.3,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -38.42,
+    "CashFlowsFromUsedInInvestingActivities": 21.86,
+    "CashFlowsFromUsedInOperatingActivities": 7.55,
+    "CashFlowsFromUsedInOperations": 16.55,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 8.05,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 9.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": -9.01,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -9.01,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -13.84,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 13.81,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 38.42,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Brahmaputra Infrastructure Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0112,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0112,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2024-11-20T18:00:00+05:30",
@@ -4677,10 +5523,2477 @@
  "operating_notes": [],
  "ownership": [],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 9.88,
+     "closing_cr": 0.74,
+     "counterparty": "PCL BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 10.62,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -8.73,
+     "closing_cr": -42.8,
+     "counterparty": "Brahmaputra Finlease Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -51.53,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business",
+      "TenureOfFinancialIndebtedness": "1",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "1",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 6.07,
+     "closing_cr": 34.0,
+     "counterparty": "UNITY BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 40.07,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 4.54,
+     "closing_cr": 0.39,
+     "counterparty": "JCC Infraprojects - BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 4.93,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.24,
+     "closing_cr": 0.0,
+     "counterparty": "PCPL & BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.24,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.95,
+     "closing_cr": 1.1,
+     "counterparty": "DRAIPL - BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.15,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.71,
+     "closing_cr": -1.7,
+     "counterparty": "M.L. Singhi and associates private limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -2.41,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Buisness",
+      "TenureOfFinancialIndebtedness": "1",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "1",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.39,
+     "closing_cr": 0.03,
+     "counterparty": "DRA BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.36,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.2,
+     "closing_cr": 0.45,
+     "counterparty": "BIL PKV (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.25,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.19,
+     "closing_cr": -0.2,
+     "counterparty": "BIL BLA GSCO (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.01,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.08,
+     "closing_cr": -0.77,
+     "counterparty": "NCDC- BRAHMAPUTRA (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.85,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.02,
+     "closing_cr": -0.18,
+     "counterparty": "Brahmaputra Projects Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.16,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Rent",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "other_details": "Rent",
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.02,
+     "closing_cr": 0.0,
+     "counterparty": "Manoj Kumar Prithani",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.02,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "salary",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.02,
+     "closing_cr": -0.18,
+     "counterparty": "Brahmaputra Promoters and Developers Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.16,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "others",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.02,
+     "closing_cr": 0.0,
+     "counterparty": "MADHAVA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.02,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": 0.07,
+     "counterparty": "Anita Prithani",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.06,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Rent",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "other_details": "Rent",
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": 0.06,
+     "counterparty": "Kiran Prithani",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.05,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Rent",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "other_details": "Rent",
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": -0.02,
+     "counterparty": "Vivek Malhotra",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.01,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "salary",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 4.17,
+     "counterparty": "VKGA - BRAHMAPUTRA - TRIBENI (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 4.16,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.03,
+     "counterparty": "Brahmaputra Realtors Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.03,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Others",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bengal Brahmaputra Realty Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Others",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.1,
+     "counterparty": "DRA BLA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.1,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.0,
+     "counterparty": "KMC BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": -0.03,
+     "counterparty": "SMSIL BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.03,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": -0.01,
+     "counterparty": "Anju Kumari",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.01,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Sitting Fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "other_details": "Sitting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": -0.01,
+     "counterparty": "Lalit Kumar",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.01,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Sitting fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "other_details": "Sitting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Narendra Nath Batabyal",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Sitting fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "other_details": "Sittting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.15,
+     "counterparty": "Anjanee Estates Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.15,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "recievables",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Brahmaputra Promoters and planners private limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "others",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.06,
+     "counterparty": "BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.06,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "BLA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.01,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.1,
+     "counterparty": "BTS BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.1,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "DRA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 3.44,
+     "counterparty": "GPL BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 3.44,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 14.71,
+     "counterparty": "IPL BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 14.71,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.99,
+     "counterparty": "KB BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.99,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "SMSIL BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 18.85,
+     "counterparty": "SUPREME BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 18.85,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kuladhar Saharia",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "Sitting fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "other_details": "Sitting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.11,
+     "counterparty": "Brahmaputra Concrete ( Bengal) Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.11,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "loan",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.45,
+     "counterparty": "Brahmaputra Concrete Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.45,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "loan",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "RA- BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.17,
+     "counterparty": "Brahmaputra - VKGA - Bilaspur Project",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.17,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.52,
+     "counterparty": "BRAHMAPUTRA - MK- PUSHPA (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.52,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "NCDC Brahmaputra JV",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DetailsOfOtherIndebtedness": "investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "1"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 45,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 21.86,
+     "closing_cr": -20.94,
+     "counterparty": "Brahmaputra Finlease Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -42.8,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business",
+      "TenureOfFinancialIndebtedness": "Long Term",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -8.98,
+     "closing_cr": 25.13,
+     "counterparty": "UNITY BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 34.11,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.35,
+     "closing_cr": 5.74,
+     "counterparty": "JCC Infraprojects - BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.39,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -2.39,
+     "closing_cr": -2.39,
+     "counterparty": "Brahmaputra Realtors Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Business activity",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -2.15,
+     "closing_cr": 2.02,
+     "counterparty": "VKGA - BRAHMAPUTRA - TRIBENI (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 4.17,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.98,
+     "closing_cr": -0.12,
+     "counterparty": "PCPL & BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -1.1,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.54,
+     "closing_cr": -0.54,
+     "counterparty": "NCDC Brahmaputra JV",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.51,
+     "closing_cr": 0.96,
+     "counterparty": "BIL PKV (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.45,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.23,
+     "closing_cr": -0.54,
+     "counterparty": "NCDC- BRAHMAPUTRA (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.77,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.13,
+     "closing_cr": -0.13,
+     "counterparty": "DRA BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.08,
+     "closing_cr": 1.78,
+     "counterparty": "M.L. Singhi and associates private limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.7,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business",
+      "TenureOfFinancialIndebtedness": "Long Term",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.08,
+     "closing_cr": -1.63,
+     "counterparty": "Anjanee Estates Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -1.55,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Business",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.07,
+     "closing_cr": 0.0,
+     "counterparty": "Anita Prithani",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.07,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Rent",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "other_details": "Rent",
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.06,
+     "closing_cr": 0.0,
+     "counterparty": "Kiran Prithani",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.06,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Rent",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "other_details": "Rent",
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.05,
+     "closing_cr": -0.05,
+     "counterparty": "DRA BLA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": -0.02,
+     "closing_cr": -0.2,
+     "counterparty": "Brahmaputra Projects Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.18,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "other_details": "Rent",
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.02,
+     "closing_cr": 0.02,
+     "counterparty": "Vivek Malhotra",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Salary",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.01,
+     "counterparty": "Manoj Kumar Prithani",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Salary",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bengal Brahmaputra Realty Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Business activity",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": -0.2,
+     "counterparty": "BIL BLA GSCO (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.2,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.1,
+     "counterparty": "DRAIPL - BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.1,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.0,
+     "counterparty": "KMC BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "SMSIL BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.01,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Anju Kumari",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Sitting Fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "other_details": "Sitting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Lalit Kumar",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Sitting Fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "other_details": "Sitting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Narendra Nath Batabyal",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Sitting Fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "other_details": "Sitting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Brahmaputra Promoters and Developers Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Business",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Brahmaputra Promoters and planners private limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Business",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Promoters Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.06,
+     "counterparty": "BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.06,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "BLA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.1,
+     "counterparty": "BTS BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.1,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "DRA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 3.44,
+     "counterparty": "GPL BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 3.44,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 14.71,
+     "counterparty": "IPL BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 14.71,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.99,
+     "counterparty": "KB BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.99,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": -0.14,
+     "counterparty": "MADHAVA BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.14,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.14,
+     "counterparty": "PCL BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.14,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": -0.03,
+     "counterparty": "SMSIL BCL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": -0.03,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 15.87,
+     "counterparty": "SUPREME BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 15.87,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kuladhar Saharia",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Sitting Fees",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "other_details": "Sitting Fees",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.11,
+     "counterparty": "Brahmaputra Concrete ( Bengal) Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.11,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.45,
+     "counterparty": "Brahmaputra Concrete Private Limited",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.45,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Investment",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "RA- BIL (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.17,
+     "counterparty": "Brahmaputra - VKGA - Bilaspur Project",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 0.17,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.52,
+     "counterparty": "BRAHMAPUTRA - MK- PUSHPA (JV)",
+     "entity": "Brahmaputra Infrastructure Limited",
+     "opening_cr": 1.52,
+     "other": {
+      "CostOfFinancialIndebtedness": 0.09,
+      "DetailsOfOtherIndebtedness": "Joint Venture",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "Long Term"
+     },
+     "relationship": "Joint operations",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 45,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "535693",
  "sector": "construction",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q2FY26",
+   "segments": [
+    {
+     "assets_cr": 592.24,
+     "liabilities_cr": 351.89,
+     "segment": "EPC"
+    },
+    {
+     "assets_cr": 114.21,
+     "liabilities_cr": 38.94,
+     "segment": "Real Estate and other income"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "totals": {
+    "assets_cr": 706.45,
+    "liabilities_cr": 390.83,
+    "net_assets_cr": 706.45,
+    "net_liabilities_cr": 390.83
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q2FY26",
+   "segments": [
+    {
+     "assets_cr": 592.02,
+     "liabilities_cr": 351.89,
+     "segment": "EPC"
+    },
+    {
+     "assets_cr": 114.21,
+     "liabilities_cr": 38.94,
+     "segment": "Real Estate and other income"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "totals": {
+    "assets_cr": 706.23,
+    "liabilities_cr": 390.83,
+    "net_assets_cr": 706.23,
+    "net_liabilities_cr": 390.83
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 604.5,
+     "liabilities_cr": 339.89,
+     "segment": "EPC"
+    },
+    {
+     "assets_cr": 105.45,
+     "liabilities_cr": 39.53,
+     "segment": "Real Estate and Other"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "totals": {
+    "assets_cr": 709.95,
+    "liabilities_cr": 379.42,
+    "net_assets_cr": 709.95,
+    "net_liabilities_cr": 379.42
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 604.2,
+     "liabilities_cr": 339.59,
+     "segment": "EPC"
+    },
+    {
+     "assets_cr": 105.45,
+     "liabilities_cr": 39.53,
+     "segment": "Real Estate and other"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "totals": {
+    "assets_cr": 709.65,
+    "liabilities_cr": 379.12,
+    "net_assets_cr": 709.65,
+    "net_liabilities_cr": 379.12
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 578.34,
+     "liabilities_cr": 332.33,
+     "segment": "EPC Division"
+    },
+    {
+     "assets_cr": 138.39,
+     "liabilities_cr": 39.48,
+     "segment": "Real Estate and Other Income"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "totals": {
+    "assets_cr": 716.73,
+    "liabilities_cr": 371.81,
+    "net_assets_cr": 716.73,
+    "net_liabilities_cr": 371.81
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 578.11,
+     "liabilities_cr": 332.11,
+     "segment": "EPC Division"
+    },
+    {
+     "assets_cr": 138.39,
+     "liabilities_cr": 39.48,
+     "segment": "Real Estate and Other Income"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "totals": {
+    "assets_cr": 716.5,
+    "liabilities_cr": 371.59,
+    "net_assets_cr": 716.5,
+    "net_liabilities_cr": 371.59
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 18.81,
+   "period": "Q1FY26",
+   "revenue_cr": 88.32,
+   "segment": "EPC",
+   "share_pct": 95.9,
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 3.09,
+   "period": "Q1FY26",
+   "revenue_cr": 3.82,
+   "segment": "Real Estate and other income",
+   "share_pct": 4.1,
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 17.15,
+   "period": "Q2FY26",
+   "revenue_cr": 85.57,
+   "segment": "EPC",
+   "share_pct": 94.3,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 5.35,
+   "period": "Q2FY26",
+   "revenue_cr": 5.2,
+   "segment": "Real Estate and other income",
+   "share_pct": 5.7,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 18.34,
+   "period": "Q3FY26",
+   "revenue_cr": 88.39,
+   "segment": "EPC",
+   "share_pct": 95.5,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 2.89,
+   "period": "Q3FY26",
+   "revenue_cr": 4.16,
+   "segment": "Real Estate and Other",
+   "share_pct": 4.5,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 14.98,
+   "period": "Q4FY26",
+   "revenue_cr": 87.53,
+   "segment": "EPC Division",
+   "share_pct": 93.2,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 5.37,
+   "period": "Q4FY26",
+   "revenue_cr": 6.4,
+   "segment": "Real Estate and Other Income",
+   "share_pct": 6.8,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 19.42,
+   "period": "Q1FY27",
+   "revenue_cr": 104.46,
+   "segment": "EPC  Division",
+   "share_pct": 94.3,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:31:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 5.4,
+   "period": "Q1FY27",
+   "revenue_cr": 6.33,
+   "segment": "Real Estate Division",
+   "share_pct": 5.7,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 69.89,
+    "Interest": 4.47,
+    "Minority share": 0.0,
+    "Net Profit": 15.04,
+    "Net Profit (owners)": 15.04,
+    "OPM %": 23.70920205217771,
+    "Operating Profit": 21.72,
+    "Other Income": 0.5300000000000011,
+    "Profit before tax": 17.44,
+    "Profit for PE": 15.04,
+    "Sales": 91.61,
+    "Tax": 2.4,
+    "Tax %": 13.761467889908255
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 69.89,
+    "Interest": 4.47,
+    "Net Profit": 15.04,
+    "Net Profit (owners)": 15.04,
+    "OPM %": 23.70920205217771,
+    "Operating Profit": 21.72,
+    "Other Income": 0.5300000000000011,
+    "Profit before tax": 17.44,
+    "Profit for PE": 15.04,
+    "Sales": 91.61,
+    "Tax": 2.4,
+    "Tax %": 13.761467889908255
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 67.93,
+    "Interest": 5.32,
+    "Minority share": 0.0,
+    "Net Profit": 14.63,
+    "Net Profit (owners)": 14.63,
+    "OPM %": 24.681228517574002,
+    "Operating Profit": 22.25999999999999,
+    "Other Income": 0.580000000000009,
+    "Profit before tax": 17.18,
+    "Profit for PE": 14.63,
+    "Sales": 90.19,
+    "Tax": 2.55,
+    "Tax %": 14.842840512223514
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 166.34,
+    "CWIP": 0,
+    "Equity Capital": 29.02,
+    "Fixed Assets": 128.14,
+    "Investments": 5.7,
+    "Other Assets": 572.61,
+    "Other Liabilities": 224.65000000000006,
+    "Reserves": 286.44,
+    "Total Assets": 706.45,
+    "Total Liabilities": 706.45
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 67.93,
+    "Interest": 5.32,
+    "Net Profit": 14.63,
+    "Net Profit (owners)": 14.63,
+    "OPM %": 24.681228517574002,
+    "Operating Profit": 22.25999999999999,
+    "Other Income": 0.580000000000009,
+    "Profit before tax": 17.18,
+    "Profit for PE": 14.63,
+    "Sales": 90.19,
+    "Tax": 2.55,
+    "Tax %": 14.842840512223514
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 166.18,
+    "CWIP": 0,
+    "Equity Capital": 29.02,
+    "Fixed Assets": 127.91999999999999,
+    "Investments": 5.7,
+    "Other Assets": 572.61,
+    "Other Liabilities": 224.64000000000004,
+    "Reserves": 286.39,
+    "Total Assets": 706.23,
+    "Total Liabilities": 706.23
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 70.97,
+    "Interest": 4.07,
+    "Net Profit": 15.13,
+    "Net Profit (owners)": 15.13,
+    "OPM %": 22.841922156990655,
+    "Operating Profit": 21.010000000000005,
+    "Other Income": 0.5699999999999967,
+    "Profit before tax": 17.17,
+    "Profit for PE": 15.13,
+    "Sales": 91.98,
+    "Tax": 2.04,
+    "Tax %": 11.88118811881188
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": -0.01,
+    "Associates' share outside PBT": -0.01,
+    "Depreciation": 0.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 70.97,
+    "Interest": 4.07,
+    "Minority share": 0.0,
+    "Net Profit": 15.12,
+    "Net Profit (owners)": 15.12,
+    "OPM %": 22.841922156990655,
+    "Operating Profit": 21.010000000000005,
+    "Other Income": 0.5699999999999967,
+    "Profit before tax": 17.17,
+    "Profit for PE": 15.12,
+    "Sales": 91.98,
+    "Tax": 2.04,
+    "Tax %": 11.88118811881188
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 73.25,
+    "Interest": 3.55,
+    "Net Profit": 14.78,
+    "Net Profit (owners)": 14.78,
+    "OPM %": 20.119956379498365,
+    "Operating Profit": 18.450000000000003,
+    "Other Income": 2.229999999999997,
+    "Profit before tax": 16.79,
+    "Profit for PE": 14.78,
+    "Sales": 91.7,
+    "Tax": 2.01,
+    "Tax %": 11.971411554496724
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 127.27,
+    "CWIP": 0.0,
+    "Equity Capital": 29.02,
+    "Fixed Assets": 150.85,
+    "Investments": 3.98,
+    "Other Assets": 561.9,
+    "Other Liabilities": 244.12000000000006,
+    "Reserves": 316.32,
+    "Total Assets": 716.73,
+    "Total Liabilities": 716.73
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.36,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 282.02,
+    "Interest": 17.43,
+    "Net Profit": 59.58,
+    "Net Profit (owners)": 59.58,
+    "OPM %": 22.833611513940962,
+    "Operating Profit": 83.45000000000005,
+    "Other Income": 3.919999999999959,
+    "Profit before tax": 68.58,
+    "Profit for PE": 59.58,
+    "Sales": 365.47,
+    "Tax": 9.0,
+    "Tax %": 13.123359580052494
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -38.42,
+    "Cash from Investing Activity": 21.86,
+    "Cash from Operating Activity": 7.55,
+    "Net Cash Flow": -9.01
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.33,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 73.24000000000001,
+    "Interest": 3.55,
+    "Net Profit": 14.8,
+    "Net Profit (owners)": 14.8,
+    "OPM %": 20.130861504907298,
+    "Operating Profit": 18.459999999999994,
+    "Other Income": 2.230000000000004,
+    "Profit before tax": 16.81,
+    "Profit for PE": 14.8,
+    "Sales": 91.7,
+    "Tax": 2.01,
+    "Tax %": 11.957168352171326
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 127.2,
+    "CWIP": 0.0,
+    "Equity Capital": 29.02,
+    "Fixed Assets": 150.63,
+    "Investments": 3.98,
+    "Other Assets": 561.89,
+    "Other Liabilities": 244.00000000000006,
+    "Reserves": 316.28,
+    "Total Assets": 716.5,
+    "Total Liabilities": 716.5
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.34,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 282.03000000000003,
+    "Interest": 17.42,
+    "Net Profit": 59.6,
+    "Net Profit (owners)": 59.6,
+    "OPM %": 22.830875311243055,
+    "Operating Profit": 83.44,
+    "Other Income": 3.9200000000000017,
+    "Profit before tax": 68.6,
+    "Profit for PE": 59.6,
+    "Sales": 365.47,
+    "Tax": 9.0,
+    "Tax %": 13.119533527696793
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -38.42,
+    "Cash from Investing Activity": 21.86,
+    "Cash from Operating Activity": 7.55,
+    "Net Cash Flow": -9.01
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.33,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 85.64000000000001,
+    "Interest": 4.71,
+    "Minority share": 0.0,
+    "Net Profit": 16.48,
+    "Net Profit (owners)": 16.48,
+    "OPM %": 20.842961456696536,
+    "Operating Profit": 22.549999999999983,
+    "Other Income": 2.6000000000000156,
+    "Profit before tax": 20.11,
+    "Profit for PE": 16.48,
+    "Sales": 108.19,
+    "Tax": 3.63,
+    "Tax %": 18.050721034311287
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:04:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:04:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.33,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 71.16000000000001,
+    "Interest": 4.71,
+    "Net Profit": 16.28,
+    "Net Profit (owners)": 16.28,
+    "OPM %": 23.844178082191767,
+    "Operating Profit": 22.279999999999987,
+    "Other Income": 2.6100000000000136,
+    "Profit before tax": 19.85,
+    "Profit for PE": 16.28,
+    "Sales": 93.44,
+    "Tax": 3.57,
+    "Tax %": 17.984886649874053
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "BRAHMINFRA",
  "timeline": [],
  "upcoming_events": [],

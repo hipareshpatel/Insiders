@@ -1,4 +1,101 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-05-31",
+     "name": "Borkar & Muzumdar Chartered Accountants",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-10-27T18:00:00+05:30",
@@ -29,16 +126,6 @@
    "source_news_id": "xbrl:res:544580:Q2FY26",
    "total_assets_cr": 750.7,
    "total_liabilities_cr": 71.72
-  },
-  {
-   "as_of": "2026-04-27T20:26:54+05:30",
-   "lab": {
-    "at": "2026-04-27T20:26:54+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "FY26",
-   "source_news_id": "nse-106601685"
   },
   {
    "as_of": "2026-04-28T00:44:36+05:30",
@@ -100,16 +187,6 @@
    "total_liabilities_cr": 72.78
   },
   {
-   "as_of": "2026-05-04T14:52:26+05:30",
-   "lab": {
-    "at": "2026-05-04T14:52:26+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Mar-2026",
-   "source_news_id": "nse-106608126"
-  },
-  {
    "as_of": "2026-10-09T18:00:00+05:30",
    "cash_cr": 3.81,
    "current_assets_cr": 695.96,
@@ -138,17 +215,6 @@
    "source_news_id": "xbrl:res:544580:Q2FY27",
    "total_assets_cr": 913.61,
    "total_liabilities_cr": 78.06
-  },
-  {
-   "as_of": "2026-10-15T17:32:47+05:30",
-   "gross_debt_cr": 0.0,
-   "lab": {
-    "at": "2026-10-15T17:32:47+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106818872"
   }
  ],
  "business_summary": null,
@@ -359,6 +425,329 @@
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -4.0796,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 3.8722,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1.4926,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -11.5048,
+    "AdjustmentsForFinanceCosts": 0.9685,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": -13.5306,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -0.089,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -8.26,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.2198,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": -0.9485,
+    "AdjustmentsForReconcileProfitLoss": -47.927,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 8.5581,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -30.9877,
+    "CashFlowsFromUsedInInvestingActivities": -31.0672,
+    "CashFlowsFromUsedInOperatingActivities": 70.324,
+    "CashFlowsFromUsedInOperations": 98.0017,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 29.9126,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 27.6777,
+    "IncreaseDecreaseInCashAndCashEquivalents": 8.2691,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 8.2691,
+    "InterestPaidClassifiedAsFinancingActivities": 0.9685,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -16.2456,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.1066,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1128.7456,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1156.1247,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 3.6881,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -3.4381,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.5891,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -2.7648,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 3.2955,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 2.7797,
+    "AdjustmentsForFinanceCosts": 1.9565,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": -8.5113,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -0.1812,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.604,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 6.1352,
+    "AdjustmentsForReconcileProfitLoss": -30.4952,
+    "AdjustmentsForSharebasedPayments": 1.8667,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.4992,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 2.1774,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -61.95,
+    "CashFlowsFromUsedInInvestingActivities": -108.4428,
+    "CashFlowsFromUsedInOperatingActivities": 172.2812,
+    "CashFlowsFromUsedInOperations": 244.1317,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 59.8252,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 71.8505,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1.8884,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1.8884,
+    "InterestPaidClassifiedAsFinancingActivities": 1.9565,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -31.5115,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.1683,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 2403.5051,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0134,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 2505.8854,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 6.0759,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -5.8527,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 5.0718,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 2.2174,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -14.6611,
+    "AdjustmentsForFinanceCosts": 1.285,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": -9.5897,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0993,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -0.0762,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 2.1357,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": -3.0968,
+    "AdjustmentsForReconcileProfitLoss": -38.6731,
+    "AdjustmentsForSharebasedPayments": 4.8065,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.1417,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 3.8132,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -51.2122,
+    "CashFlowsFromUsedInInvestingActivities": -51.2313,
+    "CashFlowsFromUsedInOperatingActivities": 104.0793,
+    "CashFlowsFromUsedInOperations": 140.5794,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 49.8544,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 36.5001,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1.6358,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1.6358,
+    "InterestPaidClassifiedAsFinancingActivities": 1.285,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -20.9554,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0728,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1464.8966,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0892,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1515.1761,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.041,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Canara Robeco Asset Management Company Limited",
  "corporate_actions": [
   {
@@ -384,6 +773,99 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2025-10-27T18:00:00+05:30",
@@ -8364,6 +8846,96 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.6501,
+     "description": "Remeasurement gain/Loss of the Defined Benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.6501,
+    "oci_net_cr": 0.4865,
+    "profit_cr": 52.7537,
+    "tax_not_reclassified_cr": 0.1636,
+    "total_comprehensive_cr": 53.2402
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.3912,
+     "description": "Remeasurement gain/(loss) of the Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.3912,
+    "oci_net_cr": 0.2927,
+    "profit_cr": 41.3613,
+    "tax_not_reclassified_cr": 0.0985,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 41.654
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0161,
+     "description": "Remeasurement gain/(loss) of the Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0161,
+    "oci_net_cr": -0.0121,
+    "profit_cr": 59.1863,
+    "tax_not_reclassified_cr": -0.004,
+    "total_comprehensive_cr": 59.1742
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-27T20:26:54+05:30",
@@ -8484,6 +9056,308 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 8.8475,
+     "approved_cr": 20.0,
+     "closing_cr": 11.1525,
+     "counterparty": "Canara Robeco Asset Management Company Ltd",
+     "entity": "Robeco Hongkong Ltd -Under the common control of entity having significant influence",
+     "opening_cr": 20.0,
+     "other_details": "Advisory Fees",
+     "relationship": "Under the common control of entity having significant influence",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.9003,
+     "approved_cr": 7.296,
+     "closing_cr": 3.3957,
+     "counterparty": "Canara Robeco Asset Management Company Ltd",
+     "entity": "Person forming a part of the promoter (chief executive officer)",
+     "opening_cr": 7.296,
+     "relationship": "KMP",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.3075,
+     "approved_cr": 0.95,
+     "closing_cr": 0.6425,
+     "counterparty": "Canara Robeco Asset Management Company Ltd",
+     "entity": "Person forming a part of the promoter (chief operating officer)",
+     "opening_cr": 0.95,
+     "relationship": "Related to promoter group",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.3024,
+     "approved_cr": 0.35,
+     "closing_cr": 0.0476,
+     "counterparty": "Canara Robeco Asset Management Company Ltd",
+     "entity": "Canara HSBC Life Insurance Company limited  -Fellow Subsidiary",
+     "opening_cr": 0.35,
+     "other_details": "Insurance Term Life Policy for Employees",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1608,
+     "approved_cr": 0.3,
+     "closing_cr": 0.1392,
+     "counterparty": "Canara Robeco Asset Management Company Ltd",
+     "entity": "Canara Bank -Holding Company",
+     "opening_cr": 0.3,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 0.3,
+     "closing_cr": 0.18,
+     "counterparty": "Canara Robeco Asset Management Company Ltd",
+     "entity": "CRMF Trustee Pvt. Ltd.-  Under common control of holding Company & Entity having significant infuence over the Company",
+     "opening_cr": 0.3,
+     "other_details": "Support Services",
+     "relationship": "Under the common control of entity having significant influence",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0209,
+     "approved_cr": 0.2,
+     "closing_cr": 0.1791,
+     "counterparty": "Canara Robeco Asset Management Company Ltd",
+     "entity": "Canara Bank -Holding Company",
+     "opening_cr": 0.2,
+     "other_details": "Rent",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 7,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 9.1494,
+     "approved_cr": 20.0,
+     "closing_cr": 4.6598,
+     "counterparty": "ROBECO HONGKONG LIMITED",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 4.6256,
+     "other_details": "Advisory Fees",
+     "relationship": "Subsidiary of Entity having significant Influence over the Company",
+     "remarks": "Omnibus Approval",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.3909,
+     "approved_cr": 14.1285,
+     "closing_cr": 0.0,
+     "counterparty": "Person forming a part of the promoter (Chief Executive Officer)",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Omnibus Approval",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.4091,
+     "approved_cr": 0.95,
+     "closing_cr": 0.0,
+     "counterparty": "Person forming a part of the promoter (Chief Operating Officer)",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Related to promoter group",
+     "remarks": "Omnibus Approval",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.135,
+     "approved_cr": 0.3,
+     "closing_cr": 0.0509,
+     "counterparty": "CANARA BANK",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Entity having significant Influence over the Company",
+     "remarks": "Omnibus Approval",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 0.3,
+     "closing_cr": 0.0648,
+     "counterparty": "CRMF TRUSTEE PRIVATE LIMITED",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Support Services",
+     "relationship": "Subsidiary of Entity having significant Influence over the Company",
+     "remarks": "Omnibus Approval",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0865,
+     "approved_cr": 0.2,
+     "closing_cr": 0.0795,
+     "counterparty": "CANARA BANK",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent and Maintainance Charges",
+     "relationship": "Entity having significant Influence over the Company",
+     "remarks": "Omnibus Approval",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.35,
+     "closing_cr": 0.0,
+     "counterparty": "CANARA HSBC ORIENTAL BANK OF COMMERCE LIFE INSURANCE CO. LTD.",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Insurance Term Life Policy for Employees",
+     "relationship": "Associate of Entity having significant Influence over the Company",
+     "remarks": "Omnibus Approval",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 7,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 8.3211,
+     "approved_cr": 19.8,
+     "closing_cr": 4.1649,
+     "counterparty": "ROBECO HONGKONG LIMITED",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 4.6598,
+     "other_details": "Advisory Fees",
+     "relationship": "Subsidiary of Entity having significant Influence over the Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3537,
+     "approved_cr": 0.3537,
+     "closing_cr": 0.0,
+     "counterparty": "Person forming a part of the promoter (Chief Operating Officer)",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Related to promoter group",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.2504,
+     "approved_cr": 0.6913,
+     "closing_cr": 0.0,
+     "counterparty": "Person forming a part of the promoter (Chief Operating Officer)",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Related to promoter group",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 0.3,
+     "closing_cr": 0.0648,
+     "counterparty": "CRMF TRUSTEE PRIVATE LIMITED",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0648,
+     "other_details": "Support Services",
+     "relationship": "Subsidiary of Entity having significant Influence over the Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0937,
+     "approved_cr": 0.22,
+     "closing_cr": 0.0457,
+     "counterparty": "CANARA BANK",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0795,
+     "other_details": "Rent",
+     "relationship": "Entity having significant Influence over the Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0452,
+     "approved_cr": 0.33,
+     "closing_cr": 0.0,
+     "counterparty": "CANARA BANK",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0509,
+     "other_details": "Salary Reimbursement of Deputed Employee",
+     "relationship": "Entity having significant Influence over the Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.385,
+     "closing_cr": 0.0,
+     "counterparty": "CANARA HSBC LIFE INSURANCE CO. LTD.",
+     "entity": "CANARA ROBECO ASSET MANAGEMENT COMPANY LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Insurance Term Life Policy for Employees",
+     "relationship": "Associate of Entity having significant Influence over the Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 7,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544580",
  "section_lab": {
@@ -8506,17 +9380,68 @@
  "sector": "nbfc",
  "segment_mix": [
   {
-   "as_of": "2026-10-15T17:32:47+05:30",
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-15T17:32:47+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Canara Robeco Asset Management Company Limited",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Canara Robeco Asset Management Company Limited",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Canara Robeco Asset Management Company Limited",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q2FY27",
-   "revenue_cr": 0.0,
-   "segment": "Equity",
-   "share_pct": 91.0,
-   "source_news_id": "nse-106818872"
+   "segment": "Canara Robeco Asset Management Company Limited",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
   }
  ],
  "standalone_only": [
@@ -8525,6 +9450,284 @@
   "Q4FY26",
   "Q1FY27",
   "Q2FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 0.0533,
+    "Equity Capital": 199.4174,
+    "Fixed Assets": 7.9875,
+    "Investments": 659.2491,
+    "Other Assets": 83.4067,
+    "Other Liabilities": 71.72129999999993,
+    "Reserves": 479.5579,
+    "Total Assets": 750.6966,
+    "Total Liabilities": 750.6966
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.966,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 48.504799999999996,
+    "Interest": 0.506,
+    "Net Profit": 52.7537,
+    "Net Profit (owners)": 52.7537,
+    "OPM %": 55.812375136763116,
+    "Operating Profit": 61.2653,
+    "Other Income": 11.693499999999993,
+    "Profit before tax": 70.4868,
+    "Profit for PE": 52.7537,
+    "Sales": 109.7701,
+    "Tax": 17.7331,
+    "Tax %": 25.158043775572164
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.9737,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 43.178399999999996,
+    "Interest": 0.482,
+    "Net Profit": 41.3613,
+    "Net Profit (owners)": 41.3613,
+    "OPM %": 62.19183407922147,
+    "Operating Profit": 71.02550000000001,
+    "Other Income": -10.35840000000001,
+    "Profit before tax": 58.2114,
+    "Profit for PE": 41.3613,
+    "Sales": 114.2039,
+    "Tax": 16.8501,
+    "Tax %": 28.946391943846056
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 17.5886,
+    "CWIP": 0.3575,
+    "Equity Capital": 199.4174,
+    "Fixed Assets": 22.753,
+    "Investments": 735.2286,
+    "Other Assets": 60.2663,
+    "Other Liabilities": 55.19320000000009,
+    "Reserves": 546.4062,
+    "Total Assets": 818.6054,
+    "Total Liabilities": 818.6054
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 7.4208,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 170.65229999999997,
+    "Interest": 1.9565,
+    "Net Profit": 203.8047,
+    "Net Profit (owners)": 203.8047,
+    "OPM %": 59.84132064149479,
+    "Operating Profit": 254.29270000000002,
+    "Other Income": 29.711499999999944,
+    "Profit before tax": 274.6269,
+    "Profit for PE": 203.8047,
+    "Sales": 424.945,
+    "Tax": 70.8222,
+    "Tax %": 25.788515254696463
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -61.95,
+    "Cash from Investing Activity": -108.4428,
+    "Cash from Operating Activity": 172.2812,
+    "Net Cash Flow": 1.8884
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.4662,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 43.4,
+    "Interest": 0.6255,
+    "Net Profit": 75.6034,
+    "Net Profit (owners)": 75.6034,
+    "OPM %": 62.651052396959074,
+    "Operating Profit": 72.8014,
+    "Other Income": 29.640699999999995,
+    "Profit before tax": 99.3504,
+    "Profit for PE": 75.6034,
+    "Sales": 116.2014,
+    "Tax": 23.747,
+    "Tax %": 23.90226914033562
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.1362,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 45.4449,
+    "Interest": 0.6595,
+    "Net Profit": 59.1863,
+    "Net Profit (owners)": 59.1863,
+    "OPM %": 62.62413756518893,
+    "Operating Profit": 76.144,
+    "Other Income": 6.553799999999995,
+    "Profit before tax": 79.9021,
+    "Profit for PE": 59.1863,
+    "Sales": 121.5889,
+    "Tax": 20.7158,
+    "Tax %": 25.92647752687351
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 0.1898,
+    "Equity Capital": 199.4174,
+    "Fixed Assets": 7.2218,
+    "Investments": 821.0627999999999,
+    "Other Assets": 85.13990000000001,
+    "Other Liabilities": 78.06089999999995,
+    "Reserves": 636.136,
+    "Total Assets": 913.6143,
+    "Total Liabilities": 913.6143
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "CRAMC",
  "timeline": [

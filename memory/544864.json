@@ -1,9 +1,309 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "006615C",
+     "name": "RISHI KAPOOR AND COMPANY",
+     "signed_on": "2026-07-01",
+     "signing_partner": "JYOTI ARORA"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "006615C",
+     "name": "RISHI KAPOOR AND COMPANY",
+     "signed_on": "2026-07-01",
+     "signing_partner": "JYOTI ARORA"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "AS PER REPORT"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "AS PER REPORT"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<p>AS PER REPORT</p>"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.2439,
+    "AdjustmentsForDecreaseIncreaseInInventories": 20.6073,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -1.8925,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.1889,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -59.9118,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 2.0039,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 3.7469,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": -0.645,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 44.0807,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 3.319,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -26.0467,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -16.1444,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.1042,
+    "AdjustmentsForReconcileProfitLoss": -30.654,
+    "CashAndCashEquivalentsCashFlowStatement": 13.0993,
+    "CashFlowsFromUsedInFinancingActivities": -8.5235,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -8.5235,
+    "CashFlowsFromUsedInInvestingActivities": -7.5848,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -7.5848,
+    "CashFlowsFromUsedInOperatingActivities": 28.6949,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 28.6949,
+    "CashFlowsFromUsedInOperations": 28.0151,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 8.4234,
+    "IncreaseDecreaseInCashAndCashEquivalents": 12.5866,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 12.5866,
+    "InterestPaidClassifiedAsFinancingActivities": 11.5024,
+    "InterestPaidClassifiedAsOperatingActivities": 11.5024,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.9968,
+    "InterestReceivedClassifiedAsOperatingActivities": 1.9968,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.3133,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -13.2662,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 18.6088,
+    "PaymentForAuditServices": 0.211,
+    "PaymentForReimbursementOfExpenses": 0.0,
+    "PaymentsToAuditor": 0.211,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 2.9789,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": -5.3295,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.6449
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.2439,
+    "AdjustmentsForDecreaseIncreaseInInventories": 20.6073,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -1.8925,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.1889,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -59.9118,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 2.0039,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 3.7469,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": -0.645,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 44.0807,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 3.319,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -26.0467,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -16.1444,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.1042,
+    "AdjustmentsForReconcileProfitLoss": -30.654,
+    "CashAndCashEquivalentsCashFlowStatement": 13.0994,
+    "CashFlowsFromUsedInFinancingActivities": -8.5235,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -8.5235,
+    "CashFlowsFromUsedInInvestingActivities": -7.5848,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -7.5848,
+    "CashFlowsFromUsedInOperatingActivities": 28.695,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 28.695,
+    "CashFlowsFromUsedInOperations": 28.0152,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 8.4234,
+    "IncreaseDecreaseInCashAndCashEquivalents": 12.5867,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 12.5867,
+    "InterestPaidClassifiedAsFinancingActivities": 11.5024,
+    "InterestPaidClassifiedAsOperatingActivities": 11.5024,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.9968,
+    "InterestReceivedClassifiedAsOperatingActivities": 1.9968,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.3133,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -13.2662,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 18.6088,
+    "PaymentForAuditServices": 0.211,
+    "PaymentForReimbursementOfExpenses": 0.0,
+    "PaymentsToAuditor": 0.211,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 2.9789,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": -5.3295,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.6449
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Technocraft Ventures Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 0,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "total_cr": 178.0127
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 0,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 178.0127
+  }
+ ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-02T18:00:00+05:30",
@@ -677,6 +977,46 @@
   "former_names": []
  },
  "industry": "Utilities > Other Utilities > Water Supply & Management",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 4,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "SANJAY TYAGI",
+     "pay_cr": 1.2
+    },
+    {
+     "designation": "Whole Time Director",
+     "name": "KARTIKEY TYAGI",
+     "pay_cr": 0.6
+    },
+    {
+     "designation": "Director",
+     "name": "REKHA TYAGI",
+     "pay_cr": 0.3
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "SHEFALI KESARWANI",
+     "pay_cr": 0.0214
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "last_filed_at": "2026-10-12T06:00:47+05:30",
  "market_deals": {
   "events": [
@@ -1173,6 +1513,294 @@
     "value_cr": 6.82
    },
    {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 359.64,
+    "qty": 276559.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.95
+   },
+   {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 359.05,
+    "qty": 280561.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.07
+   },
+   {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 362.79,
+    "qty": 308216.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 11.18
+   },
+   {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 362.57,
+    "qty": 308715.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 11.19
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 386.24,
+    "qty": 201499.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 7.78
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 386.89,
+    "qty": 213956.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 8.28
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 439.28,
+    "qty": 268014.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 11.77
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 439.72,
+    "qty": 274527.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 12.07
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 437.63,
+    "qty": 251070.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.99
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 439.85,
+    "qty": 268394.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 11.81
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 443.25,
+    "qty": 194454.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 8.62
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 443.38,
+    "qty": 209995.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.31
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 443.86,
+    "qty": 216272.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.6
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 444.08,
+    "qty": 226373.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.05
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 473.83,
+    "qty": 227781.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.79
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 475.81,
+    "qty": 229490.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.92
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 497.95,
+    "qty": 388664.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 19.35
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 499.77,
+    "qty": 388664.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 19.42
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 506.02,
+    "qty": 396185.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 20.05
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 503.71,
+    "qty": 396185.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 19.96
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 500.49,
+    "qty": 215791.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.8
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 500.17,
+    "qty": 215791.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.79
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 496.66,
+    "qty": 201066.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.99
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 496.59,
+    "qty": 201066.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.98
+   },
+   {
     "as_of": "2026-10-22T15:30:00+05:30",
     "client": "ACME CAPITAL MARKET LIMITED",
     "date": "2026-10-22",
@@ -1243,9 +1871,175 @@
     "side": "SELL",
     "symbol": "TECHNOCRAF",
     "value_cr": 17.21
+   },
+   {
+    "as_of": "2026-10-27T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-27",
+    "kind": "BULK",
+    "price": 481.34,
+    "qty": 337023.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 16.22
+   },
+   {
+    "as_of": "2026-10-27T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-27",
+    "kind": "BULK",
+    "price": 482.68,
+    "qty": 337023.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 16.27
+   },
+   {
+    "as_of": "2026-10-27T15:30:00+05:30",
+    "client": "GOVIND JI GUPTA",
+    "date": "2026-10-27",
+    "kind": "BULK",
+    "price": 481.5,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.63
+   },
+   {
+    "as_of": "2026-10-29T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-29",
+    "kind": "BULK",
+    "price": 473.12,
+    "qty": 325769.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 15.41
+   },
+   {
+    "as_of": "2026-10-29T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-29",
+    "kind": "BULK",
+    "price": 476.0,
+    "qty": 325769.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 15.51
+   },
+   {
+    "as_of": "2026-10-29T15:30:00+05:30",
+    "client": "GOVIND JI GUPTA",
+    "date": "2026-10-29",
+    "kind": "BULK",
+    "price": 475.94,
+    "qty": 250000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 11.9
+   },
+   {
+    "as_of": "2026-10-30T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-30",
+    "kind": "BULK",
+    "price": 467.57,
+    "qty": 354982.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 16.6
+   },
+   {
+    "as_of": "2026-10-30T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-30",
+    "kind": "BULK",
+    "price": 468.17,
+    "qty": 307846.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 14.41
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.0261,
+     "description": "Remeasurement gain/ (loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.0066,
+     "description": "Income Tax relating to items that will not be reclassified to  Profit & Loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.0195,
+    "oci_net_cr": 0.0195,
+    "profit_cr": 10.6935,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.713
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.0261,
+     "description": "Remeasurement gain/ (loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.0066,
+     "description": "Income Tax relating to items that will not be reclassified to Profit & Loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.0195,
+    "oci_net_cr": 0.0195,
+    "profit_cr": 10.6934,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.7129
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -1290,6 +2084,142 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 4,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 9.7719
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 6.3326,
+      "OtherRelatedPartyTransactionsContributionReceived": 9.05,
+      "OtherRelatedPartyTransactionsExpense": 0.8628,
+      "OtherRelatedPartyTransactionsIncome": 0.3
+     },
+     "party": "Rekha Tyagi"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 10.7991,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 1.2
+     },
+     "party": "Sanjay Tyagi"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.0532
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 1.21,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.9752,
+      "OtherRelatedPartyTransactionsExpense": 0.1015,
+      "OtherRelatedPartyTransactionsIncome": 0.6
+     },
+     "party": "KartikeyTyagi"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.0214
+     },
+     "party": "Shefali Kesarwani"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 4,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 9.7719
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 6.3326,
+      "OtherRelatedPartyTransactionsContributionReceived": 9.05,
+      "OtherRelatedPartyTransactionsExpense": 0.8628,
+      "OtherRelatedPartyTransactionsIncome": 0.3
+     },
+     "party": "Rekha Tyagi"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 10.7991,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 1.2
+     },
+     "party": "Sanjay Tyagi"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.0532
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 1.21,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.9752,
+      "OtherRelatedPartyTransactionsExpense": 0.1015,
+      "OtherRelatedPartyTransactionsIncome": 0.6
+     },
+     "party": "KartikeyTyagi"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.0214
+     },
+     "party": "SHEFALI\nKESARWANI"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544864",
  "section_lab": {
@@ -1299,13 +2229,30 @@
    "doc": "other"
   },
   "market_deals": {
-   "at": "2026-10-27T07:03:06+05:30",
+   "at": "2026-11-01T14:43:52+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "default",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Wastewater Treatment/Supply Schemes , Operation and Maintenance ,Water Supply Scheme Projects (WSSPs) ,Road and Highway Construction",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1763,6 +2710,403 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 87.4297,
+    "CWIP": 0.8418,
+    "Equity Capital": 7.5253,
+    "Fixed Assets": 13.0202,
+    "Investments": 5.2238,
+    "Other Assets": 250.6517,
+    "Other Liabilities": 62.32509999999999,
+    "Reserves": 112.4574,
+    "Total Assets": 269.7375,
+    "Total Liabilities": 269.7375
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 1.824,
+    "Exceptional items": 0.5193,
+    "Exceptional items AT": 0.379781080415301,
+    "Expenses": 231.896,
+    "Interest": 9.2386,
+    "Net Profit": 28.2037,
+    "Net Profit (owners)": 28.2037,
+    "OPM %": 17.050836302242075,
+    "Operating Profit": 47.668000000000035,
+    "Other Income": 1.9593999999999596,
+    "Profit before tax": 38.5648,
+    "Profit for PE": 27.8239189195847,
+    "Sales": 279.564,
+    "Tax": 10.3611,
+    "Tax %": 26.866728208106878
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -9.6554,
+    "Cash from Investing Activity": -12.6377,
+    "Cash from Operating Activity": 21.6838,
+    "Net Cash Flow": -0.6093
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 87.4297,
+    "CWIP": 0.8418,
+    "Equity Capital": 7.5253,
+    "Fixed Assets": 13.0202,
+    "Investments": 5.2238,
+    "Other Assets": 250.6517,
+    "Other Liabilities": 62.32509999999999,
+    "Reserves": 112.4574,
+    "Total Assets": 269.7375,
+    "Total Liabilities": 269.7375
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 1.824,
+    "Expenses": 231.896,
+    "Interest": 9.2386,
+    "Net Profit": 28.2037,
+    "Net Profit (owners)": 28.2037,
+    "OPM %": 17.050836302242075,
+    "Operating Profit": 47.668000000000035,
+    "Other Income": 1.9593999999999596,
+    "Profit before tax": 38.5648,
+    "Sales": 279.564,
+    "Tax": 10.3611,
+    "Tax %": 26.866728208106878
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -9.6554,
+    "Cash from Investing Activity": -12.6377,
+    "Cash from Operating Activity": 21.6838,
+    "Net Cash Flow": -0.6093
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 2.0039,
+    "Exceptional items": 0.3133,
+    "Exceptional items AT": 0.23130673847050665,
+    "Expenses": 275.1354,
+    "Interest": 11.5024,
+    "Net Profit": 43.3149,
+    "Net Profit (owners)": 43.3149,
+    "OPM %": 20.249568472632248,
+    "Operating Profit": 69.86009999999999,
+    "Other Income": 2.3153000000000077,
+    "Profit before tax": 58.6691,
+    "Profit for PE": 43.083593261529494,
+    "Sales": 344.9955,
+    "Tax": 15.3542,
+    "Tax %": 26.170846322851382
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -8.5235,
+    "Cash from Investing Activity": -7.5848,
+    "Cash from Operating Activity": 28.6949,
+    "Net Cash Flow": 12.5866
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 2.0039,
+    "Expenses": 275.1354,
+    "Interest": 11.5024,
+    "Net Profit": 43.315,
+    "Net Profit (owners)": 43.315,
+    "OPM %": 20.249568472632248,
+    "Operating Profit": 69.86009999999999,
+    "Other Income": 2.315400000000011,
+    "Profit before tax": 58.6692,
+    "Sales": 344.9955,
+    "Tax": 15.3542,
+    "Tax %": 26.170801715380474
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -8.5235,
+    "Cash from Investing Activity": -7.5848,
+    "Cash from Operating Activity": 28.695,
+    "Net Cash Flow": 12.5867
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 89.7637,
+    "CWIP": 1.0959,
+    "Equity Capital": 30.1012,
+    "Fixed Assets": 12.4071,
+    "Investments": 0.2076,
+    "Other Assets": 340.6711,
+    "Other Liabilities": 101.24230000000003,
+    "Reserves": 133.2745,
+    "Total Assets": 354.3817,
+    "Total Liabilities": 354.3817
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 89.7637,
+    "CWIP": 1.0959,
+    "Equity Capital": 30.1012,
+    "Fixed Assets": 12.4071,
+    "Investments": 0.2076,
+    "Other Assets": 340.6711,
+    "Other Liabilities": 101.2424,
+    "Reserves": 133.2744,
+    "Total Assets": 354.3817,
+    "Total Liabilities": 354.3817
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0402,
+    "Depreciation": 0.4059,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 74.7488,
+    "Interest": 3.6155,
+    "Net Profit": 10.6935,
+    "Net Profit (owners)": 10.6935,
+    "OPM %": 19.368920885348853,
+    "Operating Profit": 17.9559,
+    "Other Income": 0.539200000000001,
+    "PBT as filed": 14.4335,
+    "Profit before tax": 14.473700000000001,
+    "Profit for PE": 10.6935,
+    "Sales": 92.7047,
+    "Tax": 3.7802,
+    "Tax %": 26.117716962490583
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.4059,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 74.7488,
+    "Interest": 3.6155,
+    "Net Profit": 10.6934,
+    "Net Profit (owners)": 10.6934,
+    "OPM %": 19.368920885348853,
+    "Operating Profit": 17.9559,
+    "Other Income": 0.5391000000000012,
+    "Profit before tax": 14.4736,
+    "Profit for PE": 10.6934,
+    "Sales": 92.7047,
+    "Tax": 3.7802,
+    "Tax %": 26.117897413221314
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "TECHNOCRAF",
  "timeline": [],
  "upcoming_events": [],

@@ -1,4 +1,102 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M S K A & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-10-18T18:00:00+05:30",
@@ -62,6 +160,222 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -26.9505,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 16.0724,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 4.8,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 2.5295,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.2581,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 4.3042,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -18.8454,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.6619,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.1307,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -15.8964,
+    "AdjustmentsForSharebasedPayments": 1.4007,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0019,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0016,
+    "CashAndCashEquivalentsCashFlowStatement": 1.0571,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 420.6249,
+    "CashFlowsFromUsedInInvestingActivities": -432.8646,
+    "CashFlowsFromUsedInOperatingActivities": 8.2192,
+    "CashFlowsFromUsedInOperations": 17.5363,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 9.3171,
+    "IncreaseDecreaseInCashAndCashEquivalents": -4.0205,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -4.0205,
+    "InterestPaidClassifiedAsFinancingActivities": 0.5304,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.2599,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -1.8106,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -432.318,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 3.6025,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -14.1009,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0065,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 274.2608,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 166.4953,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.545,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0933,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -48.8203,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 22.5409,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 9.7734,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.4791,
+    "AdjustmentsForFinanceCosts": 3.1856,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 2.1367,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 7.7734,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 3.9152,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.2272,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -1.9903,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 4.5121,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.4588,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -9.8904,
+    "AdjustmentsForSharebasedPayments": 1.8598,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0037,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0132,
+    "CashAndCashEquivalentsCashFlowStatement": 23.9473,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 73.0614,
+    "CashFlowsFromUsedInInvestingActivities": -111.6387,
+    "CashFlowsFromUsedInOperatingActivities": 57.447,
+    "CashFlowsFromUsedInOperations": 60.3621,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 4.339,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 2.9151,
+    "IncreaseDecreaseInCashAndCashEquivalents": 18.8697,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 18.8697,
+    "InterestPaidClassifiedAsFinancingActivities": 0.9437,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.5214,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -6.6891,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.0136,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 113.3164,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -33.4447,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 7.5147,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.031,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 170.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.016,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.8465,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 50.7275,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Jaro Institute of Technology Management and Research Limited",
  "corporate_actions": [
   {
@@ -80,6 +394,98 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2025-10-18T18:00:00+05:30",
@@ -4770,6 +5176,134 @@
       "status": "The matter was adjourned for draft issues to 10-07-2026 and next hearing date is 10-07-2026."
      }
     ]
+   },
+   {
+    "as_of": "2026-10-28T16:01:27+05:30",
+    "board": [
+     {
+      "appointed": "2009-07-09",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SANJAY NAMDEO SALUNKHE",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2010-12-08",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "BALKRISHNA NAMDEO SALUNKHE",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2015-03-20",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RANJITA RAMAN",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2021-01-09",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "ISHAN BAVEJA",
+      "role": null,
+      "tenure_months": 60.0
+     },
+     {
+      "appointed": "2024-01-27",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "ALPA URMIL ANTANI",
+      "role": null,
+      "tenure_months": 36.0
+     },
+     {
+      "appointed": "2024-05-03",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "VAIJAYANTI AJIT PANDIT",
+      "role": null,
+      "tenure_months": 36.0
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "ISHAN BAVEJA",
+      "VAIJAYANTI AJIT PANDIT",
+      "SANJAY NAMDEO SALUNKHE"
+     ],
+     "corporate social responsibility committee": [
+      "SANJAY NAMDEO SALUNKHE",
+      "ISHAN BAVEJA",
+      "BALKRISHNA NAMDEO SALUNKHE"
+     ],
+     "nomination and remuneration committee": [
+      "ISHAN BAVEJA",
+      "VAIJAYANTI AJIT PANDIT",
+      "BALKRISHNA NAMDEO SALUNKHE"
+     ],
+     "other committee": [
+      "SANJAY NAMDEO SALUNKHE",
+      "BALKRISHNA NAMDEO SALUNKHE",
+      "RANJITA RAMAN",
+      "SANJAY NAMDEO SALUNKHE",
+      "BALKRISHNA NAMDEO SALUNKHE",
+      "RANJITA RAMAN",
+      "ISHAN BAVEJA",
+      "ALPA URMIL ANTANI",
+      "VAIJAYANTI AJIT PANDIT"
+     ],
+     "stakeholders relationship committee": [
+      "ISHAN BAVEJA",
+      "BALKRISHNA NAMDEO SALUNKHE",
+      "ALPA URMIL ANTANI"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 92.0,
+     "board": 57.0,
+     "other committee": 101.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 2.8275,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1747698_28102026040309_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Pending",
+      "initiated": "2023-09-11",
+      "opposing_party": "M/s Bennett, Coleman & Co Ltd",
+      "status": "The matter was adjourned for draft issues to 09-10-2026 and next hearing date is 09-10-2026."
+     }
+    ]
    }
   ]
  },
@@ -5484,6 +6018,162 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.079,
+     "description": "Re-measurement of the net defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.079,
+    "oci_net_cr": -0.059,
+    "profit_cr": 7.533,
+    "tax_not_reclassified_cr": -0.02,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.474
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.079,
+     "description": "Re-measurement of the net defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.079,
+    "oci_net_cr": -0.059,
+    "profit_cr": 17.02,
+    "tax_not_reclassified_cr": -0.02,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 16.961
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.157,
+     "description": "Re-measurement of the net defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.039,
+     "description": "Income tax effect on above",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.118,
+    "oci_net_cr": -0.118,
+    "profit_cr": 7.0306,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 6.9126
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0813,
+     "description": "Re-measurement of the net defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0813,
+    "oci_net_cr": -0.0606,
+    "profit_cr": 21.3328,
+    "tax_not_reclassified_cr": -0.0207,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 21.2722
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0991,
+     "description": "Re measurement of the net defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0991,
+    "oci_net_cr": -0.0742,
+    "profit_cr": 11.1689,
+    "tax_not_reclassified_cr": -0.0249,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 11.0947
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -5526,6 +6216,380 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 274.2608,
+     "closing_cr": 274.2608,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Offer expenses",
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.07,
+     "closing_cr": 1.363,
+     "counterparty": "Global Education Trust",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 5.379,
+     "relationship": "Entities in which KMP can exercise significant influence",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.8558,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.7115,
+     "closing_cr": 0.1653,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.229,
+     "closing_cr": 0.1041,
+     "counterparty": "Ranjita Raman",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Whole Time Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.06,
+     "closing_cr": 0.0,
+     "counterparty": "Net Employment Services Private Limited",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Entities in which KMP can exercise significant influence",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Uday Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Relatives of KMP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Swati Uday Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Relatives of KMP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 8,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 19.25,
+     "approved_cr": 20.0,
+     "closing_cr": 19.3172,
+     "counterparty": "Jaro Education Welfare Trust",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Entities in which KMP can exercise significant influence",
+     "remarks": "AT ARM'S LENGTH PRICE",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 7.26,
+     "approved_cr": 7.5,
+     "closing_cr": 1.374,
+     "counterparty": "Global Education Trust",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 5.379,
+     "relationship": "Entities in which KMP can exercise significant influence",
+     "remarks": "AT ARM'S LENGTH PRICE",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.7116,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Managing Director",
+     "remarks": "AT ARM'S LENGTH PRICE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.458,
+     "closing_cr": 0.1041,
+     "counterparty": "Ranjita Raman",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Whole Time Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 2.4152,
+     "closing_cr": 0.0,
+     "counterparty": "Ranjita Raman",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Grant of ESOPs",
+     "relationship": "Whole Time Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.2672,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 2.2468,
+     "closing_cr": 0.0233,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "Net Employment Services Private Limited",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Entities in which KMP can exercise significant influence",
+     "remarks": "AT ARM'S LENGTH PRICE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0914,
+     "closing_cr": 0.0,
+     "counterparty": "Balkrishna Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Non Executive Director",
+     "remarks": "NA",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.091,
+     "closing_cr": 0.0,
+     "counterparty": "Rajendra Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Relatives of KMP",
+     "remarks": "NA",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.091,
+     "closing_cr": 0.0,
+     "counterparty": "Anita Sanjay Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Relatives of KMP",
+     "remarks": "NA",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0747,
+     "closing_cr": 0.0,
+     "counterparty": "Jaro Education Welfare Trust",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Entities in which KMP can exercise significant influence",
+     "remarks": "NA",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.0441,
+     "closing_cr": 0.0,
+     "counterparty": "Ranjita Raman",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Whole Time Director",
+     "remarks": "NA",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.041,
+     "closing_cr": 0.0,
+     "counterparty": "Ishan Baveja",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Non Executive Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0395,
+     "closing_cr": 0.0,
+     "counterparty": "Vaijayanti Ajit Pandit",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Non Executive Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0381,
+     "closing_cr": 0.0,
+     "counterparty": "Global Education Trust",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Professional Fees paid",
+     "relationship": "Entities in which KMP can exercise significant influence",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.036,
+     "approved_cr": 0.06,
+     "closing_cr": 0.0,
+     "counterparty": "Uday Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Relatives of KMP",
+     "remarks": "AT ARM'S LENGTH PRICE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.036,
+     "approved_cr": 0.06,
+     "closing_cr": 0.0,
+     "counterparty": "Swati Uday Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent paid",
+     "relationship": "Relatives of KMP",
+     "remarks": "AT ARM'S LENGTH PRICE",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0125,
+     "closing_cr": 0.0,
+     "counterparty": "Alpa Urmil Antani",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Non Executive Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 2.8233,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Offer Proceed",
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 4.1633,
+     "counterparty": "Sanjay Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 3.8108,
+     "other_details": "Security Deposit",
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "Uday Namdeo Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.01,
+     "other_details": "Security Deposit",
+     "relationship": "Relatives of KMP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "Swati Uday Salunkhe",
+     "entity": "Jaro Institute of Technology Management & Research Ltd",
+     "opening_cr": 0.01,
+     "other_details": "Security Deposit",
+     "relationship": "Relatives of KMP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 23,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544534",
  "section_lab": {
@@ -5535,7 +6599,7 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-27T19:05:54+05:30",
+   "at": "2026-10-28T16:01:27+05:30",
    "by": "file",
    "doc": "other"
   },
@@ -5551,13 +6615,378 @@
   }
  },
  "sector": "default",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "Education Program Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Education Program Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Education Program Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Education Program Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Education Program Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q1FY26",
   "Q2FY26",
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.3491,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 46.718300000000006,
+    "Interest": 1.4924,
+    "Net Profit": 7.533,
+    "Net Profit (owners)": 7.533,
+    "OPM %": 23.00188217145229,
+    "Operating Profit": 13.956299999999992,
+    "Other Income": 0.1413000000000082,
+    "Profit before tax": 10.2561,
+    "Profit for PE": 7.533,
+    "Sales": 60.6746,
+    "Tax": 2.7231,
+    "Tax %": 26.5510281686021
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.4536,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 53.8694,
+    "Interest": 1.0371,
+    "Net Profit": 17.02,
+    "Net Profit (owners)": 17.02,
+    "OPM %": 33.004508285918604,
+    "Operating Profit": 26.5381,
+    "Other Income": 0.12920000000000087,
+    "Profit before tax": 23.1766,
+    "Profit for PE": 17.02,
+    "Sales": 80.4075,
+    "Tax": 6.1566,
+    "Tax %": 26.563861826152237
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 37.094100000000005,
+    "CWIP": 0.0,
+    "Equity Capital": 22.1562,
+    "Fixed Assets": 13.9002,
+    "Investments": 0.0,
+    "Other Assets": 725.7199999999999,
+    "Other Liabilities": 339.0503999999999,
+    "Reserves": 341.3195,
+    "Total Assets": 739.6202,
+    "Total Liabilities": 739.6202
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.5254,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 49.5111,
+    "Interest": 0.4333,
+    "Net Profit": 7.0306,
+    "Net Profit (owners)": 7.0306,
+    "OPM %": 17.49470084786434,
+    "Operating Profit": 10.4985,
+    "Other Income": 1.795099999999998,
+    "Profit before tax": 9.3349,
+    "Profit for PE": 7.0306,
+    "Sales": 60.0096,
+    "Tax": 2.3043,
+    "Tax %": 24.68478505393738
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.4453,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 51.6915,
+    "Interest": 0.2228,
+    "Net Profit": 21.3328,
+    "Net Profit (owners)": 21.3328,
+    "OPM %": 28.98192519481662,
+    "Operating Profit": 21.094900000000003,
+    "Other Income": 9.058099999999996,
+    "Profit before tax": 27.4849,
+    "Profit for PE": 21.3328,
+    "Sales": 72.7864,
+    "Tax": 6.1521,
+    "Tax %": 22.383563338414913
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 7.7805,
+    "CWIP": 0,
+    "Equity Capital": 21.779,
+    "Fixed Assets": 9.2155,
+    "Investments": 70.4791,
+    "Other Assets": 349.11899999999997,
+    "Other Liabilities": 60.60600000000001,
+    "Reserves": 338.6481,
+    "Total Assets": 428.8136,
+    "Total Liabilities": 428.8136
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 9.7734,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 201.7903,
+    "Interest": 3.1856,
+    "Net Profit": 52.9164,
+    "Net Profit (owners)": 52.9164,
+    "OPM %": 26.32112607762359,
+    "Operating Profit": 72.08780000000002,
+    "Other Income": 11.123699999999971,
+    "Profit before tax": 70.2525,
+    "Profit for PE": 52.9164,
+    "Sales": 273.8781,
+    "Tax": 17.3361,
+    "Tax %": 24.67684424041849
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 73.0614,
+    "Cash from Investing Activity": -111.6387,
+    "Cash from Operating Activity": 57.447,
+    "Net Cash Flow": 18.8697
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.0899,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 55.587900000000005,
+    "Interest": 0.1598,
+    "Net Profit": 11.1689,
+    "Net Profit (owners)": 11.1689,
+    "OPM %": 21.43108529268344,
+    "Operating Profit": 15.162599999999998,
+    "Other Income": 1.8794000000000004,
+    "Profit before tax": 14.7923,
+    "Profit for PE": 11.1689,
+    "Sales": 70.7505,
+    "Tax": 3.6234,
+    "Tax %": 24.49517654455359
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "JARO",
  "timeline": [],

@@ -1,4 +1,128 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "B S R & Co LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "B S R & Co LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-05-11T18:00:00+05:30",
@@ -30,12 +154,1455 @@
    "source_news_id": "xbrl:res:544700:Q4FY26",
    "total_assets_cr": 4407.1,
    "total_liabilities_cr": 1220.8
+  },
+  {
+   "as_of": "2026-05-11T22:31:20+05:30",
+   "cash_cr": 206.7,
+   "gross_debt_cr": 286.0,
+   "lab": {
+    "at": "2026-11-01T03:56:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "board",
+    "ok": true
+   },
+   "net_debt_cr": 79.3,
+   "net_worth_cr": 3184.9,
+   "period": "FY26",
+   "source_news_id": "nse-106617667"
+  },
+  {
+   "as_of": "2026-05-11T22:57:58+05:30",
+   "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2026-11-01T03:58:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "slides",
+    "ok": true
+   },
+   "period": "FY26",
+   "source_news_id": "nse-106617746"
+  },
+  {
+   "as_of": "2026-05-14T17:14:28+05:30",
+   "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "net_debt_cr": -2052.0,
+   "period": "FY26",
+   "source_news_id": "nse-106622719"
   }
  ],
  "business_summary": null,
+ "call_memory": [
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_8630ca9d",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "Revenue for Q4 was INR 886 crore or USD 97 million up 17% over last year."
+   },
+   "metric": "revenue",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Revenue for Q4 was INR 886 crore or USD 97 million up 17% over last year.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Revenue for Q4 FY2026 was INR 886 crore or USD 97 million up 17% over last year",
+   "topic": "q4_fy26_revenue",
+   "type": "kpi",
+   "unit": "INR_CR",
+   "value": 886.0,
+   "value_base": 8860000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_b31926fc",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "For the full year, revenue grew 19% to INR3,300 crore or USD 374 million."
+   },
+   "metric": "revenue_growth",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "For the full year, revenue grew 19% to INR3,300 crore or USD 374 million.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "For the full year FY2026, revenue grew 19% to INR 3,300 crore or USD 374 million",
+   "topic": "fy26_full_year_revenue_growth",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 19.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_92fdc2f2",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "Q4 adjusted EBITDA reached 22% up 189 basis points over last year."
+   },
+   "metric": "adjusted_ebitda_margin",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Q4 adjusted EBITDA reached 22% up 189 basis points over last year.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Q4 adjusted EBITDA reached 22% up 189 basis points over last year",
+   "topic": "q4_fy26_adjusted_ebitda_margin",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 22.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_7f283cb4",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "Full year adjusted EBITDA margin was 17.6 % after expensing 4.1% on R&D."
+   },
+   "metric": "adjusted_ebitda_margin",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Full year adjusted EBITDA margin was 17.6 % after expensing 4.1% on R&D.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Full year adjusted EBITDA margin was 17.6% after expensing 4.1% on R&D",
+   "topic": "fy26_adjusted_ebitda_margin",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 17.6
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_ac5d1eaa",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "Net income grew 30% for the year to INR 287 crore or 43% to INR 357 crore excluding our share of associate losses."
+   },
+   "metric": "net_income_growth",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Net income grew 30% for the year to INR 287 crore or 43% to INR 357 crore excluding our share of associate losses.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Net income grew 30% for the year to INR 287 crore or 43% to INR 357 crore excluding our share of associate losses",
+   "topic": "fy26_net_income_growth",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 30.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_0509629a",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "We ended the year with INR 2052 crore of cash, including IPO proceeds of INR 957 crore."
+   },
+   "metric": "cash_and_equivalents",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "We ended the year with INR 2052 crore of cash, including IPO proceeds of INR 957 crore.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "We ended the year with INR 2,052 crore of cash, including IPO proceeds of INR 957 crore",
+   "topic": "fy26_cash_balance",
+   "type": "kpi",
+   "unit": "INR_CR",
+   "value": 2052.0,
+   "value_base": 20520000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_a80d9660",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "Net revenue retention at 117% for the year and 112% for Q4."
+   },
+   "metric": "net_revenue_retention",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Net revenue retention at 117% for the year and 112% for Q4.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Net revenue retention at 117% for the year and 112% for Q4",
+   "topic": "fy26_net_revenue_retention",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 117.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_8e335c29",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 8,
+    "quote": "Q4 2026 gross margin expanded by 47 bps year-over-year to 48.2%."
+   },
+   "metric": "gross_margin",
+   "news_id": "nse-106622719",
+   "page": 8,
+   "pages": [
+    8
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Q4 2026 gross margin expanded by 47 bps year-over-year to 48.2%.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Q4 2026 gross margin expanded by 47 bps year-over-year to 48.2% সড়কে",
+   "topic": "q4_fy26_gross_margin",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 48.2
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_f644a5db",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 8,
+    "quote": "Gross margin for the FY2026 expanded by 93 bps year-over-year to 46.8%."
+   },
+   "metric": "gross_margin",
+   "news_id": "nse-106622719",
+   "page": 8,
+   "pages": [
+    8
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "Gross margin for the FY2026 expanded by 93 bps year-over-year to 46.8%.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Gross margin for the FY2026 expanded by 93 bps year-over-year to 46.8%",
+   "topic": "fy26_gross_margin",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 46.8
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_e3668c52",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 7,
+    "quote": "Number of clients with $1 million plus revenue went up from 53 in the previous year to 59 in FY2026."
+   },
+   "metric": "client_count",
+   "news_id": "nse-106622719",
+   "page": 7,
+   "pages": [
+    7
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "Number of clients with $1 million plus revenue went up from 53 in the previous year to 59 in FY2026.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Number of clients with $1 million plus revenue went up from 53 in the previous year to 59 in FY2026",
+   "topic": "million_dollar_plus_clients",
+   "type": "kpi",
+   "unit": "CLIENTS",
+   "value": 59.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_6c522b88",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 7,
+    "quote": "We generated INR 409 crore of cash from operations, which is a 70% conversion of adjusted EBITDA."
+   },
+   "metric": "operating_cash_flow",
+   "news_id": "nse-106622719",
+   "page": 7,
+   "pages": [
+    7
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "We generated INR 409 crore of cash from operations, which is a 70% conversion of adjusted EBITDA.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "We generated INR 409 crore of cash from operations, which is a 70% conversion of adjusted EBITDA",
+   "topic": "fy26_operating_cash_flow",
+   "type": "kpi",
+   "unit": "INR_CR",
+   "value": 409.0,
+   "value_base": 4090000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_56f016a3",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 10,
+    "quote": "DSO which is an important indicator for cash flow generation has improved by two days that is from 74 days in FY2024-FY2025 to 72 days in the current fiscal year."
+   },
+   "metric": "dso",
+   "news_id": "nse-106622719",
+   "page": 10,
+   "pages": [
+    10
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "DSO which is an important indicator for cash flow generation has improved by two days that is from 74 days in FY2024-FY2025 to 72 days in the current fiscal year.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "DSO which is an important indicator for cash flow generation has improved by two days that is from 74 days in FY2024-FY2025 to 72 days in the current fiscal year",
+   "topic": "fy26_dso",
+   "type": "kpi",
+   "unit": "DAYS",
+   "value": 72.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_deefd678",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 8,
+    "quote": "First, 151 bps improvement from change in mix of engagement type moving towards output-based contracts, price increases, and productivity improvements."
+   },
+   "metric": "gross_margin_driver",
+   "news_id": "nse-106622719",
+   "page": 8,
+   "pages": [
+    8
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "First, 151 bps improvement from change in mix of engagement type moving towards output-based contracts, price increases, and productivity improvements.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Q4 gross margin had 151 bps improvement from change in mix of engagement type moving towards output-based contracts, price increases, and productivity improvements",
+   "topic": "q4_gross_margin_driver_mix",
+   "type": "margin_driver",
+   "unit": "BPS",
+   "value": 151.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_9e4fad9a",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 8,
+    "quote": "Second, 219 bps benefit from weaker rupee."
+   },
+   "metric": "gross_margin_driver",
+   "news_id": "nse-106622719",
+   "page": 8,
+   "pages": [
+    8
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Second, 219 bps benefit from weaker rupee.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Q4 gross margin had 219 bps benefit from weaker rupee",
+   "topic": "q4_gross_margin_driver_forex",
+   "type": "margin_driver",
+   "unit": "BPS",
+   "value": 219.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_daf022d7",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 8,
+    "quote": "Third, 322 bps of negative impact from annual merit increase."
+   },
+   "metric": "gross_margin_driver",
+   "news_id": "nse-106622719",
+   "page": 8,
+   "pages": [
+    8
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Third, 322 bps of negative impact from annual merit increase.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Q4 gross margin had 322 bps of negative impact from annual merit increase",
+   "topic": "q4_gross_margin_driver_merit",
+   "type": "margin_driver",
+   "unit": "BPS",
+   "value": 322.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_031081e8",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 9,
+    "quote": "In FY2026, we spent INR 212 crore on R&D investments, 48% higher than the previous year."
+   },
+   "metric": "rd_spend",
+   "news_id": "nse-106622719",
+   "page": 9,
+   "pages": [
+    9
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "In FY2026, we spent INR 212 crore on R&D investments, 48% higher than the previous year.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "In FY2026, we spent INR 212 crore on R&D investments, 48% higher than the previous year",
+   "topic": "fy26_rd_spend",
+   "type": "capex_capacity",
+   "unit": "INR_CR",
+   "value": 212.0,
+   "value_base": 2120000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_9da96118",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 13,
+    "quote": "Now, for the last part of your question, which is about outlook for TMT, we expect these client-specific growth issues to have worked themselves out through this year, and therefore, we expect to do better in the TMT vertical in the next few quarters."
+   },
+   "metric": "outlook",
+   "news_id": "nse-106622719",
+   "page": 13,
+   "pages": [
+    13
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Now, for the last part of your question, which is about outlook for TMT, we expect these client-specific growth issues to have worked themselves out through this year, and therefore, we expect to do better in the TMT vertical in the next few quarters.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "In TMT, we expect these client-specific growth issues to have worked themselves out through this year, and therefore, we expect to do better in the TMT vertical in the next few quarters",
+   "topic": "tmt_vertical_outlook",
+   "type": "outlook"
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_aacd88a6",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "In April, we used these proceeds to repay our long-term debt as we had committed at the time of the offering. Fractal is now debt free."
+   },
+   "metric": "debt",
+   "news_id": "nse-106622719",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "In April, we used these proceeds to repay our long-term debt as we had committed at the time of the offering. Fractal is now debt free.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "In April, we used these proceeds to repay our long-term debt as we had committed at the time of the offering. Fractal is now debt free.",
+   "topic": "debt_repayment",
+   "type": "capital_allocation"
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "AIM",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_791e8b28",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 22,
+    "quote": "We want to take that license driven revenue from 3% to 20% by 2030, and which will be quite significant in terms of also margin expansion."
+   },
+   "metric": "license_revenue_share",
+   "news_id": "nse-106622719",
+   "page": 22,
+   "pages": [
+    22
+   ],
+   "period": "2030",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "We want to take that license driven revenue from 3% to 20% by 2030, and which will be quite significant in terms of also margin expansion.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The company aims to increase the share of license-driven revenue from 3% to 20% by 2030.",
+   "topic": "license_revenue_target",
+   "type": "commitment",
+   "unit": "PERCENT",
+   "value": 20.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_f6578ba1",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 22,
+    "quote": "one of the reasons I feel pretty confident about expanding our gross margins as we expand our revenue is because the share of license revenue as well as output- and outcome-based revenues are increasing of the overall pie and each of those moves actually expands our gross margin."
+   },
+   "metric": "gross_margin",
+   "news_id": "nse-106622719",
+   "page": 22,
+   "pages": [
+    22
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "one of the reasons I feel pretty confident about expanding our gross margins as we expand our revenue is because the share of license revenue as well as output- and outcome-based revenues are increasing of the overall pie and each of those moves actually expands our gross margin.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "Expanding the share of license-driven and outcome-based revenues is expected to drive gross margin expansion.",
+   "topic": "margin_expansion_drivers",
+   "type": "margin_driver"
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_70928ab6",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 23,
+    "quote": "I can tell the revenue contribution will be higher than the prior year, I can tell this segment is growing faster relative to Fractal overall."
+   },
+   "metric": "revenue_contribution",
+   "news_id": "nse-106622719",
+   "page": 23,
+   "pages": [
+    23
+   ],
+   "period": "FY27",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "I can tell the revenue contribution will be higher than the prior year, I can tell this segment is growing faster relative to Fractal overall.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "Fractal Alpha segment is expected to have a higher revenue contribution in FY2027 compared to the prior year.",
+   "topic": "fractal_alpha_growth",
+   "type": "outlook"
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-14",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_6d4dba1c",
+   "lab": {
+    "at": "2026-11-01T04:14:04+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 23,
+    "quote": "We did it while expanding gross margins, growing adjusted EBITDA, and stepping up R&D investment to 6.4% of revenue."
+   },
+   "metric": "rd_investment_ratio",
+   "news_id": "nse-106622719",
+   "page": 23,
+   "pages": [
+    23
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "We did it while expanding gross margins, growing adjusted EBITDA, and stepping up R&D investment to 6.4% of revenue.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "R&D investment for the year was 6.4% of revenue.",
+   "topic": "rd_spend",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 6.4
+  },
+  {
+   "company_defined": false,
+   "date": "2026-05-11",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_344d9ea1",
+   "lab": {
+    "at": "2026-11-01T04:13:01+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 45,
+    "quote": "Fractal course 'AI for Karmayogis' crossed 2.5 million completions by government learners"
+   },
+   "metric": "course_completions",
+   "news_id": "nse-106617746",
+   "page": 45,
+   "pages": [
+    45
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Fractal course 'AI for Karmayogis' crossed 2.5 million completions by government learners",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Fractal course 'AI for Karmayogis' crossed 2.5 million completions by government learners",
+   "topic": "ai_for_karmayogis_completions",
+   "type": "kpi",
+   "unit": "MILLION",
+   "value": 2.5,
+   "value_base": 2500000.0
+  },
+  {
+   "company_defined": false,
+   "date": "2026-05-11",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_0ff16838",
+   "lab": {
+    "at": "2026-11-01T04:13:01+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 45,
+    "quote": "Karmayogi Bharat is a Government of India initiative that runs the iGOT platform - a learning system delivering self-paced learning to 14 million civil service professionals across India."
+   },
+   "metric": "platform_reach",
+   "news_id": "nse-106617746",
+   "page": 45,
+   "pages": [
+    45
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Karmayogi Bharat is a Government of India initiative that runs the iGOT platform - a learning system delivering self-paced learning to 14 million civil service professionals across India.",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "iGOT platform is a learning system delivering self-paced learning to 14 million civil service professionals across India",
+   "topic": "igot_platform_reach",
+   "type": "kpi",
+   "unit": "MILLION",
+   "value": 14.0,
+   "value_base": 14000000.0
+  },
+  {
+   "company_defined": false,
+   "date": "2026-05-11",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_48557cca",
+   "lab": {
+    "at": "2026-11-01T04:13:01+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 49,
+    "quote": "Outstanding shares 171,965,112"
+   },
+   "metric": "outstanding_shares",
+   "news_id": "nse-106617746",
+   "page": 49,
+   "pages": [
+    49
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Outstanding shares 171,965,112",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Outstanding shares are 171,965,112",
+   "topic": "shareholding_outstanding_shares",
+   "type": "kpi",
+   "unit": "SHARES",
+   "value": 171965112.0
+  },
+  {
+   "company_defined": false,
+   "date": "2026-05-11",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_745d2662",
+   "lab": {
+    "at": "2026-11-01T04:13:01+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 49,
+    "quote": "Fully diluted shares* 198,139,447"
+   },
+   "metric": "fully_diluted_shares",
+   "news_id": "nse-106617746",
+   "page": 49,
+   "pages": [
+    49
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Fully diluted shares* 198,139,447",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Fully diluted shares are 198,139,447 excluding reserved, not granted count of 1,280,507",
+   "topic": "shareholding_fully_diluted_shares",
+   "type": "kpi",
+   "unit": "SHARES",
+   "value": 198139447.0
+  },
+  {
+   "company_defined": false,
+   "date": "2026-05-11",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_a27a27bc",
+   "lab": {
+    "at": "2026-11-01T04:13:01+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 49,
+    "quote": "Excludes reserved, not granted count of 1,280,507, including the same fully diluted shares are 199,419,954"
+   },
+   "metric": "fully_diluted_shares_total",
+   "news_id": "nse-106617746",
+   "page": 49,
+   "pages": [
+    49
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Excludes reserved, not granted count of 1,280,507, including the same fully diluted shares are 199,419,954",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Fully diluted shares including reserved, not granted count of 1,280,507 are 199,419,954",
+   "topic": "shareholding_fully_diluted_shares_total",
+   "type": "kpi",
+   "unit": "SHARES",
+   "value": 199419954.0
+  }
+ ],
+ "call_points": [
+  {
+   "category": "Guidance",
+   "date": "2026-05-14",
+   "lab": {
+    "at": "2026-11-01T04:06:42+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106622719",
+   "text": "Management expects historical revenue growth rates to be a good indication for next year's growth, with no specific FY27 revenue guidance provided."
+  },
+  {
+   "category": "Guidance",
+   "date": "2026-05-14",
+   "lab": {
+    "at": "2026-11-01T04:06:42+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106622719",
+   "text": "Aims to increase license-driven revenue from current 3% of sales to 20% by 2030 to expand gross margins."
+  },
+  {
+   "category": "Balance sheet & funding",
+   "date": "2026-05-14",
+   "lab": {
+    "at": "2026-11-01T04:06:42+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106622719",
+   "text": "Utilised IPO proceeds in April 2026 to repay all long-term debt, rendering the company entirely debt-free."
+  },
+  {
+   "category": "Demand & orders",
+   "date": "2026-05-14",
+   "lab": {
+    "at": "2026-11-01T04:06:42+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106622719",
+   "text": "Clients generating over USD 1 million in revenue increased to 59 in FY26 from 53 in FY25."
+  },
+  {
+   "category": "Margins & costs",
+   "date": "2026-05-14",
+   "lab": {
+    "at": "2026-11-01T04:06:42+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106622719",
+   "text": "Output and outcome contracts carry 5-7 percentage points higher gross margin than input pricing, while license revenue yields 25-30 points higher margins."
+  },
+  {
+   "category": "Risks",
+   "date": "2026-05-14",
+   "lab": {
+    "at": "2026-11-01T04:06:42+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106622719",
+   "text": "FY26 revenue growth was 27% excluding TMT, which suffered from a client JV migration, client restructuring, and revenue recognition delays."
+  },
+  {
+   "category": "Demand & orders",
+   "date": "2026-05-14",
+   "lab": {
+    "at": "2026-11-01T04:06:42+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106622719",
+   "text": "Qure.ai has built a strong order pipeline following calendar year setbacks from USAID funding cuts, lifting a profitability drag on Fractal."
+  },
+  {
+   "category": "Guidance",
+   "date": "2026-05-11",
+   "lab": {
+    "at": "2026-11-01T04:02:08+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106617746",
+   "text": "Full year FY26 organic constant currency revenue growth stood at 13% YoY."
+  },
+  {
+   "category": "Balance sheet & funding",
+   "date": "2026-05-11",
+   "lab": {
+    "at": "2026-11-01T04:02:08+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106617746",
+   "text": "Cash and cash equivalents reached ₹2,052 Cr, supported by IPO proceeds of ₹956.8 Cr."
+  }
+ ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -33.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.6,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -106.8,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 135.8,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -26.8,
+    "AdjustmentsForFinanceCosts": 46.2,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 24.6,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 70.8,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 12.2,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -54.1,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.8,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 3.4,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -6.1,
+    "AdjustmentsForProvisionsCurrent": 14.9,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 106.8,
+    "AdjustmentsForSharebasedPayments": 63.4,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -12.5,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 206.7,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 937.8,
+    "CashFlowsFromUsedInInvestingActivities": -1422.3,
+    "CashFlowsFromUsedInOperatingActivities": 409.0,
+    "CashFlowsFromUsedInOperations": 483.8,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 17.3,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 74.8,
+    "IncreaseDecreaseInCashAndCashEquivalents": -58.2,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -75.5,
+    "InterestPaidClassifiedAsFinancingActivities": 27.3,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 6.2,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -1.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1209.8,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 48.9,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 50.7,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 5.1,
+    "ProceedsFromExerciseOfStockOptions": -5.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 1073.4,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 218.7,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 8.8,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 15.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -3.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 216.6,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 68.0,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -21.5,
+    "AdjustmentsForFinanceCosts": 18.1,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 20.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 9.7,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 61.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 11.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -56.6,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.1,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 37.6,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 14.2,
+    "AdjustmentsForReconcileProfitLoss": 385.7,
+    "AdjustmentsForSharebasedPayments": 46.5,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -23.4,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 57.8,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1029.0,
+    "CashFlowsFromUsedInInvestingActivities": -1574.2,
+    "CashFlowsFromUsedInOperatingActivities": 580.7,
+    "CashFlowsFromUsedInOperations": 632.8,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 52.1,
+    "IncreaseDecreaseInCashAndCashEquivalents": 35.5,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 35.5,
+    "InterestPaidClassifiedAsFinancingActivities": 3.9,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 6.6,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -5.6,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 48.9,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1418.5,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 40.5,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 1073.4,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 113.4,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Fractal Analytics Limited",
- "deals": [],
+ "deals": [
+  {
+   "amount_cr": 57.6,
+   "as_of": "2026-05-21T02:04:44+05:30",
+   "counterparty": "Asper. Ai Inc.",
+   "discount_pct": null,
+   "execution_by": "March 31, 2027",
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 57.6,
+     "as_of": "2026-05-21T02:04:44+05:30",
+     "lab": {
+      "at": "2026-11-01T04:07:29+05:30",
+      "by": "ai",
+      "doc": "board",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106632832",
+     "stage": "BOARD_APPROVED"
+    }
+   ],
+   "id": "d_b4f66ede",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "OTHER",
+   "lab": {
+    "at": "2026-11-01T04:07:29+05:30",
+    "by": "ai",
+    "doc": "board",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "Data Analytics and AI Services",
+   "seller": null,
+   "source_news_id": "nse-106632832",
+   "stage": "BOARD_APPROVED",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-05-21T02:04:44+05:30",
+   "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-03-05T18:00:00+05:30",
@@ -2883,8 +4450,41 @@
  ],
  "fy_end_month": 3,
  "governance": {
-  "auditor": null,
-  "auditor_history": [],
+  "auditor": {
+   "as_of": "2026-05-14T17:14:28+05:30",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "name": "B S R & Co. LLP",
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106622719"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-05-11T22:31:20+05:30",
+    "lab": {
+     "at": "2026-11-01T03:56:16+05:30",
+     "by": "ai",
+     "doc": "board"
+    },
+    "name": "B S R & Co. LLP",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106617667"
+   },
+   {
+    "as_of": "2026-05-14T17:14:28+05:30",
+    "lab": {
+     "at": "2026-11-01T04:02:50+05:30",
+     "by": "ai",
+     "doc": "call"
+    },
+    "name": "B S R & Co. LLP",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106622719"
+   }
+  ],
   "quarters": [
    {
     "as_of": "2026-04-30T16:12:34+05:30",
@@ -3378,14 +4978,555 @@
    }
   ]
  },
- "guidance": [],
+ "guidance": [
+  {
+   "due": "2-3 years",
+   "due_date": null,
+   "given_on": "2026-05-14T17:14:28+05:30",
+   "id": "g_61d4452d",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "output_outcome_license_revenue_share",
+   "source_news_id": "nse-106622719",
+   "source_type": "CONCALL",
+   "statement": "We expect to get to 60% of our revenue to be output, outcome, or license based in the next two to three years.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "60%"
+  },
+  {
+   "due": "2030",
+   "due_date": "2030-12-31",
+   "given_on": "2026-05-14T17:14:28+05:30",
+   "id": "g_b4b1ef68",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "license_revenue_share",
+   "source_news_id": "nse-106622719",
+   "source_type": "CONCALL",
+   "statement": "We want to take that license driven revenue from 3% to 20% by 2030, and which will be quite significant in terms of also margin expansion.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "20%"
+  }
+ ],
  "identity": {
-  "entities": [],
-  "former_names": []
+  "entities": [
+   {
+    "as_of": "2026-05-11T22:31:20+05:30",
+    "lab": {
+     "at": "2026-11-01T03:56:16+05:30",
+     "by": "ai",
+     "doc": "board"
+    },
+    "name": "Senseforth Inc.",
+    "source_news_id": "nse-106617667",
+    "type": "wholly owned step-down subsidiary"
+   },
+   {
+    "as_of": "2026-05-11T22:31:20+05:30",
+    "lab": {
+     "at": "2026-11-01T03:56:16+05:30",
+     "by": "ai",
+     "doc": "board"
+    },
+    "name": "Fractal Analytics Inc.",
+    "source_news_id": "nse-106617667",
+    "type": "wholly owned subsidiary"
+   },
+   {
+    "as_of": "2026-05-11T22:31:20+05:30",
+    "lab": {
+     "at": "2026-11-01T03:56:16+05:30",
+     "by": "ai",
+     "doc": "board"
+    },
+    "name": "Fractal Frontiers Inc.",
+    "source_news_id": "nse-106617667",
+    "type": "wholly owned step-down subsidiary"
+   },
+   {
+    "as_of": "2026-05-14T17:14:28+05:30",
+    "lab": {
+     "at": "2026-11-01T04:02:50+05:30",
+     "by": "ai",
+     "doc": "call"
+    },
+    "name": "Asper.ai",
+    "source_news_id": "nse-106622719",
+    "type": "brand"
+   },
+   {
+    "as_of": "2026-05-14T17:14:28+05:30",
+    "lab": {
+     "at": "2026-11-01T04:02:50+05:30",
+     "by": "ai",
+     "doc": "call"
+    },
+    "name": "Analytics Vidhya",
+    "source_news_id": "nse-106622719",
+    "type": "brand"
+   },
+   {
+    "as_of": "2026-05-21T02:04:44+05:30",
+    "lab": {
+     "at": "2026-11-01T04:07:29+05:30",
+     "by": "ai",
+     "doc": "board"
+    },
+    "name": "Asper. Ai Inc.",
+    "source_news_id": "nse-106632832",
+    "type": "step-down subsidiary"
+   }
+  ],
+  "former_names": [
+   "Fractal Analytics Private Limited"
+  ]
  },
  "industry": "Information Technology > IT - Software > Computers - Software & Consulting",
  "last_filed_at": "2026-10-23T01:54:46+05:30",
- "operating_notes": [],
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.6,
+     "description": "Remeasurement of defined employee benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -4.0,
+     "description": "Effective portion of (losses) on derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 6.2,
+     "description": "Effective portion of gains on derivatives designated as cash flow hedge reclassified to profit or loss",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -0.1,
+     "description": "Share of (loss) / gain of associate (net of taxes) recognised in other comprehensive income",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 5.8,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.6,
+    "oci_net_cr": 8.6,
+    "profit_cr": 100.1,
+    "reclassified_cr": 7.9,
+    "tax_not_reclassified_cr": 0.4,
+    "tax_reclassified_cr": 0.5,
+    "total_comprehensive_cr": 108.7,
+    "total_comprehensive_nci_cr": -2.5,
+    "total_comprehensive_owners_cr": 111.2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.6,
+     "description": "Remeasurement of defined employee benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -4.0,
+     "description": "Effective portion of gains on derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 6.2,
+     "description": "Effective portion of gains on derivatives designated as cash flow hedge reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 1.6,
+    "oci_net_cr": 2.9,
+    "profit_cr": 49.3,
+    "reclassified_cr": 2.2,
+    "tax_not_reclassified_cr": 0.4,
+    "tax_reclassified_cr": 0.5,
+    "total_comprehensive_cr": 52.2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 11.5,
+     "description": "Remeasurement of defined employee benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -11.3,
+     "description": "Effective portion of (loss) on of derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -2.0,
+     "description": "(Loss) due to changes in intrinsic value of derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -0.9,
+     "description": "(Loss) due to changes in time value of derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 6.8,
+     "description": "Effective portion of gains on of derivatives designated as cash flow hedge reclassified to profit or loss",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.5,
+     "description": "Share of loss of associate (net of taxes) recognised in other comprehensive income",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 14.4,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 11.5,
+    "oci_net_cr": 17.8,
+    "profit_cr": 115.8,
+    "reclassified_cr": 7.5,
+    "tax_not_reclassified_cr": 3.0,
+    "tax_reclassified_cr": -1.8,
+    "total_comprehensive_cr": 133.6,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 17.8
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 10.9,
+     "description": "Remeasurement of defined employee benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -11.3,
+     "description": "Effective portion of (loss) / gain on derivative designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -2.0,
+     "description": "(Loss) due to changes in intrinsic value on derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -0.9,
+     "description": "(Loss) due to changes in time value of derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 6.8,
+     "description": "Effective portion of gain / (loss) on derivatives designated as cash flow hedge reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 10.9,
+    "oci_net_cr": 2.6,
+    "profit_cr": 73.4,
+    "reclassified_cr": -7.4,
+    "tax_not_reclassified_cr": 2.7,
+    "tax_reclassified_cr": -1.8,
+    "total_comprehensive_cr": 76.0
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -4.7,
+     "description": "(a) Remeasurement of defined employee benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 1.3,
+     "description": "Effective portion of gain / (loss) on derivative designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.3,
+     "description": "Gain / (loss) due to changes in intrinsic value on derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.6,
+     "description": "Gain / (loss) due to changes in time value of derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 10.1,
+     "description": "Effective portion of gain on derivatives designated as cash flow hedge reclassified to profit or loss",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.1,
+     "description": "Share of loss of associate (net of taxes) recognised in other comprehensive income",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 8.1,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -4.7,
+    "oci_net_cr": 13.9,
+    "profit_cr": 72.3,
+    "reclassified_cr": 20.5,
+    "tax_not_reclassified_cr": -1.2,
+    "tax_reclassified_cr": 3.1,
+    "total_comprehensive_cr": 86.2,
+    "total_comprehensive_nci_cr": -1.9,
+    "total_comprehensive_owners_cr": 88.1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -4.7,
+     "description": "(a) Remeasurement of defined employee benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 1.3,
+     "description": "Effective portion of gain / (loss) on derivative designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.3,
+     "description": "Gain / (loss) due to changes in intrinsic value on derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.6,
+     "description": "Gain / (loss) due to changes in time value of derivatives designated as cash flow hedge",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 10.1,
+     "description": "Effective portion of gain on derivatives designated as cash flow hedge reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -4.7,
+    "oci_net_cr": 5.7,
+    "profit_cr": 75.3,
+    "reclassified_cr": 12.3,
+    "tax_not_reclassified_cr": -1.2,
+    "tax_reclassified_cr": 3.1,
+    "total_comprehensive_cr": 81.0
+   }
+  }
+ ],
+ "operating_notes": [
+  {
+   "as_of": "2026-05-11T22:31:20+05:30",
+   "lab": {
+    "at": "2026-11-01T03:56:16+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "source_news_id": "nse-106617667",
+   "text": "Approved merger of Senseforth Inc. into Fractal Analytics Inc."
+  },
+  {
+   "as_of": "2026-05-11T22:31:20+05:30",
+   "lab": {
+    "at": "2026-11-01T03:56:16+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "source_news_id": "nse-106617667",
+   "text": "Approved liquidation of step-down subsidiary Fractal Frontiers Inc."
+  },
+  {
+   "as_of": "2026-05-11T22:51:12+05:30",
+   "lab": {
+    "at": "2026-11-01T03:57:52+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "source_news_id": "nse-106617735",
+   "text": "Q4 FY26 Net Revenue Retention stood at 112% and Net Promoter Score was 81."
+  },
+  {
+   "as_of": "2026-05-11T22:51:12+05:30",
+   "lab": {
+    "at": "2026-11-01T03:57:52+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "source_news_id": "nse-106617735",
+   "text": "Invests over 6% of annual revenue in AI research and development."
+  },
+  {
+   "as_of": "2026-05-11T22:57:58+05:30",
+   "lab": {
+    "at": "2026-11-01T03:58:52+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106617746",
+   "text": "FY26 Net Revenue Retention (NRR) stood at 117% and Net Promoter Score (NPS) was 78."
+  },
+  {
+   "as_of": "2026-05-11T22:57:58+05:30",
+   "lab": {
+    "at": "2026-11-01T03:58:52+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106617746",
+   "text": "Days of sales outstanding (DSO) stood at 72 days for FY26."
+  },
+  {
+   "as_of": "2026-05-11T22:57:58+05:30",
+   "lab": {
+    "at": "2026-11-01T03:58:52+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106617746",
+   "text": "Total employees count reached 5,868 as of March 31, 2026."
+  },
+  {
+   "as_of": "2026-05-14T17:14:28+05:30",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106622719",
+   "text": "Revenue per billable employee increased 5% in rupee terms to ₹75 lakh (USD 85,000) in FY26."
+  },
+  {
+   "as_of": "2026-05-14T17:14:28+05:30",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106622719",
+   "text": "Fractal Alpha segment losses narrowed to ₹15 Cr in FY26 from ₹26 Cr in FY25."
+  },
+  {
+   "as_of": "2026-05-14T17:14:28+05:30",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106622719",
+   "text": "DSO improved by 2 days to 72 days in FY26 from 74 days in FY25."
+  },
+  {
+   "as_of": "2026-05-21T02:04:44+05:30",
+   "lab": {
+    "at": "2026-11-01T04:07:29+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "source_news_id": "nse-106632832",
+   "text": "Asper US turnover reached ₹54.52 Cr in FY26 compared to ₹39.92 Cr in FY25 and ₹21.97 Cr in FY23."
+  }
+ ],
  "ownership": [
   {
    "aif_pct": 3.78,
@@ -3440,6 +5581,736 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 770.995,
+     "approved_cr": 1430.0,
+     "closing_cr": 601.4,
+     "counterparty": "Fractal Analytics Inc, USA",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 574.1,
+     "other_details": "Revenue from operations and Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 51.89,
+     "approved_cr": 0.0,
+     "closing_cr": 17.0,
+     "counterparty": "Quinag Bidco Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Company having significant influence",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 48.917,
+     "approved_cr": 0.0,
+     "closing_cr": 89.7,
+     "counterparty": "Analytics Vidhya Educon Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 40.8,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 34.304,
+     "approved_cr": 67.7,
+     "closing_cr": 46.3,
+     "counterparty": "Asper.AI Inc",
+     "entity": "ASPER.AI Technologies Private Limited",
+     "opening_cr": 33.8,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 26.508,
+     "approved_cr": 0.0,
+     "closing_cr": 8.7,
+     "counterparty": "TPG Fett Holdings Pte Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Company having significant influence",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 26.508,
+     "approved_cr": 0.0,
+     "closing_cr": 8.7,
+     "counterparty": "GLM Family Trust",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Entity in which Director is interested",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.9,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 20.9,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0739,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5 years from date of disbursement",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 20.663,
+     "approved_cr": 0.0,
+     "closing_cr": 84.8,
+     "counterparty": "Fractal Analytics UK Limited, UK",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 74.0,
+     "other_details": "Cost of Delivery and Expenses incurred for the Company to(Creating payable position)",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.85,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 15.9,
+     "other_details": "Write off of Investment in subsidiary",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.85,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 15.9,
+     "other_details": "Impairment provision for investment in equity instruments in subsidiary",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.79,
+     "approved_cr": 0.0,
+     "closing_cr": 24.6,
+     "counterparty": "Fractal Analytics FZ LLC",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 12.6,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 10.552,
+     "approved_cr": 0.0,
+     "closing_cr": 15.7,
+     "counterparty": "Fractal Analytics (Canada) Inc",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 12.1,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 8.818,
+     "approved_cr": 0.0,
+     "closing_cr": 76.9,
+     "counterparty": "Asper.AI Inc",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 76.6,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 7.388,
+     "approved_cr": 0.0,
+     "closing_cr": 4.7,
+     "counterparty": "Fractal Analytics Netherlands B.V",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 3.1,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.688,
+     "approved_cr": 0.0,
+     "closing_cr": 4.4,
+     "counterparty": "Analytics Vidhya Inc., USA",
+     "entity": "Analytics Vidhya Educon Private Limited",
+     "opening_cr": 0.1,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.381,
+     "approved_cr": 63.6,
+     "closing_cr": 105.3,
+     "counterparty": "Fractal Analytics Inc, USA",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 99.9,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.162,
+     "approved_cr": 5.162,
+     "closing_cr": 5.2,
+     "counterparty": "Asper.AI Inc",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0454,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayable on demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 5.133,
+     "approved_cr": 0.0,
+     "closing_cr": 4.0,
+     "counterparty": "Fractal Private Limited, Singapore",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 3.3,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.078,
+     "approved_cr": 11.6,
+     "closing_cr": 1.2,
+     "counterparty": "Analytics Vidhya Educon Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 1.2,
+     "other_details": "Cost of Delivery and Expenses incurred for the Company to(Creating payable position)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.73,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 4.7,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 4.42,
+     "approved_cr": 0.0,
+     "closing_cr": 15.4,
+     "counterparty": "ASPER.AI Technologies Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 11.1,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Step-down subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.865,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Pranay Agrawal",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 0.0,
+     "relationship": "Key Managerial Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 3.532,
+     "approved_cr": 7.758,
+     "closing_cr": 8.8,
+     "counterparty": "ASPER.AI LIMITED,UK",
+     "entity": "Asper.AI Inc",
+     "opening_cr": 7.6,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.429,
+     "approved_cr": 5.845,
+     "closing_cr": 4.6,
+     "counterparty": "ASPER.AI LIMITED,UK",
+     "entity": "Asper.AI Inc",
+     "opening_cr": 2.3,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.151,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Srikanth Velamakanni",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key Managerial Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 3.151,
+     "approved_cr": 0.0,
+     "closing_cr": 4.1,
+     "counterparty": "Symphony (Ukraine) LLC",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 3.4,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.127,
+     "approved_cr": 3.127,
+     "closing_cr": 8.8,
+     "counterparty": "Asper.AI Inc",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 5.0,
+     "other_details": "Revenue from operations and Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.565,
+     "approved_cr": 0.0,
+     "closing_cr": 2.6,
+     "counterparty": "Fractal Analytics Inc, USA",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Share application money pending allotment",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.263,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Ashwath Bhat",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key Managerial Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.52,
+     "approved_cr": 1.52,
+     "closing_cr": 0.1,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 1.3,
+     "other_details": "Cost of Delivery and Expenses incurred for the Company to(Creating payable position)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.434,
+     "approved_cr": 24.0,
+     "closing_cr": 43.2,
+     "counterparty": "Fractal Analytics UK Limited, UK",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 41.7,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Step-down subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.295,
+     "approved_cr": 0.0,
+     "closing_cr": 1.5,
+     "counterparty": "Fractal Analytics Germany GmbH",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 1.3,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.29,
+     "approved_cr": 5.2,
+     "closing_cr": 0.0,
+     "counterparty": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 0.0,
+     "other_details": "Expenses from Guarantee fees",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.262,
+     "approved_cr": 0.0,
+     "closing_cr": 18.4,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 17.2,
+     "other_details": "Impairment provision for deemed investment in subsidiaries",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.17,
+     "approved_cr": 5.2,
+     "closing_cr": 1.6,
+     "counterparty": "Fractal Analytics Inc, USA",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 2.7,
+     "other_details": "Unwinding of guarantee fee income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.128,
+     "approved_cr": 1.128,
+     "closing_cr": 0.9,
+     "counterparty": "Asper.AI Inc",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 0.0,
+     "other_details": "Cost of Delivery and Expenses incurred for the Company to(Creating payable position)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.995,
+     "approved_cr": 0.0,
+     "closing_cr": 4.3,
+     "counterparty": "Fractal Analytics UK Limited, UK",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 3.1,
+     "other_details": "Expenses incurred for the Company to(Creating payable position)",
+     "relationship": "Step-down subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.747,
+     "approved_cr": 1.466,
+     "closing_cr": 34.9,
+     "counterparty": "Pranay Agrawal",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 32.3,
+     "other_details": "Loan to director",
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.747,
+     "approved_cr": 2.0,
+     "closing_cr": 2.9,
+     "counterparty": "Asper.AI Inc",
+     "entity": "ASPER.AI Technologies Private Limited",
+     "opening_cr": 2.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.736,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.7,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.686,
+     "approved_cr": 0.0,
+     "closing_cr": 0.4,
+     "counterparty": "Fractal Analytics Australia Pty Limited",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 2.2,
+     "other_details": "Cost of Delivery/Reversal of Cost of Delivery",
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.593,
+     "approved_cr": 1.478,
+     "closing_cr": 0.2,
+     "counterparty": "Qure.ai Technologies Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.4,
+     "other_details": "Expense incurred for the Company creating payable position",
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.569,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Fractal Analytics FZ LLC",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.549,
+     "approved_cr": 0.0,
+     "closing_cr": 0.7,
+     "counterparty": "Fractal AI Limited",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 1.2,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.541,
+     "approved_cr": 1.06,
+     "closing_cr": 0.0,
+     "counterparty": "Tario Partners LLP",
+     "entity": "Fractal Analytics UK Limited, UK",
+     "opening_cr": 0.0,
+     "other_details": "Consulting income",
+     "relationship": "Entity in which Director is interested",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.454,
+     "approved_cr": 0.0,
+     "closing_cr": 33.2,
+     "counterparty": "Final Mile Consulting LLC",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 33.6,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.45,
+     "approved_cr": 1.3,
+     "closing_cr": 0.2,
+     "counterparty": "Analytics Vidhya Educon Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.445,
+     "approved_cr": 2.0,
+     "closing_cr": 0.9,
+     "counterparty": "Fractal Analytics Netherlands B.V",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.5,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Step-down subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.435,
+     "approved_cr": 0.65,
+     "closing_cr": 0.6,
+     "counterparty": "Fractal Analytics FZ LLC",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.2,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Step-down subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.415,
+     "approved_cr": 0.45,
+     "closing_cr": 0.4,
+     "counterparty": "Analytics Vidhya Educon Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.29,
+     "approved_cr": 0.3,
+     "closing_cr": 18.4,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 18.8,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.288,
+     "approved_cr": 0.288,
+     "closing_cr": 1.411,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 5.661,
+     "other_details": "Revenue from operations and Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.274,
+     "approved_cr": 0.0,
+     "closing_cr": 0.1,
+     "counterparty": "ASPER.AI LIMITED,UK",
+     "entity": "Fractal Analytics UK Limited, UK",
+     "opening_cr": 0.1,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.239,
+     "approved_cr": 0.0,
+     "closing_cr": 1.4,
+     "counterparty": "Fractal Analytics (Shanghai) Ltd",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 1.1,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.187,
+     "approved_cr": 0.4,
+     "closing_cr": 0.5,
+     "counterparty": "Fractal Analytics (Canada) Inc",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.3,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Step-down subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.174,
+     "approved_cr": 0.0,
+     "closing_cr": 2.8,
+     "counterparty": "Fractal Analytics (Switzerland) GmbH",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 2.8,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.132,
+     "approved_cr": 0.45,
+     "closing_cr": 0.5,
+     "counterparty": "Fractal Analytics Australia Pty Limited",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 0.3,
+     "other_details": "Deemed investment in subsidiary company",
+     "relationship": "Step-down subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.118,
+     "approved_cr": 0.0,
+     "closing_cr": 1.9,
+     "counterparty": "Senseforth AI Research Private Limited",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 1.9,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.098,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Fractal AI Limited",
+     "entity": "Fractal Analytics Inc, USA",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses from (Creating Receivable position)",
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.091,
+     "approved_cr": 5.2,
+     "closing_cr": 1.8,
+     "counterparty": "Fractal Analytics Inc, USA",
+     "entity": "Fractal Analytics Limited (Formerly known as Fractal Analytics Private Limited)",
+     "opening_cr": 2.9,
+     "other_details": "Guarantee commission income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 122,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544700",
  "section_lab": {
@@ -3450,7 +6321,234 @@
   }
  },
  "sector": "it",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 1862.5,
+     "liabilities_cr": 595.1,
+     "segment": "Fractal.ai"
+    },
+    {
+     "assets_cr": 448.8,
+     "liabilities_cr": 112.8,
+     "segment": "Fractal Alpha"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "totals": {
+    "assets_cr": 2311.3,
+    "liabilities_cr": 707.9,
+    "net_assets_cr": 3188.4,
+    "net_liabilities_cr": 1124.4
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 1927.9,
+     "liabilities_cr": 634.1,
+     "segment": "Fractal.ai"
+    },
+    {
+     "assets_cr": 417.9,
+     "liabilities_cr": 113.7,
+     "segment": "Fractal Alpha"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "totals": {
+    "assets_cr": 2345.8,
+    "liabilities_cr": 747.8,
+    "net_assets_cr": 4407.1,
+    "net_liabilities_cr": 1220.8
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 1887.0,
+     "liabilities_cr": 414.5,
+     "segment": "Fractal.ai"
+    },
+    {
+     "assets_cr": 462.4,
+     "liabilities_cr": 101.3,
+     "segment": "Fractal Alpha"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 2349.4,
+    "liabilities_cr": 515.8,
+    "net_assets_cr": 3958.9,
+    "net_liabilities_cr": 675.3
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 132.7,
+   "period": "Q3FY26",
+   "revenue_cr": 836.2,
+   "segment": "Fractal.ai",
+   "share_pct": 97.5,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -4.4,
+   "period": "Q3FY26",
+   "revenue_cr": 21.4,
+   "segment": "Fractal Alpha",
+   "share_pct": 2.5,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 190.5,
+   "period": "Q4FY26",
+   "revenue_cr": 864.4,
+   "segment": "Fractal.ai",
+   "share_pct": 97.3,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -6.0,
+   "period": "Q4FY26",
+   "revenue_cr": 24.4,
+   "segment": "Fractal Alpha",
+   "share_pct": 2.7,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-05-14T17:14:28+05:30",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "period": "FY26",
+   "revenue_cr": null,
+   "segment": "CPG and retail",
+   "share_pct": 37.0,
+   "source_news_id": "nse-106622719"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 157.7,
+   "period": "Q1FY27",
+   "revenue_cr": 894.2,
+   "segment": "Fractal.ai",
+   "share_pct": 97.4,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -14.8,
+   "period": "Q1FY27",
+   "revenue_cr": 24.0,
+   "segment": "Fractal Alpha",
+   "share_pct": 2.6,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -5866,21 +8964,532 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": -18.6,
+    "Depreciation": 35.7,
+    "Exceptional items": 0.1,
+    "Exceptional items AT": 0.1544753086419753,
+    "Expenses": 744.4999999999999,
+    "Interest": 11.2,
+    "Minority share": -2.5,
+    "Net Profit": 100.1,
+    "Net Profit (owners)": 102.6,
+    "OPM %": 12.862827715355817,
+    "Operating Profit": 109.90000000000009,
+    "Other Income": 1.799999999999926,
+    "PBT as filed": 83.4,
+    "Profit before tax": 64.80000000000001,
+    "Profit for PE": 102.44552469135802,
+    "Sales": 854.4,
+    "Tax": -35.3,
+    "Tax %": -54.47530864197529
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 19.8,
+    "Exceptional items": -3.5,
+    "Exceptional items AT": -2.7785829307568437,
+    "Expenses": 401.7,
+    "Interest": 3.9,
+    "Net Profit": 49.3,
+    "Net Profit (owners)": 49.3,
+    "OPM %": 17.835958273675594,
+    "Operating Profit": 87.19999999999999,
+    "Other Income": -1.3999999999999773,
+    "Profit before tax": 62.1,
+    "Profit for PE": 52.07858293075684,
+    "Sales": 488.9,
+    "Tax": 12.8,
+    "Tax %": 20.611916264090176
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": -7.2,
+    "Depreciation": 36.6,
+    "Exceptional items": -6.3,
+    "Exceptional items AT": -5.09811320754717,
+    "Expenses": 713.3000000000001,
+    "Interest": 12.9,
+    "Minority share": -2.0,
+    "Net Profit": 115.8,
+    "Net Profit (owners)": 117.8,
+    "OPM %": 19.519350107187172,
+    "Operating Profit": 172.9999999999999,
+    "Other Income": 19.600000000000136,
+    "PBT as filed": 150.3,
+    "Profit before tax": 143.10000000000002,
+    "Profit for PE": 122.89811320754717,
+    "Sales": 886.3,
+    "Tax": 27.3,
+    "Tax %": 19.077568134171905
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 418.4,
+    "CWIP": 35.6,
+    "Equity Capital": 17.2,
+    "Fixed Assets": 764.9,
+    "Investments": 1237.5,
+    "Other Assets": 2300.3,
+    "Other Liabilities": 735.0000000000006,
+    "Reserves": 3167.7,
+    "Total Assets": 4338.3,
+    "Total Liabilities": 4338.3
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": -70.3,
+    "Depreciation": 135.8,
+    "Exceptional items": -11.0,
+    "Exceptional items AT": -10.286273231170526,
+    "Expenses": 2861.7,
+    "Interest": 47.4,
+    "Minority share": -5.4,
+    "Net Profit": 286.8,
+    "Net Profit (owners)": 292.2,
+    "OPM %": 13.273933993999455,
+    "Operating Profit": 438.0,
+    "Other Income": 51.89999999999998,
+    "PBT as filed": 377.0,
+    "Profit before tax": 306.7,
+    "Profit for PE": 302.4862732311705,
+    "Sales": 3299.7,
+    "Tax": 19.9,
+    "Tax %": 6.488425171177045
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 937.8,
+    "Cash from Investing Activity": -1405.0,
+    "Cash from Operating Activity": 409.0,
+    "Net Cash Flow": -58.2
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 17.9,
+    "Exceptional items": -5.8,
+    "Exceptional items AT": -4.393395252837977,
+    "Expenses": 414.0,
+    "Interest": 6.0,
+    "Net Profit": 73.4,
+    "Net Profit (owners)": 73.4,
+    "OPM %": 19.251023990637805,
+    "Operating Profit": 98.70000000000005,
+    "Other Income": 22.099999999999966,
+    "Profit before tax": 96.9,
+    "Profit for PE": 77.79339525283798,
+    "Sales": 512.7,
+    "Tax": 23.5,
+    "Tax %": 24.251805985552114
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 112.1,
+    "CWIP": 29.6,
+    "Equity Capital": 17.2,
+    "Fixed Assets": 266.2,
+    "Investments": 1569.1,
+    "Other Assets": 1906.9000000000005,
+    "Other Liabilities": 381.3000000000005,
+    "Reserves": 3261.2,
+    "Total Assets": 3771.8,
+    "Total Liabilities": 3771.8
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 68.0,
+    "Exceptional items": -30.2,
+    "Exceptional items AT": -22.79360582760016,
+    "Expenses": 1564.8,
+    "Interest": 19.2,
+    "Net Profit": 186.5,
+    "Net Profit (owners)": 186.5,
+    "OPM %": 16.150466187975567,
+    "Operating Profit": 301.4000000000001,
+    "Other Income": 32.89999999999992,
+    "Profit before tax": 247.1,
+    "Profit for PE": 209.29360582760017,
+    "Sales": 1866.2,
+    "Tax": 60.6,
+    "Tax %": 24.524484014569
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1029.0,
+    "Cash from Investing Activity": -1574.2,
+    "Cash from Operating Activity": 580.7,
+    "Net Cash Flow": 35.5
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": -23.4,
+    "Depreciation": 39.8,
+    "Exceptional items": 6.9,
+    "Exceptional items AT": 5.121868583162218,
+    "Expenses": 793.0000000000001,
+    "Interest": 8.8,
+    "Minority share": -1.9,
+    "Net Profit": 72.3,
+    "Net Profit (owners)": 74.2,
+    "OPM %": 13.095890410958893,
+    "Operating Profit": 119.49999999999989,
+    "Other Income": 26.500000000000114,
+    "PBT as filed": 120.8,
+    "Profit before tax": 97.4,
+    "Profit for PE": 69.07813141683778,
+    "Sales": 912.5,
+    "Tax": 25.1,
+    "Tax %": 25.770020533880903
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 19.6,
+    "Exceptional items": 6.7,
+    "Exceptional items AT": 5.127134146341463,
+    "Expenses": 414.2,
+    "Interest": 3.0,
+    "Net Profit": 75.3,
+    "Net Profit (owners)": 75.3,
+    "OPM %": 18.14229249011858,
+    "Operating Profit": 91.80000000000001,
+    "Other Income": 29.19999999999999,
+    "Profit before tax": 98.4,
+    "Profit for PE": 70.17286585365854,
+    "Sales": 506.0,
+    "Tax": 23.1,
+    "Tax %": 23.47560975609756
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "FRACTAL",
  "timeline": [
+  {
+   "date": "2026-04-27T14:55:37+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_b551dad2",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-11-01T03:56:01+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106601070",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_27042026145432_Earnings_Call_Intimation.pdf",
+   "summary": "Fractal Analytics Limited’s **Somya Agarwal** announces a conference call on May 12, 2026, from 8:00 AM IST to discuss audited Q4FY26 and FY26 results.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-05-11T22:31:20+05:30",
+   "event_type": "OTHER",
+   "id": "t_d87dd1c9",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T03:56:16+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "news_id": "nse-106617667",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_11052026222920_Outcome_of_BM.pdf",
+   "summary": "Fractal Analytics reported Q4FY26 consolidated PAT of ₹115.8 Cr and approved the merger of Senseforth Inc. into Fractal Analytics Inc."
+  },
+  {
+   "date": "2026-05-11T22:51:12+05:30",
+   "event_type": "OTHER",
+   "id": "t_c5285e73",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T03:57:52+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "news_id": "nse-106617735",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_11052026225022_Press_Release.pdf",
+   "summary": "Fractal Analytics reported Q4 FY26 consolidated revenue of ₹886 Cr (+17% YoY) and net income of ₹116 Cr (+109% YoY)."
+  },
+  {
+   "date": "2026-05-11T22:57:58+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_122c9d53",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T03:58:52+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "news_id": "nse-106617746",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_11052026225603_Investor_Presentation.pdf",
+   "summary": "Fractal Analytics published its Q4 FY26 investor presentation highlighting a 109% YoY jump in quarterly net income to ₹115.8 Cr."
+  },
   {
    "date": "2026-05-12T14:02:52+05:30",
    "event_type": "CONCALL_PRESENTATION",
    "id": "t_9b875a1d",
    "impact_level": null,
    "lab": {
-    "at": "2026-05-12T14:02:52+05:30",
+    "at": "2026-11-01T04:02:42+05:30",
     "by": "ai",
     "doc": "call"
    },
    "news_id": "nse-106618405",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_12052026135737_Earnings_Audio_Call.pdf",
-   "summary": "Fractal Analytics Limited hosted Q4 FY26 earnings call on May 12, 2026, with audio recording uploaded by **Somya Agarwal**, Director, on the company website.",
+   "summary": "Fractal Analytics Limited hosted Q4 FY26 earnings call on May 12, 2026, with audio recording uploaded by **Somya Agarwal**, Director, at fractal.ai/investor-relations.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-05-14T17:14:28+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_d960e8e0",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106622719",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_14052026171354_Transcript_of_Earnings_Call.pdf",
+   "summary": "Fractal Analytics discussed Q4 & FY26 results on its earnings call, noting long-term debt repayment post-IPO and targeting 20% license revenue by 2030."
+  },
+  {
+   "date": "2026-05-18T19:20:15+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_c3aee6c0",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-11-01T04:07:22+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106628180",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_18052026191927_Meet.pdf",
+   "summary": "Fractal Analytics Limited’s **Somya Agarwal** scheduled in-person analyst/investor meets on May 25, June 1, and June 2, 2026, in Mumbai.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-05-21T02:04:44+05:30",
+   "event_type": "OTHER",
+   "id": "t_b4f66ede",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-11-01T04:07:29+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "news_id": "nse-106632832",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_21052026020358_SE_Intimation.pdf",
+   "summary": "Fractal Analytics board approved ₹57.6 Cr ($6 mn) investment via CCCPS by Fractal US into step-down subsidiary Asper US by March 31, 2027."
+  },
+  {
+   "date": "2026-05-29T22:44:27+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_0687a3fc",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-11-01T04:10:41+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106648530",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_29052026224213_SE_Voting_results.pdf",
+   "summary": "Fractal Analytics shareholders passed 9 special resolutions via postal ballot ratifying ESOP schemes and approving AoA amendments for board nomination rights."
+  },
+  {
+   "date": "2026-06-05T17:53:21+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_a7a896e9",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-11-01T04:14:09+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106656200",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_05062026175118_Institutional_Investors_Meet.pdf",
+   "summary": "Somya Agarwal, CFO, will virtually attend Choice Institutional Equities’ InsightX Virtual Forum on June 11, 2026, under SEBI’s disclosure rules.",
    "tier": "TIMELINE"
   },
   {
@@ -5897,9 +9506,110 @@
    "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_24072026152836_NSEBSEEarningsCall24072026.pdf",
    "summary": "Fractal Analytics Limited hosted Q1 FY27 earnings call on July 24, 2026, with audio recording available at fractal.ai/investor-relations/earnings-call-q1-fy27/ as per SEBI regulations, signed by **Somya Agarwal**.",
    "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-10-28T13:01:32+05:30",
+   "event_type": "OTHER",
+   "id": "t_f9073c79",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-28T14:01:40+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106831841",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/FRACTAL_28102026130052_Institutional_Investors_Meet_281026.pdf",
+   "summary": "Fractal Analytics Limited will hold analyst/institutional investor meetings on November 11, 16, 17, 18, 19, 26, December 2, and 3, 2026, as scheduled.",
+   "tier": "TIMELINE"
   }
  ],
- "upcoming_events": [],
- "updated_at": "2026-10-27T09:53:45+05:30",
- "watchlist": []
+ "upcoming_events": [
+  {
+   "as_of": "2026-05-11T22:57:58+05:30",
+   "date": "2026-05-12",
+   "description": "Conference call on audited Q4FY26 and FY26 results from 8:00 a.m. IST to 9:00 a.m. IST",
+   "event_type": "CONCALL_PRESENTATION",
+   "lab": {
+    "at": "2026-11-01T03:58:52+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106617746"
+  }
+ ],
+ "updated_at": "2026-11-01T04:10:41+05:30",
+ "watchlist": [
+  {
+   "check_by": "2026-06-30",
+   "check_in": "Q1FY27 results",
+   "created_on": "2026-05-14T17:14:28+05:30",
+   "id": "w_3511d0e9",
+   "kind": "KPI",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "source_news_id": "nse-106622719",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "TMT vertical revenue recovery"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-05-14T17:14:28+05:30",
+   "id": "w_a4f63adb",
+   "kind": "CONCERN",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "response": "Attributed to one APAC client moving business into a JV, an enterprise software client restructuring, and revenue recognition delays with a Mag 7 client due to data readiness; issues expected to work out.",
+   "source_news_id": "nse-106622719",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Sharp revenue decline in the TMT vertical in Q4 (-19%) and FY26 (-1%)."
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-05-14T17:14:28+05:30",
+   "id": "w_a90d1912",
+   "kind": "CONCERN",
+   "lab": {
+    "at": "2026-11-01T04:02:50+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "response": "Acknowledged current license revenue is ~3% of sales, but targeted to expand to 20% by 2030, supported by large enterprise adoption including a Mag 7 client.",
+   "source_news_id": "nse-106622719",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Low revenue contribution of the Cogentiq agentic platform."
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-05-21T02:04:44+05:30",
+   "id": "w_57072474",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-11-01T04:07:29+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "source_news_id": "nse-106632832",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Shareholder approval at 26th AGM for secretarial auditor appointment"
+  }
+ ]
 }

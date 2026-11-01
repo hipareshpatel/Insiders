@@ -1,7 +1,631 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-01-31",
+     "name": "BANSI S MEHTA AND CO",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-01-31",
+     "name": "BANSI S MEHTA AND CO",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -4.7167,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 4.3912,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 8.8247,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 24.6586,
+    "AdjustmentsForDividendIncome": 5.8828,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 4.8686,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.7825,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -2.2704,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 3.0548,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -12.3773,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.3449,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -0.4512,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 17.0193,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.4259,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 18.8117,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -40.8205,
+    "CashFlowsFromUsedInInvestingActivities": -45.7941,
+    "CashFlowsFromUsedInOperatingActivities": 48.9082,
+    "CashFlowsFromUsedInOperations": 54.9161,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 11.1711,
+    "DividendsReceivedClassifiedAsInvestingActivities": 5.8828,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.0079,
+    "IncreaseDecreaseInCashAndCashEquivalents": -37.7064,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -37.7064,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.5686,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.1009,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.577,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -3.5129,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -35.8653,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 14.5212,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.8785,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.2949,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 17.6751,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 12.4938,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -4.7167,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 8.8247,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 24.6586,
+    "AdjustmentsForDividendIncome": 5.8828,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 4.8686,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.7825,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -2.2696,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 3.0548,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 4.3914,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -12.3773,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.3449,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -0.4512,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 17.0203,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.4259,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 18.7804,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -40.8205,
+    "CashFlowsFromUsedInInvestingActivities": -45.7941,
+    "CashFlowsFromUsedInOperatingActivities": 48.91,
+    "CashFlowsFromUsedInOperations": 54.9179,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 11.1711,
+    "DividendsReceivedClassifiedAsInvestingActivities": 5.8828,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.0079,
+    "IncreaseDecreaseInCashAndCashEquivalents": -37.7046,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -37.7046,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.5686,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.1009,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.577,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -3.5129,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -35.8653,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 14.5212,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.2949,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 17.6751,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 11.6153,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 16.8126,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 7.8732,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -47.4145,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 48.6405,
+    "AdjustmentsForDividendIncome": 5.8828,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 8.0574,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 5.1329,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 6.1049,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 1.5295,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.9781,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -0.5792,
+    "AdjustmentsForProvisionsCurrent": 0.1834,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 31.5067,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 1.1115,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 57.8311,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -39.6516,
+    "CashFlowsFromUsedInInvestingActivities": -37.504,
+    "CashFlowsFromUsedInOperatingActivities": 78.4685,
+    "CashFlowsFromUsedInOperations": 92.7012,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 11.1711,
+    "DividendsReceivedClassifiedAsInvestingActivities": 5.8828,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 14.2327,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1.3129,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1.3129,
+    "InterestPaidClassifiedAsFinancingActivities": 5.4213,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 5.9809,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.169,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -0.0002,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -12.3482,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 27.7663,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 10.9147,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.2232,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 38.2427,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 6.2074,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 16.8126,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 7.8737,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -47.4145,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 48.6405,
+    "AdjustmentsForDividendIncome": 5.8828,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 8.0572,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 5.1328,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 6.1049,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 1.5295,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.9781,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -0.5792,
+    "AdjustmentsForProvisionsCurrent": 0.1834,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 31.5069,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 1.1115,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 57.801,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -39.6514,
+    "CashFlowsFromUsedInInvestingActivities": -37.504,
+    "CashFlowsFromUsedInOperatingActivities": 78.4714,
+    "CashFlowsFromUsedInOperations": 92.7041,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 11.1711,
+    "DividendsReceivedClassifiedAsInvestingActivities": 5.8828,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 14.2327,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1.316,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1.316,
+    "InterestPaidClassifiedAsFinancingActivities": 5.4213,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 5.9809,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.169,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -12.3482,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 27.7663,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 10.9147,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.2232,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 38.2427,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 6.2074,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Transpek Industry Limited",
  "corporate_actions": [
   {
@@ -13,6 +637,188 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2024-11-14T18:00:00+05:30",
@@ -4682,9 +5488,1712 @@
  },
  "industry": "Commodities > Chemicals > Chemicals & Petrochemicals > Commodity Chemicals",
  "last_filed_at": null,
+ "oci": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.0553,
+     "description": "Remeasurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 4.4543,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 4.399,
+    "oci_net_cr": 3.7759,
+    "profit_cr": 15.5807,
+    "tax_not_reclassified_cr": 0.6231,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 19.3566
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0553,
+     "description": "Remeasurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 4.4543,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 4.399,
+    "oci_net_cr": 3.7759,
+    "profit_cr": 15.5811,
+    "tax_not_reclassified_cr": 0.6231,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 19.357
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.7632,
+     "description": "Remeasurement gains/loss on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 2.7578,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.9946,
+    "oci_net_cr": 1.7924,
+    "profit_cr": 12.6386,
+    "tax_not_reclassified_cr": 0.2022,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 14.431
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.7632,
+     "description": "Remeasurement gains/loss on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 2.7578,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 1.9946,
+    "oci_net_cr": 1.7924,
+    "profit_cr": 12.639,
+    "tax_not_reclassified_cr": 0.2022,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 14.4314
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.3579,
+     "description": "Remeasurement gain/loss on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -3.3625,
+     "description": "Effect of measuring Equity instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -3.0046,
+    "oci_net_cr": -2.6138,
+    "profit_cr": 10.8456,
+    "tax_not_reclassified_cr": -0.3908,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 8.2318
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.3579,
+     "description": "Remeasurement gain/loss on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -3.3625,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -3.0046,
+    "oci_net_cr": -2.6138,
+    "profit_cr": 10.8469,
+    "tax_not_reclassified_cr": -0.3908,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 8.2331
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.3119,
+     "description": "Remeasurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -19.0058,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -17.6939,
+    "oci_net_cr": -15.3062,
+    "profit_cr": 6.5803,
+    "tax_not_reclassified_cr": -2.3877,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -8.7259
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.3119,
+     "description": "Remeasurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -19.0058,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -17.6939,
+    "oci_net_cr": -15.3062,
+    "profit_cr": 6.5808,
+    "tax_not_reclassified_cr": -2.3877,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -8.7254
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.2128,
+     "description": "Remeasurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 1.619,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.8318,
+    "oci_net_cr": 1.5467,
+    "profit_cr": 8.9283,
+    "tax_not_reclassified_cr": 0.2851,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.475
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.2128,
+     "description": "Remeasurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 1.619,
+     "description": "Effect of measuring Equity Instruments at Fair Value",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 1.8318,
+    "oci_net_cr": 1.5467,
+    "profit_cr": 8.9287,
+    "tax_not_reclassified_cr": 0.2851,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.4754
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 19.9713,
+     "approved_cr": 20.0,
+     "closing_cr": 2.2116,
+     "counterparty": "TML Industries Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 5.0046,
+     "other_details": "job work charges",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.6674,
+     "approved_cr": 5.7,
+     "closing_cr": 2.9096,
+     "counterparty": "Silox India Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 2.9096,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 2.8742,
+     "approved_cr": 3.0,
+     "closing_cr": 1.3962,
+     "counterparty": "TML Industries Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 5.8051,
+     "other_details": "income from lease rent",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.7529,
+     "approved_cr": 2.7529,
+     "closing_cr": 0.0,
+     "counterparty": "Anshul Specialty Molecules Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 1.8568,
+     "approved_cr": 3.5,
+     "closing_cr": 0.0,
+     "counterparty": "Bimal V. Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.4311,
+     "approved_cr": 2.5,
+     "closing_cr": 0.0,
+     "counterparty": "Avtar Singh",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.4054,
+     "approved_cr": 1.4054,
+     "closing_cr": 0.0,
+     "counterparty": "Kamaljyot Investments Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 1.359,
+     "approved_cr": 1.5,
+     "closing_cr": 0.4053,
+     "counterparty": "Silox India Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.145,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.7818,
+     "approved_cr": 0.7818,
+     "closing_cr": 0.0,
+     "counterparty": "Bimal V. Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "commission paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6145,
+     "approved_cr": 0.6145,
+     "closing_cr": 0.0,
+     "counterparty": "Shruti A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.5894,
+     "approved_cr": 0.5894,
+     "closing_cr": 0.0,
+     "counterparty": "Avtar Singh",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "commission paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4497,
+     "approved_cr": 0.9,
+     "closing_cr": 0.0,
+     "counterparty": "Shroffs Foundation Trust",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.4497,
+     "other_details": "CSR expenses",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4355,
+     "approved_cr": 0.4355,
+     "closing_cr": 0.0,
+     "counterparty": "Pratik P. Shah",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.3782,
+     "approved_cr": 0.3782,
+     "closing_cr": 0.0,
+     "counterparty": "TML Industries Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Sale of fixed assets"
+    },
+    {
+     "amount_cr": 0.3528,
+     "approved_cr": 0.3528,
+     "closing_cr": 0.0,
+     "counterparty": "Ashwin C. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.2407,
+     "approved_cr": 0.2407,
+     "closing_cr": 0.0,
+     "counterparty": "Shruti A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Retirement Benefit",
+     "relationship": "Promoter",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2338,
+     "approved_cr": 0.2338,
+     "closing_cr": 0.0,
+     "counterparty": "Vishwa A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.2154,
+     "approved_cr": 0.2154,
+     "closing_cr": 2.2676,
+     "counterparty": "Excel Industries Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 2.2676,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 0.191,
+     "approved_cr": 0.191,
+     "closing_cr": 0.01,
+     "counterparty": "Ramkrishna Paramhans Hospital",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0068,
+     "other_details": "Medical expenses as per MOU",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1683,
+     "approved_cr": 0.1683,
+     "closing_cr": 0.0,
+     "counterparty": "Alak D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.1508,
+     "approved_cr": 0.1508,
+     "closing_cr": 0.0,
+     "counterparty": "Anshul Specialty Molecules Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sales Promotion Expense",
+     "relationship": "Promoter",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1464,
+     "approved_cr": 0.1464,
+     "closing_cr": 0.0,
+     "counterparty": "Madison Investments Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0915,
+     "approved_cr": 0.0915,
+     "closing_cr": 0.0,
+     "counterparty": "Bela D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0878,
+     "approved_cr": 0.0878,
+     "closing_cr": 0.0,
+     "counterparty": "TML Industries Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "interest received",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.08,
+     "approved_cr": 0.08,
+     "closing_cr": 0.0,
+     "counterparty": "Anandmohan Tiwari",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "commission paid to non executive director",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.075,
+     "approved_cr": 0.075,
+     "closing_cr": 0.0,
+     "counterparty": "Rajeev M. Pandia",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commission Paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0684,
+     "approved_cr": 0.0684,
+     "closing_cr": 0.0041,
+     "counterparty": "Excel Industry Ltd",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.065,
+     "approved_cr": 0.065,
+     "closing_cr": 0.0,
+     "counterparty": "Vijay Maniar",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commission Paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0615,
+     "approved_cr": 0.0615,
+     "closing_cr": 0.0,
+     "counterparty": "Bela D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.06,
+     "closing_cr": 0.0,
+     "counterparty": "Ravi A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "commission paid to non executive director",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0564,
+     "approved_cr": 0.0564,
+     "closing_cr": 0.0,
+     "counterparty": "Mobitrash Recycle Ventures Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Repairs",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.055,
+     "approved_cr": 0.055,
+     "closing_cr": 0.0,
+     "counterparty": "Rachna P. Shah",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.055,
+     "approved_cr": 0.055,
+     "closing_cr": 0.0,
+     "counterparty": "Rita Teaotia",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commission Paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.055,
+     "approved_cr": 0.055,
+     "closing_cr": 0.0,
+     "counterparty": "Maulik Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commission Paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.05,
+     "approved_cr": 0.05,
+     "closing_cr": 0.0,
+     "counterparty": "Ashwin C. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "commission paid to non executive director",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.05,
+     "approved_cr": 0.05,
+     "closing_cr": 0.0,
+     "counterparty": "Dipesh K. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "commission paid to non executive director",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.042,
+     "approved_cr": 0.042,
+     "closing_cr": 0.0,
+     "counterparty": "Ramkrishna Mission Vivekananda Memorial , Vadodara",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "CSR expenses",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.034,
+     "approved_cr": 0.034,
+     "closing_cr": 0.0,
+     "counterparty": "Anandmohan Tiwari",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "sitting fees paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.031,
+     "approved_cr": 0.031,
+     "closing_cr": 0.0,
+     "counterparty": "Rajeev M. Pandia",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0018,
+     "other_details": "Siting fees paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.031,
+     "approved_cr": 0.031,
+     "closing_cr": 0.0,
+     "counterparty": "Vijay Maniar",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0018,
+     "other_details": "Sitting Fees Paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.025,
+     "approved_cr": 0.025,
+     "closing_cr": 0.0,
+     "counterparty": "Silox India Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "rent received",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.023,
+     "approved_cr": 0.023,
+     "closing_cr": 0.0,
+     "counterparty": "Ravi A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "sitting fees paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.021,
+     "approved_cr": 0.021,
+     "closing_cr": 0.0,
+     "counterparty": "Ashwin C. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "sitting fees paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.021,
+     "approved_cr": 0.021,
+     "closing_cr": 0.0,
+     "counterparty": "Maulik Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "sitting fees paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0197,
+     "approved_cr": 0.0197,
+     "closing_cr": 0.0,
+     "counterparty": "Ravi A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0196,
+     "approved_cr": 0.0196,
+     "closing_cr": 0.525,
+     "counterparty": "Rachna P. Shah",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.47,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.018,
+     "approved_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Rita Teaotia",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0018,
+     "other_details": "sitting fees paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0172,
+     "approved_cr": 0.02,
+     "closing_cr": 0.0097,
+     "counterparty": "Transchem Agritech Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0684,
+     "other_details": "services rendered",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.013,
+     "approved_cr": 0.013,
+     "closing_cr": 0.0,
+     "counterparty": "Dipesh K. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "sitting fees paid",
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0088,
+     "approved_cr": 0.0088,
+     "closing_cr": 0.238,
+     "counterparty": "Parul Benani",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.2455,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0075,
+     "approved_cr": 0.0075,
+     "closing_cr": 0.0,
+     "counterparty": "Parul Benani",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "RelatedPartyTransactionExplanatory": "Fixed Deposit has been repaid",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Deposit Repaid",
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0054,
+     "approved_cr": 0.0054,
+     "closing_cr": 0.1174,
+     "counterparty": "Bela D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.1174,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0033,
+     "approved_cr": 0.0033,
+     "closing_cr": 0.0,
+     "counterparty": "Dipesh K. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0007,
+     "approved_cr": 0.0007,
+     "closing_cr": 0.015,
+     "counterparty": "Vishwa A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.015,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Promoter",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0003,
+     "approved_cr": 0.0003,
+     "closing_cr": 0.0061,
+     "counterparty": "Shruti A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0061,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Promoter",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0002,
+     "approved_cr": 0.0002,
+     "closing_cr": 0.0095,
+     "counterparty": "Kavit B. Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0095,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Fixed Deposit Scheme of the Company under Shareholder Category",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of KMP",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0001,
+     "approved_cr": 0.0001,
+     "closing_cr": 0.0,
+     "counterparty": "Anshul Life Sciences",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0017,
+     "other_details": "payment of commission",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 57,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 17.4709,
+     "approved_cr": 18.0,
+     "closing_cr": 2.8185,
+     "counterparty": "TML Industries Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 2.2116,
+     "other_details": "Job work charges",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.0893,
+     "approved_cr": 2.1,
+     "closing_cr": 0.7535,
+     "counterparty": "Silox India Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.4053,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.9794,
+     "approved_cr": 1.9794,
+     "closing_cr": 0.0,
+     "counterparty": "Bimal V. Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.5091,
+     "approved_cr": 1.5091,
+     "closing_cr": 0.0,
+     "counterparty": "Avtar Singh",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.0,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Shroffs Foundation Trust",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "CSR",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4998,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Shroffs Foundation Trust",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Donation",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3016,
+     "approved_cr": 0.3016,
+     "closing_cr": 0.0,
+     "counterparty": "Pratik P. Shah",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.2,
+     "approved_cr": 0.2,
+     "closing_cr": 0.0,
+     "counterparty": "Shrujan Living and Learning Design Centre",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Donation",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.144,
+     "approved_cr": 0.144,
+     "closing_cr": 0.0,
+     "counterparty": "Shrodip Investments Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.138,
+     "approved_cr": 0.138,
+     "closing_cr": 0.0,
+     "counterparty": "Dipkanti Investments and Financing Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.1325,
+     "approved_cr": 0.1325,
+     "closing_cr": 0.0,
+     "counterparty": "AATAPI SEVA FOUNDATION",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "CSR",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1311,
+     "approved_cr": 0.1311,
+     "closing_cr": 0.0,
+     "counterparty": "Alak D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.126,
+     "approved_cr": 0.126,
+     "closing_cr": 0.0,
+     "counterparty": "Pritami Investments Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.1022,
+     "approved_cr": 0.1022,
+     "closing_cr": 0.0,
+     "counterparty": "Preeti D. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": -0.0564,
+     "approved_cr": -0.0564,
+     "closing_cr": 0.0,
+     "counterparty": "TML Industries Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.0554,
+     "approved_cr": 0.0554,
+     "closing_cr": 0.0094,
+     "counterparty": "Ramkrishna paramhans hospital",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.01,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.047,
+     "approved_cr": 0.047,
+     "closing_cr": 0.0,
+     "counterparty": "Anandmohan Tiwari",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0448,
+     "approved_cr": 0.0448,
+     "closing_cr": 0.0,
+     "counterparty": "Krishni Dipesh Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0448,
+     "approved_cr": 0.0448,
+     "closing_cr": 0.0,
+     "counterparty": "Ami K. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0433,
+     "approved_cr": 0.0433,
+     "closing_cr": 0.0,
+     "counterparty": "Anshul A. Bhatia",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0421,
+     "approved_cr": 0.0421,
+     "closing_cr": 0.0,
+     "counterparty": "Ramkrishna Mission Vivekananda Memorial , Vadodara",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "CSR",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.042,
+     "approved_cr": 0.042,
+     "closing_cr": 0.0,
+     "counterparty": "Rajeev M. Pandia",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.041,
+     "approved_cr": 0.041,
+     "closing_cr": 0.0,
+     "counterparty": "Vijay Maniar",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0407,
+     "approved_cr": 0.0407,
+     "closing_cr": 0.0,
+     "counterparty": "Shivani C. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.026,
+     "approved_cr": 0.026,
+     "closing_cr": 0.0,
+     "counterparty": "Ravi A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0235,
+     "approved_cr": 0.0235,
+     "closing_cr": 0.0,
+     "counterparty": "Silox India Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Received",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0219,
+     "approved_cr": 0.0219,
+     "closing_cr": 0.525,
+     "counterparty": "Rachna P. Shah",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.525,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0197,
+     "approved_cr": 0.0197,
+     "closing_cr": 0.0,
+     "counterparty": "Hrishit A. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.019,
+     "approved_cr": 0.019,
+     "closing_cr": 0.0,
+     "counterparty": "Maulik Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "approved_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Ashwin C. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.016,
+     "approved_cr": 0.016,
+     "closing_cr": 0.0,
+     "counterparty": "Rita Teaotia",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.013,
+     "approved_cr": 0.013,
+     "closing_cr": 0.0,
+     "counterparty": "Dipesh K. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees paid",
+     "relationship": "Key Management Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0126,
+     "approved_cr": 0.02,
+     "closing_cr": 0.0148,
+     "counterparty": "Transchem Agritech Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0097,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.0121,
+     "approved_cr": 0.0121,
+     "closing_cr": 0.0,
+     "counterparty": "Kantisen Chaturbhai Shroff-HUF",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0105,
+     "approved_cr": 0.0105,
+     "closing_cr": 0.0,
+     "counterparty": "Bela D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Deposit Taken",
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0095,
+     "approved_cr": 0.0095,
+     "closing_cr": 0.0,
+     "counterparty": "Kavit B. Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Deposit Taken",
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0095,
+     "approved_cr": 0.0095,
+     "closing_cr": 0.0,
+     "counterparty": "Kavit B. Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Deposit Taken",
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0087,
+     "approved_cr": 0.0087,
+     "closing_cr": 0.238,
+     "counterparty": "Parul Benani",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.238,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0065,
+     "approved_cr": 0.0065,
+     "closing_cr": 0.0,
+     "counterparty": "Bela D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Deposit Taken",
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0061,
+     "approved_cr": 0.0061,
+     "closing_cr": 0.1514,
+     "counterparty": "Bela D. Vyas",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.1474,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0035,
+     "approved_cr": 0.005,
+     "closing_cr": 0.0,
+     "counterparty": "Excel Industry Ltd",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": -0.0041,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.0033,
+     "approved_cr": 0.0033,
+     "closing_cr": 0.0,
+     "counterparty": "Vibrant Greentech India Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0032,
+     "approved_cr": 0.005,
+     "closing_cr": 0.0,
+     "counterparty": "Anshul Specialty Molecules Private Limited",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sales Promotion expenses",
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0023,
+     "approved_cr": 0.008,
+     "closing_cr": 0.0,
+     "counterparty": "Chandanba Enterprise Pvt. Ltd.",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0022,
+     "approved_cr": 0.0022,
+     "closing_cr": 0.0,
+     "counterparty": "Chaitanya D. Shroff",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0,
+     "relationship": "Other Related Party",
+     "remarks": "Approved Unanimously",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0002,
+     "approved_cr": 0.0003,
+     "closing_cr": 0.0095,
+     "counterparty": "Kavit B. Mehta",
+     "entity": "Transpek Industry Limited",
+     "opening_cr": 0.0095,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Relative of Key Mangerial Personnel",
+     "remarks": "Approved Unanimously",
+     "type": "Interest paid"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 46,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "506687",
  "section_lab": {
@@ -4695,7 +7204,660 @@
   }
  },
  "sector": "chemicals",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "Chemicals",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "CHEMICALS",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Chemicals",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Chemicals",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Chemicals",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.3217,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 130.1846,
+    "Interest": 2.4575,
+    "Minority share": 0.0,
+    "Net Profit": 15.5807,
+    "Net Profit (owners)": 15.5807,
+    "OPM %": 15.592362733834234,
+    "Operating Profit": 24.04860000000002,
+    "Other Income": 11.661299999999983,
+    "Profit before tax": 20.9307,
+    "Profit for PE": 15.5807,
+    "Sales": 154.2332,
+    "Tax": 5.35,
+    "Tax %": 25.560540259045325
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.3217,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 130.1842,
+    "Interest": 2.4575,
+    "Net Profit": 15.5811,
+    "Net Profit (owners)": 15.5811,
+    "OPM %": 15.592622081367697,
+    "Operating Profit": 24.049000000000007,
+    "Other Income": 11.661299999999997,
+    "Profit before tax": 20.9311,
+    "Profit for PE": 15.5811,
+    "Sales": 154.2332,
+    "Tax": 5.35,
+    "Tax %": 25.560051788964746
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.3369,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 133.58710000000002,
+    "Interest": 2.4111,
+    "Minority share": 0.0,
+    "Net Profit": 12.6386,
+    "Net Profit (owners)": 12.6386,
+    "OPM %": 16.64996593299906,
+    "Operating Profit": 26.685299999999984,
+    "Other Income": 5.028800000000018,
+    "Profit before tax": 16.9661,
+    "Profit for PE": 12.6386,
+    "Sales": 160.2724,
+    "Tax": 4.3275,
+    "Tax %": 25.506745804869706
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 25.2607,
+    "CWIP": 12.7471,
+    "Equity Capital": 5.5856,
+    "Fixed Assets": 302.9052,
+    "Investments": 335.3652,
+    "Other Assets": 348.8403,
+    "Other Liabilities": 206.66159999999996,
+    "Reserves": 762.3499,
+    "Total Assets": 999.8578,
+    "Total Liabilities": 999.8578
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.3369,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 133.5867,
+    "Interest": 2.4111,
+    "Net Profit": 12.639,
+    "Net Profit (owners)": 12.639,
+    "OPM %": 16.65021550809746,
+    "Operating Profit": 26.685699999999997,
+    "Other Income": 5.028800000000004,
+    "Profit before tax": 16.9665,
+    "Profit for PE": 12.639,
+    "Sales": 160.2724,
+    "Tax": 4.3275,
+    "Tax %": 25.506144461144014
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 25.2607,
+    "CWIP": 12.7471,
+    "Equity Capital": 5.5856,
+    "Fixed Assets": 302.9052,
+    "Investments": 335.4152,
+    "Other Assets": 348.8068999999999,
+    "Other Liabilities": 206.66080000000005,
+    "Reserves": 762.3673,
+    "Total Assets": 999.8744,
+    "Total Liabilities": 999.8744
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.3403,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 133.548,
+    "Interest": 1.6672,
+    "Minority share": 0.0,
+    "Net Profit": 10.8456,
+    "Net Profit (owners)": 10.8456,
+    "OPM %": 15.730836917955124,
+    "Operating Profit": 24.929900000000004,
+    "Other Income": 3.5411999999999964,
+    "Profit before tax": 14.4636,
+    "Profit for PE": 10.8456,
+    "Sales": 158.4779,
+    "Tax": 3.618,
+    "Tax %": 25.014519206836475
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.3403,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 133.5467,
+    "Interest": 1.6672,
+    "Net Profit": 10.8469,
+    "Net Profit (owners)": 10.8469,
+    "OPM %": 15.731657221606303,
+    "Operating Profit": 24.93120000000002,
+    "Other Income": 3.541199999999982,
+    "Profit before tax": 14.4649,
+    "Profit for PE": 10.8469,
+    "Sales": 158.4779,
+    "Tax": 3.618,
+    "Tax %": 25.012271083795948
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.6417,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 130.49130000000002,
+    "Interest": 1.5215,
+    "Minority share": 0.0,
+    "Net Profit": 6.5803,
+    "Net Profit (owners)": 6.5803,
+    "OPM %": 11.958339012005476,
+    "Operating Profit": 17.724099999999964,
+    "Other Income": 4.273100000000035,
+    "Profit before tax": 8.834,
+    "Profit for PE": 6.5803,
+    "Sales": 148.2154,
+    "Tax": 2.2537,
+    "Tax %": 25.511659497396423
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 74.4246,
+    "CWIP": 29.0175,
+    "Equity Capital": 5.5856,
+    "Fixed Assets": 318.6139,
+    "Investments": 316.497,
+    "Other Assets": 344.18530000000004,
+    "Other Liabilities": 166.44760000000002,
+    "Reserves": 761.8559,
+    "Total Assets": 1008.3137,
+    "Total Liabilities": 1008.3137
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 48.6405,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 527.811,
+    "Interest": 8.0574,
+    "Minority share": 0.0,
+    "Net Profit": 45.6454,
+    "Net Profit (owners)": 45.6454,
+    "OPM %": 15.033507780920434,
+    "Operating Profit": 93.38799999999992,
+    "Other Income": 24.50440000000009,
+    "Profit before tax": 61.1945,
+    "Profit for PE": 45.6454,
+    "Sales": 621.199,
+    "Tax": 15.5491,
+    "Tax %": 25.40930966018188
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -39.6516,
+    "Cash from Investing Activity": -37.504,
+    "Cash from Operating Activity": 78.4685,
+    "Net Cash Flow": 1.3129
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.6417,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 130.4909,
+    "Interest": 1.5214,
+    "Net Profit": 6.5808,
+    "Net Profit (owners)": 6.5808,
+    "OPM %": 11.9586088894946,
+    "Operating Profit": 17.724499999999978,
+    "Other Income": 4.273100000000021,
+    "Profit before tax": 8.8345,
+    "Profit for PE": 6.5808,
+    "Sales": 148.2154,
+    "Tax": 2.2537,
+    "Tax %": 25.51021563189767
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 74.4246,
+    "CWIP": 29.0175,
+    "Equity Capital": 5.5856,
+    "Fixed Assets": 318.6141,
+    "Investments": 316.547,
+    "Other Assets": 344.1529999999999,
+    "Other Liabilities": 166.44609999999994,
+    "Reserves": 761.8753,
+    "Total Assets": 1008.3316,
+    "Total Liabilities": 1008.3316
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 48.6405,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 527.8085000000001,
+    "Interest": 8.0572,
+    "Net Profit": 45.6481,
+    "Net Profit (owners)": 45.6481,
+    "OPM %": 15.033910228445292,
+    "Operating Profit": 93.39049999999986,
+    "Other Income": 24.504400000000146,
+    "Profit before tax": 61.1972,
+    "Profit for PE": 45.6481,
+    "Sales": 621.199,
+    "Tax": 15.5491,
+    "Tax %": 25.4081886099364
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -39.6514,
+    "Cash from Investing Activity": -37.504,
+    "Cash from Operating Activity": 78.4714,
+    "Net Cash Flow": 1.316
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 10.8366,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 130.92350000000002,
+    "Interest": 1.5151,
+    "Minority share": 0.0,
+    "Net Profit": 8.9283,
+    "Net Profit (owners)": 8.9283,
+    "OPM %": 13.331682804557303,
+    "Operating Profit": 20.139199999999988,
+    "Other Income": 4.000800000000012,
+    "Profit before tax": 11.7883,
+    "Profit for PE": 8.9283,
+    "Sales": 151.0627,
+    "Tax": 2.86,
+    "Tax %": 24.261343874858973
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:33:45+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:33:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 10.8366,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 130.9231,
+    "Interest": 1.5151,
+    "Net Profit": 8.9287,
+    "Net Profit (owners)": 8.9287,
+    "OPM %": 13.331947595270043,
+    "Operating Profit": 20.1396,
+    "Other Income": 4.000800000000002,
+    "Profit before tax": 11.7887,
+    "Profit for PE": 8.9287,
+    "Sales": 151.0627,
+    "Tax": 2.86,
+    "Tax %": 24.260520668097413
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "TRANSPEK",
  "timeline": [],
  "upcoming_events": [],

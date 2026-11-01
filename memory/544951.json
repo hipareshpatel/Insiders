@@ -1,4 +1,56 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-11-30",
+     "name": "Kantilal Patel & Co",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-11-30",
+     "name": "Kantilal Patel & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-10-15T20:19:40+05:30",
@@ -10,36 +62,6 @@
    "net_worth_cr": 158.45,
    "period": "Jun-2026",
    "source_news_id": "nse-106819255"
-  },
-  {
-   "as_of": "2026-10-16T16:47:12+05:30",
-   "lab": {
-    "at": "2026-10-16T16:47:12+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106820279"
-  },
-  {
-   "as_of": "2026-10-17T13:15:52+05:30",
-   "lab": {
-    "at": "2026-10-17T13:15:52+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "Q1FY27",
-   "source_news_id": "nse-106821034"
-  },
-  {
-   "as_of": "2026-10-19T17:06:02+05:30",
-   "lab": {
-    "at": "2026-10-19T17:06:02+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106822095"
   }
  ],
  "business_summary": null,
@@ -127,6 +149,44 @@
    "tranches": [],
    "updated_as_of": "2026-10-15T22:16:23+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
   }
  ],
  "financial_metrics": [
@@ -1624,6 +1684,526 @@
  },
  "industry": "Information Technology > IT - Services > IT Enabled Services",
  "last_filed_at": "2026-10-19T17:06:02+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "CITADEL SECURITIES SINGAPORE PTE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 318.89,
+    "qty": 407925.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 13.01
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 325.94,
+    "qty": 369690.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 12.05
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 325.85,
+    "qty": 369690.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 12.05
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 329.21,
+    "qty": 501495.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 16.51
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 330.93,
+    "qty": 535075.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 17.71
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 320.27,
+    "qty": 173197.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 5.55
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 320.79,
+    "qty": 173197.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 5.56
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 308.91,
+    "qty": 181335.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 5.6
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 304.8,
+    "qty": 208026.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 6.34
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NEO APEX VENTURE LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 305.65,
+    "qty": 180932.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 5.53
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NEO APEX VENTURE LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 304.74,
+    "qty": 189685.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 5.78
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 327.11,
+    "qty": 457346.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 14.96
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 326.77,
+    "qty": 458891.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 15.0
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PACE STOCK BROKING SERVICES PVT LTD",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 330.65,
+    "qty": 268727.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 8.89
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PACE STOCK BROKING SERVICES PVT LTD",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 373.16,
+    "qty": 270727.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 10.1
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PATRONUS TRADETECH LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 333.9,
+    "qty": 229583.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 7.67
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PATRONUS TRADETECH LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 333.54,
+    "qty": 239766.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 8.0
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 326.94,
+    "qty": 287331.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 9.39
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 326.38,
+    "qty": 287331.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 9.38
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "AFFLUENCE FINCON SERVICE PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 273.44,
+    "qty": 350000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 9.57
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 274.78,
+    "qty": 261724.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 7.19
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 274.76,
+    "qty": 261724.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 7.19
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "COMFORT CAPITAL PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 279.1,
+    "qty": 217570.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 6.07
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "COMFORT CAPITAL PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 278.64,
+    "qty": 217570.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 6.06
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 275.14,
+    "qty": 189676.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 5.22
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 275.23,
+    "qty": 189676.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 5.22
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 275.46,
+    "qty": 214480.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 5.91
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 275.57,
+    "qty": 216770.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 5.97
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 275.61,
+    "qty": 324437.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 8.94
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 275.31,
+    "qty": 324437.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 8.93
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 273.96,
+    "qty": 289055.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 7.92
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 274.39,
+    "qty": 289055.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 7.93
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 274.76,
+    "qty": 321474.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 8.83
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 274.91,
+    "qty": 323019.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 8.88
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "PAWAN KUMAR MITTAL",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 279.24,
+    "qty": 475923.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 13.29
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "PAWAN KUMAR MITTAL",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 277.3,
+    "qty": 475923.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 13.2
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 272.44,
+    "qty": 150548.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARMEE",
+    "value_cr": 4.1
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 270.87,
+    "qty": 162115.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARMEE",
+    "value_cr": 4.39
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.0217,
+     "description": "Re-measurement gains / (losses) on defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.0217,
+    "oci_net_cr": -0.0162,
+    "profit_cr": 1.8152,
+    "tax_not_reclassified_cr": -0.0055,
+    "total_comprehensive_cr": 1.799
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0217,
+     "description": "Re-measurement gains / (losses) on defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0217,
+    "oci_net_cr": -0.0162,
+    "profit_cr": 2.7685,
+    "tax_not_reclassified_cr": -0.0055,
+    "total_comprehensive_cr": 2.7523
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-15T21:56:50+05:30",
@@ -1751,10 +2331,88 @@
    "at": "2026-10-23T18:30:03+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:39:20+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "it",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 787.9738,
+     "liabilities_cr": 589.4775,
+     "segment": "IT Infrastructure Solution and Managed Services"
+    },
+    {
+     "assets_cr": 272.8452,
+     "liabilities_cr": 287.6542,
+     "segment": "Renewable Energy"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 1060.819,
+    "liabilities_cr": 877.1317,
+    "net_assets_cr": 1073.632,
+    "net_liabilities_cr": 889.6511
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 13.97,
+   "period": "Q1FY27",
+   "revenue_cr": 257.75,
+   "segment": "IT Infrastructure Solution and Managed Services",
+   "share_pct": 93.5,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 0.48,
+   "period": "Q1FY27",
+   "revenue_cr": 18.05,
+   "segment": "Renewable Energy",
+   "share_pct": 6.5,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -2135,6 +2793,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.2922,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 268.8486,
+    "Interest": 3.4594,
+    "Minority share": 0.0,
+    "Net Profit": 1.8152,
+    "Net Profit (owners)": 1.8152,
+    "OPM %": 2.5182582059495173,
+    "Operating Profit": 6.9452,
+    "Other Income": 0.3247,
+    "Profit before tax": 2.5183,
+    "Profit for PE": 1.8152,
+    "Sales": 275.7938,
+    "Tax": 0.7031,
+    "Tax %": 27.919628320692524
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.285,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 265.55089999999996,
+    "Interest": 3.4244,
+    "Net Profit": 2.7685,
+    "Net Profit (owners)": 2.7685,
+    "OPM %": 2.823648665956753,
+    "Operating Profit": 7.71610000000004,
+    "Other Income": 0.6679999999999602,
+    "Profit before tax": 3.6747,
+    "Profit for PE": 2.7685,
+    "Sales": 273.267,
+    "Tax": 0.9062,
+    "Tax %": 24.66051650474869
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "ARMEE",
  "timeline": [
   {

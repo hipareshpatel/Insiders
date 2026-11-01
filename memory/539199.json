@@ -1,4 +1,145 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "SP Chopra & Company",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "SP Chopra & Co",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "S. P. Chopra & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "S. P. Chopra & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "advances_cr": 2878.14,
@@ -194,8 +335,637 @@
    "source_news_id": "nse-106598393"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.3182,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.0854,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.9525,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -9.2372,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 3.8169,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -0.01,
+    "AdjustmentsForProvisionsNoncurrent": 0.3174,
+    "AdjustmentsForReconcileProfitLoss": -632.5409,
+    "AdjustmentsForSharebasedPayments": 3.4843,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 38.5577,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 511.8441,
+    "CashFlowsFromUsedInInvestingActivities": 79.6698,
+    "CashFlowsFromUsedInOperatingActivities": -584.0348,
+    "CashFlowsFromUsedInOperations": -560.2457,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 23.925,
+    "IncreaseDecreaseInCashAndCashEquivalents": 7.4791,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 7.4791,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -632.0976,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 80.128,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.1359,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 511.8441,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.5418,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 1.4089,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.6806,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.5981,
+    "AdjustmentsForFinanceCosts": 1.4514,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 2.3776,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 1.9175,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 2.7764,
+    "AdjustmentsForOtherBankBalances": -20.8525,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -19.6592,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.927,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": -0.0085,
+    "AdjustmentsForReconcileProfitLoss": -1722.3153,
+    "AdjustmentsForSharebasedPayments": 1.2722,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 151.5567,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1631.5832,
+    "CashFlowsFromUsedInInvestingActivities": 82.1418,
+    "CashFlowsFromUsedInOperatingActivities": -1592.3368,
+    "CashFlowsFromUsedInOperations": -1550.7656,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 41.5712,
+    "IncreaseDecreaseInCashAndCashEquivalents": 121.3882,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 121.3882,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.5114,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -1689.5153,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0595,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 80.6418,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 1315.2707,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 316.3125,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0321,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.6105,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.433,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.4298,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.3337,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 3.3843,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": -2.4742,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -6.3351,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 15.214,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.4015,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -1744.6791,
+    "AdjustmentsForSharebasedPayments": 4.3067,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 38.1663,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1678.4403,
+    "CashFlowsFromUsedInInvestingActivities": -156.5113,
+    "CashFlowsFromUsedInOperatingActivities": -1635.3194,
+    "CashFlowsFromUsedInOperations": -1593.9739,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 41.3455,
+    "IncreaseDecreaseInCashAndCashEquivalents": -113.3904,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -113.3904,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.1599,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -1758.2724,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 129.2011,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -26.673,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 1707.2529,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 21.1874,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.3362,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.4609,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 50.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.4298,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.3337,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 3.3843,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": -2.4742,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -6.6077,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 15.214,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.4015,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -1744.9517,
+    "AdjustmentsForSharebasedPayments": 4.3067,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 36.1663,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1678.4403,
+    "CashFlowsFromUsedInInvestingActivities": -158.5113,
+    "CashFlowsFromUsedInOperatingActivities": -1635.3194,
+    "CashFlowsFromUsedInOperations": -1593.9739,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 2.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 41.3455,
+    "IncreaseDecreaseInCashAndCashEquivalents": -115.3904,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -115.3904,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.1599,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -1758.2724,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 129.2011,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -26.673,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 1707.2529,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 21.1874,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.3362,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.4609,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 50.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "SG Finserve Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0177
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0185,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0218
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0273
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0273
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2025-10-14T18:00:00+05:30",
@@ -9546,9 +10316,53 @@
     "side": "SELL",
     "symbol": "SGFIN",
     "value_cr": 20.39
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MAYANK JAIN",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 678.23,
+    "qty": 340000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SGFIN",
+    "value_cr": 23.06
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.2707,
+     "description": "Remeasurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.2707,
+    "oci_net_cr": 0.2026,
+    "profit_cr": 42.2691,
+    "tax_not_reclassified_cr": 0.0681,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 42.4717
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-23T18:21:47+05:30",
@@ -9703,6 +10517,525 @@
    "value": 7000.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 5.0367,
+     "approved_cr": 12.07,
+     "closing_cr": 12.07,
+     "counterparty": "SG Green Logistics Private Limited",
+     "entity": "SG FINSERVE LIMITED",
+     "opening_cr": 7.0333,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-05",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.125,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 12.07
+     },
+     "other_details": "Loan Outstanding",
+     "relationship": "Common directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.8835,
+     "approved_cr": 8.72,
+     "closing_cr": 8.72,
+     "counterparty": "Yogiji Digi Private Limited",
+     "entity": "SG FINSERVE LIMITED",
+     "opening_cr": 9.6035,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-01",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.125,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "344 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 8.72
+     },
+     "other_details": "Loan Outstanding",
+     "relationship": "Common control Between the parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.158,
+     "approved_cr": 0.32,
+     "closing_cr": 0.32,
+     "counterparty": "SG Realtor Private Limited",
+     "entity": "SG FINSERVE LIMITED",
+     "opening_cr": 0.162,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-05-28",
+      "DetailsOfOtherIndebtedness": "Rent",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "NA",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.32
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Common directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.7292,
+     "closing_cr": 0.7292,
+     "counterparty": "Sahil Sikka",
+     "entity": "SG FINSERVE LIMITED",
+     "opening_cr": 0.7892,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2023-05-11",
+      "NatureOfFinancialIndebtedness": "Loan",
+      "TenureOfFinancialIndebtedness": "NA",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.7292
+     },
+     "relationship": "KMP",
+     "remarks": "NA",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 0.05,
+     "approved_cr": 0.65,
+     "closing_cr": 0.65,
+     "counterparty": "Sorabh Dhawan",
+     "entity": "SG FINSERVE LIMITED",
+     "opening_cr": 0.7,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2023-05-11",
+      "NatureOfFinancialIndebtedness": "Loan",
+      "TenureOfFinancialIndebtedness": "NA",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.65
+     },
+     "relationship": "KMP",
+     "remarks": "NA",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 0.0077,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Cladding Projects Pvt. Ltd.",
+     "entity": "SG FINSERVE LIMITED",
+     "opening_cr": 0.0077,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-12",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Loan Outstanding",
+     "relationship": "Common control Between the parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 6,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 164.9838,
+     "approved_cr": 164.9838,
+     "closing_cr": 0.0,
+     "counterparty": "SG Mart Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 110.1716,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-07",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "loan Given",
+     "relationship": "Common Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 88.2725,
+     "approved_cr": 88.2725,
+     "closing_cr": 43.0851,
+     "counterparty": "Yogiji Digi Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 9.3649,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-01",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.11,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Loan Given",
+     "relationship": "Common Control Between the Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 44.9621,
+     "approved_cr": 44.9621,
+     "closing_cr": 10.3492,
+     "counterparty": "Kisan Mouldings Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 19.8907,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-07",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Loan Given",
+     "relationship": "Common Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.7292,
+     "approved_cr": 20.7292,
+     "closing_cr": 10.0,
+     "counterparty": "SG Green Logistics Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 7.0332,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-05",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Loan Given",
+     "relationship": "Common Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.73,
+     "approved_cr": 2.73,
+     "closing_cr": 0.0,
+     "counterparty": "Cladding Projects Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-12",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Loan Given",
+     "relationship": "Common Control Between the Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.962,
+     "approved_cr": 1.962,
+     "closing_cr": 0.162,
+     "counterparty": "SG Realtor Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.162,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-05-28",
+      "DetailsOfOtherIndebtedness": "Rent",
+      "NatureOfFinancialIndebtedness": "Any other",
+      "TenureOfFinancialIndebtedness": "NA",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Rent paid",
+     "relationship": "Common Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.359,
+     "approved_cr": 1.359,
+     "closing_cr": 0.0,
+     "counterparty": "Yogiji Digi Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.2386,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-01",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.11,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Interest Income",
+     "relationship": "Common Control Between the Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.9945,
+     "approved_cr": 0.9945,
+     "closing_cr": 0.0294,
+     "counterparty": "SG Green Logistics Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.0956,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-05",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Interest Income",
+     "relationship": "Common Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6503,
+     "approved_cr": 0.6503,
+     "closing_cr": 0.0012,
+     "counterparty": "Kisan Mouldings Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.0157,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-07",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Interest Income",
+     "relationship": "Common Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3247,
+     "approved_cr": 0.3247,
+     "closing_cr": 0.0021,
+     "counterparty": "SG Mart Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-07",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Interest Income",
+     "relationship": "Common Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0345,
+     "approved_cr": 0.0345,
+     "closing_cr": 0.0,
+     "counterparty": "Cladding Projects Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.0077,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2024-12-12",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "day to day business",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Interest Income",
+     "relationship": "Common Control Between the Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 11,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 10.75,
+     "approved_cr": 25.0,
+     "closing_cr": 8.4975,
+     "counterparty": "SG Green Logistics Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 10.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-09-24",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.101,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "General business purpose",
+      "TenureOfFinancialIndebtedness": "NA",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "365 Days",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 25.0
+     },
+     "other_details": "Loan Given",
+     "relationship": "Mr. Rahul Gupta and Mr. Sanjay Gupta (Promoter and Promoter Group) having common Directorship",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.45,
+     "approved_cr": 3.05,
+     "closing_cr": 0.111,
+     "counterparty": "SG Realtor Private Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.162,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-07-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.05
+     },
+     "other_details": "Rent paid",
+     "relationship": "Director and their relatives are members",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.0,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "SG Insurance Brokers Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-07-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.0
+     },
+     "other_details": "Equity investment",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.0,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "SG Alternative Investment Fund Limited",
+     "entity": "SG Finserve Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-10-16",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.0
+     },
+     "other_details": "Equity investment",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 4,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "539199",
  "section_lab": {
@@ -9712,7 +11045,7 @@
    "doc": "other"
   },
   "market_deals": {
-   "at": "2026-07-14T15:30:00+05:30",
+   "at": "2026-11-01T14:39:02+05:30",
    "by": "file",
    "doc": "other"
   }
@@ -9720,30 +11053,20 @@
  "sector": "nbfc",
  "segment_mix": [
   {
-   "as_of": "2026-10-21T15:25:58+05:30",
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-21T15:25:58+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q2FY27",
-   "revenue_cr": null,
-   "segment": "Supply Chain Financing",
-   "share_pct": 70.0,
-   "source_news_id": "nse-106823381"
-  },
-  {
-   "as_of": "2026-10-21T15:25:58+05:30",
-   "lab": {
-    "at": "2026-10-21T15:25:58+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q2FY27",
-   "revenue_cr": null,
-   "segment": "Factoring",
-   "share_pct": 15.0,
-   "source_news_id": "nse-106823381"
+   "segment": "NBFC",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
   }
  ],
  "standalone": {
@@ -10837,6 +12160,367 @@
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Depreciation": 0.0,
+    "Expenses": 5.9482,
+    "Financing Margin %": 51.4491366745676,
+    "Financing Profit": 38.441199999999995,
+    "Interest": 30.3275,
+    "Net Profit": 28.3997,
+    "OPM %": 92.03901660802309,
+    "Operating Profit": 68.7687,
+    "Other Income": 0.0,
+    "Profit before tax": 38.4412,
+    "Revenue": 74.7169,
+    "Sales": 74.7169,
+    "Tax": 10.0415,
+    "Tax %": 26.121713161920017
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowing": 1896.5068,
+    "CWIP": 1.5763,
+    "Equity Capital": 55.895,
+    "Fixed Assets": 0.8208,
+    "Investments": 0.2126,
+    "Other Assets": 2987.0022,
+    "Other Liabilities": 21.927999999999884,
+    "Reserves": 1015.2821,
+    "Total Assets": 2989.6119,
+    "Total Liabilities": 2989.6119
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Depreciation": 0.1714,
+    "Expenses": 6.653499999999999,
+    "Financing Margin %": 50.094636273335986,
+    "Financing Profit": 43.2205,
+    "Interest": 36.4037,
+    "Net Profit": 32.4723,
+    "OPM %": 92.28827379496673,
+    "Operating Profit": 79.6242,
+    "Other Income": 0.0,
+    "Profit before tax": 43.0491,
+    "Revenue": 86.2777,
+    "Sales": 86.2777,
+    "Tax": 10.5768,
+    "Tax %": 24.569154755848555
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Depreciation": 0.191,
+    "Expenses": 6.3349,
+    "Financing Margin %": 53.27001637474835,
+    "Financing Profit": 56.149899999999995,
+    "Interest": 42.9214,
+    "Net Profit": 42.2691,
+    "OPM %": 93.99001197273024,
+    "Operating Profit": 99.0713,
+    "Other Income": 0.2464000000000084,
+    "Profit before tax": 56.2053,
+    "Revenue": 105.4062,
+    "Sales": 105.4062,
+    "Tax": 13.9362,
+    "Tax %": 24.795170562206764
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 0.6806,
+    "Expenses": 26.9726,
+    "Financing Margin %": 51.58287264316187,
+    "Financing Profit": 171.9839,
+    "Interest": 134.4563,
+    "Net Profit": 127.6572,
+    "OPM %": 91.91014862056886,
+    "Operating Profit": 306.4402,
+    "Other Income": 0.24639999999999418,
+    "Profit before tax": 171.5497,
+    "Revenue": 333.4128,
+    "Sales": 333.4128,
+    "Tax": 43.8925,
+    "Tax %": 25.585879777114155
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1631.5832,
+    "Cash from Investing Activity": 82.1418,
+    "Cash from Operating Activity": -1592.3368,
+    "Net Cash Flow": 121.3882
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowing": 2704.1647,
+    "CWIP": 0.0993,
+    "Equity Capital": 65.2672,
+    "Fixed Assets": 2.3456,
+    "Investments": 0.2115,
+    "Other Assets": 4170.7435000000005,
+    "Other Liabilities": 9.013400000000274,
+    "Reserves": 1394.9546,
+    "Total Assets": 4173.3999,
+    "Total Liabilities": 4173.3999
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 0.2048,
+    "Expenses": 10.263700000000005,
+    "Financing Margin %": 52.74611368513228,
+    "Financing Profit": 71.8007,
+    "Interest": 54.0607,
+    "Net Profit": 53.6776,
+    "OPM %": 92.46009736631964,
+    "Operating Profit": 125.8614,
+    "Other Income": 0.0,
+    "Profit before tax": 71.5959,
+    "Revenue": 136.1251,
+    "Sales": 136.1251,
+    "Tax": 17.9183,
+    "Tax %": 25.026991769081746
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 0.225,
+    "Expenses": 13.169600000000012,
+    "Financing Margin %": 49.42701572840738,
+    "Financing Profit": 79.5469,
+    "Interest": 68.2216,
+    "Net Profit": 58.8033,
+    "OPM %": 91.81697808039239,
+    "Operating Profit": 147.7685,
+    "Other Income": 0.060000000000002274,
+    "Profit before tax": 79.3819,
+    "Revenue": 160.9381,
+    "Sales": 160.9381,
+    "Tax": 20.5786,
+    "Tax %": 25.923541764558422
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 0.225,
+    "Expenses": 13.382200000000006,
+    "Financing Margin %": 49.294915250024694,
+    "Financing Profit": 79.33429999999998,
+    "Interest": 68.2216,
+    "Net Profit": 58.5307,
+    "Net Profit (owners)": 58.5307,
+    "OPM %": 91.6848776020097,
+    "Operating Profit": 147.55589999999998,
+    "Other Income": 2.842170943040401e-14,
+    "Profit before tax": 79.1093,
+    "Revenue": 160.9381,
+    "Sales": 160.9381,
+    "Tax": 20.5786,
+    "Tax %": 26.012870800272534
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 4362.9609,
+    "CWIP": 0.0905,
+    "Equity Capital": 65.895,
+    "Fixed Assets": 2.7218,
+    "Investments": 130.7463,
+    "Other Assets": 5850.411499999999,
+    "Other Liabilities": 23.08559999999852,
+    "Reserves": 1532.0286,
+    "Total Assets": 5983.9701,
+    "Total Liabilities": 5983.9701
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 4362.9609,
+    "CWIP": 0.0905,
+    "Equity Capital": 65.895,
+    "Fixed Assets": 2.7218,
+    "Investments": 132.7463,
+    "Other Assets": 5848.6840999999995,
+    "Other Liabilities": 23.08559999999943,
+    "Reserves": 1532.3012,
+    "Total Assets": 5984.2427,
+    "Total Liabilities": 5984.2427
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "SGFIN",
  "timeline": [

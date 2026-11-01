@@ -1,15 +1,77 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-10-19T22:47:58+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-10-19T22:47:58+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106822496"
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
+ "balance_sheet": [
   {
    "as_of": "2026-10-19T22:52:07+05:30",
    "cash_cr": 371.69,
@@ -23,16 +85,6 @@
    "net_worth_cr": 1172.72,
    "period": "Q2FY27",
    "source_news_id": "nse-106822499"
-  },
-  {
-   "as_of": "2026-10-20T10:26:16+05:30",
-   "lab": {
-    "at": "2026-10-20T10:26:16+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106822687"
   },
   {
    "as_of": "2026-10-20T18:00:00+05:30",
@@ -64,18 +116,6 @@
    "source_news_id": "xbrl:res:544942:Q2FY27",
    "total_assets_cr": 1781.17,
    "total_liabilities_cr": 608.44
-  },
-  {
-   "as_of": "2026-10-27T13:00:00+05:30",
-   "lab": {
-    "at": "2026-10-27T13:35:51+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "call",
-    "ok": true
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106829938"
   }
  ],
  "business_summary": {
@@ -206,8 +246,298 @@
    "source_news_id": "nse-106829938"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -35.125,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -9.337,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 30.1,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 22.386,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 13.909,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 5.264,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -1.521,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -50.246,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 4.667,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.274,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 48.492,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.806,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 21.458,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 50.575,
+    "CashAndCashEquivalentsCashFlowStatement": 371.692,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 299.336,
+    "CashFlowsFromUsedInInvestingActivities": -88.233,
+    "CashFlowsFromUsedInOperatingActivities": 78.677,
+    "CashFlowsFromUsedInOperations": 87.002,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 7.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 8.325,
+    "IncreaseDecreaseInCashAndCashEquivalents": 289.78,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 289.78,
+    "InterestPaidClassifiedAsFinancingActivities": 13.459,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.622,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 1.123,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -27.055,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 1.383,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 296.043,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 5.482,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 11.707,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": -18.135,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -38.81,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -1.943,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 10.707,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 16.204,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 11.311,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 5.194,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -30.441,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 6.579,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.801,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 51.08,
+    "AdjustmentsForProvisionsCurrent": 0.768,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 35.698,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 25.877,
+    "CashAndCashEquivalentsCashFlowStatement": 371.606,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 279.432,
+    "CashFlowsFromUsedInInvestingActivities": -66.173,
+    "CashFlowsFromUsedInOperatingActivities": 77.189,
+    "CashFlowsFromUsedInOperations": 84.911,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 7.722,
+    "IncreaseDecreaseInCashAndCashEquivalents": 290.448,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 290.448,
+    "InterestPaidClassifiedAsFinancingActivities": 10.819,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 4.517,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 17.406,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 7.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -27.018,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 1.383,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 15.416,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 296.043,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 3.973,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 14.768,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 19.825,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Varmora Granito Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-19T18:00:00+05:30",
@@ -4602,6 +4932,325 @@
  },
  "industry": "Consumer Discretionary > Consumer Durables > Ceramics",
  "last_filed_at": "2026-10-27T13:00:00+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "ACQUARIO WEALTH ADVISORS LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.0,
+    "qty": 1250000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 19.38
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "AJANTA MANUFACTURING PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 152.53,
+    "qty": 786547.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VARMORA",
+    "value_cr": 12.0
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "AJANTA MANUFACTURING PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 151.52,
+    "qty": 1320000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 20.0
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "ECONO TRADING & INVESTMENT PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.0,
+    "qty": 2000000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 31.0
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.05,
+    "qty": 1409167.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 21.85
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.17,
+    "qty": 1409167.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VARMORA",
+    "value_cr": 21.87
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.49,
+    "qty": 1613575.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VARMORA",
+    "value_cr": 25.09
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.47,
+    "qty": 1908688.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 29.67
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "KOMALAY INVESTRADE PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 152.66,
+    "qty": 1926506.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 29.41
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "KOMALAY INVESTRADE PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 156.51,
+    "qty": 2373922.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VARMORA",
+    "value_cr": 37.15
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "LAXMI TRADE SOLUTIONS",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 152.52,
+    "qty": 1390364.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 21.21
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "LAXMI TRADE SOLUTIONS",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 152.71,
+    "qty": 1390364.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VARMORA",
+    "value_cr": 21.23
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.63,
+    "qty": 1578342.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VARMORA",
+    "value_cr": 24.56
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.51,
+    "qty": 1578342.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 24.54
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "SIDDHISURI FINVEST PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 151.87,
+    "qty": 700000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VARMORA",
+    "value_cr": 10.63
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "SIDDHISURI FINVEST PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 155.0,
+    "qty": 1350000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VARMORA",
+    "value_cr": 20.93
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.075,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.075,
+    "oci_net_cr": 0.056,
+    "profit_cr": 9.703,
+    "tax_not_reclassified_cr": 0.019,
+    "total_comprehensive_cr": 9.759,
+    "total_comprehensive_nci_cr": -2.933,
+    "total_comprehensive_owners_cr": 12.692
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.075,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.075,
+    "oci_net_cr": 0.056,
+    "profit_cr": 14.718,
+    "tax_not_reclassified_cr": 0.019,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 14.774
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.076,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.076,
+    "oci_net_cr": 0.056,
+    "profit_cr": 43.955,
+    "tax_not_reclassified_cr": 0.02,
+    "total_comprehensive_cr": 44.011,
+    "total_comprehensive_nci_cr": -1.367,
+    "total_comprehensive_owners_cr": 45.378
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.076,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.076,
+    "oci_net_cr": 0.056,
+    "profit_cr": 23.286,
+    "tax_not_reclassified_cr": 0.02,
+    "total_comprehensive_cr": 23.342
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-20T10:26:16+05:30",
@@ -4724,6 +5373,694 @@
    "value": 400.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 36.31,
+     "approved_cr": 150.0,
+     "closing_cr": 24.472,
+     "counterparty": "Covertek Ceramica Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 17.846,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 23.0,
+     "approved_cr": 0.0,
+     "closing_cr": 25.138,
+     "counterparty": "Allemby Ceramics Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 1.607,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "On Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Joint venture",
+     "remarks": "-",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 17.031,
+     "approved_cr": 60.0,
+     "closing_cr": 2.389,
+     "counterparty": "Varmora Sanitarywares Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 5.534,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 7.0,
+     "approved_cr": 0.0,
+     "closing_cr": 25.0,
+     "counterparty": "Allemby Ceramics Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 18.0,
+     "relationship": "Joint venture",
+     "remarks": "-",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 2.636,
+     "approved_cr": 0.0,
+     "closing_cr": 1.458,
+     "counterparty": "Renite Vitrified LLP",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.112,
+     "relationship": "Joint venture",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.853,
+     "approved_cr": 5.0,
+     "closing_cr": -4.0,
+     "counterparty": "Renite Vitrified LLP",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Joint venture",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.001,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Simola Tiles LLP",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Subsidiary till 05 September 2026"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.791,
+     "approved_cr": 0.0,
+     "closing_cr": 18.322,
+     "counterparty": "Covertek Ceramica Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 17.531,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purpose",
+      "RelatedPartyTransactionExplanatory": "Inter-corporate deposit",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "On Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.789,
+     "approved_cr": 5.0,
+     "closing_cr": -2.92,
+     "counterparty": "Fiorenza Granito Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.57,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Associate",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.638,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Allemby Ceramics Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint venture",
+     "remarks": "-",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.556,
+     "approved_cr": 5.0,
+     "closing_cr": 0.073,
+     "counterparty": "Sentosa Granito Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.709,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Associate",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.444,
+     "approved_cr": 0.0,
+     "closing_cr": 0.444,
+     "counterparty": "Bhaveshkumar Harishkumar Koshti",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.289,
+     "approved_cr": 20.0,
+     "closing_cr": 0.341,
+     "counterparty": "Simola Tiles LLP",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Subsidiary till 05 September 2026. This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.25,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Simola Tiles LLP",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Subsidiary till 05 September 2026"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 0.25,
+     "approved_cr": 0.0,
+     "closing_cr": 26.687,
+     "counterparty": "Simola Tiles LLP",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 25.687,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purpose",
+      "RelatedPartyTransactionExplanatory": "Subsidiary till 05 September 2026",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "On Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 0.198,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Krutika Bhavesh Koshti",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.043,
+     "other_details": "Other expense",
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.197,
+     "approved_cr": 0.0,
+     "closing_cr": 4.574,
+     "counterparty": "Varmora Sanitarywares Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 4.377,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purpose",
+      "RelatedPartyTransactionExplanatory": "Inter-corporate deposit",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "20/05/2030",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.179,
+     "approved_cr": 0.0,
+     "closing_cr": 0.024,
+     "counterparty": "Varmora Plastech Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": -0.008,
+     "other_details": "Other expense",
+     "relationship": "Enterprise Controlled by the key management personnel or Individual having significant control or  their Relatives",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.171,
+     "approved_cr": 0.5,
+     "closing_cr": 0.171,
+     "counterparty": "Manish Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods and remuneration"
+     },
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.171,
+     "approved_cr": 0.5,
+     "closing_cr": 0.171,
+     "counterparty": "Bhaveshbhai Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods and remuneration"
+     },
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.171,
+     "approved_cr": 0.5,
+     "closing_cr": 0.171,
+     "counterparty": "Bharat Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods and remuneration"
+     },
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.171,
+     "approved_cr": 0.5,
+     "closing_cr": 0.171,
+     "counterparty": "Hiren Ramanbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods and remuneration"
+     },
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.171,
+     "approved_cr": 0.5,
+     "closing_cr": 0.171,
+     "counterparty": "Pramodkumar Parsotambhai Patel",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods and remuneration"
+     },
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.169,
+     "approved_cr": 0.0,
+     "closing_cr": 4.527,
+     "counterparty": "Avalta Granito Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 4.358,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purpose",
+      "RelatedPartyTransactionExplanatory": "Inter-corporate deposit",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "On Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Joint venture",
+     "remarks": "-",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.167,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Hiren Ramanbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.002,
+     "other_details": "Reimbursement of expense",
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.164,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Covertek Ceramica Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.029,
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.152,
+     "approved_cr": 0.0,
+     "closing_cr": 0.152,
+     "counterparty": "Nilesh Sharma",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.129,
+     "approved_cr": 0.5,
+     "closing_cr": 0.129,
+     "counterparty": "Ashokbhai Naranbhai Patel",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods and remuneration"
+     },
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.129,
+     "approved_cr": 0.5,
+     "closing_cr": 0.129,
+     "counterparty": "Adarsh Harilal Patel",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods and remuneration"
+     },
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.102,
+     "approved_cr": 0.0,
+     "closing_cr": 0.007,
+     "counterparty": "Bhaveshbhai Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expense",
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.074,
+     "approved_cr": 0.0,
+     "closing_cr": 1.979,
+     "counterparty": "Fiorenza Granito Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 1.905,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purpose",
+      "RelatedPartyTransactionExplanatory": "Inter-corporate deposit",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "On Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Associate",
+     "remarks": "-",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Suryanarayanan Sivaramakrishnan",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": -0.001,
+     "other_details": "Other expense",
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.045,
+     "approved_cr": 250.0,
+     "closing_cr": 0.012,
+     "counterparty": "Allemby Ceramics Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Joint venture",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.039,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Varmora Sanitarywares Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.025,
+     "approved_cr": 0.0,
+     "closing_cr": 0.023,
+     "counterparty": "Bhavnaben Ramanbhai Varmora",
+     "entity": "Covertek Ceramica Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent expense",
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.024,
+     "approved_cr": 0.0,
+     "closing_cr": 0.022,
+     "counterparty": "Kevin Pramodbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expense",
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.022,
+     "approved_cr": 0.0,
+     "closing_cr": 2.271,
+     "counterparty": "Simola Tiles LLP",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 4.244,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Subsidiary till 05 September 2026"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.015,
+     "approved_cr": 0.0,
+     "closing_cr": 0.014,
+     "counterparty": "Ranjanben Vallabhbhai Varmora",
+     "entity": "Covertek Ceramica Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent expense",
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.011,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bharat Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.001,
+     "other_details": "Reimbursement of expense",
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.008,
+     "approved_cr": 2.5,
+     "closing_cr": 0.0,
+     "counterparty": "Varmora Plastech Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Enterprise Controlled by the key management personnel or Individual having significant control or  their Relatives",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.0,
+     "closing_cr": 0.001,
+     "counterparty": "Fiorenza Granito Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.002,
+     "approved_cr": 0.0,
+     "closing_cr": 0.009,
+     "counterparty": "Ashokbhai Naranbhai Patel",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.006,
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.002,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Covertek Ceramica Private Limited",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.002,
+     "counterparty": "Bharat Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.001,
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bhaveshbhai Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.001,
+     "counterparty": "Hiren Ramanbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.001,
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Pramodkumar Parsotambhai Patel",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.002,
+     "counterparty": "Manish Vallabhbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.002,
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Prakashbhai Varmora",
+     "entity": "Varmora Granito Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "This is combined limit approved for sale and purchase of goods"
+     },
+     "relationship": "Close members of Key Managerial  Personnel",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 2.2,
+     "counterparty": "Rajeshkumar Naranbhai Shirvi",
+     "entity": "Simola Tiles LLP",
+     "opening_cr": 2.2,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Subsidiary till 05 September 2026"
+     },
+     "other_details": "Other receivable",
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 50,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544942",
  "section_lab": {
@@ -4734,6 +6071,11 @@
   },
   "governance_quarters": {
    "at": "2026-10-20T11:37:03+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:38:13+05:30",
    "by": "file",
    "doc": "other"
   }
@@ -4781,6 +6123,38 @@
    "segment": "Ceramic",
    "share_pct": 8.0,
    "source_news_id": "nse-106829938"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Not Applicable",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY27",
+   "segment": "Not Applicable",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
   }
  ],
  "standalone": {
@@ -6294,6 +7668,204 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": -0.259,
+    "Depreciation": 11.498,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 287.04,
+    "Interest": 7.129,
+    "Minority share": -2.933,
+    "Net Profit": 9.703,
+    "Net Profit (owners)": 12.636,
+    "OPM %": 8.955673618269751,
+    "Operating Profit": 28.234999999999957,
+    "Other Income": 4.505000000000038,
+    "PBT as filed": 14.372,
+    "Profit before tax": 14.113,
+    "Profit for PE": 12.636,
+    "Sales": 315.275,
+    "Tax": 4.41,
+    "Tax %": 31.247785729469285
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 8.065,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 268.56100000000004,
+    "Interest": 5.789,
+    "Net Profit": 14.718,
+    "Net Profit (owners)": 14.718,
+    "OPM %": 9.359042292880973,
+    "Operating Profit": 27.72999999999996,
+    "Other Income": 5.515000000000036,
+    "Profit before tax": 19.391,
+    "Profit for PE": 14.718,
+    "Sales": 296.291,
+    "Tax": 4.673,
+    "Tax %": 24.09880872569749
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.051,
+    "Depreciation": 10.888,
+    "Exceptional items": 0.581,
+    "Exceptional items AT": 0.49856226695039335,
+    "Expenses": 334.32800000000003,
+    "Interest": 6.78,
+    "Minority share": -1.367,
+    "Net Profit": 43.955,
+    "Net Profit (owners)": 45.322,
+    "OPM %": 16.201380568770265,
+    "Operating Profit": 64.63799999999998,
+    "Other Income": 4.253000000000014,
+    "PBT as filed": 51.172,
+    "Profit before tax": 51.223,
+    "Profit for PE": 44.82343773304961,
+    "Sales": 398.966,
+    "Tax": 7.268,
+    "Tax %": 14.188938562755013
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 327.46299999999997,
+    "CWIP": 35.235,
+    "Equity Capital": 45.202,
+    "Fixed Assets": 498.226,
+    "Investments": 59.704,
+    "Other Assets": 1188.0010000000002,
+    "Other Liabilities": 280.981,
+    "Reserves": 1127.52,
+    "Total Assets": 1781.166,
+    "Total Liabilities": 1781.166
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 8.139,
+    "Exceptional items": -17.867,
+    "Exceptional items AT": -13.95114217691637,
+    "Expenses": 330.012,
+    "Interest": 5.522,
+    "Net Profit": 23.286,
+    "Net Profit (owners)": 23.286,
+    "OPM %": 14.739681293016147,
+    "Operating Profit": 57.05200000000002,
+    "Other Income": -13.569000000000024,
+    "Profit before tax": 29.822,
+    "Profit for PE": 37.23714217691637,
+    "Sales": 387.064,
+    "Tax": 6.536,
+    "Tax %": 21.91670578767353
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 292.369,
+    "CWIP": 34.801,
+    "Equity Capital": 45.202,
+    "Fixed Assets": 459.819,
+    "Investments": 71.05,
+    "Other Assets": 1165.0030000000002,
+    "Other Liabilities": 292.01999999999987,
+    "Reserves": 1101.082,
+    "Total Assets": 1730.673,
+    "Total Liabilities": 1730.673
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "VARMORA",
  "timeline": [
   {

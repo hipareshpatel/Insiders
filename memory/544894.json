@@ -1,9 +1,83 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Lumino Industries Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 5
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-21T18:00:00+05:30",
@@ -657,7 +731,827 @@
   "former_names": []
  },
  "industry": "Industrials > Capital Goods > Industrial Products > Cables - Electricals",
- "last_filed_at": "2026-10-14T06:15:44+05:30",
+ "last_filed_at": "2026-10-30T13:08:45+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.74,
+    "qty": 1538487.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 17.65
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.25,
+    "qty": 1542481.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 17.62
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.91,
+    "qty": 2129579.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 24.47
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.56,
+    "qty": 2143579.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 24.56
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.46,
+    "qty": 2188731.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 24.83
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.38,
+    "qty": 2188731.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 24.82
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.18,
+    "qty": 3077479.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 35.14
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.13,
+    "qty": 3077479.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 35.12
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 112.08,
+    "qty": 4629182.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 51.88
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 112.52,
+    "qty": 5052769.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 56.85
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.32,
+    "qty": 11562930.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 131.03
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.37,
+    "qty": 11602150.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 131.53
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.57,
+    "qty": 2089022.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 23.73
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 115.11,
+    "qty": 2089022.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 24.05
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.36,
+    "qty": 3946770.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 45.14
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.32,
+    "qty": 3946770.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 45.12
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.19,
+    "qty": 4011915.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 45.41
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.26,
+    "qty": 4012402.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 45.44
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.98,
+    "qty": 4498647.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 51.28
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 113.81,
+    "qty": 4580133.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 52.13
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 112.47,
+    "qty": 1980830.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 22.28
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 112.52,
+    "qty": 1980830.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 22.29
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 116.71,
+    "qty": 1444423.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 16.86
+   },
+   {
+    "as_of": "2026-09-03T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-03",
+    "kind": "BULK",
+    "price": 114.71,
+    "qty": 6444413.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 73.92
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 117.26,
+    "qty": 1535247.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 18.0
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 117.13,
+    "qty": 1535247.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 17.98
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 117.66,
+    "qty": 2099235.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 24.7
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 117.7,
+    "qty": 2099235.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 24.71
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.56,
+    "qty": 2051306.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 23.91
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.84,
+    "qty": 2051306.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 23.97
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.62,
+    "qty": 1700627.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 19.83
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.58,
+    "qty": 1700627.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 19.83
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.61,
+    "qty": 2892802.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 33.73
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.48,
+    "qty": 2974124.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 34.64
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.89,
+    "qty": 7664459.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 89.59
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.92,
+    "qty": 7753861.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 90.66
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.74,
+    "qty": 7281236.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 85.0
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.79,
+    "qty": 7281236.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 85.04
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.49,
+    "qty": 2921704.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 34.03
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.45,
+    "qty": 2921704.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 34.02
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.79,
+    "qty": 2782193.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 32.49
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.84,
+    "qty": 2794315.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 32.65
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 116.09,
+    "qty": 2630515.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 30.54
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 117.08,
+    "qty": 6882327.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 80.58
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 117.46,
+    "qty": 3753186.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 44.08
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 117.53,
+    "qty": 3806076.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 44.73
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 112.85,
+    "qty": 1923895.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 21.71
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 112.9,
+    "qty": 1926043.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 21.75
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 107.08,
+    "qty": 1844168.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 19.75
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 107.04,
+    "qty": 1848473.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 19.79
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 105.47,
+    "qty": 1527336.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 16.11
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 105.5,
+    "qty": 1539711.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 16.24
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 108.63,
+    "qty": 1696327.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 18.43
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 108.61,
+    "qty": 1739058.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 18.89
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 104.28,
+    "qty": 1839715.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 19.18
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 104.28,
+    "qty": 1843248.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 19.22
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 105.64,
+    "qty": 1775779.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 18.76
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 105.64,
+    "qty": 1775779.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 18.76
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 110.79,
+    "qty": 1733498.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 19.21
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 110.85,
+    "qty": 1739724.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 19.28
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 110.36,
+    "qty": 1620577.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 17.88
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 110.84,
+    "qty": 1827882.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 20.26
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 109.2,
+    "qty": 1664335.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LUMINO",
+    "value_cr": 18.17
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 110.73,
+    "qty": 1867425.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LUMINO",
+    "value_cr": 20.68
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "oci_net_cr": -0.1561,
+    "profit_cr": 40.172,
+    "tax_not_reclassified_cr": 0.1233,
+    "tax_reclassified_cr": 0.0328,
+    "total_comprehensive_cr": 40.0159,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 40.0159
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "oci_net_cr": -0.1561,
+    "profit_cr": 40.2981,
+    "tax_not_reclassified_cr": 0.1233,
+    "tax_reclassified_cr": 0.0328,
+    "total_comprehensive_cr": 40.142
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -704,10 +1598,122 @@
    "at": "2026-10-09T17:56:10+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:35:09+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "consumer_durables",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 1407.4391,
+     "liabilities_cr": 810.4567,
+     "segment": "Manufacturing"
+    },
+    {
+     "assets_cr": 641.0388,
+     "liabilities_cr": 492.8417,
+     "segment": "EPC"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 2048.4779,
+    "liabilities_cr": 1303.2984,
+    "net_assets_cr": 2084.8837,
+    "net_liabilities_cr": 1315.1574
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 1383.3361,
+     "liabilities_cr": 810.4567,
+     "segment": "Manufacturing"
+    },
+    {
+     "assets_cr": 638.3867,
+     "liabilities_cr": 492.8417,
+     "segment": "EPC"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "totals": {
+    "assets_cr": 2021.7228,
+    "liabilities_cr": 1303.2984,
+    "net_assets_cr": 2085.5596,
+    "net_liabilities_cr": 1315.1557
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 48.73,
+   "period": "Q1FY27",
+   "revenue_cr": 371.03,
+   "segment": "Manufacturing",
+   "share_pct": 71.2,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 25.73,
+   "period": "Q1FY27",
+   "revenue_cr": 150.4,
+   "segment": "EPC",
+   "share_pct": 28.8,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1165,9 +2171,96 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 4.4652,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 450.53810000000004,
+    "Interest": 17.2367,
+    "Net Profit": 40.2981,
+    "Net Profit (owners)": 40.2981,
+    "OPM %": 13.595603318261947,
+    "Operating Profit": 70.89150000000001,
+    "Other Income": 5.3045999999999935,
+    "Profit before tax": 54.4942,
+    "Profit for PE": 40.2981,
+    "Sales": 521.4296,
+    "Tax": 14.1961,
+    "Tax %": 26.05066227231522
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": -0.1856,
+    "Associates' share outside PBT": -0.1856,
+    "Depreciation": 4.4652,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 450.55,
+    "Interest": 17.2367,
+    "Minority share": 0.0,
+    "Net Profit": 40.172,
+    "Net Profit (owners)": 40.172,
+    "OPM %": 13.59332113098298,
+    "Operating Profit": 70.87960000000004,
+    "Other Income": 5.373099999999965,
+    "Profit before tax": 54.5508,
+    "Profit for PE": 40.172,
+    "Sales": 521.4296,
+    "Tax": 14.1932,
+    "Tax %": 26.018316871613248
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  }
+ ],
  "symbol": "LUMINO",
- "timeline": [],
+ "timeline": [
+  {
+   "date": "2026-10-30T13:08:45+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_9aab1306",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-10-30T13:22:26+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106836150",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/LUMINO123_30102026130804_change_in_CIN.pdf",
+   "summary": "2026-10-30: Lumino Industries updates CIN to L14293WB2005PLC102556 and listing status to 'Yes' on MCA"
+  }
+ ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T10:02:23+05:30",
+ "updated_at": "2026-10-30T13:22:26+05:30",
  "watchlist": []
 }

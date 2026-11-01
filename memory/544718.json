@@ -1,15 +1,94 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-04-20T14:00:12+05:30",
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
    "lab": {
-    "at": "2026-04-20T14:00:12+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106594128"
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
   },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M S K A & ASSOCIATES LLP (Formerly known as M S K A & Associates)",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M S K A & ASSOCIATES LLP (Formerly known as M S K A & Associates)",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
+ "balance_sheet": [
   {
    "as_of": "2026-05-11T14:03:20+05:30",
    "cash_cr": 114.22,
@@ -38,16 +117,6 @@
    "source_news_id": "nse-106616723",
    "total_assets_cr": 715.39,
    "total_liabilities_cr": 200.19
-  },
-  {
-   "as_of": "2026-05-11T15:58:08+05:30",
-   "lab": {
-    "at": "2026-05-11T15:58:08+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Mar-2026",
-   "source_news_id": "nse-106616874"
   },
   {
    "as_of": "2026-05-11T18:00:00+05:30",
@@ -80,26 +149,6 @@
    "total_liabilities_cr": 200.19
   },
   {
-   "as_of": "2026-05-14T11:46:11+05:30",
-   "lab": {
-    "at": "2026-05-14T11:46:11+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q4FY26",
-   "source_news_id": "nse-106622014"
-  },
-  {
-   "as_of": "2026-05-14T13:29:42+05:30",
-   "lab": {
-    "at": "2026-05-14T13:29:42+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "FY26",
-   "source_news_id": "nse-106622264"
-  },
-  {
    "as_of": "2026-10-26T12:29:40+05:30",
    "cash_cr": 72.06,
    "current_assets_cr": 772.81,
@@ -128,18 +177,6 @@
    "source_news_id": "nse-106828194",
    "total_assets_cr": 790.8,
    "total_liabilities_cr": 230.17
-  },
-  {
-   "as_of": "2026-10-26T14:52:12+05:30",
-   "lab": {
-    "at": "2026-10-26T14:58:40+05:30",
-    "basis": "STANDALONE",
-    "by": "ai",
-    "doc": "slides",
-    "ok": true
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106828371"
   },
   {
    "as_of": "2026-10-26T18:00:00+05:30",
@@ -221,6 +258,222 @@
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -156.137,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -2.413,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.108,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -2.084,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.681,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 9.555,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 2.6,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -23.338,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 2.035,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.5,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.092,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.599,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -172.088,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 114.217,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 426.857,
+    "CashFlowsFromUsedInInvestingActivities": -246.834,
+    "CashFlowsFromUsedInOperatingActivities": -104.826,
+    "CashFlowsFromUsedInOperations": -85.616,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 19.21,
+    "IncreaseDecreaseInCashAndCashEquivalents": 75.197,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 75.197,
+    "InterestPaidClassifiedAsFinancingActivities": 9.145,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.681,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -245.097,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.417,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 75.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 361.419,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.07,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 2.348,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -124.859,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 2.66,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.123,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 2.011,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.79,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 4.894,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 1.139,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 70.875,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 10.781,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.505,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.527,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.056,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -58.341,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 72.057,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -54.023,
+    "CashFlowsFromUsedInInvestingActivities": 17.081,
+    "CashFlowsFromUsedInOperatingActivities": -5.218,
+    "CashFlowsFromUsedInOperations": 9.084,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 14.302,
+    "IncreaseDecreaseInCashAndCashEquivalents": -42.16,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -42.16,
+    "InterestPaidClassifiedAsFinancingActivities": 5.226,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 4.183,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -5.025,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.01,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -10.665,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 14.784,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.632,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -37.5,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.018,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.858,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "PNGS Reva Diamond Jewellery Limited",
  "deals": [
   {
@@ -273,6 +526,80 @@
    "tranches": [],
    "updated_as_of": "2026-05-14T13:29:42+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
   }
  ],
  "financial_metrics": [
@@ -10061,7 +10388,7 @@
    "1417"
   ]
  },
- "last_filed_at": "2026-10-26T18:00:00+05:30",
+ "last_filed_at": "2026-11-01T16:02:13+05:30",
  "market_deals": {
   "events": [
    {
@@ -10183,9 +10510,569 @@
     "side": "SELL",
     "symbol": "PNGSREVA",
     "value_cr": 10.64
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 620.78,
+    "qty": 164454.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 10.21
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 619.8,
+    "qty": 164997.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 10.23
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 612.56,
+    "qty": 200940.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 12.31
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 617.19,
+    "qty": 204134.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 12.6
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 699.87,
+    "qty": 827310.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 57.9
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 700.63,
+    "qty": 827310.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 57.96
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 709.89,
+    "qty": 185271.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 13.15
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 710.19,
+    "qty": 185271.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 13.16
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 711.02,
+    "qty": 207352.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 14.74
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 702.65,
+    "qty": 229810.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 16.15
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 696.66,
+    "qty": 174254.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 12.14
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 696.92,
+    "qty": 174254.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 12.14
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 700.58,
+    "qty": 414494.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 29.04
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 700.7,
+    "qty": 420618.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 29.47
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 705.79,
+    "qty": 598431.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 42.24
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 705.91,
+    "qty": 598431.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 42.24
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 705.22,
+    "qty": 481028.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 33.92
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 704.79,
+    "qty": 481028.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 33.9
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 698.9,
+    "qty": 533201.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 37.27
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 696.45,
+    "qty": 536239.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 37.35
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "VINSUL MAKARDI LTD",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 699.54,
+    "qty": 173317.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 12.12
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "VINSUL MAKARDI LTD",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 699.7,
+    "qty": 173324.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 12.13
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 691.05,
+    "qty": 160006.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 11.06
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 691.84,
+    "qty": 160006.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 11.07
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 694.04,
+    "qty": 203449.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 14.12
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 689.95,
+    "qty": 205441.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 14.17
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 657.92,
+    "qty": 386964.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 25.46
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 657.0,
+    "qty": 386964.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 25.42
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 651.34,
+    "qty": 196390.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 12.79
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 651.82,
+    "qty": 203763.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 13.28
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 656.95,
+    "qty": 365347.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 24.0
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 657.2,
+    "qty": 365614.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 24.03
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 659.19,
+    "qty": 281574.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 18.56
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 659.8,
+    "qty": 281574.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 18.58
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 659.05,
+    "qty": 177282.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 11.68
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 659.36,
+    "qty": 177282.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 11.69
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 656.51,
+    "qty": 226020.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "PNGSREVA",
+    "value_cr": 14.84
+   },
+   {
+    "as_of": "2026-10-28T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-28",
+    "kind": "BULK",
+    "price": 654.61,
+    "qty": 225901.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "PNGSREVA",
+    "value_cr": 14.79
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.001,
+     "description": "Re-measurement gain / (loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.001,
+    "oci_net_cr": 0.001,
+    "profit_cr": 23.114,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 23.115
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.039,
+     "description": "Re-measurement gain / (loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.039,
+    "oci_net_cr": -0.029,
+    "profit_cr": 21.409,
+    "tax_not_reclassified_cr": -0.01,
+    "total_comprehensive_cr": 21.38
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "oci_net_cr": -0.012,
+    "profit_cr": 27.21,
+    "tax_not_reclassified_cr": 0.016,
+    "tax_reclassified_cr": -0.004,
+    "total_comprehensive_cr": 27.198
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "oci_net_cr": -0.014,
+    "profit_cr": 23.294,
+    "tax_not_reclassified_cr": 0.019,
+    "tax_reclassified_cr": -0.005,
+    "total_comprehensive_cr": 23.28
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-20T14:00:12+05:30",
@@ -10276,6 +11163,16 @@
    },
    "source_news_id": "nse-106828371",
    "text": "Annualized Inventory Turn for H1FY27 calculated at 1.04 times."
+  },
+  {
+   "as_of": "2026-11-01T16:02:13+05:30",
+   "lab": {
+    "at": "2026-11-01T16:02:53+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106838799",
+   "text": "Opened an exclusive brand store at Elpro Mall, Chinchwadgaon, PCMC, Pune; network now 34 SIS stores and 7 EBOs."
   }
  ],
  "ownership": [
@@ -10334,7 +11231,969 @@
    "source_news_id": "xbrl:shp:544718:Q2FY27"
   }
  ],
- "predictions": [],
+ "predictions": [
+  {
+   "comparison": ">=",
+   "created_on": "2026-11-01T16:02:13+05:30",
+   "id": "p_ae820183",
+   "kpi": "EBO store count additions",
+   "lab": {
+    "at": "2026-11-01T16:02:53+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "metric": "ebo_store_count",
+   "period": "FY27",
+   "source_news_id": "nse-106838799",
+   "status": "OPEN",
+   "value": 15.0
+  }
+ ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 10.738,
+     "approved_cr": 20.0,
+     "closing_cr": 0.0,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Collection from customers by PNGSL on behalf of Reva",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.343,
+     "approved_cr": 20.0,
+     "closing_cr": -0.007,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": -0.367,
+     "other_details": "Payment to PNGSL instead of customers",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.0,
+     "approved_cr": 100.0,
+     "closing_cr": 0.0,
+     "counterparty": "Govind Vishwanath Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 10.0,
+     "approved_cr": 100.0,
+     "closing_cr": 0.0,
+     "counterparty": "Govind Vishwanath Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 7.878,
+     "approved_cr": 18.0,
+     "closing_cr": -1.182,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.709,
+     "other_details": "Commission paid by Reva to PNGSL",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.792,
+     "approved_cr": 70.0,
+     "closing_cr": 0.0,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 6.73,
+     "approved_cr": 50.0,
+     "closing_cr": -0.026,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": -1.436,
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.947,
+     "closing_cr": -0.764,
+     "counterparty": "Amit Yeshwant Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.273,
+     "closing_cr": -0.076,
+     "counterparty": "Vrujendra Waghchaure",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Senior management personnel",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.249,
+     "closing_cr": -0.089,
+     "counterparty": "Shendkar Kisan Maruti",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.18,
+     "approved_cr": 2.0,
+     "closing_cr": -0.18,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Security Deposit",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.17,
+     "approved_cr": 0.72,
+     "closing_cr": -0.022,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.049,
+     "other_details": "Space facility charges paid to PNGSL",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.056,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Ravindra Vinayak Khadilkar",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.044,
+     "closing_cr": 0.0,
+     "counterparty": "Kirti Vaidya",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Company Secretary",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.041,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Sunita Amit Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.032,
+     "approved_cr": 1.0,
+     "closing_cr": -0.034,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent & CAM charges paid by Reva to PNGSL (Paud Road)",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.031,
+     "approved_cr": 100.0,
+     "closing_cr": 0.0,
+     "counterparty": "Govind Vishwanath Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.021,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Payment to Gargi instead of customers",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.011,
+     "approved_cr": 0.011,
+     "closing_cr": -0.011,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": -0.011,
+     "other_details": "Gratuity Liability",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.009,
+     "closing_cr": 0.0,
+     "counterparty": "Natu Ranjeet Sadashiv",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent director",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.008,
+     "closing_cr": 0.0,
+     "counterparty": "Lale Ravindra Kamalakar",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent director",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.007,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Govind Vishwanath Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.007,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Aditya Amit Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Non Executive Director",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.006,
+     "closing_cr": 0.0,
+     "counterparty": "Purohit Aparna Prasad",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent director",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.005,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Jyoti Ravindra Paranjape",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.004,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Re-imbursement of expense",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.6,
+     "closing_cr": 0.0,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Credit card commission and charges",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Redemption of gift vouchers",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 30.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sales commission",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Facility charges",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Re-imbursement of expenses",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Credit card commission and charges",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.25,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Franchisee (security) deposit, interest on security deposit",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Redemption of gift vouchers",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Gratuity liability",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Govind Vishwanath Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/jewellery repair charges",
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Renu Govind Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Promoter",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Satyajit Govind Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Parikshit Govind Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Anjali Vishwanath Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Rohini Kalkundrikar",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Jyoti Ravindra Paranjape",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Ravindra Vinayak Khadilkar",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Amit Yeshwant Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Sunita Amit Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Mohini Vikas Wadadekar",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Ashwini Ajit Dike",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Aditya Amit Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/jewellery repair charges",
+     "relationship": "Non Executive Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Mugdha Aditya Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Kiaara Aditya Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Kirti Vaidya",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Company Secretary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Vrujendra Waghchaure",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Senior management personnel",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Shendkar Kisan Maruti",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Natu Ranjeet Sadashiv",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Independent director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Lale Ravindra Kamalakar",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Independent director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Purohit Aparna Prasad",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of goods/Sale of goods/jewellery repair charges",
+     "relationship": "Independent director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 58,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 12.859,
+     "approved_cr": 70.0,
+     "closing_cr": 0.028,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 10.339,
+     "approved_cr": 42.0,
+     "closing_cr": 0.023,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.018,
+     "other_details": "Re-imbursement of expenses and other accounting adjustments",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.177,
+     "approved_cr": 24.0,
+     "closing_cr": 1.26,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 1.164,
+     "other_details": "Commission paid by Reva to PNGSL",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.087,
+     "approved_cr": 50.0,
+     "closing_cr": 0.0,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.252,
+     "approved_cr": 30.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.173,
+     "closing_cr": 0.121,
+     "counterparty": "Amit Yeshwant Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.33,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent & CAM charges paid by Reva to PNGSL (Paud Road)",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.19,
+     "closing_cr": 0.023,
+     "counterparty": "Vrujendra Waghchaure",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.169,
+     "closing_cr": 0.02,
+     "counterparty": "Shendkar Kisan Maruti",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key managerial personnel",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 2.0,
+     "closing_cr": 0.024,
+     "counterparty": "P. N. Gadgil & Sons Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Space facility charges paid by Reva to PNGSL",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.077,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Sunita Amit Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.05,
+     "closing_cr": 0.008,
+     "counterparty": "Kirti Vaidya",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Company Secretary",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.048,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "P.N.GADGIL ART & CULTURE FOUNDATION",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Contribution towards CSR",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.043,
+     "closing_cr": 0.0,
+     "counterparty": "Sunita Amit Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "URD Purchase of goods or services",
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.023,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Govind Vishwanath Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.023,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "PNGS Gargi Fashion Jewellery Ltd",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Re-imbursement of expenses",
+     "relationship": "Enterprise over which KMP(s) or their relatives have control/significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.5,
+     "closing_cr": 0.121,
+     "counterparty": "Renu Govind Gadgil",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.002,
+     "closing_cr": 0.0,
+     "counterparty": "Natu Ranjeet Sadashiv",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent director",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.002,
+     "closing_cr": 0.0,
+     "counterparty": "Lale Ravindra Kamalakar",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent director",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.002,
+     "closing_cr": 0.0,
+     "counterparty": "Purohit Aparna Prasad",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent director",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Mugdha Aditya Modak",
+     "entity": "PNGS Reva Diamond Jewellery Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of person having significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 21,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544718",
  "section_lab": {
@@ -10349,13 +12208,77 @@
    "doc": "other"
   },
   "market_deals": {
-   "at": "2026-08-04T15:30:00+05:30",
+   "at": "2026-11-01T14:40:18+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "consumer_durables",
  "segment_mix": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Trading of diamond jewellery and precious stones",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Trading of diamond jewellery and precious stones",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Trading of natural diamond jewellery and precious stones",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY27",
+   "segment": "Trading of diamond jewellery and precious stones",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  },
   {
    "as_of": "2026-10-26T14:52:12+05:30",
    "lab": {
@@ -10460,6 +12383,256 @@
   "Q4FY26",
   "Q1FY27",
   "Q2FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.211,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 110.589,
+    "Interest": 2.59,
+    "Net Profit": 23.114,
+    "Net Profit (owners)": 23.114,
+    "OPM %": 23.299556813216537,
+    "Operating Profit": 33.593999999999994,
+    "Other Income": 0.1150000000000091,
+    "Profit before tax": 30.908,
+    "Profit for PE": 23.114,
+    "Sales": 144.183,
+    "Tax": 7.794,
+    "Tax %": 25.21677235667141
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.238,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 107.548,
+    "Interest": 3.12,
+    "Net Profit": 21.409,
+    "Net Profit (owners)": 21.409,
+    "OPM %": 22.137758278673097,
+    "Operating Profit": 30.578000000000003,
+    "Other Income": 1.5219999999999985,
+    "Profit before tax": 28.742,
+    "Profit for PE": 21.409,
+    "Sales": 138.126,
+    "Tax": 7.333,
+    "Tax %": 25.513186277920813
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 165.884,
+    "CWIP": 0.0,
+    "Equity Capital": 31.698,
+    "Fixed Assets": 2.695,
+    "Investments": 0.0,
+    "Other Assets": 712.6919999999999,
+    "Other Liabilities": 34.30299999999997,
+    "Reserves": 483.502,
+    "Total Assets": 715.387,
+    "Total Liabilities": 715.387
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.663,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 344.061,
+    "Interest": 9.867,
+    "Net Profit": 64.655,
+    "Net Profit (owners)": 64.655,
+    "OPM %": 21.631194365735222,
+    "Operating Profit": 94.96700000000004,
+    "Other Income": 2.034999999999954,
+    "Profit before tax": 86.472,
+    "Profit for PE": 64.655,
+    "Sales": 439.028,
+    "Tax": 21.817,
+    "Tax %": 25.230132297159773
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 426.857,
+    "Cash from Investing Activity": -246.834,
+    "Cash from Operating Activity": -104.826,
+    "Net Cash Flow": 75.197
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.357,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 84.04599999999999,
+    "Interest": 2.748,
+    "Net Profit": 27.21,
+    "Net Profit (owners)": 27.21,
+    "OPM %": 28.75827519856239,
+    "Operating Profit": 33.92700000000001,
+    "Other Income": 5.575999999999993,
+    "Profit before tax": 36.398,
+    "Profit for PE": 27.21,
+    "Sales": 117.973,
+    "Tax": 9.188,
+    "Tax %": 25.243145227759765
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.433,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 91.827,
+    "Interest": 2.497,
+    "Net Profit": 23.294,
+    "Net Profit (owners)": 23.294,
+    "OPM %": 23.820940592827334,
+    "Operating Profit": 28.714,
+    "Other Income": 5.243000000000002,
+    "Profit before tax": 31.027,
+    "Profit for PE": 23.294,
+    "Sales": 120.541,
+    "Tax": 7.733,
+    "Tax %": 24.923453766074708
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 134.808,
+    "CWIP": 0.029,
+    "Equity Capital": 31.698,
+    "Fixed Assets": 4.306,
+    "Investments": 0.01,
+    "Other Assets": 786.454,
+    "Other Liabilities": 95.36199999999997,
+    "Reserves": 528.931,
+    "Total Assets": 790.799,
+    "Total Liabilities": 790.799
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "PNGSREVA",
  "timeline": [
@@ -10618,10 +12791,39 @@
    "news_id": "nse-106828371",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/PNGSREVA_26102026145119_Covering_Letter_and_Presentation_q2_signed.pdf",
    "summary": "PNGS Reva presented Q2FY27 investor presentation highlighting 17% YoY revenue growth to ₹120.5 Cr and PAT of ₹23.3 Cr."
+  },
+  {
+   "date": "2026-10-30T18:30:34+05:30",
+   "event_type": "OTHER",
+   "id": "t_a3725975",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-30T19:57:10+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106837128",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/PNGSREVA_30102026183010_Outcome_Earnings_Call_30102026_Signed.pdf",
+   "summary": "Outcome and audio recording of earnings call held on 30 Oct 2026 at 4.00 p.m. IST is available on the company website.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-11-01T16:02:13+05:30",
+   "event_type": "MONTHLY_BUSINESS_UPDATE",
+   "id": "t_1e998820",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-11-01T16:02:53+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106838799",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/PNGSREVA_01112026160148_Corporate_announcement_Elpro_Mall_Chichwad_signed.pdf",
+   "summary": "PNGS Reva opened an exclusive brand store at Elpro Mall, Chinchwadgaon, Pune, taking its EBO count to 7 alongside 34 SIS stores."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T09:54:04+05:30",
+ "updated_at": "2026-11-01T16:02:53+05:30",
  "watchlist": [
   {
    "check_by": null,

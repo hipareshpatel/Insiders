@@ -1,9 +1,69 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Veegaland Developers Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.26,
+    "DebtServiceCoverageRatio": 8.67,
+    "InterestServiceCoverageRatio": 12.79
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-06T18:00:00+05:30",
@@ -675,7 +735,252 @@
   ]
  },
  "industry": "Consumer Discretionary > Realty > Residential, Commercial Projects",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 48.2,
+    "after_qty": 23498500.0,
+    "as_of": "2026-09-21T23:59:00+05:30",
+    "before_pct": 46.56,
+    "before_qty": 22698500.0,
+    "category": "Promoter and Director",
+    "exchange": "BSE",
+    "filed": "2026-09-21",
+    "filing_id": "3459",
+    "from": "2026-09-18",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Kochouseph Thomas Chittilappilly",
+    "qty": 800000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "to": "2026-09-18",
+    "value_cr": 11.7177
+   },
+   {
+    "after_pct": 48.42,
+    "after_qty": 23606446.0,
+    "as_of": "2026-09-22T23:59:00+05:30",
+    "before_pct": 48.2,
+    "before_qty": 23498500.0,
+    "category": "Promoter and Director",
+    "exchange": "BSE",
+    "filed": "2026-09-22",
+    "filing_id": "3477",
+    "from": "2026-09-21",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Kochouseph Thomas Chittilappilly",
+    "qty": 107946.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "to": "2026-09-21",
+    "value_cr": 1.5014
+   },
+   {
+    "after_pct": 48.82,
+    "after_qty": 23798500.0,
+    "as_of": "2026-09-22T23:59:00+05:30",
+    "before_pct": 48.42,
+    "before_qty": 23606446.0,
+    "category": "Promoter and Director",
+    "exchange": "NSE",
+    "filed": "2026-09-22",
+    "filing_id": "3477",
+    "from": "2026-09-21",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Kochouseph Thomas Chittilappilly",
+    "qty": 192054.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "to": "2026-09-21",
+    "value_cr": 2.7288
+   },
+   {
+    "after_pct": 49.37,
+    "after_qty": 24067746.0,
+    "as_of": "2026-09-23T23:59:00+05:30",
+    "before_pct": 48.82,
+    "before_qty": 23798500.0,
+    "category": "Promoter and Director",
+    "exchange": "NSE",
+    "filed": "2026-09-23",
+    "filing_id": "3537",
+    "from": "2026-09-22",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Kochouseph Thomas Chittilappilly",
+    "qty": 269246.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "to": "2026-09-22",
+    "value_cr": 3.7304
+   }
+  ],
+  "filings": [
+   "3459",
+   "3477",
+   "3537"
+  ]
+ },
  "last_filed_at": "2026-10-26T18:28:40+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "ASTORNE CAPITAL VCC ARVEN",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 154.0,
+    "qty": 1385000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 21.33
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "CHITTILAPPILLY THOMAS KOCHUOUSEPH",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 146.37,
+    "qty": 800000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 11.71
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "KUBER INDIA OPPORTUNITY FUND",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 154.0,
+    "qty": 292570.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VEEGALAND",
+    "value_cr": 4.51
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "LRSD SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 148.63,
+    "qty": 385176.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VEEGALAND",
+    "value_cr": 5.72
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 146.3,
+    "qty": 300000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 4.39
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 142.9,
+    "qty": 4.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 0.0
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 138.99,
+    "qty": 300004.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VEEGALAND",
+    "value_cr": 4.17
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "CHITTILAPPILLY THOMAS KOCHUOUSEPH",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 138.46,
+    "qty": 269246.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 3.73
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "CUMULUS ADVISORY LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 143.2,
+    "qty": 364994.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 5.23
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "SAROJDEVI S KABRA",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 147.7,
+    "qty": 410226.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 6.06
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "SAROJDEVI S KABRA",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 147.0,
+    "qty": 410226.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "VEEGALAND",
+    "value_cr": 6.03
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "MAYURI SHRIPAL VORA",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 129.6,
+    "qty": 357000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "VEEGALAND",
+    "value_cr": 4.63
+   }
+  ]
+ },
  "operating_notes": [
   {
    "as_of": "2026-10-26T18:28:40+05:30",
@@ -745,12 +1050,75 @@
    "at": "2026-10-24T16:19:13+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "insider_trades": {
+   "at": "2026-11-01T14:11:30+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:43:02+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "realty",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Residential Real Estate",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.2216,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 61.3071,
+    "Interest": 1.1017,
+    "Net Profit": 9.7232,
+    "Net Profit (owners)": 9.7232,
+    "OPM %": 17.511282019542044,
+    "Operating Profit": 13.014699999999998,
+    "Other Income": 1.2976000000000028,
+    "Profit before tax": 12.989,
+    "Profit for PE": 9.7232,
+    "Sales": 74.3218,
+    "Tax": 3.2658,
+    "Tax %": 25.14281314958811
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "VEEGALAND",
  "timeline": [

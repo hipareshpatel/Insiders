@@ -1,4 +1,108 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-02-29",
+     "name": "Brahmayya & Co.",
+     "peer_review_valid": true
+    },
+    {
+     "certificate_valid_until": "2029-02-28",
+     "name": "Raj Har Gopal & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "advances_cr": 140.65,
@@ -33,24 +137,23 @@
    "source_news_id": "xbrl:res:544583:Q3FY26"
   },
   {
-   "as_of": "2026-04-28T18:34:44+05:30",
+   "as_of": "2026-04-28T18:25:55+05:30",
+   "cash_cr": 613.33,
+   "credit_rating": "CRISIL AA+/Stable, CARE AA+/Stable",
+   "gross_debt_cr": 250.0,
    "lab": {
-    "at": "2026-04-28T18:34:44+05:30",
+    "at": "2026-11-01T04:14:38+05:30",
+    "basis": "STANDALONE",
     "by": "ai",
-    "doc": "call"
+    "doc": "results",
+    "ok": true
    },
-   "period": "FY26",
-   "source_news_id": "nse-106603049"
-  },
-  {
-   "as_of": "2026-04-28T18:40:38+05:30",
-   "lab": {
-    "at": "2026-04-28T18:40:38+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "FY26",
-   "source_news_id": "nse-106603060"
+   "net_debt_cr": -363.33,
+   "net_worth_cr": 1605.47,
+   "period": "Q4FY26",
+   "rating_agency": "CRISIL / CARE",
+   "rating_outlook": "Stable",
+   "source_news_id": "nse-106603028"
   },
   {
    "as_of": "2026-07-20T18:00:00+05:30",
@@ -106,6 +209,248 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 1524.79,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 0.0,
+    "CashFlowsFromUsedInInvestingActivities": -1124.58,
+    "CashFlowsFromUsedInOperatingActivities": 777.83,
+    "CashFlowsFromUsedInOperations": 784.4,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.57,
+    "IncreaseDecreaseInCashAndCashEquivalents": -346.75,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -346.75,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1036.25,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherCashPaymentsFromOperatingActivities": 865.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromOperatingActivities": 6.69,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -2157.63,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsForPremiumsAndClaimsAnnuitiesAndOtherPolicyBenefits": 2488.46,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsFromContractsHeldForDealingOrTradingPurpose": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "PaymentsToAndOnBehalfOfEmployees": 0.0,
+    "PaymentsToManufactureOrAcquireAssetsHeldForRentalToOthersAndSubsequentlyHeldForSale": 0.0,
+    "PaymentsToSuppliersForGoodsAndServices": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.3,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 3.5,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 1951.13,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 212.0,
+    "CashFlowsFromUsedInInvestingActivities": -3665.91,
+    "CashFlowsFromUsedInOperatingActivities": 3533.5,
+    "CashFlowsFromUsedInOperations": 3548.12,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 38.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 14.62,
+    "IncreaseDecreaseInCashAndCashEquivalents": 79.59,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 79.59,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2066.71,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherCashPaymentsFromOperatingActivities": 1789.08,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromOperatingActivities": 11.83,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -5722.59,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsForPremiumsAndClaimsAnnuitiesAndOtherPolicyBenefits": 4694.17,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsFromContractsHeldForDealingOrTradingPurpose": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "PaymentsToAndOnBehalfOfEmployees": 0.0,
+    "PaymentsToManufactureOrAcquireAssetsHeldForRentalToOthersAndSubsequentlyHeldForSale": 0.0,
+    "PaymentsToSuppliersForGoodsAndServices": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 250.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.34,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 10.37,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 1833.96,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -38.0,
+    "CashFlowsFromUsedInInvestingActivities": -1745.23,
+    "CashFlowsFromUsedInOperatingActivities": 1666.06,
+    "CashFlowsFromUsedInOperations": 1673.05,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 38.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.99,
+    "IncreaseDecreaseInCashAndCashEquivalents": -117.17,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -117.17,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1187.44,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherCashPaymentsFromOperatingActivities": 1048.55,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromOperatingActivities": 6.3,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -2925.43,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsForPremiumsAndClaimsAnnuitiesAndOtherPolicyBenefits": 2139.26,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsFromContractsHeldForDealingOrTradingPurpose": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "PaymentsToAndOnBehalfOfEmployees": 0.0,
+    "PaymentsToManufactureOrAcquireAssetsHeldForRentalToOthersAndSubsequentlyHeldForSale": 0.0,
+    "PaymentsToSuppliersForGoodsAndServices": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.2,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 7.44,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Canara HSBC Life Insurance Company Limited",
  "corporate_actions": [
   {
@@ -117,6 +462,169 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "final_cr": 0.004,
+    "interim_cr": 0.0
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "ConservationRatio": 0.8627,
+    "ExpensesOfManagementRatio": 0.186,
+    "GrossNPAsShareholdersFund": 86.1,
+    "NetNPAsShareholdersFund": 0.0,
+    "PercentageOfGrossNPAsShareholdersFund": 0.0562,
+    "PercentageOfNetNPAsShareholdersFund": 0,
+    "PersistencyRatio13ThMonth": 0.8199,
+    "PersistencyRatio25ThMonth": 0.7144,
+    "PersistencyRatio37ThMonth": 0.6349,
+    "PersistencyRatio49ThMonth": 0.605,
+    "PersistencyRatio61ThMonth": 0.5881,
+    "SolvencyRatio": 1.9779
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "ConservationRatio": 0.8789,
+    "ExpensesOfManagementRatio": 0.1825,
+    "GrossNPAsShareholdersFund": 86.1,
+    "NetNPAsShareholdersFund": 0.0,
+    "PercentageOfGrossNPAsShareholdersFund": 0.0534,
+    "PercentageOfNetNPAsShareholdersFund": 0,
+    "PersistencyRatio13ThMonth": 0.8473,
+    "PersistencyRatio25ThMonth": 0.6701,
+    "PersistencyRatio37ThMonth": 0.6271,
+    "PersistencyRatio49ThMonth": 0.6091,
+    "PersistencyRatio61ThMonth": 0.5701,
+    "SolvencyRatio": 1.9103
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "ConservationRatio": 0.8459,
+    "ExpensesOfManagementRatio": 0.1863,
+    "GrossNPAsShareholdersFund": 86.1,
+    "NetNPAsShareholdersFund": 0.0,
+    "PercentageOfGrossNPAsShareholdersFund": 0.0445,
+    "PercentageOfNetNPAsShareholdersFund": 0,
+    "PersistencyRatio13ThMonth": 0.8213,
+    "PersistencyRatio25ThMonth": 0.7006,
+    "PersistencyRatio37ThMonth": 0.6282,
+    "PersistencyRatio49ThMonth": 0.5889,
+    "PersistencyRatio61ThMonth": 0.511,
+    "SolvencyRatio": 1.8989
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "ConservationRatio": 0.8519,
+    "ExpensesOfManagementRatio": 0.2069,
+    "GrossNPAsShareholdersFund": 86.1,
+    "NetNPAsShareholdersFund": 0.0,
+    "PercentageOfGrossNPAsShareholdersFund": 0.0445,
+    "PercentageOfNetNPAsShareholdersFund": 0,
+    "PersistencyRatio13ThMonth": 0.8184,
+    "PersistencyRatio25ThMonth": 0.7205,
+    "PersistencyRatio37ThMonth": 0.7037,
+    "PersistencyRatio49ThMonth": 0.6139,
+    "PersistencyRatio61ThMonth": 0.527,
+    "SolvencyRatio": 1.9803
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "ConservationRatio": 0.8226,
+    "ExpensesOfManagementRatio": 0.2038,
+    "GrossNPAsShareholdersFund": 83.25,
+    "NetNPAsShareholdersFund": 0.0,
+    "PercentageOfGrossNPAsShareholdersFund": 0.0423,
+    "PercentageOfNetNPAsShareholdersFund": 0,
+    "PersistencyRatio13ThMonth": 0.8077,
+    "PersistencyRatio25ThMonth": 0.7223,
+    "PersistencyRatio37ThMonth": 0.6601,
+    "PersistencyRatio49ThMonth": 0.6029,
+    "PersistencyRatio61ThMonth": 0.5221,
+    "SolvencyRatio": 1.8041
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2025-10-27T18:00:00+05:30",
@@ -2150,6 +2658,44 @@
    "updated_as_of": "2026-02-02T18:00:00+05:30",
    "value": 10247.31,
    "value_news_id": "xbrl:res:544583:Q3FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-04-28T18:25:55+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-11-01T04:14:38+05:30",
+    "basis": "STANDALONE",
+    "by": "ai",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_worth",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106603028",
+   "unit": "INR_CR",
+   "value": 1605.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-04-28T18:25:55+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-11-01T04:14:38+05:30",
+    "basis": "STANDALONE",
+    "by": "ai",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "gross_debt",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106603028",
+   "unit": "INR_CR",
+   "value": 250.0,
    "yoy_pct": null
   },
   {
@@ -4706,6 +5252,17 @@
   },
   "auditor_history": [
    {
+    "as_of": "2026-04-28T18:25:55+05:30",
+    "lab": {
+     "at": "2026-11-01T04:14:38+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Brahmayya & Co. and Raj Har Gopal & Co.",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106603028"
+   },
+   {
     "as_of": "2026-04-28T18:34:44+05:30",
     "lab": {
      "at": "2026-04-28T18:34:44+05:30",
@@ -5533,6 +6090,1333 @@
    "value": 22.4
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 512.4393,
+     "approved_cr": 1350.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 184.0988,
+     "approved_cr": 748.5,
+     "closing_cr": 5.8956,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 4.5683,
+     "other_details": "Commission",
+     "relationship": "Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 80.9001,
+     "approved_cr": 339.75,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Software Development (India) Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 69.3545,
+     "approved_cr": 173.8632,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 51.6504,
+     "approved_cr": 300.0,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Investment - Deposits, Debt & Money market instruments",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 29.5476,
+     "approved_cr": 337.5,
+     "closing_cr": 0.0,
+     "counterparty": "CanFin Homes Ltd",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 26.9234,
+     "approved_cr": 300.0,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale / Maturity of Investment - Deposits, Debt & Money market instruments",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 23.7208,
+     "approved_cr": 119.25,
+     "closing_cr": 4.8527,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 5.5242,
+     "other_details": "Commission",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 19.711,
+     "approved_cr": 300.0,
+     "closing_cr": 0.0,
+     "counterparty": "PNB Metlife India Insurance Company Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Investment - Deposits, Debt & Money market instruments",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.5722,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Software Development (India) Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Benefits Paid",
+     "relationship": "Substantial Interest",
+     "remarks": "Limited approved by Audit Committee: At Actuals as per approved product terms and conditions",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 9.9546,
+     "approved_cr": 108.0,
+     "closing_cr": 2.4153,
+     "counterparty": "Karnataka Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commission",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.9912,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Benefits Paid",
+     "relationship": "Holding Company",
+     "remarks": "Limited approved by Audit Committee: At Actuals as per approved product terms and conditions",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.2922,
+     "approved_cr": 51.75,
+     "closing_cr": 0.9757,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 2.5119,
+     "other_details": "Commission",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.1002,
+     "approved_cr": 22.5,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Electronic Data Processing India Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.0623,
+     "approved_cr": 135.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.622,
+     "approved_cr": 1.125,
+     "closing_cr": 0.0,
+     "counterparty": "Tripura Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.5156,
+     "approved_cr": 11.25,
+     "closing_cr": 0.3362,
+     "counterparty": "CanFin Homes Ltd",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.5456,
+     "other_details": "Commission",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.2647,
+     "approved_cr": 108.0,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 4.3372,
+     "other_details": "Commission",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.1916,
+     "approved_cr": 9.0,
+     "closing_cr": 0.2777,
+     "counterparty": "Kerala Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.8998,
+     "other_details": "Commission",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.1555,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Establishment, consultancy and other expenses",
+     "relationship": "Holding Company",
+     "remarks": "Limited approved by Audit Committee: At Actuals",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6254,
+     "approved_cr": 4.5,
+     "closing_cr": 0.0,
+     "counterparty": "Kerala Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.5154,
+     "approved_cr": 2.25,
+     "closing_cr": 0.1194,
+     "counterparty": "Tripura Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.1498,
+     "other_details": "Commission",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4343,
+     "approved_cr": 108.0,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Vikas Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 1.8389,
+     "other_details": "Commission",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4206,
+     "approved_cr": 173.8632,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3923,
+     "approved_cr": 7.5,
+     "closing_cr": 0.0277,
+     "counterparty": "HSBC Securities and Capital Markets (India) Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0067,
+     "other_details": "Brokerage",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3686,
+     "approved_cr": 7.5,
+     "closing_cr": 0.0114,
+     "counterparty": "Canara Bank Securities Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0055,
+     "other_details": "Brokerage",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3483,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses- Electricity Charges and Property Tax",
+     "relationship": "Holding Company",
+     "remarks": "Limited approved by Audit Committee: At Actuals",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.254,
+     "approved_cr": 4.5,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Robeco Asset Management Company",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1628,
+     "approved_cr": 2.25,
+     "closing_cr": 0.0301,
+     "counterparty": "Himachal Pradesh Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0403,
+     "other_details": "Commission",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1428,
+     "approved_cr": 0.5625,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Establishment, consultancy and other expenses",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1094,
+     "approved_cr": 1.125,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Establishment, consultancy and other expenses",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0834,
+     "approved_cr": 750.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest and Investment Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.064,
+     "approved_cr": 2.25,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Securities and Capital Markets (India) Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0563,
+     "approved_cr": 1.125,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Anuj Mathur",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Key Management Personnel",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0517,
+     "approved_cr": 4.5,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Asset Management (India) Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0154,
+     "approved_cr": 2.25,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Professional Services (India) Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0124,
+     "approved_cr": 0.5625,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Establishment, consultancy and other expenses",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0043,
+     "approved_cr": 1.125,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Invest Direct Securities (India) Private Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.002,
+     "approved_cr": 11.25,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0003,
+     "approved_cr": 0.225,
+     "closing_cr": 0.0,
+     "counterparty": "Kerala Gramin Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Establishment, consultancy and other expenses",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 19.38,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding Company",
+     "remarks": "Limited approved by Audit Committee: At Actuals",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 8.74,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "relationship": "Substantial Interest",
+     "remarks": "Limited approved by Audit Committee: At Actuals",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 9.88,
+     "counterparty": "HSBC Insurance (Asia-Pacific) Holdings Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "relationship": "Substantial Interest",
+     "remarks": "Limited approved by Audit Committee: At Actuals",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Andhra Pragathi Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.8052,
+     "other_details": "Commission",
+     "relationship": "Associates of Holding Company",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 750.0,
+     "closing_cr": 7.76,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Margin Receivable",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 2.25,
+     "closing_cr": 0.5,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.55,
+     "other_details": "Guarantees and Collaterals",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 46,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 324.8919,
+     "approved_cr": 1350.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 286.415,
+     "approved_cr": 600.0,
+     "closing_cr": 16.6134,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 5.8956,
+     "other_details": "Commission",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 57.1162,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Investment - Deposits, Debt & Money market instruments*",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 55.5333,
+     "approved_cr": 100.0,
+     "closing_cr": 0.0,
+     "counterparty": "Can Fin Homes Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 34.93,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of IPO related expenses (Note 3)",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 28.2445,
+     "approved_cr": 75.0,
+     "closing_cr": 7.0977,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 4.8527,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 24.1152,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of IPO related expenses (Note 3)",
+     "relationship": "Having more than 10 % shareholding as per LODR",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 21.0753,
+     "approved_cr": 50.0,
+     "closing_cr": 7.2712,
+     "counterparty": "Karnataka Grameena Bank (Note 1)",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 2.4153,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.7678,
+     "approved_cr": 100.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Robeco Asset Management Company Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale / Maturity of Investment - Deposits, Debt & Money market instruments*",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.4578,
+     "approved_cr": 500.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Benefits Paid",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 9.7407,
+     "approved_cr": 15.0,
+     "closing_cr": 2.186,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.9757,
+     "other_details": "Commission",
+     "relationship": "Having more than 10 % shareholding as per LODR",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.5756,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.2693,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Grameena Bank (Note 1)",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.91,
+     "approved_cr": 25.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara HSBC Life Insurance Company Limited Group Gratuity Trust",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Gratuity Trust",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.91,
+     "approved_cr": 25.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara HSBC Life Insurance Company Limited Group Gratuity Trust",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Contribution towards Gratuity Plan",
+     "relationship": "Gratuity Trust",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.5202,
+     "approved_cr": 25.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara HSBC Life Insurance Company Limited Group Gratuity Trust",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Benefits Paid",
+     "relationship": "Gratuity Trust",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.8135,
+     "approved_cr": 10.0,
+     "closing_cr": 0.7947,
+     "counterparty": "Can Fin Homes Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.3362,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.7061,
+     "approved_cr": 10.0,
+     "closing_cr": 0.8744,
+     "counterparty": "Kerala Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.2777,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.2058,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Insurance (Asia-Pacific) Holdings Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of IPO related expenses (Note 3)",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.1545,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6412,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0143,
+     "counterparty": "Canara Bank Securities Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0114,
+     "other_details": "Brokerage",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6319,
+     "approved_cr": 25.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kerala Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2985,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2111,
+     "approved_cr": 1000.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest and Investment Income (Note 2)",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1211,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0284,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Having more than 10 % shareholding as per LODR",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0281,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses- Electricity Charges and Property Tax",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1000.0,
+     "closing_cr": 11.19,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 7.76,
+     "other_details": "Margin Receivable (Note 2)",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 25.0,
+     "closing_cr": 0.5,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.5,
+     "other_details": "Guarantees and Collaterals",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 29,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 606.7506,
+     "approved_cr": 2000.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 209.2874,
+     "approved_cr": 1000.0,
+     "closing_cr": 7.8758,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 16.6134,
+     "other_details": "Commission",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 79.2257,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 44.6701,
+     "approved_cr": 150.0,
+     "closing_cr": 0.0,
+     "counterparty": "Can Fin Homes Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 29.4461,
+     "approved_cr": 125.0,
+     "closing_cr": 5.0683,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 7.0977,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 25.3836,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale / Maturity of Investments*",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 24.5127,
+     "approved_cr": 100.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Robeco Asset Management Company Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale / Maturity of Investments*",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 16.4361,
+     "approved_cr": 750.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Benefits Paid",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 14.5898,
+     "approved_cr": 25.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara HSBC Life Insurance Company Limited Group Gratuity Trust",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Gratuity Trust",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 14.5898,
+     "approved_cr": 25.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara HSBC Life Insurance Company Limited Group Gratuity Trust",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Contribution towards Gratuity Plan",
+     "relationship": "Gratuity Trust",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 13.9883,
+     "approved_cr": 75.0,
+     "closing_cr": 2.9869,
+     "counterparty": "Karnataka Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 7.2712,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.5199,
+     "approved_cr": 25.0,
+     "closing_cr": 1.3006,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 2.186,
+     "other_details": "Commission",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.8943,
+     "approved_cr": 500.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.2548,
+     "approved_cr": 25.0,
+     "closing_cr": 0.3953,
+     "counterparty": "Can Fin Homes Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.7947,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.5388,
+     "approved_cr": 25.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara HSBC Life Insurance Company Limited Group Gratuity Trust",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Benefits Paid",
+     "relationship": "Gratuity Trust",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.0998,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.0573,
+     "approved_cr": 25.0,
+     "closing_cr": 0.8196,
+     "counterparty": "Kerala Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.8744,
+     "other_details": "Commission",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.7943,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of IPO related expenses (Note 2)",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6912,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank Securities Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0143,
+     "other_details": "Brokerage",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6688,
+     "approved_cr": 50.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kerala Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.5484,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of IPO related expenses (Note 2)",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.5412,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses- Electricity Charges and Property Tax",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.2059,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1643,
+     "approved_cr": 1000.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest and Investment Income (Note 1)",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1085,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0274,
+     "closing_cr": 0.0,
+     "counterparty": "HSBC Insurance (Asia-Pacific) Holdings Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of IPO related expenses (Note 2)",
+     "relationship": "Promoter",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0131,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Punjab National Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Substantial Interest",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "Karnataka Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.0005,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Canara Robeco Asset Management Company Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Premium Income",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0002,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kerala Grameena Bank",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1000.0,
+     "closing_cr": -4.43,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 11.19,
+     "other_details": "Margin Receivable/(Payable) (Note 1)",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 50.0,
+     "closing_cr": 0.5,
+     "counterparty": "The Hongkong and Shanghai Banking Corporation Limited",
+     "entity": "Canara HSBC Life Insurance Company Limited",
+     "opening_cr": 0.5,
+     "other_details": "Guarantees and Collaterals",
+     "relationship": "Promoter Group",
+     "remarks": "-",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 32,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544583",
  "section_lab": {
@@ -5548,6 +7432,273 @@
   }
  },
  "sector": "insurance",
+ "segment_balance": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 7,
+   "period": "Q2FY26",
+   "segments": [
+    {
+     "assets_cr": 18081.38,
+     "liabilities_cr": 18081.38,
+     "segment": "Segment 1"
+    },
+    {
+     "assets_cr": 13986.66,
+     "liabilities_cr": 13986.66,
+     "segment": "Segment 9"
+    },
+    {
+     "assets_cr": 8061.52,
+     "liabilities_cr": 8061.52,
+     "segment": "Segment 5"
+    },
+    {
+     "assets_cr": 2597.78,
+     "liabilities_cr": 2597.78,
+     "segment": "Segment 10"
+    },
+    {
+     "assets_cr": 1543.09,
+     "liabilities_cr": 1543.09,
+     "segment": "Segment 21"
+    },
+    {
+     "assets_cr": 276.16,
+     "liabilities_cr": 276.16,
+     "segment": "Segment 2"
+    },
+    {
+     "assets_cr": 5.67,
+     "liabilities_cr": 5.67,
+     "segment": "Segment 11"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 7,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 19769.29,
+     "liabilities_cr": 19769.29,
+     "segment": "Segment 1"
+    },
+    {
+     "assets_cr": 14511.98,
+     "liabilities_cr": 14511.98,
+     "segment": "Segment 9"
+    },
+    {
+     "assets_cr": 8373.08,
+     "liabilities_cr": 8373.08,
+     "segment": "Segment 5"
+    },
+    {
+     "assets_cr": 2753.8,
+     "liabilities_cr": 2753.8,
+     "segment": "Segment 10"
+    },
+    {
+     "assets_cr": 1570.74,
+     "liabilities_cr": 1570.74,
+     "segment": "Segment 21"
+    },
+    {
+     "assets_cr": 286.13,
+     "liabilities_cr": 286.13,
+     "segment": "Segment 2"
+    },
+    {
+     "assets_cr": 5.91,
+     "liabilities_cr": 5.91,
+     "segment": "Segment 11"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 7,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 17620.08,
+     "liabilities_cr": 17620.08,
+     "segment": "Segment 1"
+    },
+    {
+     "assets_cr": 15418.63,
+     "liabilities_cr": 15418.63,
+     "segment": "Segment 9"
+    },
+    {
+     "assets_cr": 8638.36,
+     "liabilities_cr": 8638.36,
+     "segment": "Segment 5"
+    },
+    {
+     "assets_cr": 3000.3,
+     "liabilities_cr": 3000.3,
+     "segment": "Segment 10"
+    },
+    {
+     "assets_cr": 1855.47,
+     "liabilities_cr": 1855.47,
+     "segment": "Segment 21"
+    },
+    {
+     "assets_cr": 285.64,
+     "liabilities_cr": 285.64,
+     "segment": "Segment 2"
+    },
+    {
+     "assets_cr": 5.96,
+     "liabilities_cr": 5.96,
+     "segment": "Segment 11"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 7,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 19469.01,
+     "liabilities_cr": 19469.01,
+     "segment": "Segment 1"
+    },
+    {
+     "assets_cr": 16233.3,
+     "liabilities_cr": 16233.3,
+     "segment": "Segment 9"
+    },
+    {
+     "assets_cr": 8923.09,
+     "liabilities_cr": 8923.09,
+     "segment": "Segment 5"
+    },
+    {
+     "assets_cr": 3186.43,
+     "liabilities_cr": 3186.43,
+     "segment": "Segment 10"
+    },
+    {
+     "assets_cr": 1883.61,
+     "liabilities_cr": 1883.61,
+     "segment": "Segment 21"
+    },
+    {
+     "assets_cr": 314.36,
+     "liabilities_cr": 314.36,
+     "segment": "Segment 2"
+    },
+    {
+     "assets_cr": 6.15,
+     "liabilities_cr": 6.15,
+     "segment": "Segment 11"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 7,
+   "period": "Q2FY27",
+   "segments": [
+    {
+     "assets_cr": 19048.05,
+     "liabilities_cr": 19048.05,
+     "segment": "Segment 1"
+    },
+    {
+     "assets_cr": 16873.56,
+     "liabilities_cr": 16873.56,
+     "segment": "Segment 9"
+    },
+    {
+     "assets_cr": 9201.14,
+     "liabilities_cr": 9201.14,
+     "segment": "Segment 5"
+    },
+    {
+     "assets_cr": 3343.18,
+     "liabilities_cr": 3343.18,
+     "segment": "Segment 10"
+    },
+    {
+     "assets_cr": 1888.66,
+     "liabilities_cr": 1888.66,
+     "segment": "Segment 21"
+    },
+    {
+     "assets_cr": 319.45,
+     "liabilities_cr": 319.45,
+     "segment": "Segment 2"
+    },
+    {
+     "assets_cr": 6.49,
+     "liabilities_cr": 6.49,
+     "segment": "Segment 11"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "segment_mix": [],
  "standalone_only": [
   "Q2FY26",
@@ -5556,8 +7707,160 @@
   "Q1FY27",
   "Q2FY27"
  ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "insurer",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Net Profit": 40.81
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "insurer",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Net Profit": 27.65
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "insurer",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Net Profit": 34.73
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "insurer",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Net Profit": 126.61
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "insurer",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 212.0,
+    "Cash from Investing Activity": -3665.91,
+    "Cash from Operating Activity": 3533.5,
+    "Net Cash Flow": 79.59
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "insurer",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Net Profit": 28.14
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "insurer",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Net Profit": 43.05
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "CANHLIFE",
  "timeline": [
+  {
+   "date": "2026-04-28T18:25:55+05:30",
+   "event_type": "RESULTS",
+   "id": "t_e8c3de45",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T04:14:38+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "news_id": "nse-106603028",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/CANARAHSBCLIFE_28042026182437_OutcomeReg30NSE.pdf",
+   "summary": "Canara HSBC Life reported Q4FY26 standalone PAT of ₹34.13 Cr and recommended a final dividend of ₹0.40 per share."
+  },
   {
    "date": "2026-04-28T18:30:58+05:30",
    "event_type": "CORPORATE_ACTION",
@@ -5614,8 +7917,25 @@
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-28T05:32:59+05:30",
+ "updated_at": "2026-11-01T07:26:39+05:30",
  "watchlist": [
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-04-28T18:25:55+05:30",
+   "id": "w_1200cf29",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-11-01T04:14:38+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "source_news_id": "nse-106603028",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Shareholder approval for final dividend of ₹0.40 per equity share at AGM"
+  },
   {
    "check_by": "2027-03-31",
    "check_in": "FY27 results",

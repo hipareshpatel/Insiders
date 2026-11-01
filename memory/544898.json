@@ -1,4 +1,56 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2026-09-30",
+     "name": "M S K C & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2026-09-30",
+     "name": "M S K C & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-09-17T14:11:53+05:30",
@@ -13,16 +65,6 @@
    "source_news_id": "a369adcf-9ab2-457b-933f-bada90dc9f66"
   },
   {
-   "as_of": "2026-09-24T20:37:48+05:30",
-   "lab": {
-    "at": "2026-09-24T20:37:48+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "1b933ea0-6848-4e29-9436-5b1b0dd40cb4"
-  },
-  {
    "as_of": "2026-09-29T13:42:40+05:30",
    "credit_rating": "IND A/Stable/IND A1",
    "lab": {
@@ -34,16 +76,6 @@
    "rating_agency": "India Ratings",
    "rating_outlook": "Stable",
    "source_news_id": "09120818-c3c9-4131-b9ad-d76a0cf5aa3a"
-  },
-  {
-   "as_of": "2026-09-29T19:51:53+05:30",
-   "lab": {
-    "at": "2026-09-29T19:51:53+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106801148"
   },
   {
    "as_of": "2026-09-29T19:57:08+05:30",
@@ -131,6 +163,44 @@
  "capital_actions": [],
  "company_name": "ESDS Software Solution Ltd",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-24T18:00:00+05:30",
@@ -1407,6 +1477,134 @@
     "opinion": "UNMODIFIED",
     "source_news_id": "6b945cdb-6737-46c7-afb4-5238f1bfd5ec"
    }
+  ],
+  "quarters": [
+   {
+    "as_of": "2026-10-30T16:20:40+05:30",
+    "board": [
+     {
+      "appointed": "2005-08-18",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Piyush Prakashchandra Somani",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2021-07-28",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Komal Piyush Somani",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-07-13",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sameer Suresh Redij",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2021-07-28",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Thandankorai Ganapathy Dhandapani",
+      "role": null,
+      "tenure_months": 62.02
+     },
+     {
+      "appointed": "2023-07-01",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Venkatesh Natarajan",
+      "role": null,
+      "tenure_months": 38.29
+     },
+     {
+      "appointed": "2021-07-28",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Pamela Kumar",
+      "role": null,
+      "tenure_months": 62.02
+     },
+     {
+      "appointed": "2025-02-04",
+      "category": "Executive Director",
+      "ceased": "2026-07-13",
+      "cessation_reason": "Others",
+      "name": "Jitendra Pathak",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Thandankorai Ganapathy Dhandapani",
+      "Pamela Kumar",
+      "Venkatesh Natarajan"
+     ],
+     "corporate social responsibility committee": [
+      "Piyush Prakashchandra Somani",
+      "Komal Piyush Somani",
+      "Pamela Kumar"
+     ],
+     "nomination and remuneration committee": [
+      "Thandankorai Ganapathy Dhandapani",
+      "Pamela Kumar",
+      "Venkatesh Natarajan"
+     ],
+     "risk management committee": [
+      "Pamela Kumar",
+      "Thandankorai Ganapathy Dhandapani",
+      "Venkatesh Natarajan",
+      "Piyush Prakashchandra Somani"
+     ],
+     "stakeholders relationship committee": [
+      "Venkatesh Natarajan",
+      "Pamela Kumar",
+      "Piyush Prakashchandra Somani"
+     ]
+    },
+    "complaints": {
+     "disposed": 11.0,
+     "pending": 1.0,
+     "received": 12.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 71.0,
+     "board": 46.0,
+     "nomination and remuneration committee": 55.0
+    },
+    "independent_directors": 3,
+    "material_floor_cr": 6.041,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749906_30102026042040_WEB.xml",
+    "tax_litigation": []
+   }
   ]
  },
  "guidance": [
@@ -1567,6 +1765,103 @@
  },
  "industry": "Information Technology > IT - Services > IT Enabled Services",
  "last_filed_at": "2026-10-17T04:42:33+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "ANCHORAGE CAPITAL SCHEME I",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 757.44,
+    "qty": 1003591.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ESDS",
+    "value_cr": 76.02
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "MAITHAN ALLOYS LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 1482.04,
+    "qty": 634148.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ESDS",
+    "value_cr": 93.98
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.775,
+     "description": "Re-measurement  gains/(losses) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.068,
+     "description": "Exchange differences on translation of financial information of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.775,
+    "oci_net_cr": -0.648,
+    "profit_cr": 29.277,
+    "reclassified_cr": -0.068,
+    "tax_not_reclassified_cr": -0.195,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 28.629,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -0.648
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.775,
+     "description": "Re-measurement  gains/(losses) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.775,
+    "oci_net_cr": -0.58,
+    "profit_cr": 18.199,
+    "tax_not_reclassified_cr": -0.195,
+    "total_comprehensive_cr": 17.619
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-14T20:26:17+05:30",
@@ -1783,46 +2078,35 @@
  ],
  "schema_version": 3,
  "scrip_code": "544898",
+ "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-30T16:20:40+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:31:58+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "it",
  "segment_mix": [
   {
-   "as_of": "2026-09-29T19:51:53+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-09-29T19:51:53+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q1FY27",
-   "revenue_cr": null,
-   "segment": "Infrastructure-as-a-Service",
-   "share_pct": 51.0,
-   "source_news_id": "nse-106801148"
-  },
-  {
-   "as_of": "2026-09-29T19:51:53+05:30",
-   "lab": {
-    "at": "2026-09-29T19:51:53+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": null,
-   "segment": "Managed Services",
-   "share_pct": 31.31,
-   "source_news_id": "nse-106801148"
-  },
-  {
-   "as_of": "2026-09-29T19:51:53+05:30",
-   "lab": {
-    "at": "2026-09-29T19:51:53+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": null,
-   "segment": "Software-as-a-Service",
-   "share_pct": 17.55,
-   "source_news_id": "nse-106801148"
+   "segment": "The Group has identified business segment as its primary segment. In accordance with Indian Accounting Standard 108 - Segment Reporting, the Group has determined its business segment as \"design, development, installation and servicing of information technology related resource\". Operating segments are reported in a manner consistent with the internal reporting provided to the board of directors based in India regarded as the Chief Operating Decision Maker (“CODM”).  The CODM evaluates performance of the Group as one single segment. Accordingly, segment information has not been separately disclosed.",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -2282,6 +2566,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 18.475,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 77.66,
+    "Interest": 2.569,
+    "Minority share": 0.0,
+    "Net Profit": 29.277,
+    "Net Profit (owners)": 29.277,
+    "OPM %": 41.89604734506985,
+    "Operating Profit": 55.997000000000014,
+    "Other Income": 1.5139999999999887,
+    "Profit before tax": 36.467,
+    "Profit for PE": 29.277,
+    "Sales": 133.657,
+    "Tax": 7.19,
+    "Tax %": 19.716455973894206
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 18.475,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 72.326,
+    "Interest": 2.57,
+    "Net Profit": 18.199,
+    "Net Profit (owners)": 18.199,
+    "OPM %": 37.73909749840745,
+    "Operating Profit": 43.84,
+    "Other Income": 1.4909999999999997,
+    "Profit before tax": 24.286,
+    "Profit for PE": 18.199,
+    "Sales": 116.166,
+    "Tax": 6.087,
+    "Tax %": 25.063822778555544
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "ESDS",
  "timeline": [
   {

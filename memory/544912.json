@@ -1,9 +1,77 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "C N K & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Prasol Chemicals Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0016,
+    "DebtServiceCoverageRatio": 0.0788,
+    "InterestServiceCoverageRatio": 0.5238
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-28T18:00:00+05:30",
@@ -674,6 +742,30 @@
  },
  "industry": "Commodities > Chemicals > Chemicals & Petrochemicals > Specialty Chemicals",
  "last_filed_at": "2026-10-14T06:22:00+05:30",
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "oci_net_cr": 0.15,
+    "profit_cr": 61.023,
+    "tax_not_reclassified_cr": -0.2,
+    "tax_reclassified_cr": 0.05,
+    "total_comprehensive_cr": 61.173
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -738,9 +830,62 @@
   }
  },
  "sector": "chemicals",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Specialty Chemicals",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.611,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 343.36699999999996,
+    "Interest": 1.821,
+    "Net Profit": 61.023,
+    "Net Profit (owners)": 61.023,
+    "OPM %": 20.818593968352076,
+    "Operating Profit": 90.27900000000005,
+    "Other Income": 1.710999999999956,
+    "Profit before tax": 83.558,
+    "Profit for PE": 61.023,
+    "Sales": 433.646,
+    "Tax": 22.535,
+    "Tax %": 26.9692907920247
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "PRASOLCHEM",
  "timeline": [],

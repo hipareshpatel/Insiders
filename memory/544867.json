@@ -1,4 +1,102 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "012754N/N500016",
+     "name": "PRICE WATERHOUSE CHARTERED ACCOUNTANTS LLP",
+     "signed_on": "2026-07-25",
+     "signing_partner": "BORKAR AMIT ARUN"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "012754N/N500016",
+     "name": "For Price Waterhouse Chartered Accountants LLP",
+     "signed_on": "2026-07-25",
+     "signing_partner": "BORKAR AMIT ARUN"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "ix. (a) \tThe Company has not defaulted in repayment of loans or other borrowings or in the payment of interest thereon to any lender during the year.\n\nFurther, loans from related parties amounting to Rs. 87.30 million are repayable on demand and terms and conditions for payment of interest thereon have not been stipulated. According to the information and explanations given to us, such loan has not been demanded for repayment during the year.  Consequently, to the extend of these loans the question of our commenting under clause 3(ix)(a) of the Order does not arise.\n\n(b)\tOn the basis of our audit procedures, we report that the Company has not been declared Wilful Defaulter by any bank or financial institution or government or any government authority.\n\n(c)\tIn our opinion, the term loans have been applied for the purposes for which they were obtained. (Also, refer Note 18 to the standalone financial statements).\n\n(d)\tAccording to the information and explanations given to us, and the pro"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "(xi)(a)\tDuring the course of our examination of the books and records of the Company, carried out in accordance with the generally accepted auditing practices in India, we have neither come across any instance of material fraud by the Company or on the Company, noticed or reported during the year, nor have we been informed of any such case by the Management."
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "vii. (a)\tIn our opinion, the Company is regular in depositing the undisputed statutory dues, including goods and services tax, provident fund, employees’ state insurance, income tax, duty of customs, value added tax, professional tax, labour welfare fund, and other statutory dues, as applicable, with the appropriate authorities. Also, refer Note 38 to the standalone financial statements regarding management's assessment on certain matters relating to provident fund.\n \n\n\n      (b)   There are no statutory dues of provident fund, employees’ state insurance,    professional tax, labour welfare fund, and cess which have not been deposited on account of any dispute. The particulars of other statutory dues referred to in sub-clause (a) as at March 31,2026 which have not been deposited on account of a dispute, are as follows:\n\nName of the statute\tNature of dues\tAmount (Rs. in Million)\tPaid under Protest (Rs. in Million)\tPeriod to which the amount relates\tForum where the dispute is pending\nGoo"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-09-10T12:02:41+05:30",
@@ -23,8 +121,261 @@
   "text": "Dhoot Transmission is an auto components maker supplying wiring harnesses and non-wiring harness products such as battery packs, controllers, sensors and switches, primarily to two-wheeler OEMs."
  },
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -205.239,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -20.24,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -184.725,
+    "AdjustmentsForDeferredTaxOfPriorPeriods": -10.097,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 122.544,
+    "AdjustmentsForFinanceCosts": 91.244,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 13.758,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 166.934,
+    "AdjustmentsForInterestIncome": 2.081,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -7.245,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 4.385,
+    "AdjustmentsForReconcileProfitLoss": -39.177,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.518,
+    "CashAndCashEquivalentsCashFlowStatement": 1084.282,
+    "CashFlowsFromUsedInFinancingActivities": 1948.168,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 1948.168,
+    "CashFlowsFromUsedInInvestingActivities": -1261.693,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -1261.693,
+    "CashFlowsFromUsedInOperatingActivities": 347.657,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 347.657,
+    "CashFlowsFromUsedInOperations": 476.51,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 3.703,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 128.853,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1037.835,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1034.132,
+    "InterestPaidClassifiedAsFinancingActivities": 17.195,
+    "OtherAdjustmentsToReconcileProfitLoss": -19.03,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 2087.393,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -933.509,
+    "PaymentForOtherServices": 1.111,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 15.519,
+    "PaymentsToAuditor": 1.111,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 93.328,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 21.783,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 349.967,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 199.839
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.0,
+    "AdjustmentsForDecreaseIncreaseInInventories": -112.013,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -13.695,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -170.657,
+    "AdjustmentsForDeferredTaxOfPriorPeriods": -7.202,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 68.387,
+    "AdjustmentsForFinanceCosts": 61.772,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 8.158,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 170.347,
+    "AdjustmentsForInterestIncome": 1.394,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -12.793,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 2.716,
+    "AdjustmentsForProvisionsCurrent": 2.656,
+    "AdjustmentsForReconcileProfitLoss": -8.99,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.908,
+    "CashAndCashEquivalentsCashFlowStatement": 1037.368,
+    "CashFlowsFromUsedInFinancingActivities": 1977.191,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 1977.191,
+    "CashFlowsFromUsedInInvestingActivities": -1105.358,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -1105.358,
+    "CashFlowsFromUsedInOperatingActivities": 159.176,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 159.176,
+    "CashFlowsFromUsedInOperations": 218.713,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 59.537,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1031.009,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1031.009,
+    "InterestPaidClassifiedAsFinancingActivities": 17.194,
+    "InterestReceivedClassifiedAsInvestingActivities": 17.721,
+    "OtherAdjustmentsForNoncashItems": -0.662,
+    "OtherAdjustmentsToReconcileProfitLoss": -12.72,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 2061.988,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1135.506,
+    "PaymentForAuditServices": 0.599,
+    "PaymentsOfFinanceLeaseLiabilitiesClassifiedAsFinancingActivities": 10.125,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 2.954,
+    "PaymentsToAuditor": 0.599,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 93.328,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 12.427,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 147.852
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Dhoot Transmission Limited",
- "deals": [],
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 8.781,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Income tax matters under dispute"
+    },
+    {
+     "amount_cr": 3.229,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Value Added Tax Act / Sales Tax matters under dispute and Goods & Services Tax Act"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 2,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 60.051,
+     "class": "TaxContingentLiability",
+     "description": "i. Value Added Tax Act / Sales Tax matters under dispute\nii. Income tax matters under dispute\niii. Goods & Services Tax Act\niv. Claims in respect of various cases such as Motor Accident Claims Tribunal\nv. Advisory and consultancy services fees (Refer Note - 38.2)"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 1,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
+ "deals": [
+  {
+   "amount_cr": 2.82,
+   "as_of": "2026-10-31T18:17:21+05:30",
+   "counterparty": "Dhoot Transmission GmbH",
+   "discount_pct": null,
+   "execution_by": null,
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 2.82,
+     "as_of": "2026-10-31T18:17:21+05:30",
+     "lab": {
+      "at": "2026-10-31T18:23:24+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106838424",
+     "stage": "COMPLETED"
+    }
+   ],
+   "id": "d_dda25388",
+   "includes_gst": false,
+   "issue_price": null,
+   "kind": "OTHER",
+   "lab": {
+    "at": "2026-10-31T18:23:24+05:30",
+    "by": "ai",
+    "doc": "other",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "engineering services and customer acquisition",
+   "seller": null,
+   "source_news_id": "nse-106838424",
+   "stage": "COMPLETED",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-31T18:17:21+05:30",
+   "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-04T18:00:00+05:30",
@@ -617,8 +968,28 @@
  ],
  "fy_end_month": 3,
  "governance": {
-  "auditor": null,
-  "auditor_history": [],
+  "auditor": {
+   "as_of": "2026-10-31T18:17:21+05:30",
+   "lab": {
+    "at": "2026-10-31T18:23:24+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106838424"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-10-31T18:17:21+05:30",
+    "lab": {
+     "at": "2026-10-31T18:23:24+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106838424"
+   }
+  ],
   "quarters": [
    {
     "as_of": "2026-10-27T20:04:06+05:30",
@@ -865,12 +1236,83 @@
     "name": "Ride Vision",
     "source_news_id": "nse-106777499",
     "type": "JV (forming)"
+   },
+   {
+    "as_of": "2026-10-31T18:17:21+05:30",
+    "lab": {
+     "at": "2026-10-31T18:23:24+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "Dhoot Transmission GmbH",
+    "source_news_id": "nse-106838424",
+    "type": "100% subsidiary"
    }
   ],
   "former_names": []
  },
  "industry": "Consumer Discretionary > Automobile and Auto Components > Auto Components > Auto Components & Equipments",
- "last_filed_at": "2026-10-17T04:13:28+05:30",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 8,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "RAHUL RADHAVALLABH DHOOT",
+     "pay_cr": 2.4
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "DHIREN VINODRAI SHETH",
+     "pay_cr": 0.881
+    },
+    {
+     "designation": "CFO",
+     "name": "NITINKUMAR DAGDULAL KALANI",
+     "pay_cr": 0.45
+    },
+    {
+     "designation": "Independent Director",
+     "name": "AJAY SETH",
+     "pay_cr": 0.14
+    },
+    {
+     "designation": "Independent Director",
+     "name": "TARUN DHARAMPAL SHARMA",
+     "pay_cr": 0.13
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "AMEY DEELIPRAO JOGAS",
+     "pay_cr": 0.13
+    },
+    {
+     "designation": "Independent Director",
+     "name": "MATANGI GOWRISHANKAR",
+     "pay_cr": 0.075
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "PREETI BHANDARI",
+     "pay_cr": 0.044
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
+ "last_filed_at": "2026-10-31T18:17:21+05:30",
  "market_deals": {
   "events": [
    {
@@ -899,6 +1341,70 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.741,
+     "description": "Remeasurements of post-employment benefit obligations",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.741,
+    "oci_net_cr": -1.483,
+    "profit_cr": 132.67,
+    "tax_not_reclassified_cr": -0.113,
+    "tax_reclassified_cr": 0.855,
+    "total_comprehensive_cr": 131.187,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -1.483
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.184,
+     "description": "Remeasurements of post-employment benefit obligations",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.184,
+    "oci_net_cr": 0.138,
+    "profit_cr": 57.237,
+    "tax_not_reclassified_cr": 0.046,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 57.375
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-10T12:02:41+05:30",
@@ -929,6 +1435,16 @@
    },
    "source_news_id": "nse-106777499",
    "text": "Dhoot Autocomponents, a subsidiary, does about ₹1,200 Cr of business for group companies, which is self-consumption and not reflected in overall sales."
+  },
+  {
+   "as_of": "2026-10-31T18:17:21+05:30",
+   "lab": {
+    "at": "2026-10-31T18:23:24+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106838424",
+   "text": "Subscribed to 250,000 shares of €1 each in Dhoot Transmission GmbH for ₹2.82 Cr."
   }
  ],
  "ownership": [
@@ -1030,6 +1546,1163 @@
    "value": 30.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 35,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 1029.523,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "BC Asia Investments XV Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 893.646,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Rahul R. Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 51.54,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "TACK ELECTRIC INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 46.268,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "YUVAN ELECTRICAL SYSTEMS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 25.326,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "MANGALAM CAPITAL PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 18.51,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "DHT RUBBER FACTORY PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 3.962,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "DHOOTMOTORS AUTOTECH PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 2.619,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "EKAKSH TRANSMISSION PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 1.156,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "DEETEE INFRA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.8,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "IOTLYNX TECHNOLOGIES PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.453,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "DHOOT MOTORS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Ms. Matangi Gowrishankar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mrs. Kiranbai Radhavallabh Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Nitinkumar Dagdulal Kalani"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Amey Jogas"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mrs. Preeti Surle"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Radhavallabh Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Ms. Vedika Rahul Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Ms. Vanshika Rahul Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Rudransh Rahul Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Vikram Vinodrai Sheth"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Om Sai Ram Charitable Trust"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Radhavallabh Dhoot & Co"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "NEUROATLAS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Coral Green Ventures (Partnership Firm)"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Blue Copper Ventures (Partnership Firm)"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Pearl White Ventures (Partnership Firm)"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Red Brass Ventures (Partnership Firm)"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Dhiren Vinodrai Sheth"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Saahil Haresh Bhatia"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Rishi Mandawat"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mrs. Anupama Rahul Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Ajay Seth"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Tarun Sharma"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Mr. Burjor Dadachanji"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 35,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 869.491,
+      "OtherRelatedPartyTransactionsExpense": 2.4,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 1.802
+     },
+     "party": "Rahul R. Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 1.421,
+      "OtherRelatedPartyTransactionsIncome": 0.175,
+      "PurchasesOfGoodsRelatedPartyTransactions": 441.495,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 1.026,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 6.135
+     },
+     "party": "DHOOT AUTOCOMPONENTS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 1.841,
+      "OtherRelatedPartyTransactionsExpense": 2.712,
+      "OtherRelatedPartyTransactionsIncome": 0.424,
+      "PurchasesOfGoodsRelatedPartyTransactions": 198.344,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.065,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 48.736,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.064,
+      "ServicesReceivedRelatedPartyTransactions": 0.0
+     },
+     "party": "DHOOT AUTOMOTIVE SYSTEMS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.353,
+      "OtherRelatedPartyTransactionsExpense": 0.368,
+      "PurchasesOfGoodsRelatedPartyTransactions": 215.961,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 29.392,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 1.987
+     },
+     "party": "DHOOT ELECTRICAL SOLUTIONS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 33.538,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 7.09
+     },
+     "party": "TACK ELECTRIC INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 32.154,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 6.755
+     },
+     "party": "YUVAN ELECTRICAL SYSTEMS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 1.485,
+      "OtherRelatedPartyTransactionsExpense": 1.646,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 21.72
+     },
+     "party": "MANGALAM CAPITAL PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 9.193,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 1.652
+     },
+     "party": "DT Wiring Systems (Thailand) Company Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.384,
+      "OtherRelatedPartyTransactionsExpense": 0.154,
+      "OtherRelatedPartyTransactionsIncome": 0.03,
+      "PurchasesOfGoodsRelatedPartyTransactions": 6.144,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 1.074
+     },
+     "party": "DHOOT ELECTRICALS SYSTEMS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 4.888
+     },
+     "party": "Dhoot Transmission (UK) Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 3.459,
+      "ServicesReceivedRelatedPartyTransactions": 0.209
+     },
+     "party": "DHOOTMOTORS AUTOTECH PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 2.718
+     },
+     "party": "Red Brass Ventures"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 2.619
+     },
+     "party": "EKAKSH TRANSMISSION PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 2.542
+     },
+     "party": "Dhoot Transmission GMBH"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 2.536
+     },
+     "party": "DANKOSYS TECHNOLOGIES PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 2.389
+     },
+     "party": "Pearl White Ventures"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.281,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.953
+     },
+     "party": "Parkinson Harness Technology Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.943,
+      "OtherRelatedPartyTransactionsExpense": 0.086
+     },
+     "party": "DEETEE INFRA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.941,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0
+     },
+     "party": "DHOOT SWITCH SOLUTIONS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.881
+     },
+     "party": "Dhiren Vinodrai Sheth"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.639
+     },
+     "party": "Coral Green Ventures"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.45
+     },
+     "party": "Nitinkumar Dagdulal Kalani"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.296
+     },
+     "party": "Ajay Seth"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.167,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.122,
+      "ServicesReceivedRelatedPartyTransactions": 0.004
+     },
+     "party": "DHOOT MOTORS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.243
+     },
+     "party": "Tarun Sharma"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.195,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.029
+     },
+     "party": "DHT RUBBER FACTORY PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.134
+     },
+     "party": "Matangi Gowrishankar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.13
+     },
+     "party": "Amey Jogas"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.084
+     },
+     "party": "DHOOT HOLDINGS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.044
+     },
+     "party": "Preeti Surle"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Dhoot Transmission Vietnam Company Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Om Sai Ram Charitable Trust"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Anupama Rahul Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Vedika Rahul Dhoot"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "Rudransh Rahul Dhoot"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544867",
  "section_lab": {
@@ -1052,30 +2725,20 @@
  "sector": "auto_components",
  "segment_mix": [
   {
-   "as_of": "2026-09-10T12:02:41+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-09-10T12:02:41+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q1FY27",
-   "revenue_cr": 1090.0,
-   "segment": "Wiring harness",
-   "share_pct": null,
-   "source_news_id": "nse-106777499"
-  },
-  {
-   "as_of": "2026-09-10T12:02:41+05:30",
-   "lab": {
-    "at": "2026-09-10T12:02:41+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": 358.0,
-   "segment": "Non-wiring harness",
-   "share_pct": null,
-   "source_news_id": "nse-106777499"
+   "segment": "Automotive wiring harness & ancillary components business",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -1535,6 +3198,411 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 814.9380000000001,
+    "CWIP": 188.162,
+    "Equity Capital": 17.58562,
+    "Fixed Assets": 892.245,
+    "Investments": 4.024,
+    "Other Assets": 1238.4670000000003,
+    "Other Liabilities": 514.3923800000002,
+    "Reserves": 975.982,
+    "Total Assets": 2322.898,
+    "Total Liabilities": 2322.898
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 99.334,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2844.4979999999996,
+    "Interest": 70.682,
+    "Minority share": -0.016,
+    "Net Profit": 353.887,
+    "Net Profit (owners)": 353.903,
+    "OPM %": 17.427833849996365,
+    "Operating Profit": 600.3650000000002,
+    "Other Income": 27.244999999999777,
+    "Profit before tax": 457.594,
+    "Profit for PE": 353.903,
+    "Sales": 3444.863,
+    "Tax": 103.707,
+    "Tax %": 22.66354016879592
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 137.977,
+    "Cash from Investing Activity": -442.14599999999996,
+    "Cash from Operating Activity": 320.214,
+    "Net Cash Flow": 16.045
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 482.34499999999997,
+    "CWIP": 81.732,
+    "Equity Capital": 17.58562,
+    "Fixed Assets": 513.3900000000001,
+    "Investments": 209.745,
+    "Other Assets": 791.257,
+    "Other Liabilities": 429.65938,
+    "Reserves": 666.534,
+    "Total Assets": 1596.124,
+    "Total Liabilities": 1596.124
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 56.418,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2287.875,
+    "Interest": 46.464,
+    "Net Profit": 156.385,
+    "Net Profit (owners)": 156.385,
+    "OPM %": 11.75830791939175,
+    "Operating Profit": 304.8620000000001,
+    "Other Income": 14.467999999999904,
+    "Profit before tax": 216.448,
+    "Profit for PE": 156.385,
+    "Sales": 2592.737,
+    "Tax": 60.063,
+    "Tax %": 27.749390153755176
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 58.499,
+    "Cash from Investing Activity": -286.722,
+    "Cash from Operating Activity": 224.217,
+    "Net Cash Flow": -4.006
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 125.025,
+    "Exceptional items": -20.259,
+    "Exceptional items AT": -15.590119739299226,
+    "Expenses": 3809.5389999999998,
+    "Interest": 93.19,
+    "Minority share": 0.188,
+    "Net Profit": 396.842,
+    "Net Profit (owners)": 396.654,
+    "OPM %": 15.810455573591344,
+    "Operating Profit": 715.4160000000002,
+    "Other Income": 18.485999999999876,
+    "Profit before tax": 515.687,
+    "Profit for PE": 412.2441197392992,
+    "Sales": 4524.955,
+    "Tax": 118.845,
+    "Tax %": 23.045956171088275
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1948.168,
+    "Cash from Investing Activity": -1257.99,
+    "Cash from Operating Activity": 347.657,
+    "Net Cash Flow": 1037.835
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 68.387,
+    "Exceptional items": -11.12,
+    "Exceptional items AT": -8.349754900023274,
+    "Expenses": 3135.3829999999994,
+    "Interest": 64.526,
+    "Net Profit": 170.977,
+    "Net Profit (owners)": 170.977,
+    "OPM %": 10.059666042276858,
+    "Operating Profit": 350.6870000000008,
+    "Other Income": 9.928999999999235,
+    "Profit before tax": 227.703,
+    "Profit for PE": 179.32675490002327,
+    "Sales": 3486.07,
+    "Tax": 56.726,
+    "Tax %": 24.912276078927377
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1977.191,
+    "Cash from Investing Activity": -1105.358,
+    "Cash from Operating Activity": 159.176,
+    "Net Cash Flow": 1031.009
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 954.126,
+    "CWIP": 18.039,
+    "Equity Capital": 37.6912224,
+    "Fixed Assets": 1383.386,
+    "Investments": 0.009,
+    "Other Assets": 2704.464,
+    "Other Liabilities": 717.4297776000005,
+    "Reserves": 2396.651,
+    "Total Assets": 4105.898,
+    "Total Liabilities": 4105.898
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 603.7760000000001,
+    "CWIP": 9.134,
+    "Equity Capital": 37.6912224,
+    "Fixed Assets": 770.52,
+    "Investments": 1149.8,
+    "Other Assets": 2092.742,
+    "Other Liabilities": 603.9607776,
+    "Reserves": 2776.768,
+    "Total Assets": 4022.196,
+    "Total Liabilities": 4022.196
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 39.643,
+    "Exceptional items": -3.0,
+    "Exceptional items AT": -2.2880844385423313,
+    "Expenses": 1227.9840000000002,
+    "Interest": 15.494,
+    "Minority share": 0.015,
+    "Net Profit": 132.67,
+    "Net Profit (owners)": 132.655,
+    "OPM %": 15.101544162636575,
+    "Operating Profit": 218.4309999999998,
+    "Other Income": 10.6550000000002,
+    "Profit before tax": 173.949,
+    "Profit for PE": 134.94308443854234,
+    "Sales": 1446.415,
+    "Tax": 41.279,
+    "Tax %": 23.730518715255624
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 20.967,
+    "Exceptional items": -2.0,
+    "Exceptional items AT": -1.4836694489087043,
+    "Expenses": 973.584,
+    "Interest": 8.878,
+    "Net Profit": 57.237,
+    "Net Profit (owners)": 57.237,
+    "OPM %": 9.638222100945876,
+    "Operating Profit": 103.84500000000014,
+    "Other Income": 3.155999999999864,
+    "Profit before tax": 77.156,
+    "Profit for PE": 58.72066944890871,
+    "Sales": 1077.429,
+    "Tax": 19.919,
+    "Tax %": 25.81652755456478
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "DHOOTTRANS",
  "timeline": [
   {
@@ -1550,10 +3618,24 @@
    "news_id": "nse-106777499",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/DTL_10092026120212_DTL_SE_Earning_transcript_sd.pdf",
    "summary": "On its first post-listing earnings call, Dhoot Transmission guided FY27 revenue growth of 25-30% and a 15-16% EBITDA margin, after Q1 revenue rose nearly 50% YoY with EV at 27% of sales."
+  },
+  {
+   "date": "2026-10-31T18:17:21+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_dda25388",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-10-31T18:23:24+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106838424",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/DTL_31102026181708_SEIntimationGMBGinvestment.pdf",
+   "summary": "Dhoot Transmission subscribed to 2,50,000 shares in its German wholly owned subsidiary for ₹2.82 Cr."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T10:01:04+05:30",
+ "updated_at": "2026-10-31T18:23:24+05:30",
  "watchlist": [
   {
    "check_by": "2026-09-30",

@@ -1,4 +1,486 @@
 {
+ "audit": [
+  {
+   "as_of": "2024-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "117366W/W-100018",
+     "name": "Deloitte Haskins & Sells LLP",
+     "signed_on": "2024-05-28",
+     "signing_partner": "SHAH NILESH VASANTLAL"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY24",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY24:consolidated"
+  },
+  {
+   "as_of": "2024-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "117366W/W-100018",
+     "name": "Deloitte Haskins & Sells LLP",
+     "signed_on": "2024-05-28",
+     "signing_partner": "SHAH NILESH VASANTLAL"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer disclosure in auditor’s report explanatory [Text Block]"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer disclosure in auditor’s report explanatory [Text Block]"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<p>\n\tRefer disclosure in auditor’s report explanatory [Text Block]</p>"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY24",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY24:standalone"
+  },
+  {
+   "as_of": "2024-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY25",
+   "source_news_id": "xbrl-facts:Q2FY25:consolidated"
+  },
+  {
+   "as_of": "2024-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY25",
+   "source_news_id": "xbrl-facts:Q2FY25:standalone"
+  },
+  {
+   "as_of": "2024-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY25",
+   "source_news_id": "xbrl-facts:Q3FY25:consolidated"
+  },
+  {
+   "as_of": "2024-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY25",
+   "source_news_id": "xbrl-facts:Q3FY25:standalone"
+  },
+  {
+   "as_of": "2025-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY25",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated"
+  },
+  {
+   "as_of": "2025-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "117366W/W-100018",
+     "name": "Deloitte Haskins & Sells LLP",
+     "signed_on": "2025-05-16",
+     "signing_partner": "SHAH NILESH VASANTLAL"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer disclosure in auditor’s report explanatory [Text Block]"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer disclosure in auditor’s report explanatory [Text Block]"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<p>\n\tRefer&nbsp;disclosure&nbsp;in&nbsp;auditor’s&nbsp;report&nbsp;explanatory&nbsp;[Text&nbsp;Block]</p>"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY25",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY25:standalone"
+  },
+  {
+   "as_of": "2025-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY25",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY25:standalone"
+  },
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "M/s. Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2024-11-07T18:00:00+05:30",
@@ -94,6 +576,21 @@
    "total_liabilities_cr": 2265.85
   },
   {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "credit_rating": "AA",
+   "lab": {
+    "at": "2026-10-29T03:51:04+05:30",
+    "basis": "STANDALONE",
+    "by": "ai",
+    "doc": "release",
+    "ok": true
+   },
+   "period": "FY26",
+   "rating_agency": "CARE",
+   "rating_outlook": "Stable",
+   "source_news_id": "nse-106629148"
+  },
+  {
    "as_of": "2026-05-25T18:00:00+05:30",
    "cash_cr": 125.86,
    "current_assets_cr": 1160.74,
@@ -126,14 +623,16 @@
   },
   {
    "as_of": "2026-05-25T19:13:49+05:30",
-   "cash_cr": 443.0,
+   "gross_debt_cr": 0.0,
    "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
+    "at": "2026-10-29T03:52:04+05:30",
+    "basis": "CONSOLIDATED",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "net_debt_cr": -443.0,
-   "period": "Mar-2026",
+   "period": "FY26",
    "source_news_id": "nse-106639883"
   }
  ],
@@ -143,39 +642,1523 @@
    "category": "Guidance",
    "date": "2026-05-25",
    "lab": {
-    "at": "2026-05-25",
+    "at": "2026-10-29T03:52:30+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "news_id": "nse-106639883",
-   "text": "FY27 growth expected to accelerate with focus on volume growth and multi-category expansion"
+   "text": "Management stands by its long-term FY30 guidance provided during the Investor Day."
   },
   {
    "category": "Margins & costs",
    "date": "2026-05-25",
    "lab": {
-    "at": "2026-05-25",
+    "at": "2026-10-29T03:52:30+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "news_id": "nse-106639883",
-   "text": "Aiming to hold margins in FY27 despite cost inflation through price increases and efficiency initiatives"
+   "text": "A 6-7% price increase was implemented in April across categories to mitigate input cost pressures."
   },
   {
    "category": "Demand & orders",
    "date": "2026-05-25",
    "lab": {
-    "at": "2026-05-25",
+    "at": "2026-10-29T03:52:30+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "news_id": "nse-106639883",
-   "text": "Water purifier category growth expected to accelerate with rising consumer awareness"
+   "text": "Water purifier category has grown at a 3-year CAGR of over 12% with low penetration providing a long runway."
+  },
+  {
+   "category": "Capex & capacity",
+   "date": "2026-05-25",
+   "lab": {
+    "at": "2026-10-29T03:52:30+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106639883",
+   "text": "Robotics category is targeted to reach more than ₹1,000 crores by FY30."
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2024-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY24",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": -0.013,
+    "AdjustmentsForDecreaseIncreaseInInventories": -47.825,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -7.8451,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -15.4688,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 54.027,
+    "AdjustmentsForFairValueGainsLosses": -3.6721,
+    "AdjustmentsForFinanceCosts": 7.8646,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 48.1784,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -15.0131,
+    "AdjustmentsForInterestIncome": 0.1513,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.9371,
+    "AdjustmentsForProvisionsCurrent": -2.4475,
+    "AdjustmentsForReconcileProfitLoss": 67.8163,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.2422,
+    "CashAndCashEquivalentsCashFlowStatement": 61.3217,
+    "CashFlowsFromUsedInFinancingActivities": -120.0669,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -120.0669,
+    "CashFlowsFromUsedInInvestingActivities": -31.6286,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -31.6286,
+    "CashFlowsFromUsedInOperatingActivities": 194.4718,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 194.4718,
+    "CashFlowsFromUsedInOperations": 196.2901,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1.4027,
+    "IncreaseDecreaseInCashAndCashEquivalents": 42.7763,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 42.7763,
+    "InterestPaidClassifiedAsFinancingActivities": 9.5196,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.0612,
+    "OtherAdjustmentsToReconcileProfitLoss": 50.8641,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -71.3943,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -8.6811,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": -0.4156,
+    "PaymentForAuditServices": 1.0061,
+    "PaymentForCostAuditCharges": 0.07,
+    "PaymentForOtherServices": 0.005,
+    "PaymentForReimbursementOfExpenses": 0.0156,
+    "PaymentForTaxationMatters": 0.0225,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 14.1887,
+    "PaymentsToAuditor": 1.0492,
+    "PaymentsToCostAuditor": 0.07,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 3.3866,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 28.3953,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 24.9643
+   },
+   "source_news_id": "xbrl-facts:FY24:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2024-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY24",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -47.5858,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -7.4643,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -15.8259,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 53.1249,
+    "AdjustmentsForFairValueGainsLosses": -3.6721,
+    "AdjustmentsForFinanceCosts": 9.7177,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 47.8655,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -9.281,
+    "AdjustmentsForInterestIncome": 1.9061,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.2457,
+    "AdjustmentsForProvisionsCurrent": -2.5334,
+    "AdjustmentsForReconcileProfitLoss": 71.8195,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0637,
+    "CashAndCashEquivalentsCashFlowStatement": 55.5179,
+    "CashFlowsFromUsedInFinancingActivities": -117.4679,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -117.4679,
+    "CashFlowsFromUsedInInvestingActivities": -34.5692,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -34.5692,
+    "CashFlowsFromUsedInOperatingActivities": 195.195,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 195.195,
+    "CashFlowsFromUsedInOperations": 194.2229,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -0.9707,
+    "IncreaseDecreaseInCashAndCashEquivalents": 43.1579,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 43.1579,
+    "InterestPaidClassifiedAsFinancingActivities": 7.5753,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.9061,
+    "OtherAdjustmentsToReconcileProfitLoss": 49.562,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -71.1378,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -10.3899,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0014,
+    "PaymentForAuditServices": 0.8683,
+    "PaymentForCostAuditCharges": 0.07,
+    "PaymentForOtherServices": 0.005,
+    "PaymentForReimbursementOfExpenses": 0.0156,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 13.7548,
+    "PaymentsToAuditor": 0.8889,
+    "PaymentsToCostAuditor": 0.07,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 3.3678,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 29.4532,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 25.0
+   },
+   "source_news_id": "xbrl-facts:FY24:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2024-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY25",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -86.6943,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.6478,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -66.8094,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 27.849,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.9659,
+    "AdjustmentsForFinanceCosts": 3.3399,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 77.5545,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -23.7355,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 2.362,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.7225,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -2.3867,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -59.2043,
+    "AdjustmentsForSharebasedPayments": 14.3378,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.3353,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 61.3217,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 16.1018,
+    "CashFlowsFromUsedInInvestingActivities": -26.947,
+    "CashFlowsFromUsedInOperatingActivities": 46.7165,
+    "CashFlowsFromUsedInOperations": 47.7154,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.9989,
+    "IncreaseDecreaseInCashAndCashEquivalents": 35.8713,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 35.8713,
+    "InterestPaidClassifiedAsFinancingActivities": 1.7898,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.362,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 1.4097,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.002,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -12.2859,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfFinanceLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 7.4582,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 37.8498,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 2.1673,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 19.1904,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 12.5,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY25:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2024-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY25",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -83.4473,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.4036,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -96.3233,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 27.6507,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.9659,
+    "AdjustmentsForFinanceCosts": 3.3399,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 6.459,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 2.2923,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.8907,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 77.3155,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 2.2535,
+    "AdjustmentsForProvisionsNoncurrent": -2.4047,
+    "AdjustmentsForReconcileProfitLoss": -56.3169,
+    "AdjustmentsForSharebasedPayments": 14.3378,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0911,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 55.5179,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 16.1381,
+    "CashFlowsFromUsedInInvestingActivities": -23.5245,
+    "CashFlowsFromUsedInOperatingActivities": 47.215,
+    "CashFlowsFromUsedInOperations": 47.6537,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.4387,
+    "IncreaseDecreaseInCashAndCashEquivalents": 39.8285,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 39.8285,
+    "InterestPaidClassifiedAsFinancingActivities": 1.7898,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.2923,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.8438,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -8.9129,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfFinanceLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 7.4219,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 37.8498,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 2.1673,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 19.0712,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 12.5,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY25:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY25",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -9.0219,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -0.0008,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 10.0756,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -41.8034,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 58.0019,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -4.001,
+    "AdjustmentsForFinanceCosts": 2.6007,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -10.3533,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 7.2176,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -2.7704,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -1.3444,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -5.5154,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 20.1474,
+    "AdjustmentsForSharebasedPayments": 22.0912,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.1286,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 95.5093,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -43.3864,
+    "CashFlowsFromUsedInInvestingActivities": -168.425,
+    "CashFlowsFromUsedInOperatingActivities": 245.999,
+    "CashFlowsFromUsedInOperations": 240.8452,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -5.1538,
+    "IncreaseDecreaseInCashAndCashEquivalents": 34.1876,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 34.1876,
+    "InterestPaidClassifiedAsFinancingActivities": 2.5204,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 7.2176,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.7005,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 8.8343,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -120.09,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 15.866,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 4.1086,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 59.6612,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 25.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY25",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -7.3881,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 11.4203,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -41.8741,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 57.5794,
+    "AdjustmentsForFairValueGainsLosses": -4.001,
+    "AdjustmentsForFinanceCosts": 5.6204,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -1.2885,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -31.7101,
+    "AdjustmentsForInterestIncome": 7.1107,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -2.7704,
+    "AdjustmentsForProvisionsCurrent": -5.581,
+    "AdjustmentsForReconcileProfitLoss": 0.4388,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.1176,
+    "CashAndCashEquivalentsCashFlowStatement": 69.5106,
+    "CashFlowsFromUsedInFinancingActivities": -43.3415,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -43.3415,
+    "CashFlowsFromUsedInInvestingActivities": -168.1659,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -168.1659,
+    "CashFlowsFromUsedInOperatingActivities": 225.5001,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 225.5001,
+    "CashFlowsFromUsedInOperations": 219.3082,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -6.1817,
+    "IncreaseDecreaseInCashAndCashEquivalents": 13.9927,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 13.9927,
+    "InterestPaidClassifiedAsFinancingActivities": 2.5118,
+    "InterestReceivedClassifiedAsInvestingActivities": 7.1107,
+    "OtherAdjustmentsToReconcileProfitLoss": 27.6602,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -119.8859,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0102,
+    "PaymentForAuditServices": 0.81,
+    "PaymentForCostAuditCharges": 0.0712,
+    "PaymentForOtherServices": 0.07,
+    "PaymentForReimbursementOfExpenses": 0.0461,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 15.8297,
+    "PaymentsToAuditor": 0.9261,
+    "PaymentsToCostAuditor": 0.0712,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 4.1086,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 59.4993,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 25.0
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -138.1751,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -104.1289,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -188.1928,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 32.2828,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.8361,
+    "AdjustmentsForFinanceCosts": 3.2457,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 94.8663,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 10.178,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.3956,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 139.4895,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.2698,
+    "AdjustmentsForProvisionsNoncurrent": 2.2427,
+    "AdjustmentsForReconcileProfitLoss": -158.5289,
+    "AdjustmentsForSharebasedPayments": 11.3076,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.4803,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 13.6608,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 52.9237,
+    "CashFlowsFromUsedInInvestingActivities": -112.1332,
+    "CashFlowsFromUsedInOperatingActivities": -22.639,
+    "CashFlowsFromUsedInOperations": -21.4886,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1.1504,
+    "IncreaseDecreaseInCashAndCashEquivalents": -81.8485,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -81.8485,
+    "InterestPaidClassifiedAsFinancingActivities": 1.646,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 10.178,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.5983,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -76.8232,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 8.4956,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 62.4834,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.5819,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.4301,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.2508,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 45.6673,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -135.13,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -103.9901,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -189.3336,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 32.0212,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.8361,
+    "AdjustmentsForFinanceCosts": 3.2457,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 99.4433,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 9.7518,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.3954,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 139.1824,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.2,
+    "AdjustmentsForProvisionsNoncurrent": 2.2606,
+    "AdjustmentsForReconcileProfitLoss": -152.5177,
+    "AdjustmentsForSharebasedPayments": 11.3076,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0655,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 11.7275,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 52.9239,
+    "CashFlowsFromUsedInInvestingActivities": -92.3023,
+    "CashFlowsFromUsedInOperatingActivities": -18.4047,
+    "CashFlowsFromUsedInOperations": -17.6616,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.7431,
+    "IncreaseDecreaseInCashAndCashEquivalents": -57.7831,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -57.7831,
+    "InterestPaidClassifiedAsFinancingActivities": 1.646,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 9.7518,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.5978,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -59.0132,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 8.4956,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 62.4834,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.5821,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.4282,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.2508,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 43.2183,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -126.5219,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -18.385,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -55.8149,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 69.4488,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -3.6264,
+    "AdjustmentsForFinanceCosts": 7.8328,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 48.9512,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 18.4801,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.4019,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 64.8416,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 2.5198,
+    "AdjustmentsForProvisionsNoncurrent": -1.3988,
+    "AdjustmentsForReconcileProfitLoss": 31.6069,
+    "AdjustmentsForSharebasedPayments": 22.1047,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.9333,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 125.8597,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -22.1479,
+    "CashFlowsFromUsedInInvestingActivities": -197.704,
+    "CashFlowsFromUsedInOperatingActivities": 250.2023,
+    "CashFlowsFromUsedInOperations": 250.9073,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.705,
+    "IncreaseDecreaseInCashAndCashEquivalents": 30.3504,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 30.3504,
+    "InterestPaidClassifiedAsFinancingActivities": 4.3827,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 18.4801,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.2247,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 40.4418,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -128.6793,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 18.2696,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.5044,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.6915,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.2508,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 87.9455,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -127.6615,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -20.3605,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -55.6344,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 68.947,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -3.6264,
+    "AdjustmentsForFinanceCosts": 7.8328,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 45.4709,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 17.4665,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.0507,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 65.0104,
+    "AdjustmentsForProvisionsCurrent": 2.45,
+    "AdjustmentsForProvisionsNoncurrent": -0.9006,
+    "AdjustmentsForReconcileProfitLoss": 25.8319,
+    "AdjustmentsForSharebasedPayments": 22.1047,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.9735,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 114.5276,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -22.1479,
+    "CashFlowsFromUsedInInvestingActivities": -174.5944,
+    "CashFlowsFromUsedInOperatingActivities": 241.7593,
+    "CashFlowsFromUsedInOperations": 241.5292,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -0.2301,
+    "IncreaseDecreaseInCashAndCashEquivalents": 45.017,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 45.017,
+    "InterestPaidClassifiedAsFinancingActivities": 4.3827,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 17.4665,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.2484,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 40.4418,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -107.3209,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 18.2696,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.5044,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.6603,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 5.2508,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 85.1495,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Eureka Forbes Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2024-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 34.1298,
+     "class": "ContingentLiabilityOnDisputedSalesTax",
+     "description": "Disputed Sales Tax demands"
+    },
+    {
+     "amount_cr": 22.2059,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Disputed Income Tax demands"
+    },
+    {
+     "amount_cr": 16.0293,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Disputed Goods and Services Tax Demand"
+    },
+    {
+     "amount_cr": 15.5109,
+     "class": "ContingentLiabilityOnDisputedExciseDemands",
+     "description": "Disputed Central Excise demands"
+    },
+    {
+     "amount_cr": 8.5803,
+     "class": "ContingentLiabilityOnDisputedServiceTaxDemands",
+     "description": "Disputed Service Tax demands"
+    },
+    {
+     "amount_cr": 0.9084,
+     "class": "LegalProceedingsContingentLiability",
+     "description": "Disputed civil suit"
+    },
+    {
+     "amount_cr": 0.4285,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "Disputed claims against the Group not acknowledged as debt"
+    },
+    {
+     "amount_cr": 0.425,
+     "class": "ContingentLiabilityOnDisputedLiabilityRelatingToEmployeesAndOtherStaff",
+     "description": "Disputed claims against the company for certain Labor Laws & related matters"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 8,
+   "period": "FY24",
+   "source_news_id": "xbrl-facts:FY24:consolidated",
+   "total_cr": 98.2181
+  },
+  {
+   "as_of": "2024-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 33.8989,
+     "class": "ContingentLiabilityOnDisputedSalesTax",
+     "description": "Disputed Sales Tax demands"
+    },
+    {
+     "amount_cr": 16.2373,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Disputed Income Tax demands"
+    },
+    {
+     "amount_cr": 16.0102,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Disputed Goods and Services Tax  demand"
+    },
+    {
+     "amount_cr": 14.4281,
+     "class": "ContingentLiabilityOnDisputedExciseDemands",
+     "description": "Disputed Central Excise demands"
+    },
+    {
+     "amount_cr": 8.5803,
+     "class": "ContingentLiabilityOnDisputedServiceTaxDemands",
+     "description": "Disputed Service Tax demands"
+    },
+    {
+     "amount_cr": 0.9084,
+     "class": "LegalProceedingsContingentLiability",
+     "description": "Disputed civil suit"
+    },
+    {
+     "amount_cr": 0.4285,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "Disputed claims against the company not acknowledged as debt"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 7,
+   "period": "FY24",
+   "source_news_id": "xbrl-facts:FY24:standalone",
+   "total_cr": 90.9167
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 26.6041,
+     "class": "ContingentLiabilityOnDisputedSalesTax",
+     "description": "Disputed Sales Tax demands"
+    },
+    {
+     "amount_cr": 20.9098,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Disputed Goods and Services Tax  demand"
+    },
+    {
+     "amount_cr": 16.2373,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Disputed Income Tax demands"
+    },
+    {
+     "amount_cr": 14.4281,
+     "class": "ContingentLiabilityOnDisputedExciseDemands",
+     "description": "Disputed Central Excise demands"
+    },
+    {
+     "amount_cr": 8.5803,
+     "class": "ContingentLiabilityOnDisputedServiceTaxDemands",
+     "description": "Disputed Service Tax demands"
+    },
+    {
+     "amount_cr": 0.9084,
+     "class": "LegalProceedingsContingentLiability",
+     "description": "Disputed civil suit"
+    },
+    {
+     "amount_cr": 0.4285,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "Disputed claims against the company not acknowledged as debt"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 7,
+   "period": "FY25",
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "total_cr": 88.5215
+  }
+ ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2024-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY25",
+   "source_news_id": "xbrl-facts:Q2FY25:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2024-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY25",
+   "source_news_id": "xbrl-facts:Q2FY25:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2024-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY25",
+   "source_news_id": "xbrl-facts:Q3FY25:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2024-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY25",
+   "source_news_id": "xbrl-facts:Q3FY25:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY25",
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY25",
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY25",
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0058,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY25",
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0058,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0116,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0117,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2024-11-07T18:00:00+05:30",
@@ -6539,12 +8522,29 @@
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-25T18:00:00+05:30",
+   "as_of": "2026-05-19T12:49:59+05:30",
    "metric": "revenue",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
+   "source_news_id": "nse-106629148",
    "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": 5.9,
+     "unit": "INR_CR",
+     "value": 683.8,
+     "yoy_pct": 11.6
+    },
     {
      "as_of": "2026-05-25T18:00:00+05:30",
      "basis": "CONSOLIDATED",
@@ -6561,22 +8561,6 @@
      "unit": "INR_CR",
      "value": 683.72,
      "yoy_pct": null
-    },
-    {
-     "as_of": "2026-05-25T19:13:49+05:30",
-     "basis": "CONSOLIDATED",
-     "lab": {
-      "at": "2026-05-25T19:13:49+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "ai",
-      "doc": "call",
-      "unit": "INR_CR"
-     },
-     "news_id": "nse-106639883",
-     "qoq_pct": null,
-     "unit": "INR_CR",
-     "value": 684.0,
-     "yoy_pct": 11.6
     }
    ],
    "unit": "INR_CR",
@@ -6586,12 +8570,29 @@
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-25T18:00:00+05:30",
+   "as_of": "2026-05-19T12:49:59+05:30",
    "metric": "ebitda_margin",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
+   "source_news_id": "nse-106629148",
    "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 12.5,
+     "yoy_pct": null
+    },
     {
      "as_of": "2026-05-25T18:00:00+05:30",
      "basis": "CONSOLIDATED",
@@ -6617,10 +8618,11 @@
      "as_of": "2026-05-25T19:13:49+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-05-25T19:13:49+05:30",
+      "at": "2026-10-29T03:52:04+05:30",
       "basis": "CONSOLIDATED",
       "by": "ai",
       "doc": "call",
+      "ok": true,
       "unit": "PCT"
      },
      "news_id": "nse-106639883",
@@ -6633,6 +8635,358 @@
    "unit": "PCT",
    "updated_as_of": "2026-05-25T18:00:00+05:30",
    "value": 12.51,
+   "value_news_id": "xbrl:res:543482:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "metric": "ebitda",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106629148",
+   "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": 26.3,
+     "unit": "INR_CR",
+     "value": 85.2,
+     "yoy_pct": 9.7
+    },
+    {
+     "as_of": "2026-05-25T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T07:10:11+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt_before_exceptional:Q4FY26",
+       "finance_cost:Q4FY26",
+       "depreciation:Q4FY26",
+       "other_income:Q4FY26"
+      ],
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:543482:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 85.55,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-25T18:00:00+05:30",
+   "value": 85.55,
+   "value_news_id": "xbrl:res:543482:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "metric": "pat",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106629148",
+   "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": 467.7,
+     "unit": "INR_CR",
+     "value": 51.1,
+     "yoy_pct": 0.7
+    },
+    {
+     "as_of": "2026-05-25T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T07:10:11+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:543482:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 51.03,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-25T18:00:00+05:30",
+   "value": 51.03,
+   "value_news_id": "xbrl:res:543482:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "metric": "pbt",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106629148",
+   "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": 454.0,
+     "unit": "INR_CR",
+     "value": 68.5,
+     "yoy_pct": 0.8
+    },
+    {
+     "as_of": "2026-05-25T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T07:10:11+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:543482:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 68.57,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-25T18:00:00+05:30",
+   "value": 68.57,
+   "value_news_id": "xbrl:res:543482:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "metric": "revenue",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106629148",
+   "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 2710.5,
+     "yoy_pct": 11.3
+    },
+    {
+     "as_of": "2026-05-25T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T07:10:11+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:543482:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 2709.06,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-25T18:00:00+05:30",
+   "value": 2709.06,
+   "value_news_id": "xbrl:res:543482:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "metric": "ebitda_margin",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106629148",
+   "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 11.4,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-25T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T07:10:11+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "ebitda:FY26",
+       "revenue:FY26"
+      ],
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "xbrl:res:543482:Q4FY26",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 11.56,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "PCT",
+   "updated_as_of": "2026-05-25T18:00:00+05:30",
+   "value": 11.56,
+   "value_news_id": "xbrl:res:543482:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "metric": "ebitda",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106629148",
+   "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 309.7,
+     "yoy_pct": 17.8
+    },
+    {
+     "as_of": "2026-05-25T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T07:10:11+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt_before_exceptional:FY26",
+       "finance_cost:FY26",
+       "depreciation:FY26",
+       "other_income:FY26"
+      ],
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:543482:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 313.29,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-25T18:00:00+05:30",
+   "value": 313.29,
+   "value_news_id": "xbrl:res:543482:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-19T12:49:59+05:30",
+   "metric": "pat",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106629148",
+   "sources": [
+    {
+     "as_of": "2026-05-19T12:49:59+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-29T03:51:04+05:30",
+      "basis": "STANDALONE",
+      "by": "ai",
+      "doc": "release",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106629148",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 160.2,
+     "yoy_pct": -1.9
+    },
+    {
+     "as_of": "2026-05-25T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T07:10:11+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:543482:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 162.62,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-25T18:00:00+05:30",
+   "value": 162.62,
    "value_news_id": "xbrl:res:543482:Q4FY26",
    "yoy_pct": null
   },
@@ -6691,31 +9045,6 @@
    "source_news_id": "xbrl:res:543482:Q4FY26",
    "unit": "INR_CR",
    "value": 20.03,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-25T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T07:10:11+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "calc",
-    "doc": "results",
-    "from": [
-     "pbt_before_exceptional:Q4FY26",
-     "finance_cost:Q4FY26",
-     "depreciation:Q4FY26",
-     "other_income:Q4FY26"
-    ],
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "ebitda",
-   "period": "Q4FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
-   "unit": "INR_CR",
-   "value": 85.55,
    "yoy_pct": null
   },
   {
@@ -6881,25 +9210,6 @@
     "ok": true,
     "unit": "INR_CR"
    },
-   "metric": "pat",
-   "period": "Q4FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
-   "unit": "INR_CR",
-   "value": 51.03,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-25T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T07:10:11+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "pat_continuing",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -6925,25 +9235,6 @@
    "source_news_id": "xbrl:res:543482:Q4FY26",
    "unit": "INR_CR",
    "value": 51.03,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-25T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T07:10:11+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pbt",
-   "period": "Q4FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
-   "unit": "INR_CR",
-   "value": 68.57,
    "yoy_pct": null
   },
   {
@@ -7138,104 +9429,6 @@
   },
   {
    "as_of": "2026-05-25T18:00:00+05:30",
-   "metric": "revenue",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
-   "sources": [
-    {
-     "as_of": "2026-05-25T18:00:00+05:30",
-     "basis": "CONSOLIDATED",
-     "lab": {
-      "at": "2026-10-27T07:10:11+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "file",
-      "doc": "results",
-      "ok": true,
-      "unit": "INR_CR"
-     },
-     "news_id": "xbrl:res:543482:Q4FY26",
-     "qoq_pct": null,
-     "unit": "INR_CR",
-     "value": 2709.06,
-     "yoy_pct": null
-    },
-    {
-     "as_of": "2026-05-25T19:13:49+05:30",
-     "basis": "CONSOLIDATED",
-     "lab": {
-      "at": "2026-05-25T19:13:49+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "ai",
-      "doc": "call",
-      "unit": "INR_CR"
-     },
-     "news_id": "nse-106639883",
-     "qoq_pct": null,
-     "unit": "INR_CR",
-     "value": 2710.0,
-     "yoy_pct": 11.3
-    }
-   ],
-   "unit": "INR_CR",
-   "updated_as_of": "2026-05-25T18:00:00+05:30",
-   "value": 2709.06,
-   "value_news_id": "xbrl:res:543482:Q4FY26",
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-25T18:00:00+05:30",
-   "metric": "ebitda_margin",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
-   "sources": [
-    {
-     "as_of": "2026-05-25T18:00:00+05:30",
-     "basis": "CONSOLIDATED",
-     "lab": {
-      "at": "2026-10-27T07:10:11+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "calc",
-      "doc": "results",
-      "from": [
-       "ebitda:FY26",
-       "revenue:FY26"
-      ],
-      "ok": true,
-      "unit": "PCT"
-     },
-     "news_id": "xbrl:res:543482:Q4FY26",
-     "qoq_pct": null,
-     "unit": "PCT",
-     "value": 11.56,
-     "yoy_pct": null
-    },
-    {
-     "as_of": "2026-05-25T19:13:49+05:30",
-     "basis": "CONSOLIDATED",
-     "lab": {
-      "at": "2026-05-25T19:13:49+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "ai",
-      "doc": "call",
-      "unit": "PCT"
-     },
-     "news_id": "nse-106639883",
-     "qoq_pct": null,
-     "unit": "PCT",
-     "value": 12.2,
-     "yoy_pct": null
-    }
-   ],
-   "unit": "PCT",
-   "updated_as_of": "2026-05-25T18:00:00+05:30",
-   "value": 11.56,
-   "value_news_id": "xbrl:res:543482:Q4FY26",
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-25T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
     "at": "2026-10-27T07:10:11+05:30",
@@ -7308,31 +9501,6 @@
    "source_news_id": "xbrl:res:543482:Q4FY26",
    "unit": "INR_CR",
    "value": 69.45,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-25T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T07:10:11+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "calc",
-    "doc": "results",
-    "from": [
-     "pbt_before_exceptional:FY26",
-     "finance_cost:FY26",
-     "depreciation:FY26",
-     "other_income:FY26"
-    ],
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "ebitda",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
-   "unit": "INR_CR",
-   "value": 313.29,
    "yoy_pct": null
   },
   {
@@ -7561,25 +9729,6 @@
    "source_news_id": "xbrl:res:543482:Q4FY26",
    "unit": "INR_CR",
    "value": 193.49,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-25T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T07:10:11+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:543482:Q4FY26",
-   "unit": "INR_CR",
-   "value": 162.62,
    "yoy_pct": null
   },
   {
@@ -8412,8 +10561,49 @@
  ],
  "fy_end_month": 3,
  "governance": {
-  "auditor": null,
-  "auditor_history": [],
+  "auditor": {
+   "as_of": "2026-05-25T19:13:49+05:30",
+   "lab": {
+    "at": "2026-10-29T03:52:04+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106639883"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-05-19T12:27:38+05:30",
+    "lab": {
+     "at": "2026-10-29T03:49:51+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Deloitte Haskins & Sells LLP",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106629101"
+   },
+   {
+    "as_of": "2026-05-19T12:49:59+05:30",
+    "lab": {
+     "at": "2026-10-29T03:51:04+05:30",
+     "by": "ai",
+     "doc": "release"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106629148"
+   },
+   {
+    "as_of": "2026-05-25T19:13:49+05:30",
+    "lab": {
+     "at": "2026-10-29T03:52:04+05:30",
+     "by": "ai",
+     "doc": "call"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106639883"
+   }
+  ],
   "quarters": [
    {
     "as_of": "2026-01-30T18:08:42+05:30",
@@ -8819,83 +11009,797 @@
     "related_finance": [],
     "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1705331_30072026054003_WEB.xml",
     "tax_litigation": []
+   },
+   {
+    "as_of": "2026-10-30T20:15:11+05:30",
+    "board": [
+     {
+      "appointed": "2022-04-26",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Arvind Uppal",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-01-31",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Homi Adi Katgara",
+      "role": null,
+      "tenure_months": 56.01
+     },
+     {
+      "appointed": "2022-04-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Vinod Rao",
+      "role": null,
+      "tenure_months": 53.05
+     },
+     {
+      "appointed": "2022-04-26",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sahil Dilip Dalal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-04-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Gurveen Singh",
+      "role": null,
+      "tenure_months": 53.05
+     },
+     {
+      "appointed": "2022-08-16",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Pratik Rashmikant Pota",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-10-10",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shashank Shankar Samant",
+      "role": null,
+      "tenure_months": 47.21
+     }
+    ],
+    "board_size": 7,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Vinod Rao",
+      "Gurveen Singh",
+      "Sahil Dilip Dalal"
+     ],
+     "corporate social responsibility committee": [
+      "Gurveen Singh",
+      "Pratik Rashmikant Pota",
+      "Homi Adi Katgara",
+      "Vinod Rao"
+     ],
+     "nomination and remuneration committee": [
+      "Gurveen Singh",
+      "Vinod Rao",
+      "Homi Adi Katgara",
+      "Sahil Dilip Dalal"
+     ],
+     "risk management committee": [
+      "Vinod Rao",
+      "Arvind Uppal",
+      "Sahil Dilip Dalal",
+      "Gurveen Singh",
+      "Shashank Shankar Samant"
+     ],
+     "stakeholders relationship committee": [
+      "Arvind Uppal",
+      "Pratik Rashmikant Pota",
+      "Vinod Rao",
+      "Gurveen Singh",
+      "Shashank Shankar Samant"
+     ]
+    },
+    "complaints": {
+     "disposed": 3.0,
+     "pending": 1.0,
+     "received": 4.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 71.0,
+     "board": 84.0,
+     "nomination and remuneration committee": 84.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 9.046,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1750469_30102026081804_WEB.xml",
+    "tax_litigation": []
    }
   ]
  },
- "guidance": [
-  {
-   "due": "FY27",
-   "due_date": "2027-03-31",
-   "given_on": "2026-05-25T19:13:49+05:30",
-   "id": "g_9a45698e",
-   "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "revenue_growth",
-   "source_news_id": "nse-106639883",
-   "source_type": "CONCALL",
-   "statement": "FY27 growth expected to accelerate",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "Acceleration from FY26"
-  },
-  {
-   "due": "FY27",
-   "due_date": "2027-03-31",
-   "given_on": "2026-05-25T19:13:49+05:30",
-   "id": "g_14f7ede2",
-   "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "ebitda_margin",
-   "source_news_id": "nse-106639883",
-   "source_type": "CONCALL",
-   "statement": "Aiming to hold margins in FY27",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "At least FY26 level"
-  }
- ],
+ "guidance": [],
  "identity": {
-  "entities": [],
+  "entities": [
+   {
+    "as_of": "2026-05-19T12:27:38+05:30",
+    "lab": {
+     "at": "2026-10-29T03:49:51+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Infinite Water Solutions Private Limited",
+    "source_news_id": "nse-106629101",
+    "type": "Subsidiary Company"
+   },
+   {
+    "as_of": "2026-05-19T12:27:38+05:30",
+    "lab": {
+     "at": "2026-10-29T03:49:51+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Forbes Aquatech Limited",
+    "source_news_id": "nse-106629101",
+    "type": "Subsidiary Company"
+   },
+   {
+    "as_of": "2026-05-19T12:27:38+05:30",
+    "lab": {
+     "at": "2026-10-29T03:49:51+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Euro Forbes Limited",
+    "source_news_id": "nse-106629101",
+    "type": "Subsidiary Company"
+   }
+  ],
   "former_names": []
  },
  "industry": "Consumer Discretionary > Consumer Durables > Household Appliances",
+ "kmp_pay": [
+  {
+   "as_of": "2024-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 8,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "PRATIK RASHMIKANT POTA",
+     "pay_cr": 5.7578
+    },
+    {
+     "designation": "CFO",
+     "name": "GAURAV PRADIP KHANDELWAL",
+     "pay_cr": 5.54
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "PRAGYA KAUL",
+     "pay_cr": 0.8041
+    },
+    {
+     "designation": "Independent Director",
+     "name": "VINOD RAO",
+     "pay_cr": 0.295
+    },
+    {
+     "designation": "Director",
+     "name": "ARVIND UPPAL",
+     "pay_cr": 0.2915
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Homi Adi Katgara",
+     "pay_cr": 0.2915
+    },
+    {
+     "designation": "Independent Director",
+     "name": "GURVEEN SINGH",
+     "pay_cr": 0.291
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Shashank Shankar Samant",
+     "pay_cr": 0.1565
+    }
+   ],
+   "period": "FY24",
+   "source_news_id": "xbrl-facts:FY24:standalone"
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 8,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "PRATIK RASHMIKANT POTA",
+     "pay_cr": 7.7512
+    },
+    {
+     "designation": "CFO",
+     "name": "GAURAV PRADIP KHANDELWAL",
+     "pay_cr": 5.8599
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "PRAGYA KAUL",
+     "pay_cr": 1.0308
+    },
+    {
+     "designation": "Independent Director",
+     "name": "GURVEEN SINGH",
+     "pay_cr": 0.296
+    },
+    {
+     "designation": "Independent Director",
+     "name": "VINOD RAO",
+     "pay_cr": 0.296
+    },
+    {
+     "designation": "Director",
+     "name": "ARVIND UPPAL",
+     "pay_cr": 0.2915
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Shashank Shankar Samant",
+     "pay_cr": 0.2835
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Homi Adi Katgara",
+     "pay_cr": 0.279
+    }
+   ],
+   "period": "FY25",
+   "source_news_id": "xbrl-facts:FY25:standalone"
+  }
+ ],
  "last_filed_at": "2026-10-21T06:23:25+05:30",
+ "oci": [
+  {
+   "as_of": "2024-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY25",
+   "source_news_id": "xbrl-facts:Q2FY25:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.7863,
+    "oci_net_cr": -0.5896,
+    "profit_cr": 47.7445,
+    "tax_not_reclassified_cr": -0.2016,
+    "tax_reclassified_cr": 0.0049,
+    "total_comprehensive_cr": 47.1549,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -0.5896
+   }
+  },
+  {
+   "as_of": "2024-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY25",
+   "source_news_id": "xbrl-facts:Q2FY25:standalone",
+   "values": {
+    "not_reclassified_cr": -0.7863,
+    "oci_net_cr": -0.5884,
+    "profit_cr": 46.6737,
+    "tax_not_reclassified_cr": -0.1979,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 46.0853,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -0.5884
+   }
+  },
+  {
+   "as_of": "2024-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY25",
+   "source_news_id": "xbrl-facts:Q3FY25:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.7863,
+    "oci_net_cr": -0.8308,
+    "profit_cr": 35.0336,
+    "tax_not_reclassified_cr": -0.1977,
+    "tax_reclassified_cr": 0.2422,
+    "total_comprehensive_cr": 34.2028,
+    "total_comprehensive_nci_cr": -0.0121,
+    "total_comprehensive_owners_cr": 34.2149
+   }
+  },
+  {
+   "as_of": "2024-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY25",
+   "source_news_id": "xbrl-facts:Q3FY25:standalone",
+   "values": {
+    "not_reclassified_cr": -0.7863,
+    "oci_net_cr": -0.5886,
+    "profit_cr": 34.8221,
+    "tax_not_reclassified_cr": -0.1977,
+    "total_comprehensive_cr": 34.2335
+   }
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -2.2297,
+     "description": "Remeasurements of the defined benefit plans gain/(loss)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY25",
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "values": {
+    "not_reclassified_cr": -2.2297,
+    "oci_net_cr": -1.498,
+    "profit_cr": 49.481,
+    "tax_not_reclassified_cr": -0.529,
+    "tax_reclassified_cr": -0.2027,
+    "total_comprehensive_cr": 47.983,
+    "total_comprehensive_nci_cr": -0.0158,
+    "total_comprehensive_owners_cr": 47.9989
+   }
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -2.2297,
+     "description": "Items that will not be reclassified to statement of profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY25",
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "values": {
+    "not_reclassified_cr": -2.2297,
+    "oci_net_cr": -1.6687,
+    "profit_cr": 50.7518,
+    "tax_not_reclassified_cr": -0.561,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 49.0831
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.1545,
+     "description": "Remeasurements of the defined benefit plans gain/(loss)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.0129,
+     "description": "Items that may be reclassified to Statement of Profit and Loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -1.1545,
+    "oci_net_cr": -0.877,
+    "profit_cr": 38.6991,
+    "reclassified_cr": -0.0129,
+    "tax_not_reclassified_cr": -0.2904,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 37.8221,
+    "total_comprehensive_nci_cr": 0.0201,
+    "total_comprehensive_owners_cr": 37.802
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.1472,
+     "description": "Items that will not be reclassified to statement of profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -1.1472,
+    "oci_net_cr": -0.8586,
+    "profit_cr": 38.5222,
+    "tax_not_reclassified_cr": -0.2886,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 37.6636
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.1545,
+     "description": "Items that will not be reclassified to statement of profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -1.1545,
+    "oci_net_cr": -0.4363,
+    "profit_cr": 62.9175,
+    "tax_not_reclassified_cr": -0.2905,
+    "tax_reclassified_cr": -0.4277,
+    "total_comprehensive_cr": 62.4812,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -0.4363
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.1471,
+     "description": "Items that will not be reclassified to statement of profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -1.1471,
+    "oci_net_cr": -0.8583,
+    "profit_cr": 61.5886,
+    "tax_not_reclassified_cr": -0.2888,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 60.7303
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 3.9416,
+     "description": "Items that will not be reclassified to statement of profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 3.9416,
+    "oci_net_cr": 2.8605,
+    "profit_cr": 9.9788,
+    "tax_not_reclassified_cr": 0.9922,
+    "tax_reclassified_cr": 0.0889,
+    "total_comprehensive_cr": 12.8393,
+    "total_comprehensive_nci_cr": -0.0441,
+    "total_comprehensive_owners_cr": 12.8834
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 3.9698,
+     "description": "Items that will not be reclassified to statement of profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 3.9698,
+    "oci_net_cr": 2.9707,
+    "profit_cr": 9.0022,
+    "tax_not_reclassified_cr": 0.9991,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 11.9729
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 5.3249,
+     "description": "Remeasurements of the defined benefit plans Gain/(Loss)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.2913,
+     "description": "Items that may be reclassified to Statement of Profit and Loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 5.3249,
+    "oci_net_cr": 3.6938,
+    "profit_cr": 51.0284,
+    "reclassified_cr": -0.2913,
+    "tax_not_reclassified_cr": 1.3398,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 54.7222,
+    "total_comprehensive_nci_cr": -0.0091,
+    "total_comprehensive_owners_cr": 54.7313
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 5.3391,
+     "description": "Remeasurements of the defined benefit plans gain/(loss)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 5.3391,
+    "oci_net_cr": 3.9954,
+    "profit_cr": 51.094,
+    "tax_not_reclassified_cr": 1.3437,
+    "total_comprehensive_cr": 55.0894
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -2.8075,
+     "description": "Remeasurements of the defined benefit plans Gain/(Loss)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.0005,
+     "description": "Exchange difference on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -2.8075,
+    "oci_net_cr": -2.1004,
+    "profit_cr": 56.9874,
+    "reclassified_cr": 0.0005,
+    "tax_not_reclassified_cr": -0.7066,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 54.887,
+    "total_comprehensive_nci_cr": 0.0098,
+    "total_comprehensive_owners_cr": 54.8772
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -2.8059,
+     "description": "Remeasurement of the defined benefit plans Gain/(loss)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T21:56:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -2.8059,
+    "oci_net_cr": -2.0997,
+    "profit_cr": 55.4363,
+    "tax_not_reclassified_cr": -0.7062,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 53.3366
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-25T19:13:49+05:30",
    "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
+    "at": "2026-10-29T03:52:04+05:30",
     "by": "ai",
     "doc": "call"
    },
    "source_news_id": "nse-106639883",
-   "text": "Robotics portfolio growing strongly and expected to reach ₹1,000 Cr by FY30"
-  },
-  {
-   "as_of": "2026-05-25T19:13:49+05:30",
-   "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "source_news_id": "nse-106639883",
-   "text": "Air purifiers grew 2.7x in FY26"
-  },
-  {
-   "as_of": "2026-05-25T19:13:49+05:30",
-   "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "source_news_id": "nse-106639883",
-   "text": "Water softeners maintained strong double-digit growth"
+   "text": "Robotics contributes more than 65-66% of the overall vacuum cleaner category and is targeted to reach over ₹1,000 Cr by FY30."
   }
  ],
  "ownership": [
@@ -8948,17 +11852,1074 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2024-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 21,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.9841
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 15.6408
+     },
+     "party": "Eureka Forbes Limited Employees Provident Fund"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 3.4759
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 7.1411
+     },
+     "party": "Eureka Forbes Limited Employees Gratuity Fund"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 6.703
+     },
+     "party": "Pratik Rashmikant Pota"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.1302
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 1.8743
+     },
+     "party": "Eureka Forbes Limited Managing Staff Superannuation Scheme"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.299
+     },
+     "party": "Vinod Rao"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2955
+     },
+     "party": "Shashank Samant"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2955
+     },
+     "party": "Arvind Uppal"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2955
+     },
+     "party": "Homi Katgara"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.295
+     },
+     "party": "Gurveen Singh"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Marzin Shroff"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Pallon Shapoor Mistry"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Shankar Krishnan"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Jai Mavani"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Anil Kamath"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "D Sivanandhan"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Indu Shahani"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SHAPOORJI PALLONJI AND COMPANY PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Afcons Infrastructure Limited"
+    },
+    {
+     "balances": {},
+     "category": "Parent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Lunolux Limited"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0
+     },
+     "party": "JAYKALI DEVELOPERS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0
+     },
+     "party": "S D CORPORATION PRIVATE LIMITED"
+    }
+   ],
+   "period": "FY24",
+   "source_news_id": "xbrl-facts:FY24:consolidated"
+  },
+  {
+   "as_of": "2024-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 24,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 27.2558
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 0.8612,
+      "PurchasesOfGoodsRelatedPartyTransactions": 54.3547,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 2.1042
+     },
+     "party": "INFINITE WATER SOLUTIONS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.9841
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 15.6408
+     },
+     "party": "Eureka Forbes Limited Employees Provident Fund"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 3.4759
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 7.1411
+     },
+     "party": "Eureka Forbes Limited Employees Gratuity Fund"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 6.703
+     },
+     "party": "Pratik Rashmikant Pota"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 2.0625
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 0.0018,
+      "PurchasesOfGoodsRelatedPartyTransactions": 5.4041,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.4257
+     },
+     "party": "Forbes Aquatech Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.1302
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 1.8743
+     },
+     "party": "Eureka Forbes Limited Managing Staff Superannuation Scheme"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.299
+     },
+     "party": "Vinod Rao"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2955
+     },
+     "party": "Shashank Samant"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2955
+     },
+     "party": "Arvind Uppal"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2955
+     },
+     "party": "Homi Katgara"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.274
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.295
+     },
+     "party": "Gurveen Singh"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Marzin Shroff"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Pallon Shapoor Mistry"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Shankar Krishnan"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Jai Mavani"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Anil Kamath"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "D Sivanandhan"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Indu Shahani"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SHAPOORJI PALLONJI AND COMPANY PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Afcons Infrastructure Limited"
+    },
+    {
+     "balances": {},
+     "category": "Parent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Lunolux Limited"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0
+     },
+     "party": "JAYKALI DEVELOPERS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0
+     },
+     "party": "S D CORPORATION PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.089,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Forbes Lux FZE"
+    }
+   ],
+   "period": "FY24",
+   "source_news_id": "xbrl-facts:FY24:standalone"
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 13,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 5.7275
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 0.687,
+      "PurchasesOfGoodsRelatedPartyTransactions": 36.6489,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.1576
+     },
+     "party": "INFINITE WATER SOLUTIONS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.0982
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 16.1731
+     },
+     "party": "Eureka Forbes Limited Employees Provident Fund"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 8.0364
+     },
+     "party": "Pratik Rashmikant Pota"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.0314
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 0.0018,
+      "PurchasesOfGoodsRelatedPartyTransactions": 5.6934,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.2067
+     },
+     "party": "Forbes Aquatech Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 4.8839
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 5.6041
+     },
+     "party": "Eureka Forbes Limited Employees Gratuity Fund"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0896
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 1.0386
+     },
+     "party": "Eureka Forbes Limited Managing Staff Superannuation Scheme"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.27
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.296
+     },
+     "party": "Vinod Rao"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.27
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.296
+     },
+     "party": "Gurveen Singh"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.27
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2915
+     },
+     "party": "Arvind Uppal"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.27
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2835
+     },
+     "party": "Shashank Samant"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.27
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.279
+     },
+     "party": "Homi Katgara"
+    },
+    {
+     "balances": {},
+     "category": "Parent",
+     "flows": {
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Lunolux Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.089
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Forbes Lux FZE"
+    }
+   ],
+   "period": "FY25",
+   "source_news_id": "xbrl-facts:FY25:standalone"
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 13.0254,
+     "closing_cr": 5.7275,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 24.1421,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.1637,
+     "closing_cr": 1.0314,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 4.051,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.6074,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Job Works",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1796,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1531,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.1295,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other services",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0656,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0009,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other services",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 8,
+   "period": "Q4FY25",
+   "source_news_id": "xbrl-facts:Q4FY25:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 29.9822,
+     "closing_cr": 14.0403,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 5.7275,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.8992,
+     "closing_cr": 2.9693,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 1.0314,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.1909,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.0141,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Job work",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.5071,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.2515,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other service",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2161,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0009,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 8,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 17.5635,
+     "closing_cr": 3.5782,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 14.0403,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.3219,
+     "closing_cr": 0.674,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 2.9693,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.5895,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Job work",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3624,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other service",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2897,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other service",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2161,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1466,
+     "closing_cr": 0.0,
+     "counterparty": "Forbes Aquatech Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0697,
+     "closing_cr": 0.0,
+     "counterparty": "Infinite Water Solutions Private Limited",
+     "entity": "Eureka Forbes Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Company",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 8,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "543482",
  "section_lab": {
   "governance_quarters": {
-   "at": "2026-07-30T17:40:04+05:30",
+   "at": "2026-10-30T20:15:11+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "consumer_durables",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2024-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY25",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY25:consolidated"
+  },
+  {
+   "as_of": "2024-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY25",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY25:consolidated"
+  },
+  {
+   "as_of": "2025-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY25",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated"
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Health, Hygiene & Safety products and its services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -9052,7 +13013,7 @@
     "total_liabilities_cr": 2266.63
    },
    {
-    "as_of": "2026-05-25T18:00:00+05:30",
+    "as_of": "2026-05-19T12:27:38+05:30",
     "cash_cr": 114.53,
     "current_assets_cr": 1117.6,
     "current_liabilities_cr": 1078.88,
@@ -9064,7 +13025,7 @@
     "inventories_cr": 370.8,
     "investments_cr": 88.08,
     "lab": {
-     "at": "2026-10-27T07:10:24+05:30",
+     "at": "2026-10-29T03:50:46+05:30",
      "basis": "STANDALONE",
      "by": "file",
      "doc": "results",
@@ -9077,7 +13038,7 @@
     "period": "Q4FY26",
     "receivables_cr": 233.07,
     "reserves_cr": 4379.54,
-    "source_news_id": "xbrl:res-sa:543482:Q4FY26",
+    "source_news_id": "nse-106629101",
     "total_assets_cr": 6701.95,
     "total_liabilities_cr": 2128.91
    }
@@ -15561,78 +19522,1484 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY23",
+   "rows": {
+    "Borrowings": 139.9462,
+    "CWIP": 2.4593,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5480.8651,
+    "Investments": 75.8138,
+    "Other Assets": 470.0274000000003,
+    "Other Liabilities": 1791.5750000000005,
+    "Reserves": 3904.1652,
+    "Total Assets": 6029.1656,
+    "Total Liabilities": 6029.1656
+   },
+   "source_news_id": "xbrl-facts:Q4FY23:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY23",
+   "rows": {
+    "Depreciation": 56.4606,
+    "Exceptional items": -40.018,
+    "Exceptional items AT": -27.50773797121921,
+    "Expenses": 1939.4888999999998,
+    "Interest": 20.2592,
+    "Minority share": -0.0851,
+    "Net Profit": 26.4724,
+    "Net Profit (owners)": 26.5575,
+    "OPM %": 6.956864725348959,
+    "Operating Profit": 145.01620000000003,
+    "Other Income": -29.78460000000004,
+    "Profit before tax": 38.5118,
+    "Profit for PE": 54.06523797121921,
+    "Sales": 2084.5051,
+    "Tax": 12.0394,
+    "Tax %": 31.261587357641034
+   },
+   "source_news_id": "xbrl-facts:FY23:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY23",
+   "rows": {
+    "Cash from Financing Activity": -153.533,
+    "Cash from Investing Activity": -26.307,
+    "Cash from Operating Activity": 180.6275,
+    "Net Cash Flow": 0.7875
+   },
+   "source_news_id": "xbrl-facts:FY23:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY23",
+   "rows": {
+    "Borrowings": 139.27769999999998,
+    "CWIP": 2.4593,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5474.7357999999995,
+    "Investments": 101.04809999999999,
+    "Other Assets": 450.7165000000009,
+    "Other Liabilities": 1810.3522000000003,
+    "Reserves": 3885.8506,
+    "Total Assets": 6028.9597,
+    "Total Liabilities": 6028.9597
+   },
+   "source_news_id": "xbrl-facts:Q4FY23:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY23",
+   "rows": {
+    "Depreciation": 55.2843,
+    "Exceptional items": -40.018,
+    "Exceptional items AT": -25.371862686943903,
+    "Expenses": 1948.7386999999999,
+    "Interest": 19.8575,
+    "Net Profit": 17.0802,
+    "Net Profit (owners)": 17.0802,
+    "OPM %": 6.329499618057674,
+    "Operating Profit": 131.68010000000004,
+    "Other Income": -29.59840000000004,
+    "Profit before tax": 26.9399,
+    "Profit for PE": 42.452062686943904,
+    "Sales": 2080.4188,
+    "Tax": 9.8597,
+    "Tax %": 36.598873789435004
+   },
+   "source_news_id": "xbrl-facts:FY23:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY23",
+   "rows": {
+    "Cash from Financing Activity": -149.602,
+    "Cash from Investing Activity": -22.5022,
+    "Cash from Operating Activity": 171.0463,
+    "Net Cash Flow": -1.0579
+   },
+   "source_news_id": "xbrl-facts:FY23:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY24",
+   "rows": {
+    "Depreciation": 54.027,
+    "Exceptional items": -15.149,
+    "Exceptional items AT": -11.27854321503684,
+    "Expenses": 1990.6054,
+    "Interest": 9.7745,
+    "Minority share": 0.0111,
+    "Net Profit": 95.6497,
+    "Net Profit (owners)": 95.6386,
+    "OPM %": 9.073645396949148,
+    "Operating Profit": 198.64480000000003,
+    "Other Income": -6.369500000000016,
+    "Profit before tax": 128.4738,
+    "Profit for PE": 106.91714321503684,
+    "Sales": 2189.2502,
+    "Tax": 32.8241,
+    "Tax %": 25.54925595724576
+   },
+   "source_news_id": "xbrl-facts:FY24:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY24",
+   "rows": {
+    "Cash from Financing Activity": -120.0669,
+    "Cash from Investing Activity": -31.6286,
+    "Cash from Operating Activity": 194.4718,
+    "Net Cash Flow": 42.7763
+   },
+   "source_news_id": "xbrl-facts:FY24:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY24",
+   "rows": {
+    "Depreciation": 53.1249,
+    "Exceptional items": -15.149,
+    "Exceptional items AT": -11.33278329278435,
+    "Expenses": 1997.3607,
+    "Interest": 9.7177,
+    "Net Profit": 91.5685,
+    "Net Profit (owners)": 91.5685,
+    "OPM %": 8.764082543682209,
+    "Operating Profit": 191.86559999999986,
+    "Other Income": -6.619599999999849,
+    "Profit before tax": 122.4034,
+    "Profit for PE": 102.90128329278436,
+    "Sales": 2189.2263,
+    "Tax": 30.8349,
+    "Tax %": 25.19121200881675
+   },
+   "source_news_id": "xbrl-facts:FY24:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY24",
+   "rows": {
+    "Cash from Financing Activity": -117.4679,
+    "Cash from Investing Activity": -34.5692,
+    "Cash from Operating Activity": 195.195,
+    "Net Cash Flow": 43.1579
+   },
+   "source_news_id": "xbrl-facts:FY24:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY24",
+   "rows": {
+    "Borrowings": 38.7444,
+    "CWIP": 1.2219,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5462.914699999999,
+    "Investments": 54.9626,
+    "Other Assets": 609.0459000000004,
+    "Other Liabilities": 1863.757,
+    "Reserves": 4032.1645,
+    "Total Assets": 6128.1451,
+    "Total Liabilities": 6128.1451
+   },
+   "source_news_id": "xbrl-facts:Q4FY24:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY24",
+   "rows": {
+    "Borrowings": 38.7081,
+    "CWIP": 1.2219,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5456.947099999999,
+    "Investments": 80.197,
+    "Other Assets": 581.8315000000008,
+    "Other Liabilities": 1878.4623000000004,
+    "Reserves": 4009.5479,
+    "Total Assets": 6120.1975,
+    "Total Liabilities": 6120.1975
+   },
+   "source_news_id": "xbrl-facts:Q4FY24:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY25",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.062,
+    "Exceptional items": 3.0,
+    "Exceptional items AT": 2.2473182051390674,
+    "Expenses": 600.0658999999999,
+    "Interest": 1.6694,
+    "Minority share": 0.0328,
+    "Net Profit": 47.7445,
+    "Net Profit (owners)": 47.7117,
+    "OPM %": 10.855679607713002,
+    "Operating Profit": 73.0739000000001,
+    "Other Income": 6.392799999999909,
+    "Profit before tax": 63.7353,
+    "Profit for PE": 45.464381794860934,
+    "Sales": 673.1398,
+    "Tax": 15.9908,
+    "Tax %": 25.089393162031087
+   },
+   "source_news_id": "xbrl-facts:Q2FY25:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY25",
+   "rows": {
+    "Borrowings": 50.3498,
+    "CWIP": 0.0,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5474.5745,
+    "Investments": 56.9285,
+    "Other Assets": 800.1229000000003,
+    "Other Liabilities": 1962.5564000000004,
+    "Reserves": 4125.2405,
+    "Total Assets": 6331.6259,
+    "Total Liabilities": 6331.6259
+   },
+   "source_news_id": "xbrl-facts:Q2FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY25",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 13.9903,
+    "Exceptional items": 3.0,
+    "Exceptional items AT": 2.243492848341908,
+    "Expenses": 601.0326,
+    "Interest": 1.6694,
+    "Net Profit": 46.6737,
+    "Net Profit (owners)": 46.6737,
+    "OPM %": 10.675696502288636,
+    "Operating Profit": 71.83309999999994,
+    "Other Income": 6.238700000000051,
+    "Profit before tax": 62.4121,
+    "Profit for PE": 44.43020715165809,
+    "Sales": 672.8657,
+    "Tax": 15.7384,
+    "Tax %": 25.216905055269734
+   },
+   "source_news_id": "xbrl-facts:Q2FY25:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY25",
+   "rows": {
+    "Borrowings": 50.3498,
+    "CWIP": 0.0,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5468.647199999999,
+    "Investments": 82.1629,
+    "Other Assets": 808.2379000000003,
+    "Other Liabilities": 2014.7974999999997,
+    "Reserves": 4100.4215,
+    "Total Assets": 6359.048,
+    "Total Liabilities": 6359.048
+   },
+   "source_news_id": "xbrl-facts:Q2FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY25",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 15.0768,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 538.6043,
+    "Interest": 1.1851,
+    "Minority share": -0.0121,
+    "Net Profit": 35.0336,
+    "Net Profit (owners)": 35.0457,
+    "OPM %": 9.893742048219691,
+    "Operating Profit": 59.13920000000007,
+    "Other Income": 4.436399999999921,
+    "Profit before tax": 47.3137,
+    "Profit for PE": 35.0457,
+    "Sales": 597.7435,
+    "Tax": 12.2801,
+    "Tax %": 25.954638931218653
+   },
+   "source_news_id": "xbrl-facts:Q3FY25:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY25",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.9486,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 539.1544999999999,
+    "Interest": 1.1851,
+    "Net Profit": 34.8221,
+    "Net Profit (owners)": 34.8221,
+    "OPM %": 9.816421119257292,
+    "Operating Profit": 58.68660000000011,
+    "Other Income": 4.393799999999885,
+    "Profit before tax": 46.9467,
+    "Profit for PE": 34.8221,
+    "Sales": 597.8411,
+    "Tax": 12.1246,
+    "Tax %": 25.826309410459093
+   },
+   "source_news_id": "xbrl-facts:Q3FY25:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 15.0761,
+    "Exceptional items": 1.1769,
+    "Exceptional items AT": 0.8761711367288354,
+    "Expenses": 535.579,
+    "Interest": 1.104,
+    "Minority share": -0.0147,
+    "Net Profit": 49.481,
+    "Net Profit (owners)": 49.4957,
+    "OPM %": 12.580253527205166,
+    "Operating Profit": 77.07320000000004,
+    "Other Income": 5.571299999999951,
+    "Profit before tax": 66.4644,
+    "Profit for PE": 48.619528863271164,
+    "Sales": 612.6522,
+    "Tax": 16.9834,
+    "Tax %": 25.5526266693147
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 25.5535,
+    "CWIP": 1.9207,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5471.349099999999,
+    "Investments": 58.9636,
+    "Other Assets": 804.3880000000005,
+    "Other Liabilities": 1902.3805000000002,
+    "Reserves": 4215.2082,
+    "Total Assets": 6336.6214,
+    "Total Liabilities": 6336.6214
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 58.0019,
+    "Exceptional items": 4.1769,
+    "Exceptional items AT": 3.1116928235351686,
+    "Expenses": 2171.3271,
+    "Interest": 5.629,
+    "Minority share": 0.0143,
+    "Net Profit": 164.4147,
+    "Net Profit (owners)": 164.4004,
+    "OPM %": 10.89850389896764,
+    "Operating Profit": 265.58719999999994,
+    "Other Income": 18.741500000000087,
+    "Profit before tax": 220.6978,
+    "Profit for PE": 161.2887071764648,
+    "Sales": 2436.9143,
+    "Tax": 56.2831,
+    "Tax %": 25.502338491820034
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -43.3864,
+    "Cash from Investing Activity": -168.425,
+    "Cash from Operating Activity": 245.999,
+    "Net Cash Flow": 34.1876
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.9801,
+    "Exceptional items": 2.0769,
+    "Exceptional items AT": 1.5511869893645673,
+    "Expenses": 534.8974999999999,
+    "Interest": 1.0954,
+    "Net Profit": 50.7518,
+    "Net Profit (owners)": 50.7518,
+    "OPM %": 12.676097496311307,
+    "Operating Profit": 77.64670000000012,
+    "Other Income": 6.380899999999869,
+    "Profit before tax": 67.9521,
+    "Profit for PE": 49.200613010635436,
+    "Sales": 612.5442,
+    "Tax": 17.2003,
+    "Tax %": 25.312389168252338
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 25.5535,
+    "CWIP": 1.9206,
+    "Equity Capital": 193.4792,
+    "Fixed Assets": 5465.6053,
+    "Investments": 84.198,
+    "Other Assets": 757.9174,
+    "Other Liabilities": 1899.1171000000004,
+    "Reserves": 4191.4915,
+    "Total Assets": 6309.6413,
+    "Total Liabilities": 6309.6413
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 57.5794,
+    "Exceptional items": 5.0769,
+    "Exceptional items AT": 3.787597680854428,
+    "Expenses": 2173.1721000000002,
+    "Interest": 5.6204,
+    "Net Profit": 163.2865,
+    "Net Profit (owners)": 163.2865,
+    "OPM %": 10.79160780117946,
+    "Operating Profit": 262.89029999999957,
+    "Other Income": 19.178900000000453,
+    "Profit before tax": 218.8694,
+    "Profit for PE": 159.49890231914557,
+    "Sales": 2436.0624,
+    "Tax": 55.5829,
+    "Tax %": 25.395464144371026
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -43.3415,
+    "Cash from Investing Activity": -168.1659,
+    "Cash from Operating Activity": 225.5001,
+    "Net Cash Flow": 13.9927
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 15.8581,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 546.3811999999999,
+    "Interest": 0.9994,
+    "Minority share": 0.0201,
+    "Net Profit": 38.6991,
+    "Net Profit (owners)": 38.679,
+    "OPM %": 10.115363596193545,
+    "Operating Profit": 61.48820000000012,
+    "Other Income": 7.440799999999868,
+    "Profit before tax": 52.0715,
+    "Profit for PE": 38.679,
+    "Sales": 607.8694,
+    "Tax": 13.3724,
+    "Tax %": 25.68084268745859
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 15.702,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 546.4871999999999,
+    "Interest": 0.9994,
+    "Net Profit": 38.5222,
+    "Net Profit (owners)": 38.5222,
+    "OPM %": 10.078887262281436,
+    "Operating Profit": 61.25350000000003,
+    "Other Income": 7.14049999999996,
+    "Profit before tax": 51.6926,
+    "Profit for PE": 38.5222,
+    "Sales": 607.7407,
+    "Tax": 13.1704,
+    "Tax %": 25.478308307185166
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 16.4247,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 674.4160999999999,
+    "Interest": 2.2463,
+    "Minority share": 0.02145,
+    "Net Profit": 62.9175,
+    "Net Profit (owners)": 62.8961,
+    "OPM %": 12.649385542471416,
+    "Operating Profit": 97.66330000000005,
+    "Other Income": 5.976499999999959,
+    "Profit before tax": 84.9688,
+    "Profit for PE": 62.8961,
+    "Sales": 772.0794,
+    "Tax": 22.0513,
+    "Tax %": 25.952231878054064
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 62.4834,
+    "CWIP": 4.3157,
+    "Equity Capital": 193.4918,
+    "Fixed Assets": 5493.7243,
+    "Investments": 61.051300000000005,
+    "Other Assets": 1228.1410999999998,
+    "Other Liabilities": 2204.6513000000004,
+    "Reserves": 4326.6059,
+    "Total Assets": 6787.2324,
+    "Total Liabilities": 6787.2324
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 16.3192,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 677.5889999999999,
+    "Interest": 2.2463,
+    "Net Profit": 61.5886,
+    "Net Profit (owners)": 61.5886,
+    "OPM %": 12.393869902009099,
+    "Operating Profit": 95.86030000000005,
+    "Other Income": 5.868699999999947,
+    "Profit before tax": 83.1635,
+    "Profit for PE": 61.5886,
+    "Sales": 773.4493,
+    "Tax": 21.5749,
+    "Tax %": 25.942751327204842
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 77.0772,
+    "CWIP": 4.3157,
+    "Equity Capital": 193.4918,
+    "Fixed Assets": 5485.794,
+    "Investments": 86.2857,
+    "Other Assets": 1185.4847999999997,
+    "Other Liabilities": 2189.5487,
+    "Reserves": 4301.7625,
+    "Total Assets": 6761.8802,
+    "Total Liabilities": 6761.8802
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 17.1349,
+    "Exceptional items": -40.4418,
+    "Exceptional items AT": -29.478067072796602,
+    "Expenses": 576.8106,
+    "Interest": 2.7379,
+    "Minority share": -0.0441,
+    "Net Profit": 9.9788,
+    "Net Profit (owners)": 10.0229,
+    "OPM %": 10.62684324874751,
+    "Operating Profit": 68.58519999999999,
+    "Other Income": -35.022199999999984,
+    "Profit before tax": 13.6902,
+    "Profit for PE": 39.5009670727966,
+    "Sales": 645.3958,
+    "Tax": 3.7114,
+    "Tax %": 27.109903434573635
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 17.0152,
+    "Exceptional items": -40.4418,
+    "Exceptional items AT": -29.452013296336148,
+    "Expenses": 578.0086,
+    "Interest": 2.7379,
+    "Net Profit": 9.0022,
+    "Net Profit (owners)": 9.0022,
+    "OPM %": 10.448102968895581,
+    "Operating Profit": 67.43679999999995,
+    "Other Income": -35.322399999999945,
+    "Profit before tax": 12.3613,
+    "Profit for PE": 38.45421329633615,
+    "Sales": 645.4454,
+    "Tax": 3.3591,
+    "Tax %": 27.174326324901106
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 20.0311,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 598.1632,
+    "Interest": 1.8492,
+    "Minority share": -0.0062,
+    "Net Profit": 51.0284,
+    "Net Profit (owners)": 51.0345,
+    "OPM %": 12.513017085436553,
+    "Operating Profit": 85.55360000000007,
+    "Other Income": 4.89669999999991,
+    "Profit before tax": 68.57,
+    "Profit for PE": 51.0345,
+    "Sales": 683.7168,
+    "Tax": 17.5416,
+    "Tax %": 25.58203295901998
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 28.916800000000002,
+    "CWIP": 7.2675,
+    "Equity Capital": 193.4918,
+    "Fixed Assets": 5511.6134999999995,
+    "Investments": 62.8415,
+    "Other Assets": 1152.2002000000007,
+    "Other Liabilities": 2105.8332,
+    "Reserves": 4405.6809,
+    "Total Assets": 6733.9227,
+    "Total Liabilities": 6733.9227
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 69.4488,
+    "Exceptional items": -40.4418,
+    "Exceptional items AT": -29.989891266317798,
+    "Expenses": 2395.7711999999997,
+    "Interest": 7.8328,
+    "Minority share": -0.0088,
+    "Net Profit": 162.6237,
+    "Net Profit (owners)": 162.6325,
+    "OPM %": 11.56452932369862,
+    "Operating Profit": 313.29020000000037,
+    "Other Income": -16.708200000000375,
+    "Profit before tax": 219.3004,
+    "Profit for PE": 192.62239126631778,
+    "Sales": 2709.0614,
+    "Tax": 56.6767,
+    "Tax %": 25.844321305387496
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -22.1479,
+    "Cash from Investing Activity": -197.704,
+    "Cash from Operating Activity": 250.2023,
+    "Net Cash Flow": 30.3504
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 19.9106,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 598.6345,
+    "Interest": 1.8492,
+    "Net Profit": 51.094,
+    "Net Profit (owners)": 51.094,
+    "OPM %": 12.45906534599489,
+    "Operating Profit": 85.1993,
+    "Other Income": 5.040400000000005,
+    "Profit before tax": 68.4799,
+    "Profit for PE": 51.094,
+    "Sales": 683.8338,
+    "Tax": 17.3859,
+    "Tax %": 25.388325625475503
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 28.916800000000002,
+    "CWIP": 7.2675,
+    "Equity Capital": 193.4918,
+    "Fixed Assets": 5503.583,
+    "Investments": 88.0759,
+    "Other Assets": 1103.0204,
+    "Other Liabilities": 2099.9939999999997,
+    "Reserves": 4379.5442,
+    "Total Assets": 6701.9468,
+    "Total Liabilities": 6701.9468
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 68.947,
+    "Exceptional items": -40.4418,
+    "Exceptional items AT": -30.037740169209354,
+    "Expenses": 2400.7192999999997,
+    "Interest": 7.8328,
+    "Net Profit": 160.207,
+    "Net Profit (owners)": 160.207,
+    "OPM %": 11.427907020673773,
+    "Operating Profit": 309.74990000000025,
+    "Other Income": -17.27280000000019,
+    "Profit before tax": 215.6973,
+    "Profit for PE": 190.24474016920934,
+    "Sales": 2710.4692,
+    "Tax": 55.4903,
+    "Tax %": 25.726005842446796
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -22.1479,
+    "Cash from Investing Activity": -174.5944,
+    "Cash from Operating Activity": 241.7593,
+    "Net Cash Flow": 45.017
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 18.6659,
+    "Exceptional items": 19.5377,
+    "Exceptional items AT": 14.53203951833207,
+    "Expenses": 631.0146,
+    "Interest": 1.09,
+    "Minority share": 0.00977,
+    "Net Profit": 56.9874,
+    "Net Profit (owners)": 56.97763,
+    "OPM %": 9.906950739231345,
+    "Operating Profit": 69.3886,
+    "Other Income": 26.984399999999994,
+    "Profit before tax": 76.6171,
+    "Profit for PE": 42.44559048166793,
+    "Sales": 700.4032,
+    "Tax": 19.6297,
+    "Tax %": 25.620520745368857
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:15:52+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:15:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 18.5433,
+    "Exceptional items": 19.5377,
+    "Exceptional items AT": 14.5507254354076,
+    "Expenses": 633.4238999999999,
+    "Interest": 1.09,
+    "Net Profit": 55.4363,
+    "Net Profit (owners)": 55.4363,
+    "OPM %": 9.609964732948487,
+    "Operating Profit": 67.34350000000006,
+    "Other Income": 26.72579999999995,
+    "Profit before tax": 74.436,
+    "Profit for PE": 40.8855745645924,
+    "Sales": 700.7674,
+    "Tax": 18.9997,
+    "Tax %": 25.524880434198504
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "EUREKAFORB",
  "timeline": [
+  {
+   "date": "2026-05-13T12:21:09+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_e6efc19a",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-29T03:49:38+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106620095",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SHILPAJAIN_13052026122057_Signed.pdf",
+   "summary": "Eureka Forbes Limited scheduled an earnings conference call for Q4 FY2026 & FY2026 results on May 20, 2026, at 2:00 PM IST with **Mr. Pratik Pota (MD & CEO)** and **Mr. Gaurav Khandelwal (CFO)**.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-05-19T10:39:07+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_f6b28256",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-29T03:49:45+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106594104",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/team_sandeshc_20042026132649_22.pdf",
+   "summary": "Lunolux Limited, acting with Christodoulos Patsalides, declared no new share encumbrances in Eureka Forbes Limited for FY2026 under SEBI’s Regulation 31(4).",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-05-19T12:27:38+05:30",
+   "event_type": "RESULTS",
+   "id": "t_215b5de5",
+   "impact_level": "HIGH",
+   "lab": {
+    "at": "2026-10-29T03:49:51+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "news_id": "nse-106629101",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SHILPAJAIN_19052026122420_OUTSOME_Signed.pdf",
+   "summary": "Eureka Forbes reported Q4 FY26 standalone revenue of ₹683.83 Cr and PAT of ₹51.09 Cr, weighed down by a ₹40.44 Cr labour code provision."
+  },
+  {
+   "date": "2026-05-19T12:49:59+05:30",
+   "event_type": "RESULTS",
+   "id": "t_f163bfd9",
+   "impact_level": "HIGH",
+   "lab": {
+    "at": "2026-10-29T03:51:04+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "news_id": "nse-106629148",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SHILPAJAIN_19052026124952_Press_Release_signed.pdf",
+   "summary": "Eureka Forbes reported Q4 FY26 standalone revenue of ₹683.8 Cr, up 11.6% YoY, with an adjusted EBITDA margin of 13.2%."
+  },
+  {
+   "date": "2026-05-20T16:20:41+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_d476354c",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-29T03:51:36+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106631572",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SHILPAJAIN_20052026162026_Audio_link.pdf",
+   "summary": "Shilpa Jain uploaded the audio recording of the May 20, 2026, analysts/investor conference call on Eureka Forbes Limited’s website.",
+   "tier": "TIMELINE"
+  },
   {
    "date": "2026-05-25T19:13:49+05:30",
    "event_type": "CONCALL_PRESENTATION",
    "id": "t_18a7d16f",
-   "impact_level": "HIGH",
+   "impact_level": "MODERATE",
    "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
+    "at": "2026-10-29T03:52:04+05:30",
     "by": "ai",
     "doc": "call"
    },
    "news_id": "nse-106639883",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/SHILPAJAIN_25052026191335_Transcript_signed.pdf",
-   "summary": "Eureka Forbes reported Q4FY26 results with 11.6% YoY revenue growth to ₹684 Cr and record 13.2% adjusted EBITDA margin"
+   "summary": "Eureka Forbes reported Q4 FY26 revenue of ₹684 Cr, up 11.6% YoY, with an adjusted EBITDA margin of 13.2%."
+  },
+  {
+   "date": "2026-05-28T15:04:49+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_4a64c335",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-29T03:52:48+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106645126",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SHILPAJAIN_28052026150341_Intimation_-_Analyst_Call_-_Signed.pdf",
+   "summary": "Eureka Forbes Limited will attend Axis Capital's Rising Stars Conference on June 02, 2026, in Mumbai (Physical – Group) as per Regulation 30 of SEBI Listing Regulations, signed by Shilpa Jain.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-10-28T19:43:12+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_fb60d375",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-29T03:25:42+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106833086",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SHILPAJAIN_28102026194259_EFL_-_Intimation_of_Analyst_Call_-_Signed.pdf",
+   "summary": "Eureka Forbes Limited scheduled an earnings conference call for Q2 and H1 FY27 results on November 03, 2026, at 02:00 PM IST, led by **Pratik Pota (MD & CEO)** and **Gaurav Khandelwal (CFO)**.",
+   "tier": "TIMELINE"
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T07:10:11+05:30",
+ "updated_at": "2026-10-29T03:52:48+05:30",
  "watchlist": [
   {
-   "check_by": "2027-03-31",
-   "check_in": "FY27 results",
-   "created_on": "2026-05-25T19:13:49+05:30",
-   "id": "w_e89d91dc",
+   "check_by": "2026-06-30",
+   "check_in": "Q1FY27 results",
+   "created_on": "2026-05-19T12:49:59+05:30",
+   "id": "w_fe870de5",
    "kind": "KPI",
    "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
+    "at": "2026-10-29T03:51:04+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "release"
    },
-   "source_news_id": "nse-106639883",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "Double-digit growth",
-   "text": "Service revenue growth"
-  },
-  {
-   "check_by": null,
-   "check_in": null,
-   "created_on": "2026-05-25T19:13:49+05:30",
-   "id": "w_ec5dade5",
-   "kind": "CONCERN",
-   "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "response": "Implemented 6-7% price increase and focusing on efficiency initiatives to mitigate impact",
-   "source_news_id": "nse-106639883",
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "source_news_id": "nse-106629148",
    "status": "OPEN",
    "status_history": [],
    "target": null,
-   "text": "Impact of input cost inflation and currency depreciation on margins"
-  },
-  {
-   "check_by": null,
-   "check_in": null,
-   "created_on": "2026-05-25T19:13:49+05:30",
-   "id": "w_7097ee9f",
-   "kind": "CONCERN",
-   "lab": {
-    "at": "2026-05-25T19:13:49+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "response": "Expect acceleration in FY27 following double-digit AMC bookings growth in FY26",
-   "source_news_id": "nse-106639883",
-   "status": "OPEN",
-   "status_history": [],
-   "target": null,
-   "text": "Service revenue growth trajectory"
+   "text": "revenue growth"
   }
  ]
 }

@@ -1,4 +1,85 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2026-11-30",
+     "name": "Price Waterhouse Chartered Accountants LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-11-13T18:00:00+05:30",
@@ -90,27 +171,6 @@
    "total_liabilities_cr": 5970.7
   },
   {
-   "as_of": "2026-05-21T18:53:16+05:30",
-   "lab": {
-    "at": "2026-05-21T18:53:16+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "Q4FY26",
-   "source_news_id": "nse-106634427"
-  },
-  {
-   "as_of": "2026-05-28T17:19:20+05:30",
-   "cash_cr": 4476.0,
-   "lab": {
-    "at": "2026-05-28T17:19:20+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Mar-2026",
-   "source_news_id": "nse-106645499"
-  },
-  {
    "as_of": "2026-08-20T18:56:20+05:30",
    "cash_cr": 5707.0,
    "lab": {
@@ -162,6 +222,222 @@
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -38.622,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 39.638,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -9.229,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -67.161,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 183.735,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -86.534,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 79.48,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -94.599,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 136.18,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -12.591,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -2.812,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 205.666,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 14.273,
+    "AdjustmentsForProvisionsNoncurrent": 9.606,
+    "AdjustmentsForReconcileProfitLoss": 134.864,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 20.983,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 4283.71,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -58.733,
+    "CashFlowsFromUsedInInvestingActivities": -425.459,
+    "CashFlowsFromUsedInOperatingActivities": 1026.859,
+    "CashFlowsFromUsedInOperations": 1351.674,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -0.43,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 324.815,
+    "IncreaseDecreaseInCashAndCashEquivalents": 542.237,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 542.667,
+    "InterestPaidClassifiedAsFinancingActivities": 17.496,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 136.18,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 29.211,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 41.237,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 27.506,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.082,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 589.227,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 69.831,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -3.496,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -8.016,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -456.332,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 396.107,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 58.68,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 141.25,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 87.203,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 267.929,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -84.975,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -37.928,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 27.241,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 33.822,
+    "AdjustmentsForProvisionsNoncurrent": -2.748,
+    "AdjustmentsForReconcileProfitLoss": 42.344,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 54.227,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 4476.265,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -127.433,
+    "CashFlowsFromUsedInInvestingActivities": -856.476,
+    "CashFlowsFromUsedInOperatingActivities": 1721.248,
+    "CashFlowsFromUsedInOperations": 2341.855,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -2.547,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 620.607,
+    "IncreaseDecreaseInCashAndCashEquivalents": 734.792,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 737.339,
+    "InterestPaidClassifiedAsFinancingActivities": 35.946,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 267.929,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 35.407,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 91.487,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 47.718,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.114,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1172.237,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "LG Electronics India Limited",
  "deals": [
   {
@@ -274,6 +550,80 @@
    "tranches": [],
    "updated_as_of": "2026-08-20T18:56:20+05:30",
    "usage": "CAPTIVE"
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
   }
  ],
  "financial_metrics": [
@@ -8069,6 +8419,125 @@
  },
  "industry": "Consumer Discretionary > Consumer Durables > Household Appliances",
  "last_filed_at": "2026-10-22T15:12:54+05:30",
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.319,
+     "description": "Remeasurement of post-employment benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -1.319,
+    "oci_net_cr": -0.987,
+    "profit_cr": 389.434,
+    "tax_not_reclassified_cr": -0.332,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 388.447
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -8.399,
+     "description": "Remeasurement of post-employment benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -8.399,
+    "oci_net_cr": -6.556,
+    "profit_cr": 89.673,
+    "tax_not_reclassified_cr": -1.843,
+    "total_comprehensive_cr": 83.117
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 22.34,
+     "description": "Remeasurement of post-employment benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 22.34,
+    "oci_net_cr": 16.988,
+    "profit_cr": 692.731,
+    "tax_not_reclassified_cr": 5.352,
+    "total_comprehensive_cr": 709.719
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 2.278,
+     "description": "Remeasurement of post-employment benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 2.278,
+    "oci_net_cr": 1.705,
+    "profit_cr": 652.863,
+    "tax_not_reclassified_cr": 0.573,
+    "total_comprehensive_cr": 654.568
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-06T14:09:15+05:30",
@@ -8239,6 +8708,1404 @@
    "value": 12.5
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1404.715,
+     "approved_cr": 2990.0,
+     "closing_cr": 408.086,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 395.173,
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 370.76,
+     "approved_cr": 780.0,
+     "closing_cr": 138.602,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 162.565,
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 231.082,
+     "approved_cr": 530.0,
+     "closing_cr": 12.951,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 5.577,
+     "other_details": "Royalty",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 135.604,
+     "approved_cr": 340.0,
+     "closing_cr": 47.636,
+     "counterparty": "LG Display Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 25.777,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 124.705,
+     "approved_cr": 277.0,
+     "closing_cr": 44.432,
+     "counterparty": "Nanjing LG-Panda Appliances Co., Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 30.391,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 101.857,
+     "approved_cr": 265.0,
+     "closing_cr": 39.807,
+     "counterparty": "LG Electronics Tianjin Appliances Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 45.364,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 79.487,
+     "approved_cr": 280.0,
+     "closing_cr": 9.542,
+     "counterparty": "PT. LG Electronics Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 14.825,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 72.139,
+     "approved_cr": 210.0,
+     "closing_cr": 13.368,
+     "counterparty": "Taizhou LG Electronics Refrigeration Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 21.1,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 70.304,
+     "approved_cr": 129.0,
+     "closing_cr": 0.001,
+     "counterparty": "LG Electronics Thailand Co., Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 37.423,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 51.403,
+     "approved_cr": 89.0,
+     "closing_cr": 23.422,
+     "counterparty": "LG Innotek Yantai Co., Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 19.303,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 38.086,
+     "approved_cr": 97.0,
+     "closing_cr": 12.729,
+     "counterparty": "LG CNS India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 16.316,
+     "other_details": "Other, Manpower, Purchase of IT services and software development",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 24.649,
+     "approved_cr": 530.0,
+     "closing_cr": 1.588,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 10.487,
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 23.373,
+     "approved_cr": 60.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Other (Service warranty, Reimbursement, others)",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 17.557,
+     "approved_cr": 36.0,
+     "closing_cr": 11.796,
+     "counterparty": "PT. LG Innotek Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 5.371,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 16.971,
+     "approved_cr": 22.0,
+     "closing_cr": 14.726,
+     "counterparty": "LG Electronics Nanjing New Technology Co.,Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 1.164,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 14.819,
+     "approved_cr": 34.0,
+     "closing_cr": 7.47,
+     "counterparty": "LG Electronics Qinhuangdao Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 4.486,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 14.648,
+     "approved_cr": 70.0,
+     "closing_cr": 8.209,
+     "counterparty": "PT. LG Electronics Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 1.083,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 11.78,
+     "approved_cr": 13.5,
+     "closing_cr": 7.57,
+     "counterparty": "LG Electronics Dubai FZE",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 3.426,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 9.335,
+     "approved_cr": 33.0,
+     "closing_cr": 0.548,
+     "counterparty": "LG CNS India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.474,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 8.349,
+     "approved_cr": 70.0,
+     "closing_cr": 5.096,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 8.13,
+     "other_details": "Service charges paid",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.22,
+     "approved_cr": 19.4,
+     "closing_cr": 0.94,
+     "counterparty": "ACERNA ECO INDIA PRIVATE LIMITED",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 4.151,
+     "approved_cr": 42.5,
+     "closing_cr": 3.162,
+     "counterparty": "LG Electronics Morocco S.A.R.L.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 2.701,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.163,
+     "approved_cr": 10.0,
+     "closing_cr": 3.165,
+     "counterparty": "LG Electronics (Levant) Jordan",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.074,
+     "approved_cr": 10.0,
+     "closing_cr": 3.092,
+     "counterparty": "Arcelic-LG Klima Sanayi ve Ticarta A.S",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.022,
+     "approved_cr": 6.0,
+     "closing_cr": 0.73,
+     "counterparty": "LG CNS Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 1.904,
+     "other_details": "Other expenses",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.942,
+     "approved_cr": 6.5,
+     "closing_cr": 2.293,
+     "counterparty": "LG Electronics Vietnam Hai Phong  Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.739,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.597,
+     "approved_cr": 6.5,
+     "closing_cr": 0.401,
+     "counterparty": "LG Soft India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.266,
+     "approved_cr": 10.0,
+     "closing_cr": 2.336,
+     "counterparty": "LG Electronics Algeria SARL",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.384,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.782,
+     "approved_cr": 9.0,
+     "closing_cr": 0.749,
+     "counterparty": "LG Electronics Singapore Pte Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 1.897,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.632,
+     "approved_cr": 3.0,
+     "closing_cr": 1.152,
+     "counterparty": "LG Electronics (M) Sdn. Bhd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.482,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.289,
+     "approved_cr": 3.0,
+     "closing_cr": 0.029,
+     "counterparty": "LG Electronics Singapore Pte Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.028,
+     "other_details": "Service charges paid",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.261,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "PT. LG Electronics Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 1.224,
+     "approved_cr": 1.5,
+     "closing_cr": 1.243,
+     "counterparty": "LG Electronics Gulf FZE",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.052,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Egypt S.A.E",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.897,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses received",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.675,
+     "approved_cr": 5.0,
+     "closing_cr": 1.117,
+     "counterparty": "LG Electronics Tianjin Appliances Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.478,
+     "approved_cr": 1.0,
+     "closing_cr": 0.004,
+     "counterparty": "LG Electronics Middle East Company FZCO",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.395,
+     "approved_cr": 1.0,
+     "closing_cr": 0.4,
+     "counterparty": "LG Electronics Alabama, Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.008,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.322,
+     "approved_cr": 1.0,
+     "closing_cr": 0.322,
+     "counterparty": "LG Electronics Almaty Kazakhstan Limited Liability Partnership",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.002,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.231,
+     "approved_cr": 1.5,
+     "closing_cr": 0.118,
+     "counterparty": "LG Electronics Middle East Company FZCO",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.16,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.216,
+     "approved_cr": 1.5,
+     "closing_cr": 0.507,
+     "counterparty": "LG Electronics Thailand Co., Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.049,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.213,
+     "approved_cr": 1.0,
+     "closing_cr": 0.098,
+     "counterparty": "LG Electronics (Huizhou) Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.167,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.184,
+     "approved_cr": 2.0,
+     "closing_cr": 0.046,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.089,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Nanjing New Technology Co.,Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.06,
+     "other_details": "Reimbursement of expenses received",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.084,
+     "approved_cr": 10.0,
+     "closing_cr": 0.073,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Other expenses paid",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.068,
+     "approved_cr": 1.0,
+     "closing_cr": 0.051,
+     "counterparty": "Taizhou LG Electronics Refrigeration Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service warranty claims received",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.061,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Africa Logistic FZE",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service warranty charges",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.047,
+     "approved_cr": 0.5,
+     "closing_cr": 0.01,
+     "counterparty": "LG Electronics European Shared Service Center B.V.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service charges paid",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.042,
+     "approved_cr": 0.5,
+     "closing_cr": 0.044,
+     "counterparty": "LG Electronics Tianjin Appliances Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service charges paid and received and reimbursement of expenses received",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.031,
+     "approved_cr": 100.0,
+     "closing_cr": 0.011,
+     "counterparty": "LG Electronics do Brasil Ltda.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.03,
+     "approved_cr": 0.5,
+     "closing_cr": 0.012,
+     "counterparty": "LG Electronics Philippines Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.003,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.026,
+     "approved_cr": 14.0,
+     "closing_cr": 0.014,
+     "counterparty": "LG Electronics Taiwan Taipei Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.011,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.025,
+     "approved_cr": 0.5,
+     "closing_cr": 0.003,
+     "counterparty": "PT. LG Electronics Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Services warranty claim received",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.009,
+     "approved_cr": 1.0,
+     "closing_cr": 0.003,
+     "counterparty": "LG Electronics Panama S.A.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.005,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.5,
+     "closing_cr": 0.163,
+     "counterparty": "LG Electronics (Levant) Jordan",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.151,
+     "other_details": "Service charges paid",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.005,
+     "approved_cr": 0.5,
+     "closing_cr": 0.001,
+     "counterparty": "LG Electronics European Shared Service Center B.V.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.001,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.005,
+     "approved_cr": 2.0,
+     "closing_cr": 0.003,
+     "counterparty": "PT. LG Electronics Service Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.002,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.004,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Mexico S.A. DEC.V.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.016,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.002,
+     "approved_cr": 2.5,
+     "closing_cr": 0.002,
+     "counterparty": "LG Electronics Vietnam Hai Phong  Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.004,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.001,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics HK Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 60,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1241.57,
+     "approved_cr": 2990.0,
+     "closing_cr": 493.756,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 408.086,
+     "relationship": "Holding Company/Promoter",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 379.42,
+     "approved_cr": 845.0,
+     "closing_cr": 122.309,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 138.602,
+     "relationship": "Holding Company/Promoter",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 228.576,
+     "approved_cr": 530.0,
+     "closing_cr": 97.755,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 12.951,
+     "other_details": "Royalty",
+     "relationship": "Holding Company/Promoter",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 147.321,
+     "approved_cr": 290.0,
+     "closing_cr": 36.772,
+     "counterparty": "LG Electronics Tianjin Appliances Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 39.807,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 87.912,
+     "approved_cr": 277.0,
+     "closing_cr": 40.232,
+     "counterparty": "Nanjing LG-Panda Appliances Co., Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 44.432,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 82.749,
+     "approved_cr": 280.0,
+     "closing_cr": 7.98,
+     "counterparty": "PT. LG Electronics Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 9.542,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 65.133,
+     "approved_cr": 210.0,
+     "closing_cr": 24.201,
+     "counterparty": "Taizhou LG Electronics Refrigeration Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 13.368,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 48.916,
+     "approved_cr": 340.0,
+     "closing_cr": 24.572,
+     "counterparty": "LG Display Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 47.636,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 44.446,
+     "approved_cr": 97.0,
+     "closing_cr": 6.706,
+     "counterparty": "LG CNS India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 12.729,
+     "other_details": "Other, Manpower, Purchase of IT services and software development",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 28.069,
+     "approved_cr": 60.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Other (Service warranty, Reimbursement, others)",
+     "relationship": "Holding Company/Promoter",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 27.423,
+     "approved_cr": 129.0,
+     "closing_cr": 9.853,
+     "counterparty": "LG Electronics Thailand Co., Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.001,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 23.44,
+     "approved_cr": 36.0,
+     "closing_cr": 3.383,
+     "counterparty": "LG CNS India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.548,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 20.999,
+     "approved_cr": 41.5,
+     "closing_cr": 11.239,
+     "counterparty": "PT. LG Innotek Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 11.796,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 20.371,
+     "approved_cr": 100.0,
+     "closing_cr": 11.451,
+     "counterparty": "LG Innotek Yantai Co., Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 23.422,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 14.293,
+     "approved_cr": 38.0,
+     "closing_cr": 5.807,
+     "counterparty": "LG Electronics Nanjing New Technology Co.,Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 14.726,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 13.442,
+     "approved_cr": 530.0,
+     "closing_cr": 5.932,
+     "counterparty": "LG Electronics Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 1.588,
+     "relationship": "Holding Company/Promoter",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 10.664,
+     "approved_cr": 34.0,
+     "closing_cr": 0.048,
+     "counterparty": "LG Electronics Qinhuangdao Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 7.47,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 7.831,
+     "approved_cr": 30.0,
+     "closing_cr": 4.692,
+     "counterparty": "LG Electronics Dubai FZE",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 7.57,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 7.433,
+     "approved_cr": 70.0,
+     "closing_cr": 1.724,
+     "counterparty": "PT. LG Electronics Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 8.209,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.94,
+     "approved_cr": 8.0,
+     "closing_cr": 1.666,
+     "counterparty": "LG Electronics Vietnam Hai Phong  Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.002,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.546,
+     "approved_cr": 9.0,
+     "closing_cr": 5.288,
+     "counterparty": "LG CNS Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.73,
+     "other_details": "Other-Other expenses Ltd",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.983,
+     "approved_cr": 9.0,
+     "closing_cr": 3.185,
+     "counterparty": "LG Electronics Vietnam Hai Phong  Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 2.293,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.545,
+     "approved_cr": 12.0,
+     "closing_cr": 1.59,
+     "counterparty": "LG Electronics Gulf FZE",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 1.243,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.692,
+     "approved_cr": 70.0,
+     "closing_cr": 0.02,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 5.096,
+     "other_details": "Service charges paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.789,
+     "approved_cr": 42.5,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Morocco S.A.R.L.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 3.162,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.756,
+     "approved_cr": 3.0,
+     "closing_cr": 0.072,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service Charges Recovered",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.105,
+     "approved_cr": 3.0,
+     "closing_cr": 0.477,
+     "counterparty": "LG Electronics Singapore Pte Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.029,
+     "other_details": "service charges paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.782,
+     "approved_cr": 6.5,
+     "closing_cr": 0.101,
+     "counterparty": "LG Soft India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.401,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.774,
+     "approved_cr": 9.0,
+     "closing_cr": 0.477,
+     "counterparty": "LG Electronics Singapore Pte Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.749,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.77,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronis Reynosa, S.A. de C.V.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-11",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.77
+     },
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.711,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Middle East Company FZCO",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service warranty charges paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.632,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics (Levant) Jordan",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 3.165,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.593,
+     "approved_cr": 3.0,
+     "closing_cr": 0.009,
+     "counterparty": "LG Electronics (M) Sdn. Bhd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 1.152,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.567,
+     "approved_cr": 2.0,
+     "closing_cr": 0.586,
+     "counterparty": "LG Electronics Almaty Kazakhstan Limited Liability Partnership",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.322,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.475,
+     "approved_cr": 1.5,
+     "closing_cr": 0.427,
+     "counterparty": "LG Electronics Thailand Co., Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.507,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.473,
+     "approved_cr": 1.0,
+     "closing_cr": 0.523,
+     "counterparty": "Taizhou LG Electronics Refrigeration Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.051,
+     "other_details": "service warranty claim received",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.463,
+     "approved_cr": 3.5,
+     "closing_cr": 0.0,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses received",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.425,
+     "approved_cr": 1.0,
+     "closing_cr": 0.15,
+     "counterparty": "LG Electronics Saudi Arabia LLC",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service warranty charges paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.266,
+     "approved_cr": 0.5,
+     "closing_cr": 0.049,
+     "counterparty": "LG Electronics (Levant) Jordan",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.163,
+     "other_details": "Service charges paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.239,
+     "approved_cr": 1.0,
+     "closing_cr": 0.152,
+     "counterparty": "LG Electronics Middle East Company FZCO",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.004,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.238,
+     "approved_cr": 1.0,
+     "closing_cr": 0.12,
+     "counterparty": "LG Electronics (Huizhou) Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.098,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.195,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Africa Logistic FZE",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service warranty charges",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.173,
+     "approved_cr": 1.5,
+     "closing_cr": 0.069,
+     "counterparty": "LG Electronics Middle East Company FZCO",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.118,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.119,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Mlawa Sp. Zo.o.e",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.092,
+     "approved_cr": 3.5,
+     "closing_cr": 0.35,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.046,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.078,
+     "approved_cr": 0.5,
+     "closing_cr": 0.042,
+     "counterparty": "LG Electronics European Shared Service Center B.V.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.001,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.072,
+     "approved_cr": 0.5,
+     "closing_cr": 0.069,
+     "counterparty": "LG Electronics Philippines Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.012,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.054,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Nanjing New Technology Co.,Ltd",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses received",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.051,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Hi- M.Solutek India Private Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.073,
+     "other_details": "Other expenses paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.049,
+     "approved_cr": 0.5,
+     "closing_cr": 0.011,
+     "counterparty": "LG Electronics European Shared Service Center B.V.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.01,
+     "other_details": "service charges paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.04,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "PT. LG Electronics Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.003,
+     "other_details": "service warannty claim received",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.038,
+     "approved_cr": 0.5,
+     "closing_cr": 0.061,
+     "counterparty": "LG Electronics Philippines Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Service warranty charges paid",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.017,
+     "approved_cr": 1.0,
+     "closing_cr": 0.006,
+     "counterparty": "LG Electronics Alabama, Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.4,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.014,
+     "approved_cr": 1.0,
+     "closing_cr": 0.007,
+     "counterparty": "LG Electronics Panama S.A.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.003,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.011,
+     "approved_cr": 14.0,
+     "closing_cr": 0.007,
+     "counterparty": "LG Electronics Taiwan Taipei Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.014,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics Peru S.A.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.009,
+     "approved_cr": 0.5,
+     "closing_cr": 0.169,
+     "counterparty": "LG Electronics Tianjin Appliances Co. Ltd.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.044,
+     "other_details": "Service charges paid and received and reimbursement of expenses received",
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.003,
+     "approved_cr": 2.0,
+     "closing_cr": 0.001,
+     "counterparty": "PT. LG Electronics Service Indonesia",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.003,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.002,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "LG Electronics HK Limited",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.001,
+     "approved_cr": 1.0,
+     "closing_cr": 0.001,
+     "counterparty": "LG Electronics Canada, Inc.",
+     "entity": "LG ELECTRONICS INDIA LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Group Company/Promoter Group",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 66,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544576",
  "section_lab": {
@@ -8254,6 +10121,144 @@
   }
  },
  "sector": "consumer_durables",
+ "segment_balance": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q2FY26",
+   "segments": [
+    {
+     "assets_cr": 4820.297,
+     "liabilities_cr": 2650.818,
+     "segment": "(a) Segment – Home appliances and air solution division"
+    },
+    {
+     "assets_cr": 1741.389,
+     "liabilities_cr": 1285.042,
+     "segment": "(b) Segment – Home entertainment division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "totals": {
+    "assets_cr": 6561.686,
+    "liabilities_cr": 3935.86,
+    "net_assets_cr": 12616.528,
+    "net_liabilities_cr": 5743.808
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 4490.359,
+     "liabilities_cr": 2834.72,
+     "segment": "(a) Segment – Home appliances and air solution division"
+    },
+    {
+     "assets_cr": 943.907,
+     "liabilities_cr": 987.862,
+     "segment": "(b) Segment – Home entertainment division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "totals": {
+    "assets_cr": 5434.266,
+    "liabilities_cr": 3822.582,
+    "net_assets_cr": 12656.035,
+    "net_liabilities_cr": 5700.198
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 5189.614,
+     "liabilities_cr": 2972.486,
+     "segment": "(a) Segment – Home appliances and air solution division"
+    },
+    {
+     "assets_cr": 1704.427,
+     "liabilities_cr": 1159.074,
+     "segment": "(b) Segment – Home entertainment division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "totals": {
+    "assets_cr": 6894.041,
+    "liabilities_cr": 4131.56,
+    "net_assets_cr": 13636.255,
+    "net_liabilities_cr": 5970.699
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 4472.115,
+     "liabilities_cr": 3296.835,
+     "segment": "(a) Segment – Home appliances and air solution division"
+    },
+    {
+     "assets_cr": 1630.513,
+     "liabilities_cr": 1327.182,
+     "segment": "(b) Segment – Home entertainment division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "totals": {
+    "assets_cr": 6102.628,
+    "liabilities_cr": 4624.017,
+    "net_assets_cr": 14899.278,
+    "net_liabilities_cr": 6579.154
+   }
+  }
+ ],
  "segment_mix": [
   {
    "as_of": "2026-05-28T17:19:20+05:30",
@@ -8313,6 +10318,256 @@
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 93.494,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 5626.465,
+    "Interest": 8.993,
+    "Net Profit": 389.434,
+    "Net Profit (owners)": 389.434,
+    "OPM %": 8.868813034213646,
+    "Operating Profit": 547.5630000000001,
+    "Other Income": 79.779,
+    "Profit before tax": 524.855,
+    "Profit for PE": 389.434,
+    "Sales": 6174.028,
+    "Tax": 135.421,
+    "Tax %": 25.80160234731497
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 167.352,
+    "Equity Capital": 678.772,
+    "Fixed Assets": 1445.781,
+    "Investments": 0.0,
+    "Other Assets": 11003.394999999999,
+    "Other Liabilities": 5743.807999999999,
+    "Reserves": 6193.948,
+    "Total Assets": 12616.528,
+    "Total Liabilities": 12616.528
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 110.736,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 3918.3070000000002,
+    "Interest": 9.317,
+    "Net Profit": 89.673,
+    "Net Profit (owners)": 89.673,
+    "OPM %": 4.7658780369599985,
+    "Operating Profit": 196.087,
+    "Other Income": 75.65100000000001,
+    "Profit before tax": 151.685,
+    "Profit for PE": 89.673,
+    "Sales": 4114.394,
+    "Tax": 62.012,
+    "Tax %": 40.882091175791935
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 101.636,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 7108.195,
+    "Interest": 13.771,
+    "Net Profit": 692.731,
+    "Net Profit (owners)": 692.731,
+    "OPM %": 11.738385745817498,
+    "Operating Profit": 945.357,
+    "Other Income": 101.06600000000003,
+    "Profit before tax": 931.016,
+    "Profit for PE": 692.731,
+    "Sales": 8053.552,
+    "Tax": 238.285,
+    "Tax %": 25.594082164001478
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 459.15599999999995,
+    "CWIP": 458.035,
+    "Equity Capital": 678.772,
+    "Fixed Assets": 1560.287,
+    "Investments": 0.0,
+    "Other Assets": 11617.932999999999,
+    "Other Liabilities": 5511.542999999999,
+    "Reserves": 6986.784,
+    "Total Assets": 13636.255,
+    "Total Liabilities": 13636.255
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 396.107,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 22196.607,
+    "Interest": 40.584,
+    "Net Profit": 1685.093,
+    "Net Profit (owners)": 1685.093,
+    "OPM %": 9.787903325970035,
+    "Operating Profit": 2408.3050000000003,
+    "Other Income": 327.8969999999995,
+    "Profit before tax": 2299.511,
+    "Profit for PE": 1685.093,
+    "Sales": 24604.912,
+    "Tax": 614.418,
+    "Tax %": 26.719506886464124
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -127.433,
+    "Cash from Investing Activity": -859.023,
+    "Cash from Operating Activity": 1721.248,
+    "Net Cash Flow": 734.792
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 111.807,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 6329.07,
+    "Interest": 9.136,
+    "Net Profit": 652.863,
+    "Net Profit (owners)": 652.863,
+    "OPM %": 12.501538014889373,
+    "Operating Profit": 904.2800000000007,
+    "Other Income": 94.73499999999933,
+    "Profit before tax": 878.072,
+    "Profit for PE": 652.863,
+    "Sales": 7233.35,
+    "Tax": 225.209,
+    "Tax %": 25.64812452737361
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "LGEINDIA",
  "timeline": [
@@ -8455,10 +10710,25 @@
    "news_id": "nse-106824769",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/LGEINDIA_22102026151012_Press_Release_dated_22nd_October_2026.pdf",
    "summary": "LG Electronics India announced receiving the Great Place to Work certification for the third consecutive year on October 22, 2026."
+  },
+  {
+   "date": "2026-10-31T18:50:57+05:30",
+   "event_type": "LITIGATION_REGULATORY",
+   "id": "t_5667ef1d",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-31T19:19:27+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106838483",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/LGEINDIA_31102026185009_Intimation_under_Regulation_30_dated_31st_October_2026.pdf",
+   "summary": "LG Electronics India Limited received an Order-in-Original from Office of Principal Commissioner of Customs on October 30, 2026, imposing customs duty ₹61,30,064, redemption fine ₹40,00,000, penalty ₹5,00,000.",
+   "tier": "TIMELINE"
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T09:55:14+05:30",
+ "updated_at": "2026-10-31T19:19:27+05:30",
  "watchlist": [
   {
    "check_by": null,

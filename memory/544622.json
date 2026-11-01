@@ -1,4 +1,67 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-05-31",
+     "name": "M/s. Walker Chandiok & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-05-20T18:00:00+05:30",
@@ -33,8 +96,264 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -164.1,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -47.4,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -92.6,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 172.3,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.1,
+    "AdjustmentsForFinanceCosts": 37.5,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 62.4,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 18.4,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 308.7,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -0.3,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 54.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 8.8,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 6.2,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 7.9,
+    "AdjustmentsForProvisionsNoncurrent": -9.3,
+    "AdjustmentsForReconcileProfitLoss": 380.2,
+    "AdjustmentsForSharebasedPayments": 2.1,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 14.0,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 273.4,
+    "CashFlowsFromUsedInInvestingActivities": -213.9,
+    "CashFlowsFromUsedInOperatingActivities": -45.5,
+    "CashFlowsFromUsedInOperations": -45.3,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.2,
+    "IncreaseDecreaseInCashAndCashEquivalents": 14.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 14.0,
+    "InterestPaidClassifiedAsFinancingActivities": 0.8,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 15.1,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 297.6,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 78.7,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 50.3,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 5.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 213.9,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Kwality Wall's (India) Limited",
- "deals": [],
+ "deals": [
+  {
+   "amount_cr": 1303.04,
+   "as_of": "2026-04-22T17:39:03+05:30",
+   "counterparty": "Public Shareholders of Kwality Wall's (India) Limited",
+   "discount_pct": null,
+   "execution_by": "May 21, 2026",
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 1303.04,
+     "as_of": "2026-04-22T17:39:03+05:30",
+     "lab": {
+      "at": "2026-11-01T08:30:37+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": "Underlying 61.90% acquisition completed on March 30, 2026",
+     "source_news_id": "nse-106597115",
+     "stage": "IN_PROGRESS"
+    },
+    {
+     "amount_cr": 1303.04,
+     "as_of": "2026-04-28T20:22:00+05:30",
+     "lab": {
+      "at": "2026-11-01T08:33:51+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": "Underlying 61.90% acquisition completed on March 30, 2026",
+     "source_news_id": "nse-106596871",
+     "stage": "IN_PROGRESS"
+    },
+    {
+     "amount_cr": 1303.04,
+     "as_of": "2026-05-15T15:25:58+05:30",
+     "lab": {
+      "at": "2026-11-01T09:00:54+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": "Underlying 61.90% acquisition completed on March 30, 2026; open offer closed May 7, 2026",
+     "source_news_id": "nse-106624610",
+     "stage": "COMPLETED"
+    }
+   ],
+   "id": "d_171800e1",
+   "includes_gst": false,
+   "issue_price": null,
+   "kind": "ACQUISITION",
+   "lab": {
+    "at": "2026-11-01T08:30:37+05:30",
+    "by": "ai",
+    "doc": "other",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": "Underlying 61.90% acquisition completed on March 30, 2026; open offer closed May 7, 2026",
+   "segment": "ice cream",
+   "seller": null,
+   "source_news_id": "nse-106597115",
+   "stage": "COMPLETED",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-05-15T15:25:58+05:30",
+   "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.82,
+    "DebtServiceCoverageRatio": -0.7
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-03-06T18:00:00+05:30",
@@ -2692,8 +3011,64 @@
  ],
  "fy_end_month": 3,
  "governance": {
-  "auditor": null,
-  "auditor_history": [],
+  "auditor": {
+   "as_of": "2026-05-20T17:38:52+05:30",
+   "change": "appointed",
+   "lab": {
+    "at": "2026-11-01T09:18:41+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "name": "Walker Chandiok & Co. LLP",
+   "note": "Appointed for a term of five years",
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106631822"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-05-11T14:50:04+05:30",
+    "lab": {
+     "at": "2026-11-01T08:58:49+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106616773"
+   },
+   {
+    "as_of": "2026-05-15T15:25:58+05:30",
+    "lab": {
+     "at": "2026-11-01T09:00:54+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106624610"
+   },
+   {
+    "as_of": "2026-05-15T22:53:31+05:30",
+    "lab": {
+     "at": "2026-11-01T09:02:53+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106625860"
+   },
+   {
+    "as_of": "2026-05-20T17:38:52+05:30",
+    "change": "appointed",
+    "lab": {
+     "at": "2026-11-01T09:18:41+05:30",
+     "by": "ai",
+     "doc": "board"
+    },
+    "name": "Walker Chandiok & Co. LLP",
+    "note": "Appointed for a term of five years",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106631822"
+   }
+  ],
   "quarters": [
    {
     "as_of": "2026-07-27T20:10:56+05:30",
@@ -2963,12 +3338,164 @@
     "related_finance": [],
     "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1704676_30072026095508_WEB.xml",
     "tax_litigation": []
+   },
+   {
+    "as_of": "2026-10-30T16:43:39+05:30",
+    "board": [
+     {
+      "appointed": "2026-03-30",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Abhijit Bhattacharya",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-12-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Chitrank Goel",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-05-09",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Prashant Premrajka",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-03-30",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Tahir Toloy Tanridagli",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-12-01",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Madhavan Hariharan",
+      "role": null,
+      "tenure_months": 10.0
+     },
+     {
+      "appointed": "2025-12-01",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ravindra Pisharody",
+      "role": null,
+      "tenure_months": 10.0
+     },
+     {
+      "appointed": "2025-12-01",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shukla Wassan",
+      "role": null,
+      "tenure_months": 10.0
+     },
+     {
+      "appointed": "2025-12-01",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Jayaraman Vaidyaraman",
+      "role": null,
+      "tenure_months": 10.0
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Madhavan Hariharan",
+      "Shukla Wassan",
+      "Jayaraman Vaidyaraman"
+     ],
+     "nomination and remuneration committee": [
+      "Ravindra Pisharody",
+      "Madhavan Hariharan",
+      "Jayaraman Vaidyaraman",
+      "Abhijit Bhattacharya"
+     ],
+     "risk management committee": [
+      "Jayaraman Vaidyaraman",
+      "Madhavan Hariharan",
+      "Chitrank Goel"
+     ],
+     "stakeholders relationship committee": [
+      "Shukla Wassan",
+      "Ravindra Pisharody",
+      "Chitrank Goel"
+     ]
+    },
+    "complaints": {
+     "disposed": 5.0,
+     "pending": 0.0,
+     "received": 5.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 48.0,
+     "board": 45.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749955_30102026044401_WEB.xml",
+    "tax_litigation": []
    }
   ]
  },
  "guidance": [],
  "identity": {
-  "entities": [],
+  "entities": [
+   {
+    "as_of": "2026-04-22T17:39:03+05:30",
+    "lab": {
+     "at": "2026-11-01T08:30:37+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "The Magnum Ice Cream Company HoldCo 1 Netherlands B.V.",
+    "source_news_id": "nse-106597115",
+    "type": "Acquirer"
+   },
+   {
+    "as_of": "2026-04-22T17:39:03+05:30",
+    "lab": {
+     "at": "2026-11-01T08:30:37+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "The Magnum Ice Cream Company N.V.",
+    "source_news_id": "nse-106597115",
+    "type": "PAC 2 / Ultimate holding company"
+   }
+  ],
   "former_names": []
  },
  "industry": "Fast Moving Consumer Goods > Food Products > Dairy Products",
@@ -3003,7 +3530,97 @@
   ]
  },
  "last_filed_at": "2026-10-15T08:42:34+05:30",
- "operating_notes": [],
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 47.64,
+    "qty": 13309156.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KWIL",
+    "value_cr": 63.4
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 47.6,
+    "qty": 13326862.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KWIL",
+    "value_cr": 63.44
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 6.4,
+     "description": "Remeasurements of the net defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 6.4,
+    "oci_net_cr": 4.8,
+    "profit_cr": -107.1,
+    "tax_not_reclassified_cr": 1.6,
+    "total_comprehensive_cr": -102.3
+   }
+  }
+ ],
+ "operating_notes": [
+  {
+   "as_of": "2026-04-22T17:39:03+05:30",
+   "lab": {
+    "at": "2026-11-01T08:30:37+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106597115",
+   "text": "Acquirer consummated underlying acquisition of 145,44,12,858 shares (61.90% voting share capital) on March 30, 2026."
+  },
+  {
+   "as_of": "2026-05-15T15:25:58+05:30",
+   "lab": {
+    "at": "2026-11-01T09:00:54+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106624610",
+   "text": "Magnum open offer completed with 1,42,126 shares accepted at ₹21.33 per share."
+  },
+  {
+   "as_of": "2026-05-15T22:53:31+05:30",
+   "lab": {
+    "at": "2026-11-01T09:02:53+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106625860",
+   "text": "Postal ballot successfully passed for appointing Chitrank Goel as Deputy MD, Prashant Premrajka as CFO, four independent directors, and S.N. Ananthasubramanian & Co. as secretarial auditors."
+  }
+ ],
  "ownership": [
   {
    "aif_pct": 0.02,
@@ -3039,11 +3656,340 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 17.896,
+     "approved_cr": 17.896,
+     "closing_cr": 0.0,
+     "counterparty": "Unilever IP Holdings B.V.",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty  - Trademark",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.6,
+     "approved_cr": 20.0,
+     "closing_cr": 13.45,
+     "counterparty": "Hindustan Unilever Limited",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Payment of processing charges",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.4,
+     "approved_cr": 15.0,
+     "closing_cr": 14.19,
+     "counterparty": "Hindustan Unilever Limited",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reciept of processing charges",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.5,
+     "approved_cr": 26.0,
+     "closing_cr": 11.39,
+     "counterparty": "Hindustan Unilever Limited",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursments paid",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.67,
+     "approved_cr": 7.67,
+     "closing_cr": 0.0,
+     "counterparty": "Unilever IP Holdings B.V.",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty  - Technology",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.9,
+     "approved_cr": 8.787,
+     "closing_cr": 1.54,
+     "counterparty": "Unilever Europe Business Center B.V.",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Approval taken from Audit committee ~ 0.9 euro million (INR 87.87 Mn)"
+     },
+     "other_details": "Expenses for transitional service agreements",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.7,
+     "approved_cr": 5.0,
+     "closing_cr": 2.87,
+     "counterparty": "Hindustan Unilever Limited",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses for transitional service agreements",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.33,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Prashant Premrajka",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 2.1,
+     "approved_cr": 2.1,
+     "closing_cr": 2.1,
+     "counterparty": "Unilever PLC",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Share based payments",
+     "relationship": "Erstwhile Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.0,
+     "approved_cr": 3.0,
+     "closing_cr": 2.0,
+     "counterparty": "Unilever Industries Private Limited",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursments paid",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.63,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Chitrank Goel",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.3,
+     "approved_cr": 5.0,
+     "closing_cr": 1.5,
+     "counterparty": "Hindustan Unilever Limited",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursments received",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.7,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kwality Wall's (India) Limited Employees' Superannuation Fund Trust",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "These are employer pension contributions paid to Kwality Wall's (India) Limited Employees' Superannuation Fund Trust."
+     },
+     "other_details": "Contributions during the year (Employer's contribution only)",
+     "relationship": "Trust",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.09,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Anand Upadhyay",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.08,
+     "approved_cr": 0.0,
+     "closing_cr": 0.02,
+     "counterparty": "Madhavan Hariharan",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director sitting fees",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.08,
+     "approved_cr": 0.0,
+     "closing_cr": 0.02,
+     "counterparty": "JV Raman",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director sitting fees",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.07,
+     "approved_cr": 0.0,
+     "closing_cr": 0.07,
+     "counterparty": "Ravindra Pisharody",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Commission",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.07,
+     "approved_cr": 0.0,
+     "closing_cr": 0.07,
+     "counterparty": "Shukla Wassan",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Commission",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.07,
+     "approved_cr": 0.0,
+     "closing_cr": 0.07,
+     "counterparty": "Madhavan Hariharan",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Commission",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.07,
+     "approved_cr": 0.0,
+     "closing_cr": 0.07,
+     "counterparty": "JV Raman",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Commission",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "Ravindra Pisharody",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director sitting fees",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "Shukla Wassan",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director sitting fees",
+     "relationship": "Independent Directors",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Vidhi Sanghavi",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 39.38,
+     "counterparty": "Magnum IP Holdings B.V.",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "In March 2026, Unilever assigned its rights, to outstanding receivable for the period 1st October 2025 to 31st March 2026   towards central services and royalty payable, to Magnum IP Holdings B.V."
+     },
+     "other_details": "Royalty assignment",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 58.0,
+     "counterparty": "Hindustan Unilever Limited",
+     "entity": "Kwality Wall's (India) Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Receivable from Demerged Company. The Company had applied for and claimed benefits under Production Linked Incentive scheme of the Ministry of Food Processing Industries, Government of India (“MoFPI”) in respect of the Demerged Undertaking prior to the Demerger. As per the Scheme these balances are "
+     },
+     "other_details": "Receivable with respect to PLI",
+     "relationship": "Erstwhile Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 25,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544622",
  "section_lab": {
   "governance_quarters": {
-   "at": "2026-07-30T09:55:04+05:30",
+   "at": "2026-10-30T16:43:39+05:30",
    "by": "file",
    "doc": "other"
   },
@@ -3051,18 +3997,405 @@
    "at": "2026-05-16T23:59:00+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:26:07+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "fmcg",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Ice-cream",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Ice-cream",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Ice-cream",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
  ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 38.1,
+    "Exceptional items": -93.7,
+    "Exceptional items AT": -82.36845062093435,
+    "Expenses": 287.67999999999995,
+    "Interest": 6.87,
+    "Net Profit": -178.38,
+    "Net Profit (owners)": -178.38,
+    "OPM %": -28.767736448681777,
+    "Operating Profit": -64.26999999999995,
+    "Other Income": -93.68000000000004,
+    "Profit before tax": -202.92,
+    "Profit for PE": -96.01154937906564,
+    "Sales": 223.41,
+    "Tax": -24.54,
+    "Tax %": -12.09343583678297
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 38.2,
+    "Exceptional items": -17.7,
+    "Exceptional items AT": -13.237918994413405,
+    "Expenses": 564.1999999999999,
+    "Interest": 9.1,
+    "Net Profit": -107.1,
+    "Net Profit (owners)": -107.1,
+    "OPM %": -16.138328530259347,
+    "Operating Profit": -78.39999999999992,
+    "Other Income": -17.50000000000007,
+    "Profit before tax": -143.2,
+    "Profit for PE": -93.86208100558659,
+    "Sales": 485.8,
+    "Tax": -36.1,
+    "Tax %": -25.20949720670391
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 547.9,
+    "CWIP": 43.6,
+    "Equity Capital": 235.0,
+    "Fixed Assets": 1181.3000000000002,
+    "Investments": 0.0,
+    "Other Assets": 611.1999999999997,
+    "Other Liabilities": 615.9999999999999,
+    "Reserves": 437.2,
+    "Total Assets": 1836.1,
+    "Total Liabilities": 1836.1
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 172.3,
+    "Exceptional items": -113.9,
+    "Exceptional items AT": -98.7222561692127,
+    "Expenses": 2355.2,
+    "Interest": 29.7,
+    "Net Profit": -368.8,
+    "Net Profit (owners)": -368.8,
+    "OPM %": -4.894668863848913,
+    "Operating Profit": -109.89999999999964,
+    "Other Income": -113.60000000000036,
+    "Profit before tax": -425.5,
+    "Profit for PE": -270.0777438307873,
+    "Sales": 2245.3,
+    "Tax": -56.7,
+    "Tax %": -13.325499412455935
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 273.4,
+    "Cash from Investing Activity": -213.9,
+    "Cash from Operating Activity": -45.5,
+    "Net Cash Flow": 14.0
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 40.3,
+    "Exceptional items": 13.5,
+    "Exceptional items AT": 10.110044313146233,
+    "Expenses": 774.9000000000001,
+    "Interest": 10.4,
+    "Net Profit": 50.7,
+    "Net Profit (owners)": 50.7,
+    "OPM %": 11.772742798588165,
+    "Operating Profit": 103.39999999999986,
+    "Other Income": 15.000000000000142,
+    "Profit before tax": 67.7,
+    "Profit for PE": 40.58995568685377,
+    "Sales": 878.3,
+    "Tax": 17.0,
+    "Tax %": 25.110782865583456
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "KWIL",
- "timeline": [],
- "upcoming_events": [],
- "updated_at": "2026-10-27T09:56:32+05:30",
- "watchlist": []
+ "timeline": [
+  {
+   "date": "2026-04-22T17:39:03+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_171800e1",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T08:30:37+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106597115",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/Magnum_22042026173839_SEIntimationOpenOfferPreAdsigned.pdf",
+   "summary": "Magnum Ice Cream Company HoldCo 1 issued the offer opening advertisement for its 26% mandatory open offer at ₹21.33 per share."
+  },
+  {
+   "date": "2026-04-28T20:22:00+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_d825d349",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T08:33:51+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106596871",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/team_bbodade_22042026152126_KWIL.zip",
+   "summary": "Kwality Wall's (India) Limited published the open offer opening advertisement at ₹21.33 per share."
+  },
+  {
+   "date": "2026-05-11T14:50:04+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_3c3aca55",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-11-01T08:58:49+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106616773",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/Magnum_11052026144952_SEIntimationsigned.pdf",
+   "summary": "Kwality Wall's responded to IiAS and SES proxy voting recommendations regarding executive director appointments on May 11, 2026."
+  },
+  {
+   "date": "2026-05-15T15:25:58+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_7d32a008",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T09:00:54+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106624610",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/Magnum_15052026152544_SEIntimation15052026signed.pdf",
+   "summary": "Kwality Wall's published the post-offer advertisement for Magnum's open offer on May 15, 2026."
+  },
+  {
+   "date": "2026-05-15T22:53:31+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_c0c8755b",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T09:02:53+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106625860",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/KWIL_15052026225034_SEIntimationPBOutcome15052026signed.pdf",
+   "summary": "Kwality Wall's announced the voting results of its postal ballot on May 15, 2026, approving all executive and independent director appointments."
+  },
+  {
+   "date": "2026-05-20T17:38:52+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_15352973",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T09:18:41+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "news_id": "nse-106631822",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/KWIL_20052026172909_SEIntimationOutcomeBM20052026signed.pdf",
+   "summary": "Kwality Wall's board approved the appointment of Walker Chandiok & Co. LLP as statutory auditors for a 5-year term."
+  }
+ ],
+ "upcoming_events": [
+  {
+   "as_of": "2026-04-22T17:39:03+05:30",
+   "date": "2026-04-23",
+   "description": "Open offer tendering period opens",
+   "event_type": "OTHER",
+   "lab": {
+    "at": "2026-11-01T08:30:37+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106597115"
+  },
+  {
+   "as_of": "2026-04-28T20:22:00+05:30",
+   "date": "2026-05-07",
+   "description": "Open offer tendering period closes",
+   "event_type": "OTHER",
+   "lab": {
+    "at": "2026-11-01T08:33:51+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106596871"
+  }
+ ],
+ "updated_at": "2026-11-01T09:18:41+05:30",
+ "watchlist": [
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-05-11T14:50:04+05:30",
+   "id": "w_625fd9bd",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-11-01T08:58:49+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106616773",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Postal ballot voting results for executive appointments"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-05-20T17:38:52+05:30",
+   "id": "w_3fbfb731",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-11-01T09:18:41+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "source_news_id": "nse-106631822",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Shareholder approval for statutory auditor appointment"
+  }
+ ]
 }

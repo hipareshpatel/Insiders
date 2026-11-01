@@ -1,4 +1,174 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-03-31",
+     "name": "Lodha & Co. LLP",
+     "peer_review_valid": true
+    },
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "Singhi & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-03-31",
+     "name": "Lodha & Co. LLP",
+     "peer_review_valid": true
+    },
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "Singhi & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "advances_cr": 84838.02,
@@ -101,18 +271,6 @@
    "rating_agency": "CRISIL, ICRA, CARE, S&P, Moody's, JCRA, R&I",
    "rating_outlook": "Stable",
    "source_news_id": "nse-106789028"
-  },
-  {
-   "as_of": "2026-10-13T10:29:53+05:30",
-   "lab": {
-    "at": "2026-10-27T03:25:50+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "slides",
-    "ok": true
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106815425"
   },
   {
    "advances_cr": 96618.21,
@@ -255,6 +413,436 @@
    "source_news_id": "nse-106821987"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 87.62,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 902.8,
+    "AdjustmentsForDividendIncome": 52.57,
+    "AdjustmentsForFairValueGainsLosses": 1034.66,
+    "AdjustmentsForFinanceCosts": 6390.19,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -321.35,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 25.21,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 11.88,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 134.76,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -19157.48,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 114.91,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 35.62,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -11541.39,
+    "AdjustmentsForSharebasedPayments": 72.29,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 4123.12,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 12392.68,
+    "CashFlowsFromUsedInInvestingActivities": 2630.9,
+    "CashFlowsFromUsedInOperatingActivities": -15892.3,
+    "CashFlowsFromUsedInOperations": -10347.24,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 249.35,
+    "DividendsReceivedClassifiedAsInvestingActivities": 52.57,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -213.41,
+    "IncreaseDecreaseInCashAndCashEquivalents": -868.72,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -868.72,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 5758.47,
+    "InterestReceivedClassifiedAsInvestingActivities": 153.78,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 874.95,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -287.93,
+    "OtherAdjustmentsToReconcileProfitLoss": -1326.36,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 582554.85,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": -94.91,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 583771.89,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 1169.69,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 94.68,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 64657.66,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.14,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 59.36,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 116.45,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 51921.09,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 188.93
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 65.68,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 897.84,
+    "AdjustmentsForDividendIncome": 1417.17,
+    "AdjustmentsForFairValueGainsLosses": 1053.78,
+    "AdjustmentsForFinanceCosts": 6294.94,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -319.04,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 18.88,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -12.3,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 131.64,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -18945.44,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 117.16,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 34.14,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -11683.82,
+    "AdjustmentsForSharebasedPayments": 72.29,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 3962.45,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 12194.11,
+    "CashFlowsFromUsedInInvestingActivities": 2622.85,
+    "CashFlowsFromUsedInOperatingActivities": -15799.25,
+    "CashFlowsFromUsedInOperations": -10336.6,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 50.1,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 249.35,
+    "DividendsReceivedClassifiedAsInvestingActivities": 1417.17,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -208.44,
+    "IncreaseDecreaseInCashAndCashEquivalents": -982.29,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -982.29,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 5671.09,
+    "InterestReceivedClassifiedAsInvestingActivities": 150.02,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 874.94,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -287.88,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 582187.44,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 583518.74,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -182.85,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 139.42,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 45769.24,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.24,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 59.35,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 102.04,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 33186.6,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -2.05,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 114.42,
+    "AdjustmentsForDividendIncome": 27.93,
+    "AdjustmentsForFairValueGainsLosses": -59.91,
+    "AdjustmentsForFinanceCosts": 3559.07,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 508.97,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 43.26,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 216.14,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 61.91,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -11482.44,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 10.1,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 26.73,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -6619.89,
+    "AdjustmentsForSharebasedPayments": 38.69,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 2054.45,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 7033.02,
+    "CashFlowsFromUsedInInvestingActivities": -89.48,
+    "CashFlowsFromUsedInOperatingActivities": -9012.21,
+    "CashFlowsFromUsedInOperations": -5732.63,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 248.84,
+    "DividendsReceivedClassifiedAsInvestingActivities": 27.93,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -159.31,
+    "IncreaseDecreaseInCashAndCashEquivalents": -2068.67,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -2068.67,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 3438.89,
+    "InterestReceivedClassifiedAsInvestingActivities": 68.92,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 363.43,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -2.22,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 184148.58,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 184204.97,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -151.76,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 41.49,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 13562.61,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 2052.1,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.66,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 91.62,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 8291.36,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 135.76
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -0.97,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 113.01,
+    "AdjustmentsForDividendIncome": 31.29,
+    "AdjustmentsForFairValueGainsLosses": -49.2,
+    "AdjustmentsForFinanceCosts": 3511.62,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 508.97,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 39.29,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 228.7,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 59.51,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -11399.45,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 9.16,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 24.92,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -6704.89,
+    "AdjustmentsForSharebasedPayments": 38.69,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 1980.45,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 7024.79,
+    "CashFlowsFromUsedInInvestingActivities": -52.85,
+    "CashFlowsFromUsedInOperatingActivities": -8953.94,
+    "CashFlowsFromUsedInOperations": -5725.16,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 249.35,
+    "DividendsReceivedClassifiedAsInvestingActivities": 31.29,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -163.41,
+    "IncreaseDecreaseInCashAndCashEquivalents": -1982.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -1982.0,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 3392.19,
+    "InterestReceivedClassifiedAsInvestingActivities": 66.88,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 363.43,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -2.26,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 183321.86,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 183408.34,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -156.56,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 67.71,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 13562.61,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 2052.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.66,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 81.6,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 8272.76,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Piramal Finance Limited",
  "corporate_actions": [
   {
@@ -309,6 +897,294 @@
    "tranches": [],
    "updated_as_of": "2026-10-19T15:56:03+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0271
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0268
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0284
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0277
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0285,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.028,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0275
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0271
+   }
   }
  ],
  "financial_metrics": [
@@ -10078,6 +10954,424 @@
  },
  "industry": "Financial Services > Finance > Non Banking Financial Company (NBFC)",
  "last_filed_at": "2026-10-19T18:00:00+05:30",
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.68,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 25.67,
+     "description": "Equity instruments measure through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -25.75,
+     "description": "Share of other comprehensive income of associates and joint ventures accounted for using the equity method",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 2.37,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -2.0,
+     "description": "Debt instruments measure through OCI",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.39,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 26.35,
+    "oci_net_cr": -2.56,
+    "profit_cr": 401.01,
+    "reclassified_cr": -24.99,
+    "tax_not_reclassified_cr": 3.83,
+    "tax_reclassified_cr": 0.09,
+    "total_comprehensive_cr": 398.45,
+    "total_comprehensive_nci_cr": 0.84,
+    "total_comprehensive_owners_cr": 397.61
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.68,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 25.76,
+     "description": "Equity instruments measure through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 2.37,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -2.0,
+     "description": "Debt instruments measure through OCI",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 26.44,
+    "oci_net_cr": 22.87,
+    "profit_cr": 395.86,
+    "reclassified_cr": 0.37,
+    "tax_not_reclassified_cr": 3.85,
+    "tax_reclassified_cr": 0.09,
+    "total_comprehensive_cr": 418.73
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.19,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 3.71,
+     "description": "Equity instruments measured through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -182.0,
+     "description": "Share of other comprehensive income of associates and joint ventures accounted for using the equity method",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 8.18,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -58.27,
+     "description": "Debt instruments measured through OCI",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 1.01,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 4.9,
+    "oci_net_cr": -214.36,
+    "profit_cr": 501.77,
+    "reclassified_cr": -231.08,
+    "tax_not_reclassified_cr": 0.78,
+    "tax_reclassified_cr": -12.6,
+    "total_comprehensive_cr": 287.41,
+    "total_comprehensive_nci_cr": 0.83,
+    "total_comprehensive_owners_cr": 286.58
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.05,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 3.88,
+     "description": "Equity Instruments Measured through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 8.18,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -58.27,
+     "description": "Debt Instruments Measured through OCI",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 4.93,
+    "oci_net_cr": -33.38,
+    "profit_cr": 603.24,
+    "reclassified_cr": -50.09,
+    "tax_not_reclassified_cr": 0.82,
+    "tax_reclassified_cr": -12.6,
+    "total_comprehensive_cr": 569.86
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -9.66,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.83,
+     "description": "Equity instruments measured through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 155.12,
+     "description": "Share of other comprehensive income of associates and joint ventures accounted for using the equity method",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 24.7,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 46.18,
+     "description": "Debt instruments measured through OCI",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -0.03,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -10.49,
+    "oci_net_cr": 200.15,
+    "profit_cr": 460.98,
+    "reclassified_cr": 225.97,
+    "tax_not_reclassified_cr": -2.51,
+    "tax_reclassified_cr": 17.84,
+    "total_comprehensive_cr": 661.13,
+    "total_comprehensive_nci_cr": 1.86,
+    "total_comprehensive_owners_cr": 659.27
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -9.66,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -1.24,
+     "description": "Equity instruments measured through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 24.7,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 46.18,
+     "description": "Debt instruments measured through OCI",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -10.9,
+    "oci_net_cr": 44.75,
+    "profit_cr": 439.92,
+    "reclassified_cr": 70.88,
+    "tax_not_reclassified_cr": -2.61,
+    "tax_reclassified_cr": 17.84,
+    "total_comprehensive_cr": 484.67
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.43,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 9.31,
+     "description": "Equity instruments measured through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -168.75,
+     "description": "Share of other comprehensive income of associates and joint ventures accounted for using the equity method",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -55.28,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -66.3,
+     "description": "Debt instruments measured through OCI",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.17,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 8.88,
+    "oci_net_cr": -251.88,
+    "profit_cr": 545.42,
+    "reclassified_cr": -290.16,
+    "tax_not_reclassified_cr": 1.2,
+    "tax_reclassified_cr": -30.6,
+    "total_comprehensive_cr": 293.54,
+    "total_comprehensive_nci_cr": 6.832,
+    "total_comprehensive_owners_cr": 286.708
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.63,
+     "description": "Remeasurement of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 9.13,
+     "description": "Equity instruments measured through OCI",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -55.28,
+     "description": "Remeasurement gain/(loss) on hedge accounting",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -66.3,
+     "description": "Debt instruments measured through OCI",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 8.5,
+    "oci_net_cr": -83.63,
+    "profit_cr": 529.21,
+    "reclassified_cr": -121.58,
+    "tax_not_reclassified_cr": 1.15,
+    "tax_reclassified_cr": -30.6,
+    "total_comprehensive_cr": 445.58
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-27T16:04:02+05:30",
@@ -10384,6 +11678,1598 @@
    "value": 2.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1322.0,
+     "approved_cr": 1500.0,
+     "closing_cr": 0.0,
+     "counterparty": "Indiareit Investment Management Co",
+     "entity": "Piramal Fund Management Limited (\"PFML\") (formerly known as Piramal Fund Management Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Dividend is net off forward contract settlement cost"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 1321.8,
+     "approved_cr": 1500.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Fund Management Limited (\"PFML\") (formerly known as Piramal Fund Management Private Limited)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 151.08,
+     "approved_cr": 151.08,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Access Fund",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Investment",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 142.34,
+     "approved_cr": 460.0,
+     "closing_cr": 247.52,
+     "counterparty": "India Resurgence Fund 2 - Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 105.18,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -140.34,
+     "approved_cr": 150.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Access Fund",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 140.34,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -127.72,
+     "approved_cr": 2013.0,
+     "closing_cr": 1607.15,
+     "counterparty": "Piramal Alternatives Trust",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 1734.87,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -114.0,
+     "approved_cr": 1675.0,
+     "closing_cr": 61.0,
+     "counterparty": "Piramal Agastya Offices Private Limited (Formerly Known As PRL Agastya Private Limited)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 175.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.095,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "General Corporate Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Upto 11.12.2027",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": -101.52,
+     "approved_cr": 800.0,
+     "closing_cr": 197.07,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 298.59,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -100.0,
+     "approved_cr": 1315.0,
+     "closing_cr": 5.0,
+     "counterparty": "Piramal Corporate Tower Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 105.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.1,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "General Corporate Purpose",
+      "RelatedPartyTransactionExplanatory": "ICD of Rs. 480 crores given and repaid at ROI of 8.60% during the period.",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Upto 26.12.2026",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 82.21,
+     "approved_cr": 316.0,
+     "closing_cr": 105.74,
+     "counterparty": "Piramal Alternatives Trust",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 19.7,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 55.88,
+     "approved_cr": 125.0,
+     "closing_cr": -1.55,
+     "counterparty": "Piramal Corporate Services Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -20.96,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "The estimated amount for FY 26 refers to approvals for PFL consolidated level. Further the actual expenditure has been disclosed at accrual basis."
+     },
+     "other_details": "Royalty Expenses",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 52.8,
+     "approved_cr": 260.0,
+     "closing_cr": 115.83,
+     "counterparty": "Piramal Foundation For Education Leadership",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 63.04,
+     "other_details": "Intangible assets under development (Including capital advances)",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 50.0,
+     "approved_cr": 100.0,
+     "closing_cr": 209.0,
+     "counterparty": "Piramal Alternatives Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 159.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -42.0,
+     "approved_cr": 47.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Investment Advisory Services Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 42.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0885,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "General Corporate Purpose",
+      "RelatedPartyTransactionExplanatory": "No additional ICD given during the period",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Upto 10.12.2025",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 41.34,
+     "approved_cr": 300.0,
+     "closing_cr": 9.4,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 38.2,
+     "other_details": "Insurance Commission Income",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 28.5,
+     "approved_cr": 71.0,
+     "closing_cr": 0.0,
+     "counterparty": "Shriram General Insurance Company Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 27.21,
+     "approved_cr": 260.0,
+     "closing_cr": -224.17,
+     "counterparty": "Piramal Foundation For Education Leadership",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -196.96,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "The approved transaction limit for intangible asset of Piramal Foundation for Education Leadership has been revised from ₹260 crore to ₹340 crore in omnibus approval obtained for\n FY 2026-27."
+     },
+     "other_details": "Net capital commitments",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 25.66,
+     "approved_cr": 80.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.38,
+     "approved_cr": 49.0,
+     "closing_cr": -0.11,
+     "counterparty": "Piramal Agastya Offices Private Limited (Formerly Known As PRL Agastya Private Limited)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.17,
+     "other_details": "Rent & Maintenance expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 18.5,
+     "approved_cr": 100.0,
+     "closing_cr": 0.0,
+     "counterparty": "India Resurgence Fund Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -17.25,
+     "approved_cr": 148.0,
+     "closing_cr": 401.97,
+     "counterparty": "India Resurgence Fund Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 419.22,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 17.15,
+     "approved_cr": 50.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Structured Credit Opportunities Fund",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.0,
+     "approved_cr": 30.0,
+     "closing_cr": 0.0,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Advertisement & Marketing Income",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.0,
+     "approved_cr": 200.0,
+     "closing_cr": 15.0,
+     "counterparty": "Piramal Agastya Offices Private Limited (Formerly Known As PRL Agastya Private Limited)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.092,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "General Corporate Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Upto 09.03.2029",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": -10.82,
+     "approved_cr": 150.0,
+     "closing_cr": 262.8,
+     "counterparty": "Piramal Structured Credit Opportunities Fund",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 273.61,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 9.44,
+     "approved_cr": 9.44,
+     "closing_cr": 0.0,
+     "counterparty": "Jairam Sridharan",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 8.02,
+     "approved_cr": 167.5,
+     "closing_cr": 7.07,
+     "counterparty": "Piramal Agastya Offices Private Limited (Formerly Known As PRL Agastya Private Limited)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 12.05,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 7.15,
+     "approved_cr": 15.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Access Fund",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.86,
+     "approved_cr": 130.0,
+     "closing_cr": 1.04,
+     "counterparty": "Piramal Corporate Tower Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 16.7,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 6.54,
+     "approved_cr": 22.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Corporate Tower Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Expenses (Including Common Area Maintenance)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.25,
+     "approved_cr": 5.25,
+     "closing_cr": 0.0,
+     "counterparty": "Anand Piramal",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 4.98,
+     "approved_cr": 4.98,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Foundation For Education Leadership",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "CSR Expenditure also approved by CSR Committee"
+     },
+     "other_details": "CSR expenditure",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.58,
+     "approved_cr": 8.0,
+     "closing_cr": 0.0,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Insurance Premium Paid",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.5,
+     "approved_cr": 25.0,
+     "closing_cr": -2.48,
+     "counterparty": "Social Worth Technologies Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.56,
+     "other_details": "Commission and Service Fees expense",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.7,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Structured Credit Opportunities Fund",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 2.22,
+     "other_details": "Management Fees",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.68,
+     "approved_cr": 8.0,
+     "closing_cr": 0.0,
+     "counterparty": "PEPL Developers Private Limited (formerly Piramal Estates Private Limited)",
+     "entity": "Piramal Agastya Offices Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Development Management Fees",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.0,
+     "approved_cr": 4.0,
+     "closing_cr": 0.01,
+     "counterparty": "Gliders Buildcon Realtors Private Limited",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent and Amenities",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.9,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Capital & Housing Finance Limited Employee Group Gratuity Trust",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Claim received from Trust",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -2.65,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Investment Opportunities Fund",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 2.65,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 2.47,
+     "approved_cr": 2.47,
+     "closing_cr": 0.0,
+     "counterparty": "Vikash Singhla",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 2.16,
+     "approved_cr": 10.0,
+     "closing_cr": 0.65,
+     "counterparty": "Piramal Pharma Limited",
+     "entity": "Piramal Agastya Offices Private Limited",
+     "opening_cr": 0.54,
+     "other_details": "Rent & maintenance income",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.09,
+     "approved_cr": 30.0,
+     "closing_cr": 0.0,
+     "counterparty": "India Resurgence Fund 2 - Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.05,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Access Fund",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 0.02,
+     "other_details": "Reimbursement of expenses recovered",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -1.9,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Access Fund",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 2.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 1.71,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "India Resurgence Asset Management Business Private Limited",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent and Amenities",
+     "relationship": "Joint Venture of Holding company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.39,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "PRL Developers Private Limited",
+     "entity": "Piramal Agastya Offices Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Assets Management Fees",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.34,
+     "approved_cr": 5.63,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Foundation",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "CSR Expenditure also approved by CSR Committee"
+     },
+     "other_details": "CSR expenditure",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.32,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Corporate Services Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Expenses (Including Common Area Maintenance)",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -1.32,
+     "approved_cr": 10.0,
+     "closing_cr": -0.19,
+     "counterparty": "Social Worth Technologies Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "FLDG Recovery (net of recovery from customer)",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.26,
+     "approved_cr": 1.26,
+     "closing_cr": 0.0,
+     "counterparty": "Swati Ajay Piramal",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "At Actuals. \nDuring the reporting period, transactions were undertaken with the related party in accordance with the relationship disclosed."
+     },
+     "other_details": "Reimbursement of expenses paid",
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.11,
+     "approved_cr": 1.11,
+     "closing_cr": 0.0,
+     "counterparty": "Bipin Singh",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.1,
+     "approved_cr": 2.0,
+     "closing_cr": -0.07,
+     "counterparty": "Analog Legalhub Technology Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Fees expense",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.1,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "PRL Developers Private Limited",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Assets Management Fees",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.01,
+     "approved_cr": 6.0,
+     "closing_cr": 0.0,
+     "counterparty": "PRL Developers Private Limited",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent and Amenities",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.0,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Capital & Housing Finance Limited Employee Group Gratuity Trust",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Contribution to Trust",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.92,
+     "approved_cr": 6.0,
+     "closing_cr": 0.24,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 0.06,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.87,
+     "approved_cr": 2.0,
+     "closing_cr": -0.04,
+     "counterparty": "Piramal Foundation For Education Leadership",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Professional Fees/Reimbursement of Expenses",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.83,
+     "approved_cr": 3.25,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Pharma Limited",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent & Service Charges",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.79,
+     "approved_cr": 2.0,
+     "closing_cr": -0.02,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.01,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.79,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "India Resurgence Asset Management Business Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Interest received"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 155,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": -296.49,
+     "approved_cr": 1000.0,
+     "closing_cr": 1310.66,
+     "counterparty": "Piramal Alternatives Trust",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 1607.15,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -148.26,
+     "approved_cr": 66.0,
+     "closing_cr": 253.71,
+     "counterparty": "India Resurgence Fund Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 401.97,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -137.56,
+     "approved_cr": 0.0,
+     "closing_cr": 125.23,
+     "counterparty": "Piramal Structured Credit Opportunities Fund",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 262.8,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 130.83,
+     "approved_cr": 320.0,
+     "closing_cr": 224.34,
+     "counterparty": "Piramal Alternatives Trust",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 105.74,
+     "other_details": "Distribution income (net of expenses)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 111.64,
+     "approved_cr": 700.0,
+     "closing_cr": 308.71,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 197.07,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 80.91,
+     "approved_cr": 350.0,
+     "closing_cr": 28.71,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 9.4,
+     "other_details": "Insurance Commission Income",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -65.19,
+     "approved_cr": 0.0,
+     "closing_cr": 7.31,
+     "counterparty": "Paladin Consultancy Private Limited (Formerly Known As India Resurgence Arc Private Limited )",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 72.5,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 63.76,
+     "approved_cr": 175.0,
+     "closing_cr": -37.02,
+     "counterparty": "Piramal Corporate Services Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -1.55,
+     "other_details": "Royalty Expenses",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 61.78,
+     "approved_cr": 61.78,
+     "closing_cr": 0.0,
+     "counterparty": "Anutham Realty Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 61.52,
+     "approved_cr": 112.0,
+     "closing_cr": 0.0,
+     "counterparty": "India Resurgence Fund Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 52.29,
+     "approved_cr": 340.0,
+     "closing_cr": 168.12,
+     "counterparty": "Piramal Foundation For Education Leadership",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 115.83,
+     "other_details": "Intangible assets under development (Including capital advances)",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 32.28,
+     "approved_cr": 130.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Structured Credit Opportunities Fund",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 27.96,
+     "approved_cr": 500.0,
+     "closing_cr": 275.48,
+     "counterparty": "India Resurgence Fund 2 - Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 247.52,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 27.91,
+     "approved_cr": 56.0,
+     "closing_cr": 0.0,
+     "counterparty": "Shriram General Insurance Company Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 24.98,
+     "approved_cr": 24.98,
+     "closing_cr": 0.0,
+     "counterparty": "The Sri Krishna Trust (through its Trustee Mr. Ajay G Piramal and Dr. (Mrs.) Swati Piramal)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 21.84,
+     "approved_cr": 50.0,
+     "closing_cr": -0.13,
+     "counterparty": "Piramal Agastya Offices Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.11,
+     "other_details": "Rent & Maintenance expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 17.95,
+     "approved_cr": 50.0,
+     "closing_cr": 21.18,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Advertisement & Marketing Income",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 14.17,
+     "approved_cr": 14.17,
+     "closing_cr": 0.0,
+     "counterparty": "Jairam Sridharan",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 12.39,
+     "approved_cr": 80.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.67,
+     "approved_cr": 10.67,
+     "closing_cr": 0.0,
+     "counterparty": "V3 Designs LLP",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 9.87,
+     "approved_cr": 9.87,
+     "closing_cr": 0.0,
+     "counterparty": "PRL Realtors LLP",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 9.36,
+     "approved_cr": 19.36,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Foundation For Education Leadership",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "CSR Expenditure also approved by CSR Committee"
+     },
+     "other_details": "CSR expenditure",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.8,
+     "approved_cr": 8.8,
+     "closing_cr": 0.0,
+     "counterparty": "Anand Piramal",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 7.63,
+     "approved_cr": 18.0,
+     "closing_cr": -0.15,
+     "counterparty": "Piramal Corporate Tower Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Expenses (Including Common Area Maintenance)",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.92,
+     "approved_cr": 5.92,
+     "closing_cr": 0.0,
+     "counterparty": "Vikash Singhla",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 5.69,
+     "approved_cr": 32.0,
+     "closing_cr": 0.0,
+     "counterparty": "India Resurgence Fund 2 - Scheme 2",
+     "entity": "Piramal Alternatives Trust",
+     "opening_cr": 0.0,
+     "other_details": "Income from Portfolio Investment (Net of Expenses)",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.86,
+     "approved_cr": 40.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Management Fees",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.7,
+     "approved_cr": 8.18,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Foundation",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "CSR Expenditure also approved by CSR Committee"
+     },
+     "other_details": "CSR expenditure",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.6,
+     "approved_cr": 100.0,
+     "closing_cr": 10.3,
+     "counterparty": "Piramal Agastya Offices Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 7.07,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 3.36,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Paladin Consultancy Private Limited (Formerly Known As India Resurgence Arc Private Limited )",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 3.16,
+     "approved_cr": 3.16,
+     "closing_cr": 0.0,
+     "counterparty": "Semplice Corporate Solutions Private Limited (Formerly known as AASAN Corporate Solutions Pvt. Ltd)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 3.06,
+     "approved_cr": 7.0,
+     "closing_cr": 0.02,
+     "counterparty": "Gliders Buildcon Realtors Private Limited",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.01,
+     "other_details": "Rent and Amenities",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.0,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Foundation For Education Leadership",
+     "entity": "Piramal Fund Management Limited (\"PFML\") (formerly known as Piramal Fund Management Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "CSR Expenditure also approved by CSR Committee"
+     },
+     "other_details": "CSR expenditure",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.72,
+     "approved_cr": 8.0,
+     "closing_cr": 0.15,
+     "counterparty": "Piramal Pharma Limited",
+     "entity": "Piramal Agastya Offices Private Limited",
+     "opening_cr": 0.65,
+     "other_details": "Rent & maintenance income",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.62,
+     "approved_cr": 2.62,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Welfare Trust",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": -2.57,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Paladin Consultancy Private Limited (Formerly Known As India Resurgence Arc Private Limited )",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 2.57,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption)"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 2.46,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Structured Credit Opportunities Fund",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Management Fees",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.07,
+     "approved_cr": 2.07,
+     "closing_cr": 0.0,
+     "counterparty": "Bipin Singh",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As per Companies Act 2013 and approvals from Nomination & Remuneration Committee"
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.96,
+     "approved_cr": 2.49,
+     "closing_cr": 0.0,
+     "counterparty": "Kaivalya Education Foundation",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "CSR Expenditure also approved by CSR Committee"
+     },
+     "other_details": "CSR expenditure",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.86,
+     "approved_cr": 15.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Corporate Services Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses (Cross Charges)",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.76,
+     "approved_cr": 5.0,
+     "closing_cr": 0.03,
+     "counterparty": "India Resurgence Asset Management Business Private Limited",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent and Amenities",
+     "relationship": "Joint Venture of Holding company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.56,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Corporate Services Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Expenses (Including Common Area Maintenance)",
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.36,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "PEPL Developers Private Limited (formerly Piramal Estates Private Limited)",
+     "entity": "Piramal Agastya Offices Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Assets Management Fees",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.21,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "PEPL Developers Private Limited (formerly Piramal Estates Private Limited)",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Assets Management Fees",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.09,
+     "approved_cr": 1.09,
+     "closing_cr": 0.0,
+     "counterparty": "The Ajay G. Piramal Foundation (through its Trustee Mr. Ajay G Piramal and Dr. (Mrs.) Swati Piramal)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Promoter & Promoter Group",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 1.06,
+     "approved_cr": 35.0,
+     "closing_cr": 0.0,
+     "counterparty": "Social Worth Technologies Limited (formerly known as Social Worth Technologies Private Limited)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -2.48,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Ceased to be related party w.e.f. May 04, 2026"
+     },
+     "other_details": "Commission and Service Fees expense",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.05,
+     "approved_cr": 3.0,
+     "closing_cr": 0.02,
+     "counterparty": "PRL Developers Private Limited",
+     "entity": "Piramal Corporate Tower Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent and Amenities",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.88,
+     "approved_cr": 2.5,
+     "closing_cr": -0.29,
+     "counterparty": "Analog Legalhub Technology solutions Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.07,
+     "other_details": "Fees expense",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.77,
+     "approved_cr": 2.0,
+     "closing_cr": -0.01,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.02,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.75,
+     "approved_cr": 6.0,
+     "closing_cr": 0.57,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 0.24,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.73,
+     "approved_cr": 30.0,
+     "closing_cr": -21.87,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -22.6,
+     "other_details": "Redemption of NCD",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.72,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "India Resurgence Asset Management Business Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.72,
+     "approved_cr": 3.25,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Pharma Limited",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent & Service Charges",
+     "relationship": "Promoter & Promoter Group of Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.7,
+     "approved_cr": 15.0,
+     "closing_cr": 0.0,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Management Fees",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.7,
+     "approved_cr": 5.0,
+     "closing_cr": 2.78,
+     "counterparty": "Piramal Alternatives India Credit Opportunities Fund II",
+     "entity": "Piramal Alternatives Private Limited",
+     "opening_cr": 2.1,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Investment (net of redemption) and Fair Value movement"
+     },
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.6,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "Shikha Sharma",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Professional fees",
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.58,
+     "approved_cr": 20.0,
+     "closing_cr": 0.0,
+     "counterparty": "Social Worth Technologies Limited (formerly known as Social Worth Technologies Private Limited)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.19,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Ceased to be related party w.e.f. May 04, 2026"
+     },
+     "other_details": "FLDG Recovery (net of recovery from customer)",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.51,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "PFL Employee ESOP Trust (formerly Piramal Phytocare Limited Senior Employees Option Trust)",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "As approved by shareholders"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 0.49,
+     "approved_cr": 8.0,
+     "closing_cr": 0.0,
+     "counterparty": "Pramerica Life Insurance Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Insurance Premium Paid",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.37,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "MoEngage India Private Limited",
+     "entity": "Piramal Finance Limited",
+     "opening_cr": -0.65,
+     "other_details": "Marketing Expenses",
+     "relationship": "Other related party",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 154,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544597",
  "section_lab": {
@@ -10406,56 +13292,68 @@
  "sector": "nbfc",
  "segment_mix": [
   {
-   "as_of": "2026-04-27T16:18:09+05:30",
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-04-27T16:18:09+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Financing Activity",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q4FY26",
-   "revenue_cr": null,
-   "segment": "Retail",
-   "share_pct": 85.0,
-   "source_news_id": "nse-106601183"
+   "segment": "Financing Activity",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
   },
   {
-   "as_of": "2026-09-23T13:03:24+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-09-23T13:03:24+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q1FY27",
-   "revenue_cr": null,
-   "segment": "Wholesale",
-   "share_pct": 15.0,
-   "source_news_id": "nse-106789028"
+   "segment": "Financing Activity",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   },
   {
-   "as_of": "2026-10-19T15:56:03+05:30",
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-19T15:56:03+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q2FY27",
-   "revenue_cr": null,
-   "segment": "Retail",
-   "share_pct": 86.0,
-   "source_news_id": "nse-106821987"
-  },
-  {
-   "as_of": "2026-10-19T15:56:03+05:30",
-   "lab": {
-    "at": "2026-10-19T15:56:03+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "Q2FY27",
-   "revenue_cr": null,
-   "segment": "Wholesale",
-   "share_pct": null,
-   "source_news_id": "nse-106821987"
+   "segment": "Financing Activity",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
   }
  ],
  "standalone": {
@@ -14030,6 +16928,494 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Depreciation": 57.02,
+    "Expenses": 982.6500000000001,
+    "Financing Margin %": 9.89313427106467,
+    "Financing Profit": 288.64999999999964,
+    "Interest": 1646.38,
+    "Net Profit": 401.01,
+    "Net Profit (owners)": 400.17,
+    "OPM %": 66.32084395821337,
+    "Operating Profit": 1935.0299999999997,
+    "Other Income": 96.26000000000045,
+    "PBT as filed": 289.04,
+    "Profit before tax": 327.89000000000004,
+    "Revenue": 2917.68,
+    "Sales": 2917.68,
+    "Tax": -73.12,
+    "Tax %": -22.300161639574245
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Depreciation": 55.85,
+    "Expenses": 963.2299999999999,
+    "Financing Margin %": 11.128618654802741,
+    "Financing Profit": 324.1800000000003,
+    "Interest": 1625.62,
+    "Net Profit": 395.86,
+    "OPM %": 66.93374252925648,
+    "Operating Profit": 1949.8000000000002,
+    "Other Income": 55.98999999999978,
+    "Profit before tax": 324.32,
+    "Revenue": 2913.03,
+    "Sales": 2913.03,
+    "Tax": -71.54,
+    "Tax %": -22.058460779477063
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Depreciation": 645.0,
+    "Expenses": 1977.71,
+    "Financing Margin %": -6.638999301988011,
+    "Financing Profit": -227.3199999999997,
+    "Interest": 1673.62,
+    "Net Profit": 501.77,
+    "Net Profit (owners)": 500.94,
+    "OPM %": 42.23994672912755,
+    "Operating Profit": 1446.3000000000002,
+    "Other Income": 1377.08,
+    "PBT as filed": 496.16,
+    "Profit before tax": 504.76000000000005,
+    "Revenue": 3424.01,
+    "Sales": 3424.01,
+    "Tax": 2.99,
+    "Tax %": 0.5923607258895316
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 902.8,
+    "Expenses": 4801.389999999999,
+    "Financing Margin %": 5.673744504319349,
+    "Financing Profit": 672.4800000000005,
+    "Interest": 6378.62,
+    "Net Profit": 1506.14,
+    "Net Profit (owners)": 1504.31,
+    "OPM %": 59.490453060918,
+    "Operating Profit": 7051.1,
+    "Other Income": 1613.3999999999996,
+    "PBT as filed": 1194.15,
+    "Profit before tax": 1383.0800000000002,
+    "Revenue": 11852.49,
+    "Sales": 11852.49,
+    "Tax": -123.06,
+    "Tax %": -8.897533042195679
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 12392.68,
+    "Cash from Investing Activity": 2630.9,
+    "Cash from Operating Activity": -15892.3,
+    "Net Cash Flow": -868.72
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Depreciation": 643.77,
+    "Expenses": 1941.29,
+    "Financing Margin %": 24.183228379822783,
+    "Financing Profit": 1147.1,
+    "Interest": 1654.98,
+    "Net Profit": 603.24,
+    "OPM %": 59.0736122208472,
+    "Operating Profit": 2802.08,
+    "Other Income": 39.909999999999854,
+    "Profit before tax": 543.24,
+    "Revenue": 4743.37,
+    "Sales": 4743.37,
+    "Tax": -60.0,
+    "Tax %": -11.04484205875856
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 897.84,
+    "Expenses": 4708.28,
+    "Financing Margin %": 16.3702860895321,
+    "Financing Profit": 2153.8500000000013,
+    "Interest": 6294.94,
+    "Net Profit": 1540.02,
+    "OPM %": 64.21482898548082,
+    "Operating Profit": 8448.79,
+    "Other Income": 91.20999999999913,
+    "Profit before tax": 1347.22,
+    "Revenue": 13157.07,
+    "Sales": 13157.07,
+    "Tax": -192.8,
+    "Tax %": -14.310951440744644
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 12194.11,
+    "Cash from Investing Activity": 2622.85,
+    "Cash from Operating Activity": -15799.25,
+    "Net Cash Flow": -982.29
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowing": 79989.21,
+    "CWIP": 116.42,
+    "Equity Capital": 45.22,
+    "Fixed Assets": 2351.81,
+    "Investments": 9813.83,
+    "Other Assets": 98264.41,
+    "Other Liabilities": 2408.5999999999913,
+    "Reserves": 28103.44,
+    "Total Assets": 110546.47,
+    "Total Liabilities": 110546.47
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowing": 78723.66,
+    "CWIP": 116.42,
+    "Equity Capital": 45.34,
+    "Fixed Assets": 639.0799999999999,
+    "Investments": 10494.3,
+    "Other Assets": 98292.62999999999,
+    "Other Liabilities": 2383.649999999994,
+    "Reserves": 28389.78,
+    "Total Assets": 109542.43,
+    "Total Liabilities": 109542.43
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 56.03,
+    "Expenses": 1295.5300000000002,
+    "Financing Margin %": 10.06095117077906,
+    "Financing Profit": 338.8799999999999,
+    "Interest": 1733.86,
+    "Net Profit": 460.98,
+    "Net Profit (owners)": 459.12,
+    "OPM %": 61.53722831008202,
+    "Operating Profit": 2072.74,
+    "Other Income": 160.14000000000033,
+    "PBT as filed": 344.12,
+    "Profit before tax": 442.99,
+    "Revenue": 3368.27,
+    "Sales": 3368.27,
+    "Tax": -17.99,
+    "Tax %": -4.061039752590351
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 54.85,
+    "Expenses": 1284.5900000000004,
+    "Financing Margin %": 12.167318221943283,
+    "Financing Profit": 414.8799999999999,
+    "Interest": 1710.32,
+    "Net Profit": 439.92,
+    "OPM %": 62.326418929024946,
+    "Operating Profit": 2125.2,
+    "Other Income": 61.05000000000018,
+    "Profit before tax": 421.08,
+    "Revenue": 3409.79,
+    "Sales": 3409.79,
+    "Tax": -18.84,
+    "Tax %": -4.474209176403534
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 58.39,
+    "Expenses": 1290.4199999999998,
+    "Financing Margin %": 14.854653625529158,
+    "Financing Profit": 543.5600000000004,
+    "Interest": 1825.21,
+    "Net Profit": 545.42,
+    "Net Profit (owners)": 538.588,
+    "OPM %": 64.73481836144066,
+    "Operating Profit": 2368.7700000000004,
+    "Other Income": 94.85999999999967,
+    "PBT as filed": 543.14,
+    "Profit before tax": 580.03,
+    "Revenue": 3659.19,
+    "Sales": 3659.19,
+    "Tax": 34.61,
+    "Tax %": 5.966932744858025
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 58.16,
+    "Expenses": 1264.9499999999998,
+    "Financing Margin %": 15.418459671190558,
+    "Financing Profit": 558.95,
+    "Interest": 1801.3,
+    "Net Profit": 529.21,
+    "OPM %": 65.10675273088381,
+    "Operating Profit": 2360.25,
+    "Other Income": 57.85999999999967,
+    "Profit before tax": 558.65,
+    "Revenue": 3625.2,
+    "Sales": 3625.2,
+    "Tax": 29.44,
+    "Tax %": 5.269846952474716
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 85808.81999999999,
+    "CWIP": 164.56,
+    "Equity Capital": 47.31,
+    "Fixed Assets": 2303.73,
+    "Investments": 8706.47,
+    "Other Assets": 108583.13,
+    "Other Liabilities": 3007.2100000000064,
+    "Reserves": 30894.55,
+    "Total Assets": 119757.89,
+    "Total Liabilities": 119757.89
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 84556.97,
+    "CWIP": 164.56,
+    "Equity Capital": 47.33,
+    "Fixed Assets": 614.63,
+    "Investments": 8979.68,
+    "Other Assets": 108806.13,
+    "Other Liabilities": 2801.3300000000017,
+    "Reserves": 31159.37,
+    "Total Assets": 118565.0,
+    "Total Liabilities": 118565.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "PIRAMALFIN",
  "timeline": [
   {

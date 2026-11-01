@@ -1,16 +1,41 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-09-08T00:00:39+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-09-08T00:00:39+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106773924"
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
   }
  ],
+ "balance_sheet": [],
  "business_summary": {
   "as_of": "2026-09-08T00:00:39+05:30",
   "lab": {
@@ -37,6 +62,44 @@
  "capital_actions": [],
  "company_name": "Shiprocket Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-07T18:00:00+05:30",
@@ -959,6 +1022,308 @@
  },
  "industry": "Consumer Discretionary > Consumer Services > Retailing > E-Retail/ E-Commerce",
  "last_filed_at": "2026-10-19T04:17:18+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "GOLDMAN SACHS FDS GOLDMAN SACHS INDIA EQ PORTFOLIO",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 131.0,
+    "qty": 4024040.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 52.71
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 142.39,
+    "qty": 4777616.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 68.03
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 142.45,
+    "qty": 4777616.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 68.06
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 141.24,
+    "qty": 4716785.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 66.62
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 142.57,
+    "qty": 5223596.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 74.47
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 143.08,
+    "qty": 5987354.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 85.67
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 143.0,
+    "qty": 6249089.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 89.36
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 140.68,
+    "qty": 4126848.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 58.06
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 140.7,
+    "qty": 4126848.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 58.06
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 140.9,
+    "qty": 6782846.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 95.57
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 140.83,
+    "qty": 6782846.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 95.52
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 142.78,
+    "qty": 4001807.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 57.14
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 142.65,
+    "qty": 4055202.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 57.85
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 149.73,
+    "qty": 4025494.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 60.27
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 149.68,
+    "qty": 4025494.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 60.25
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 150.35,
+    "qty": 4234987.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 63.67
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 150.28,
+    "qty": 4234987.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 63.64
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 134.95,
+    "qty": 3668239.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHIPROCKET",
+    "value_cr": 49.5
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 135.0,
+    "qty": 3671882.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHIPROCKET",
+    "value_cr": 49.57
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -2.206,
+     "description": "Re-measurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.021,
+     "description": "Exchange differences on translating the financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -2.206,
+    "oci_net_cr": -2.185,
+    "profit_cr": -13.714,
+    "reclassified_cr": 0.021,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -15.899,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -2.185
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.721,
+     "description": "Re-measurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -1.721,
+    "oci_net_cr": -1.721,
+    "profit_cr": 20.164,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 18.443
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-08T00:00:39+05:30",
@@ -1145,36 +1510,15 @@
    "at": null,
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:28:32+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "consumer_services",
  "segment_mix": [
-  {
-   "as_of": "2026-09-08T00:00:39+05:30",
-   "lab": {
-    "at": "2026-09-08T00:00:39+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": 411.7,
-   "segment": "Core",
-   "share_pct": null,
-   "source_news_id": "nse-106773924"
-  },
-  {
-   "as_of": "2026-09-08T00:00:39+05:30",
-   "lab": {
-    "at": "2026-09-08T00:00:39+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": 180.4,
-   "segment": "Emerging",
-   "share_pct": null,
-   "source_news_id": "nse-106773924"
-  },
   {
    "as_of": "2026-09-08T00:00:39+05:30",
    "lab": {
@@ -1200,6 +1544,42 @@
    "segment": "Emerging",
    "share_pct": null,
    "source_news_id": "nse-106773924"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 52.69,
+   "period": "Q1FY27",
+   "revenue_cr": 411.74,
+   "segment": "Core Business Segment",
+   "share_pct": 69.5,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -43.75,
+   "period": "Q1FY27",
+   "revenue_cr": 180.35,
+   "segment": "Emerging Business Segment",
+   "share_pct": 30.5,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -1659,6 +2039,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 10.094,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 602.9549999999999,
+    "Interest": 6.427,
+    "Minority share": 0.0,
+    "Net Profit": -13.714,
+    "Net Profit (owners)": -13.714,
+    "OPM %": -1.835541060688706,
+    "Operating Profit": -10.867999999999938,
+    "Other Income": 13.674999999999937,
+    "Profit before tax": -13.714,
+    "Profit for PE": -13.714,
+    "Sales": 592.087,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 9.526,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 559.6060000000001,
+    "Interest": 6.289,
+    "Net Profit": 20.164,
+    "Net Profit (owners)": 20.164,
+    "OPM %": 3.636163258839836,
+    "Operating Profit": 21.11599999999987,
+    "Other Income": 14.863000000000127,
+    "Profit before tax": 20.164,
+    "Profit for PE": 20.164,
+    "Sales": 580.722,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "SHIPROCKET",
  "timeline": [
   {

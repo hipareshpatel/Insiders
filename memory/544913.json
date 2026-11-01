@@ -1,4 +1,40 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "call_points": [
@@ -30,6 +66,44 @@
  "capital_actions": [],
  "company_name": "Glass Wall Systems (India) Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-06T18:00:00+05:30",
@@ -596,6 +670,179 @@
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106816069"
    }
+  ],
+  "quarters": [
+   {
+    "as_of": "2026-10-31T19:53:00+05:30",
+    "board": [
+     {
+      "appointed": "2010-08-27",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Jawahar Hariram Hemrajani",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2014-09-26",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Eshan Jawahar Hemrajani",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-05-21",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sunaina Primlani Gera",
+      "role": null,
+      "tenure_months": 16.09
+     },
+     {
+      "appointed": "2025-05-21",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Siddharth Nandkishore Bafna",
+      "role": null,
+      "tenure_months": 16.09
+     },
+     {
+      "appointed": "2025-07-22",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Nandita Khurana",
+      "role": null,
+      "tenure_months": 14.08
+     },
+     {
+      "appointed": "2014-09-26",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": "2026-09-18",
+      "cessation_reason": "Others",
+      "name": "Prakash Bagla",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 5,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Siddharth Nandkishore Bafna",
+      "Sunaina Primlani Gera",
+      "Jawahar Hariram Hemrajani"
+     ],
+     "corporate social responsibility committee": [
+      "Eshan Jawahar Hemrajani",
+      "Jawahar Hariram Hemrajani",
+      "Siddharth Nandkishore Bafna"
+     ],
+     "nomination and remuneration committee": [
+      "Sunaina Primlani Gera",
+      "Siddharth Nandkishore Bafna",
+      "Jawahar Hariram Hemrajani"
+     ],
+     "risk management committee": [
+      "Eshan Jawahar Hemrajani",
+      "Jawahar Hariram Hemrajani",
+      "Nandita Khurana"
+     ],
+     "stakeholders relationship committee": [
+      "Nandita Khurana",
+      "Jawahar Hariram Hemrajani",
+      "Eshan Jawahar Hemrajani"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 33.0,
+     "board": 48.0,
+     "risk management committee": 42.0
+    },
+    "independent_directors": 3,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1750810_31102026075318_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "2.01 million",
+      "initiated": "2021-09-21",
+      "opposing_party": "Income Tax Department",
+      "status": "The demand pertaining to Assessment Year 2018-19 was raised by the Assessing Officer vide order dated 21 September 2021. The Company has filed an appeal against the said order before the Commissioner of Income Tax (Appeals), which is currently pending adjudication."
+     },
+     {
+      "as_last_disclosed": "312.13 million",
+      "initiated": "2026-08-24",
+      "opposing_party": "Maharashtra Sales Tax Department",
+      "status": "The Maharashtra Sales Tax Tribunal (MSTT), vide its order dated 9 July 2025, quashed the MVAT and CST demands and directed the concerned authorities to recompute the demands in accordance with its order. The review/rectification application filed by the MVAT Department was subsequently dismissed by the MSTT vide order dated 4 May 2026, thereby upholding its earlier decision. The Department has filed a petition before the Bombay High Court on 24 August 2026 challenging the MSTT order. No further proceedings have taken place as at 30 September 2026."
+     },
+     {
+      "as_last_disclosed": "19.93 million",
+      "initiated": "2026-08-24",
+      "opposing_party": "Maharashtra Sales Tax Department",
+      "status": "The Maharashtra Sales Tax Tribunal (MSTT), vide its order dated 9 July 2025, quashed the MVAT and CST demands and directed the concerned authorities to recompute the demands in accordance with its order. The review/rectification application filed by the MVAT Department was subsequently dismissed by the MSTT vide order dated 4 May 2026, thereby upholding its earlier decision. The Department has filed a petition before the Bombay High Court on 24 August 2026 challenging the MSTT order. No further proceedings have taken place as at 30 September 2026."
+     },
+     {
+      "as_last_disclosed": "111.90 million",
+      "initiated": "2026-07-22",
+      "opposing_party": "Karnataka Goods and Services Tax Department / GST authorities",
+      "status": "The Company has submitted the reply on 17-08-2026 and closure order received on 14/10/2026"
+     },
+     {
+      "as_last_disclosed": "3.49 million",
+      "initiated": "2026-08-21",
+      "opposing_party": "Haryana Tax Department (VAT)",
+      "status": "The Company has paid the liability under OTS Form dated 02-09-2026, and OTS closure order received on 19/10/2026."
+     },
+     {
+      "as_last_disclosed": "5.47 million",
+      "initiated": "2026-07-17",
+      "opposing_party": "Maharashtra Goods and Services Tax Department",
+      "status": "The Company has submitted the reply on 17-08-2026 and closure order received on 15-09-2026."
+     },
+     {
+      "as_last_disclosed": "2.73 million",
+      "initiated": "2026-05-18",
+      "opposing_party": "Maharashtra Goods and Services Tax Department",
+      "status": "The Company has submitted the reply on 18-06-2026 and closure order awaited from the department."
+     },
+     {
+      "as_last_disclosed": "0.50 million",
+      "initiated": "2026-08-28",
+      "opposing_party": "Maharashtra Goods and Services Tax Department",
+      "status": "The Company has submitted the reply on 25-09-2026 and closure order is awaited from the department."
+     },
+     {
+      "as_last_disclosed": "0.17 million",
+      "initiated": "2026-09-25",
+      "opposing_party": "Uttar Pradesh Goods and Services Tax Department",
+      "status": "Company is attending hearing through Tax consultant and further communication is awaited from the department."
+     }
+    ]
+   }
   ]
  },
  "guidance": [
@@ -624,6 +871,1272 @@
  },
  "industry": "Commodities > Construction Materials > Other Construction Materials",
  "last_filed_at": "2026-10-15T20:10:01+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "ARUN GODAWAT",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.15,
+    "qty": 540200.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 16.65
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "ARUN GODAWAT",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.87,
+    "qty": 540200.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 16.69
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "ASHWIN STOCKS AND INVESTMENT PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.93,
+    "qty": 477361.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 14.75
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "ASHWIN STOCKS AND INVESTMENT PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 309.27,
+    "qty": 477361.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 14.76
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 306.72,
+    "qty": 508376.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.59
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 306.56,
+    "qty": 508376.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.58
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.32,
+    "qty": 1350525.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 41.64
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.86,
+    "qty": 1350525.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 41.71
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.62,
+    "qty": 2052173.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 63.13
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.91,
+    "qty": 2052183.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 63.19
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.93,
+    "qty": 714294.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 22.0
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.86,
+    "qty": 714294.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 21.99
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.6,
+    "qty": 630705.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 19.4
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.46,
+    "qty": 630705.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 19.39
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.36,
+    "qty": 242381.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 7.45
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 309.56,
+    "qty": 489781.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.16
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.54,
+    "qty": 1156101.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 35.67
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.52,
+    "qty": 1320346.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 40.6
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 311.23,
+    "qty": 484786.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.09
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 311.57,
+    "qty": 484786.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.1
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 306.56,
+    "qty": 2972597.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 91.13
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 309.86,
+    "qty": 2972597.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 92.11
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.17,
+    "qty": 1592471.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 49.08
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.01,
+    "qty": 1601384.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 49.32
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.71,
+    "qty": 758224.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 23.33
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.16,
+    "qty": 758224.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 23.37
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.76,
+    "qty": 957520.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 29.47
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.18,
+    "qty": 968995.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 29.86
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 309.58,
+    "qty": 2111652.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 65.37
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 309.76,
+    "qty": 2111652.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 65.41
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.56,
+    "qty": 1920198.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 59.06
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.73,
+    "qty": 1920198.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 59.09
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.1,
+    "qty": 564096.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 17.38
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.96,
+    "qty": 571805.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 17.61
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.3,
+    "qty": 3810923.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 117.49
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 308.18,
+    "qty": 3810923.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 117.45
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.73,
+    "qty": 1016474.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 31.28
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.33,
+    "qty": 1056262.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 32.46
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "SILVERLEAF CAPITAL SERVICES PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 306.96,
+    "qty": 443153.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.6
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "SILVERLEAF CAPITAL SERVICES PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 307.59,
+    "qty": 443153.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.63
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "SIMPY PRUTHI",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 306.83,
+    "qty": 524260.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 16.09
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "SIMPY PRUTHI",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 306.88,
+    "qty": 524260.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 16.09
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "D3 STOCK VISION LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 281.07,
+    "qty": 454600.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 12.78
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "D3 STOCK VISION LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 283.12,
+    "qty": 474601.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.44
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 301.53,
+    "qty": 676480.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 20.4
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 300.56,
+    "qty": 683980.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 20.56
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 301.19,
+    "qty": 714595.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 21.52
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 299.9,
+    "qty": 722567.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 21.67
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 303.15,
+    "qty": 706545.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 21.42
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 292.62,
+    "qty": 968044.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 28.33
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 299.79,
+    "qty": 2567115.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 76.96
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 289.24,
+    "qty": 2569521.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 74.32
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 297.77,
+    "qty": 756717.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 22.53
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 298.03,
+    "qty": 756717.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 22.55
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 296.31,
+    "qty": 620043.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 18.37
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 296.03,
+    "qty": 620043.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 18.36
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 299.03,
+    "qty": 796608.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 23.82
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 299.23,
+    "qty": 796608.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 23.84
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 291.06,
+    "qty": 489275.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 14.24
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 290.88,
+    "qty": 501573.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 14.59
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 301.9,
+    "qty": 2012831.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 60.77
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 301.77,
+    "qty": 2012831.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 60.74
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 295.15,
+    "qty": 675293.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 19.93
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 301.52,
+    "qty": 680572.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 20.52
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 274.47,
+    "qty": 1064749.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 29.22
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 271.28,
+    "qty": 1304935.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 35.4
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 273.17,
+    "qty": 510940.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.96
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 273.28,
+    "qty": 510940.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.96
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 275.48,
+    "qty": 656875.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 18.1
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 275.51,
+    "qty": 656875.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 18.1
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 272.44,
+    "qty": 1488556.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 40.55
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 272.41,
+    "qty": 1731148.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 47.16
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 271.84,
+    "qty": 561773.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.27
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 271.81,
+    "qty": 568231.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.45
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 272.66,
+    "qty": 612641.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 16.7
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 272.83,
+    "qty": 612641.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 16.71
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 267.89,
+    "qty": 567546.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.2
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 267.92,
+    "qty": 567546.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.21
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 273.23,
+    "qty": 855716.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 23.38
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 269.83,
+    "qty": 855716.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 23.09
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 272.77,
+    "qty": 567077.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.47
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 272.76,
+    "qty": 567077.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.47
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 275.95,
+    "qty": 720835.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 19.89
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 274.02,
+    "qty": 720835.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 19.75
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 277.24,
+    "qty": 826735.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 22.92
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 277.18,
+    "qty": 826735.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 22.92
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 285.22,
+    "qty": 540482.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.42
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 282.63,
+    "qty": 551907.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.6
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 283.24,
+    "qty": 712053.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 20.17
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 283.29,
+    "qty": 712053.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 20.17
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 260.52,
+    "qty": 581573.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.15
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 262.52,
+    "qty": 581573.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 15.27
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 261.1,
+    "qty": 523507.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.67
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 260.42,
+    "qty": 535191.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.94
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 265.05,
+    "qty": 516710.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.7
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 265.13,
+    "qty": 553333.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 14.67
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 265.35,
+    "qty": 498121.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.22
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 266.77,
+    "qty": 499884.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.34
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 265.21,
+    "qty": 494196.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.11
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 265.58,
+    "qty": 500227.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GLASSWALL",
+    "value_cr": 13.29
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.452,
+     "description": "Re-measurement (loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.452,
+    "oci_net_cr": -0.338,
+    "profit_cr": 17.295,
+    "tax_not_reclassified_cr": -0.114,
+    "total_comprehensive_cr": 16.957,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -0.3383
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.454,
+     "description": "Re-measurement (loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.454,
+    "oci_net_cr": -0.34,
+    "profit_cr": 16.002,
+    "tax_not_reclassified_cr": -0.114,
+    "total_comprehensive_cr": 15.662
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-13T17:18:17+05:30",
@@ -734,8 +2247,37 @@
  ],
  "schema_version": 3,
  "scrip_code": "544913",
+ "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-31T19:53:00+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:40:06+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "construction",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Construction Activities",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1193,6 +2735,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.536,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 84.50999999999999,
+    "Interest": 0.846,
+    "Minority share": 0.0,
+    "Net Profit": 17.295,
+    "Net Profit (owners)": 17.2949,
+    "OPM %": 21.348000893455442,
+    "Operating Profit": 22.938000000000002,
+    "Other Income": 2.4959999999999987,
+    "Profit before tax": 23.052,
+    "Profit for PE": 17.2949,
+    "Sales": 107.448,
+    "Tax": 5.757,
+    "Tax %": 24.973971889640808
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.454,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 79.763,
+    "Interest": 0.831,
+    "Net Profit": 16.002,
+    "Net Profit (owners)": 16.002,
+    "OPM %": 21.13370972047816,
+    "Operating Profit": 21.373999999999995,
+    "Other Income": 2.3970000000000056,
+    "Profit before tax": 21.486,
+    "Profit for PE": 16.002,
+    "Sales": 101.137,
+    "Tax": 5.484,
+    "Tax %": 25.52359676068137
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "GLASSWALL",
  "timeline": [
   {

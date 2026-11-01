@@ -1,4 +1,262 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "304026E/E300009",
+     "name": "Price Waterhouse & Co Chartered Accountants LLP",
+     "signed_on": "2026-05-08",
+     "signing_partner": "Abhishek Rara"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2026-11-30",
+     "name": "Price Waterhouse & Co Chartered Accountants LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "304026E/E300009",
+     "name": "Price Waterhouse & Co Chartered Accountants LLP",
+     "signed_on": "2026-05-08",
+     "signing_partner": "Abhishek Rara"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "ix.\t(a)\tAs the Company did not have any loans or other borrowings from any lender during the year, the reporting under clause 3(ix)(a) of the Order is not applicable to the Company.\n\n(b)\tOn the basis of our audit procedures, we report that the Company has not been declared Wilful Defaulter by any bank or financial institution or government or any government authority."
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "xi.\t(a)\tDuring the course of our examination of the books and records of the Company, carried out in accordance with the generally accepted auditing practices in India, we have neither come across any instance of material fraud by the Company or on the Company, noticed or reported during the year, nor have we been informed of any such case by the Management.  \n\n\t(b)\tDuring the course of our examination of the books and records of the Company carried out in accordance with the generally accepted auditing practices in India, a report under Section 143(12) of the Act, in Form ADT-4, as prescribed under rule 13 of Companies (Audit and Auditors) Rules, 2014 was not required to be filed by us, as statutory auditors, with the Central Government. Further, no such report has been filed by any other auditor appointed by the Company under the Act. Accordingly, the reporting under clause 3(xi)(b) of the Order is not applicable to the Company.\n\n\t(c)\tDuring the course of our examination of the books"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "vii.\t(a)\tIn our opinion, the Company is regular in depositing the undisputed statutory dues, including goods and services tax, provident fund, employees’ state insurance, professional tax, income tax, duty of customs, cess, and other statutory dues, as applicable, with the appropriate authorities. \n\t(b)\tThere are no statutory dues of provident fund, employees’ state insurance, professional tax, income tax, duty of customs, cess which have not been deposited on account of any dispute. The particulars of other statutory dues referred to in sub-clause (a) as at March 31, 2026 which have not been deposited on account of a dispute, are as follows:\n\nName of the statute\tNature of dues\tAmount\n(INR in crores)\tAmount paid under protest\n(INR in crores)\tPeriod to which the amount relates\tForum where the dispute is pending\nGoods and\nServices\nTax, 2017\tGoods and\nServices Tax\t18.09\t-\tFinancial year 2018-19 to\n2022-23\tHigh Court of Punjab and\nHaryana\nGoods and\nServices\nTax, 2017\tGoods and\nServices Tax"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2026-11-30",
+     "name": "Price Waterhouse & Co Chartered Accountants LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-11-01T18:00:00+05:30",
@@ -119,38 +377,6 @@
    },
    "period": "Jun-2026",
    "source_news_id": "nse-106721258"
-  },
-  {
-   "as_of": "2026-10-16T16:03:09+05:30",
-   "cash_cr": 121.31,
-   "lab": {
-    "at": "2026-10-16T16:03:09+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "net_worth_cr": 1979.84,
-   "period": "Sep-2026",
-   "source_news_id": "nse-106820169"
-  },
-  {
-   "as_of": "2026-10-16T16:07:15+05:30",
-   "lab": {
-    "at": "2026-10-16T16:07:15+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106820192"
-  },
-  {
-   "as_of": "2026-10-16T16:11:31+05:30",
-   "lab": {
-    "at": "2026-10-16T16:11:31+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106820204"
   },
   {
    "as_of": "2026-10-16T18:00:00+05:30",
@@ -409,7 +635,606 @@
    "source_news_id": "nse-106820610"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -36.9,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -17.26,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -6.45,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 19.91,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.88,
+    "AdjustmentsForFinanceCosts": 5.61,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -0.82,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 49.36,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 60.66,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -7.1,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 15.83,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 7.47,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 24.55,
+    "AdjustmentsForSharebasedPayments": 48.11,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 199.88,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 500.25,
+    "CashFlowsFromUsedInInvestingActivities": -343.57,
+    "CashFlowsFromUsedInOperatingActivities": -17.9,
+    "CashFlowsFromUsedInOperations": -10.28,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 7.62,
+    "IncreaseDecreaseInCashAndCashEquivalents": 138.78,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 138.78,
+    "InterestPaidClassifiedAsFinancingActivities": 5.61,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 54.4,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 8.33,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 47.94,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -382.04,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 11.13,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 469.05,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.46,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 16.39,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -20.86,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -12.55,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -11.23,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 18.78,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.88,
+    "AdjustmentsForFinanceCosts": 5.59,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -0.17,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 52.66,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 60.52,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.99,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -5.46,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 6.42,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 17.53,
+    "AdjustmentsForSharebasedPayments": 46.15,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 170.72,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 501.3,
+    "CashFlowsFromUsedInInvestingActivities": -331.57,
+    "CashFlowsFromUsedInOperatingActivities": -15.57,
+    "CashFlowsFromUsedInOperations": -8.05,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 7.52,
+    "IncreaseDecreaseInCashAndCashEquivalents": 154.16,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 154.16,
+    "InterestPaidClassifiedAsFinancingActivities": 5.59,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 54.24,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.59,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 47.94,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -370.23,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 10.1,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 469.05,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.46,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 16.04,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -40.09,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -63.18,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -13.73,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 45.21,
+    "AdjustmentsForFairValueGainsLosses": -3.19,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 1.5,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 69.62,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -11.49,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 52.0,
+    "AdjustmentsForProvisionsCurrent": 9.93,
+    "AdjustmentsForReconcileProfitLoss": 150.13,
+    "AdjustmentsForSharebasedPayments": 103.55,
+    "CashAndCashEquivalentsCashFlowStatement": 119.69,
+    "CashFlowsFromUsedInFinancingActivities": 434.88,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 434.88,
+    "CashFlowsFromUsedInInvestingActivities": -277.84,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -277.84,
+    "CashFlowsFromUsedInOperatingActivities": -98.63,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -98.63,
+    "CashFlowsFromUsedInOperations": 6.7,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.18,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1.79,
+    "IncreaseDecreaseInCashAndCashEquivalents": 58.59,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 58.41,
+    "InterestPaidClassifiedAsFinancingActivities": 11.22,
+    "InterestPaidClassifiedAsOperatingActivities": -12.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 113.7,
+    "InterestReceivedClassifiedAsOperatingActivities": -128.58,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 640.76,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 566.14,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -276.86,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 13.04,
+    "PaymentForAuditServices": 0.85,
+    "PaymentForOtherServices": 0.53,
+    "PaymentForReimbursementOfExpenses": 0.03,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 25.52,
+    "PaymentsToAuditor": 1.41,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 471.62,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.78,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 40.84
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -16.92,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -62.37,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -10.28,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 42.91,
+    "AdjustmentsForFairValueGainsLosses": -3.31,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -0.4,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 47.4,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -5.8,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 27.93,
+    "AdjustmentsForProvisionsCurrent": 9.07,
+    "AdjustmentsForReconcileProfitLoss": 119.57,
+    "AdjustmentsForSharebasedPayments": 91.34,
+    "CashAndCashEquivalentsCashFlowStatement": 46.91,
+    "CashFlowsFromUsedInFinancingActivities": 436.89,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 436.89,
+    "CashFlowsFromUsedInInvestingActivities": -276.49,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -276.49,
+    "CashFlowsFromUsedInOperatingActivities": -130.05,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -130.05,
+    "CashFlowsFromUsedInOperations": -15.59,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1.45,
+    "IncreaseDecreaseInCashAndCashEquivalents": 30.35,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 30.35,
+    "InterestPaidClassifiedAsFinancingActivities": 11.78,
+    "InterestPaidClassifiedAsOperatingActivities": -11.78,
+    "InterestReceivedClassifiedAsInvestingActivities": 113.52,
+    "InterestReceivedClassifiedAsOperatingActivities": -128.41,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 640.76,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 566.14,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.78,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -276.9,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 3.62,
+    "PaymentForAuditServices": 0.75,
+    "PaymentForOtherServices": 0.53,
+    "PaymentForReimbursementOfExpenses": 0.03,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 23.73,
+    "PaymentsToAuditor": 1.31,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 471.62,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.78,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 39.27
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -49.51,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -9.55,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -8.31,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 33.25,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.16,
+    "AdjustmentsForFinanceCosts": 6.39,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 12.42,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 54.23,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 62.94,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 2.53,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 34.81,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 6.96,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 116.83,
+    "AdjustmentsForSharebasedPayments": 94.19,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 121.31,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -20.74,
+    "CashFlowsFromUsedInInvestingActivities": 158.04,
+    "CashFlowsFromUsedInOperatingActivities": -135.95,
+    "CashFlowsFromUsedInOperations": -129.37,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.27,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.58,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1.62,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1.35,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 78.95,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 2.2,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 111.45,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 22.8,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 2.06,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.03,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 32.39,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -36.08,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -3.41,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -6.52,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 31.88,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.16,
+    "AdjustmentsForFinanceCosts": 6.2,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 11.53,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 50.84,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 62.57,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -6.92,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 23.45,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 6.22,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 97.97,
+    "AdjustmentsForSharebasedPayments": 87.24,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 20.89,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -19.73,
+    "CashFlowsFromUsedInInvestingActivities": 158.6,
+    "CashFlowsFromUsedInOperatingActivities": -164.89,
+    "CashFlowsFromUsedInOperations": -158.34,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.55,
+    "IncreaseDecreaseInCashAndCashEquivalents": -26.02,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -26.02,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 78.69,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -4.05,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 111.45,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 21.79,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 2.06,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.03,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 31.57,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Urban Company Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 116.69,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "Claims against the Group not acknowledged as debts & GST Demands - matters under dispute"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 1,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "total_cr": 116.69
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 116.14,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "Claims against the Company not acknowledged as debts"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 1,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 116.14
+  }
+ ],
  "deals": [
   {
    "amount_cr": 2500.0,
@@ -475,6 +1300,188 @@
    "tranches": [],
    "updated_as_of": "2026-10-17T19:30:27+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
   }
  ],
  "financial_metrics": [
@@ -9555,6 +10562,71 @@
   ]
  },
  "industry": "Consumer Discretionary > Consumer Services > Retailing > E-Retail/ E-Commerce",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 9,
+   "people": [
+    {
+     "designation": "CFO",
+     "name": "ABHAY KRISHNA MATHUR",
+     "pay_cr": 2.5
+    },
+    {
+     "designation": "Whole Time Director",
+     "name": "RAGHAV CHANDRA",
+     "pay_cr": 2.0
+    },
+    {
+     "designation": "Whole Time Director",
+     "name": "VARUN KHAITAN",
+     "pay_cr": 2.0
+    },
+    {
+     "designation": "Managing Director",
+     "name": "ABHIRAJ SINGH BHAL",
+     "pay_cr": 2.0
+    },
+    {
+     "designation": "Independent Director",
+     "name": "SHYAMAL MUKHERJEE",
+     "pay_cr": 0.96
+    },
+    {
+     "designation": "Independent Director",
+     "name": "IREENA VITTAL",
+     "pay_cr": 0.94
+    },
+    {
+     "designation": "Independent Director",
+     "name": "RAJESH GOPINATHAN",
+     "pay_cr": 0.93
+    },
+    {
+     "designation": "Independent Director",
+     "name": "ASHISH GUPTA",
+     "pay_cr": 0.84
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "SONALI SINGH",
+     "pay_cr": 0.77
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "last_filed_at": "2026-10-23T20:35:40+05:30",
  "market_deals": {
   "events": [
@@ -9644,6 +10716,334 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.36,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.25,
+     "description": "exchange Difference on Translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.36,
+    "oci_net_cr": 0.61,
+    "profit_cr": -59.33,
+    "reclassified_cr": 0.25,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -58.72
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.32,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.32,
+    "oci_net_cr": 0.32,
+    "profit_cr": -49.29,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -48.97
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.34,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.6,
+     "description": "Exchange difference on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.34,
+    "oci_net_cr": 0.94,
+    "profit_cr": -21.26,
+    "reclassified_cr": 0.6,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -20.32
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.31,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.31,
+    "oci_net_cr": 0.31,
+    "profit_cr": -15.35,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -15.04
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.34,
+     "description": "Remeasurement of defined beneift plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 1.13,
+     "description": "Exchange difference on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.34,
+    "oci_net_cr": 1.98,
+    "profit_cr": -161.16,
+    "reclassified_cr": 1.13,
+    "tax_not_reclassified_cr": -1.19,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -159.18
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.13,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.13,
+    "oci_net_cr": 1.06,
+    "profit_cr": -155.74,
+    "tax_not_reclassified_cr": -1.19,
+    "total_comprehensive_cr": -154.68
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.21,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 5.03,
+     "description": "Exchange difference on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.21,
+    "oci_net_cr": 5.24,
+    "profit_cr": -92.12,
+    "reclassified_cr": 5.03,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -86.88
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.21,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.21,
+    "oci_net_cr": 0.21,
+    "profit_cr": -84.28,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -84.07
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.99,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.11,
+     "description": "Exchange difference on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.99,
+    "oci_net_cr": 1.1,
+    "profit_cr": -182.48,
+    "reclassified_cr": 0.11,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -181.38
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.77,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.77,
+    "oci_net_cr": 0.77,
+    "profit_cr": -187.55,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -186.78
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-05T16:47:08+05:30",
@@ -10014,6 +11414,1269 @@
    "value": -144.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 143.97,
+     "approved_cr": 268.85,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Collection received on behalf of subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 19.74,
+     "approved_cr": 42.35,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Payment made on behalf of subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.63,
+     "approved_cr": 6.33,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-01",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 11.0
+     },
+     "other_details": "Purchase of training and safety material from the subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.58,
+     "approved_cr": 6.5,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, DMCC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty income received from step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.97,
+     "approved_cr": 5.52,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, DMCC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses recovered from step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.71,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-08-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.71
+     },
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.4,
+     "approved_cr": 3.63,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty income received from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.35,
+     "approved_cr": 3.3,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty income received from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.33,
+     "approved_cr": 2.17,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses recovered from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.23,
+     "approved_cr": 3.01,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses paid by subsidiary on behalf of holding company",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.19,
+     "approved_cr": 3.22,
+     "closing_cr": 0.0,
+     "counterparty": "Company Waed Khadmat Al-Munzal For Marketing",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty income received from joint venture of Subsidiary",
+     "relationship": "Joint Venture of Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.15,
+     "approved_cr": 3.18,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, DMCC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Business support services provided to step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.08,
+     "approved_cr": 2.78,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Investment in subsidiary on account of ESOP",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.98,
+     "approved_cr": 3.22,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Investment in subsidiary on account of ESOP",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.91,
+     "approved_cr": 2.31,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Business support services provided to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.56,
+     "approved_cr": 1.91,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Business support services provided to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.55,
+     "approved_cr": 2.22,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses recovered from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.42,
+     "approved_cr": 0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-01",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.6
+     },
+     "other_details": "Payment made to subsidiary on account of transfer of employee benefit obligation",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.37,
+     "approved_cr": 9.03,
+     "closing_cr": 0.0,
+     "counterparty": "Company Waed Khadmat Al-Munzal For Marketing",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses recovered from joint venture of Subsidiary",
+     "relationship": "Joint Venture of Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.09,
+     "approved_cr": 3.53,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, DMCC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Investment in step-down subsidiary on account of ESOP",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.02,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Brand royalty paid to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 55.0,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.7,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Company Arabia for Information Technology",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Investments written off in step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 24,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 1,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.84
+     },
+     "party": "ASHISH GUPTA"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 1,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.84
+     },
+     "party": "ASHISH GUPTA"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 298.29,
+     "approved_cr": 298.29,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Collection received on behalf of subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 39.16,
+     "approved_cr": 42.35,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Payment made on behalf of subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.43,
+     "approved_cr": 55.0,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 10.07,
+     "approved_cr": 11.0,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Purchase of training and safety material from the subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.99,
+     "approved_cr": 6.5,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Royalty income received from step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.44,
+     "approved_cr": 5.44,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in step-down subsidiary on account of ESOP",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.39,
+     "approved_cr": 5.52,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Expenses recovered from subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.48,
+     "approved_cr": 3.48,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in subsidiary on account of ESOP",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.28,
+     "approved_cr": 3.28,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in subsidiary on account of ESOP",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.23,
+     "approved_cr": 3.3,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Royalty income received from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.1,
+     "approved_cr": 3.63,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Royalty income received from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.06,
+     "approved_cr": 3.22,
+     "closing_cr": 0.0,
+     "counterparty": "Company Waed Khadmat Al-Munzal For Marketing",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty income received from joint venture of Subsidiary",
+     "relationship": "Joint Venture of Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.06,
+     "approved_cr": 3.06,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Expenses recovered from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.76,
+     "approved_cr": 3.18,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Business support services provided to step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.63,
+     "approved_cr": 2.63,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Salary paid on behalf of subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.49,
+     "approved_cr": 3.01,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Expenses paid by subsidiary on behalf of holding company",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.09,
+     "approved_cr": 2.31,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Business support services provided to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.83,
+     "approved_cr": 1.83,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.41,
+     "approved_cr": 1.41,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Liquidation expenses of subsidiary paid on behalf of Holding Company by subsidiary company",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.35,
+     "approved_cr": 2.22,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Expenses recovered from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.15,
+     "approved_cr": 1.91,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Business support services provided to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.45,
+     "approved_cr": 0.45,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Transfer of fixed assets",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4,
+     "approved_cr": 0.6,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Payment made to subsidiary on account of transfer of employee benefit obligation",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.36,
+     "approved_cr": 9.03,
+     "closing_cr": 0.0,
+     "counterparty": "Company Waed Khadmat Al-Munzal For Marketing",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses recovered from joint venture of subsidiary",
+     "relationship": "Joint Venture of Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.11,
+     "approved_cr": 0.11,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Expenses incurred for Interim FS prepared for IPO and  paid by step-down subsidiary on behalf of ultimate holding company",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.03,
+     "approved_cr": 0.03,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Company Technologies Onshore LLC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in step-down subsidiary on account of ESOP",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies, FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Transfer of fixed assets",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.02,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Brand royalty paid to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.7,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Company Arabia for Information Technology",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investments written off in step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 30,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 190.1,
+     "approved_cr": 190.1,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Collections received on behalf of subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.12,
+     "approved_cr": 20.12,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Payment made on behalf of subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.21,
+     "approved_cr": 7.21,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Purchase of training and safety material from the subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.99,
+     "approved_cr": 6.99,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Reimbursements paid on behalf of subsidiaries, step-down subsidiaries & joint venture",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.01,
+     "approved_cr": 4.01,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Royalty income received from step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.01,
+     "approved_cr": 3.01,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in subsidiaries & step-down subsidiaries on account of grant of ESOP",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.98,
+     "approved_cr": 15.0,
+     "closing_cr": 0.0,
+     "counterparty": "Company Waed Khadmat Al-Munzal For Marketing",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty income received from joint venture",
+     "relationship": "Joint Venture of Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.58,
+     "approved_cr": 2.58,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Royalty income received from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.33,
+     "approved_cr": 2.33,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Reimbursements paid on behalf of subsidiaries, step-down subsidiaries & joint venture",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.11,
+     "approved_cr": 2.11,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Royalty income received from subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.1,
+     "approved_cr": 2.1,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in subsidiaries & step-down subsidiaries on account of grant of ESOP",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.04,
+     "approved_cr": 2.04,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Expenses paid by subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.83,
+     "approved_cr": 1.83,
+     "closing_cr": 0.0,
+     "counterparty": "Urbanclap Technologies FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Business support services provided to step-down subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.73,
+     "approved_cr": 1.73,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in subsidiaries & step-down subsidiaries on account of grant of ESOP",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.27,
+     "approved_cr": 1.27,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Expenses paid by subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.16,
+     "approved_cr": 1.16,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Reimbursements paid on behalf of subsidiaries, step-down subsidiaries & joint venture",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.08,
+     "approved_cr": 1.08,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Business support services provided to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.55,
+     "approved_cr": 0.55,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Business support services provided to subsidiary",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.37,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "Company Waed Khadmat Al-Munzal For Marketing",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses recovered from joint venture",
+     "relationship": "Joint Venture of Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1,
+     "approved_cr": 0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Company Technologies Onshore LLC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Investment in subsidiaries & step-down subsidiaries on account of grant of ESOP",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.08,
+     "approved_cr": 0.08,
+     "closing_cr": 0.0,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Payment received from subsidiary on account employee benefit obligation",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.02,
+     "approved_cr": 0.02,
+     "closing_cr": 0.0,
+     "counterparty": "Urban Essentials General Trading LLC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Note for column K Audit Committee approval is not required in case of any of the following a transaction between Urban Company Limited and its wholly owned subsidiary b transaction between two wholly owned subsidiaries of Urban Company Limited and c transaction not exceeding 10% of annual standalone"
+     },
+     "other_details": "Business support services provided to subsidiary",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 2.53,
+     "counterparty": "Company Waed Khadmat Al-Munzal For Marketing",
+     "entity": "Urban Company Limited",
+     "opening_cr": 1.57,
+     "other_details": "Other financial assets",
+     "relationship": "Joint Venture of Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.02,
+     "counterparty": "Urban Essentials General Trading LLC",
+     "entity": "Urban Company Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other financial assets",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 4.04,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 1.7,
+     "other_details": "Other financial assets",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 8.17,
+     "counterparty": "Urbanclap Technologies FZCO",
+     "entity": "Urban Company Limited",
+     "opening_cr": 3.92,
+     "other_details": "Other financial assets",
+     "relationship": "Step-down Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 2.04,
+     "counterparty": "Urban Home Experts PTE LTD",
+     "entity": "Urban Company Limited",
+     "opening_cr": 1.32,
+     "other_details": "Other financial liabilities",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 8.27,
+     "counterparty": "Handy Home Solutions Private Limited",
+     "entity": "Urban Company Limited",
+     "opening_cr": 11.44,
+     "other_details": "Other financial liabilities",
+     "relationship": "Subsidiary of Urban Company Limited",
+     "remarks": "No comments",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 28,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544515",
  "section_lab": {
@@ -10088,160 +12751,364 @@
    "source_news_id": "nse-106656352"
   },
   {
-   "as_of": "2026-08-02T16:58:27+05:30",
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-08-02T16:58:27+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q1FY27",
-   "revenue_cr": 1056.0,
-   "segment": "India Consumer Services (ex-InstaHelp)",
-   "share_pct": null,
-   "source_news_id": "nse-106721258"
+   "pbit_cr": 10.13,
+   "period": "Q2FY26",
+   "revenue_cr": 262.0,
+   "segment": "India consumer services (excluding Insta Help)",
+   "share_pct": 68.9,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
   },
   {
-   "as_of": "2026-08-02T16:58:27+05:30",
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-08-02T16:58:27+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q1FY27",
-   "revenue_cr": 237.0,
-   "segment": "International",
-   "share_pct": null,
-   "source_news_id": "nse-106721258"
-  },
-  {
-   "as_of": "2026-08-02T16:58:27+05:30",
-   "lab": {
-    "at": "2026-08-02T16:58:27+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": 119.0,
+   "pbit_cr": -10.94,
+   "period": "Q2FY26",
+   "revenue_cr": 75.41,
    "segment": "Native",
-   "share_pct": null,
-   "source_news_id": "nse-106721258"
+   "share_pct": 19.8,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
   },
   {
-   "as_of": "2026-10-16T16:07:15+05:30",
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-16T16:07:15+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 963.0,
-   "segment": "India Consumer Services (Ex InstaHelp) NTV",
-   "share_pct": null,
-   "source_news_id": "nse-106820192"
+   "pbit_cr": 0.43,
+   "period": "Q2FY26",
+   "revenue_cr": 41.19,
+   "segment": "International business",
+   "share_pct": 10.8,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
   },
   {
-   "as_of": "2026-10-16T16:07:15+05:30",
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-16T16:07:15+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 267.0,
-   "segment": "International NTV",
-   "share_pct": null,
-   "source_news_id": "nse-106820192"
+   "pbit_cr": -42.91,
+   "period": "Q2FY26",
+   "revenue_cr": 1.43,
+   "segment": "Insta Help",
+   "share_pct": 0.4,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
   },
   {
-   "as_of": "2026-10-16T16:07:15+05:30",
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-16T16:07:15+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 132.0,
-   "segment": "Native NTV",
-   "share_pct": null,
-   "source_news_id": "nse-106820192"
+   "pbit_cr": 52.15,
+   "period": "Q3FY26",
+   "revenue_cr": 264.54,
+   "segment": "India consumer services (excluding InstaHelp)",
+   "share_pct": 69.1,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
   },
   {
-   "as_of": "2026-10-16T16:07:15+05:30",
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-16T16:07:15+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 71.0,
-   "segment": "InstaHelp NTV",
-   "share_pct": null,
-   "source_news_id": "nse-106820192"
-  },
-  {
-   "as_of": "2026-10-16T16:07:15+05:30",
-   "lab": {
-    "at": "2026-10-16T16:07:15+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q2FY27",
-   "revenue_cr": 93.0,
-   "segment": "KSA JV NTV",
-   "share_pct": null,
-   "source_news_id": "nse-106820192"
-  },
-  {
-   "as_of": "2026-10-16T16:11:31+05:30",
-   "lab": {
-    "at": "2026-10-16T16:11:31+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q2FY27",
-   "revenue_cr": 963.0,
-   "segment": "India Consumer Services (Ex InstaHelp)",
-   "share_pct": null,
-   "source_news_id": "nse-106820204"
-  },
-  {
-   "as_of": "2026-10-16T16:11:31+05:30",
-   "lab": {
-    "at": "2026-10-16T16:11:31+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q2FY27",
-   "revenue_cr": 267.0,
-   "segment": "International",
-   "share_pct": null,
-   "source_news_id": "nse-106820204"
-  },
-  {
-   "as_of": "2026-10-16T16:11:31+05:30",
-   "lab": {
-    "at": "2026-10-16T16:11:31+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q2FY27",
-   "revenue_cr": 132.0,
+   "pbit_cr": -3.48,
+   "period": "Q3FY26",
+   "revenue_cr": 61.77,
    "segment": "Native",
-   "share_pct": null,
-   "source_news_id": "nse-106820204"
+   "share_pct": 16.1,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
   },
   {
-   "as_of": "2026-10-16T16:11:31+05:30",
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-16T16:11:31+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 71.0,
+   "pbit_cr": 4.36,
+   "period": "Q3FY26",
+   "revenue_cr": 49.58,
+   "segment": "International business",
+   "share_pct": 13.0,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -60.91,
+   "period": "Q3FY26",
+   "revenue_cr": 6.79,
    "segment": "InstaHelp",
-   "share_pct": null,
-   "source_news_id": "nse-106820204"
+   "share_pct": 1.8,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 35.64,
+   "period": "Q4FY26",
+   "revenue_cr": 288.47,
+   "segment": "India consumer services (excluding InstaHelp)",
+   "share_pct": 67.8,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -8.06,
+   "period": "Q4FY26",
+   "revenue_cr": 70.22,
+   "segment": "Native",
+   "share_pct": 16.5,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 4.72,
+   "period": "Q4FY26",
+   "revenue_cr": 57.93,
+   "segment": "International business",
+   "share_pct": 13.6,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -118.73,
+   "period": "Q4FY26",
+   "revenue_cr": 8.94,
+   "segment": "InstaHelp",
+   "share_pct": 2.1,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 82.02,
+   "period": "Q1FY27",
+   "revenue_cr": 356.42,
+   "segment": "India consumer services (excluding InstaHelp)",
+   "share_pct": 67.5,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -7.75,
+   "period": "Q1FY27",
+   "revenue_cr": 95.28,
+   "segment": "Native",
+   "share_pct": 18.0,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 3.16,
+   "period": "Q1FY27",
+   "revenue_cr": 65.42,
+   "segment": "International business",
+   "share_pct": 12.4,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -131.58,
+   "period": "Q1FY27",
+   "revenue_cr": 11.22,
+   "segment": "InstaHelp",
+   "share_pct": 2.1,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 43.39,
+   "period": "Q2FY27",
+   "revenue_cr": 336.38,
+   "segment": "India consumer services (excluding InstaHelp)",
+   "share_pct": 62.6,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -7.95,
+   "period": "Q2FY27",
+   "revenue_cr": 105.37,
+   "segment": "Native",
+   "share_pct": 19.6,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 5.74,
+   "period": "Q2FY27",
+   "revenue_cr": 75.0,
+   "segment": "International business",
+   "share_pct": 14.0,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -173.12,
+   "period": "Q2FY27",
+   "revenue_cr": 20.54,
+   "segment": "InstaHelp",
+   "share_pct": 3.8,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
   }
  ],
  "standalone": {
@@ -14762,6 +17629,790 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 119.9,
+    "CWIP": 0,
+    "Equity Capital": 49.359455,
+    "Fixed Assets": 126.97,
+    "Investments": 1091.06,
+    "Other Assets": 982.6100000000001,
+    "Other Liabilities": 284.92054500000006,
+    "Reserves": 1746.46,
+    "Total Assets": 2200.64,
+    "Total Liabilities": 2200.64
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Associates' share": -8.65,
+    "Depreciation": 37.0,
+    "Expenses": 1184.4,
+    "Interest": 10.97,
+    "Net Profit": 239.76,
+    "Net Profit (owners)": 239.76,
+    "OPM %": -3.4889512175941757,
+    "Operating Profit": -39.930000000000064,
+    "Other Income": 116.45000000000007,
+    "PBT as filed": 37.2,
+    "Profit before tax": 28.550000000000004,
+    "Sales": 1144.47,
+    "Tax": -211.21,
+    "Tax %": -739.7898423817862
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 163.88,
+    "Cash from Investing Activity": -199.5,
+    "Cash from Operating Activity": 54.56,
+    "Net Cash Flow": 18.94
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 118.98,
+    "CWIP": 0,
+    "Equity Capital": 49.359455,
+    "Fixed Assets": 124.88,
+    "Investments": 1573.42,
+    "Other Assets": 887.77,
+    "Other Liabilities": 215.99054500000057,
+    "Reserves": 2201.74,
+    "Total Assets": 2586.07,
+    "Total Liabilities": 2586.07
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 32.35,
+    "Expenses": 788.65,
+    "Interest": 10.5,
+    "Net Profit": 290.02,
+    "Net Profit (owners)": 290.02,
+    "OPM %": -0.7769273036277812,
+    "Operating Profit": -6.079999999999927,
+    "Other Income": 127.73999999999992,
+    "Profit before tax": 78.81,
+    "Sales": 782.57,
+    "Tax": -211.21,
+    "Tax %": -267.99898490039334
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 166.89,
+    "Cash from Investing Activity": -259.95,
+    "Cash from Operating Activity": 96.59,
+    "Net Cash Flow": 3.53
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 0,
+    "Equity Capital": 143.59,
+    "Fixed Assets": 24.029999999999998,
+    "Investments": 1106.62,
+    "Other Assets": 1678.0299999999997,
+    "Other Liabilities": 543.5899999999997,
+    "Reserves": 2121.5,
+    "Total Assets": 2808.68,
+    "Total Liabilities": 2808.68
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 10.05,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 342.75,
+    "Interest": 2.92,
+    "Net Profit": -49.29,
+    "Net Profit (owners)": -49.29,
+    "OPM %": -27.09978863054844,
+    "Operating Profit": -73.07999999999998,
+    "Other Income": 36.75999999999999,
+    "Profit before tax": -49.29,
+    "Profit for PE": -49.29,
+    "Sales": 269.67,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 0,
+    "Equity Capital": 143.59,
+    "Fixed Assets": 22.659999999999997,
+    "Investments": 1590.94,
+    "Other Assets": 1581.0900000000001,
+    "Other Liabilities": 446.8600000000001,
+    "Reserves": 2604.24,
+    "Total Assets": 3194.69,
+    "Total Liabilities": 3194.69
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": -10.26,
+    "Associates' share outside PBT": -10.26,
+    "Depreciation": 10.41,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 448.39,
+    "Interest": 2.93,
+    "Net Profit": -59.33,
+    "Net Profit (owners)": -59.33,
+    "OPM %": -17.988053574717792,
+    "Operating Profit": -68.36000000000001,
+    "Other Income": 32.63000000000002,
+    "Profit before tax": -49.07,
+    "Profit for PE": -59.33,
+    "Sales": 380.03,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.06,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 303.54999999999995,
+    "Interest": 2.98,
+    "Net Profit": -15.35,
+    "Net Profit (owners)": -15.35,
+    "OPM %": -16.17804654011022,
+    "Operating Profit": -42.26999999999998,
+    "Other Income": 40.95999999999998,
+    "Profit before tax": -15.35,
+    "Profit for PE": -15.35,
+    "Sales": 261.28,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": -7.0,
+    "Associates' share outside PBT": -7.0,
+    "Depreciation": 11.73,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 417.98999999999995,
+    "Interest": 3.11,
+    "Net Profit": -21.26,
+    "Net Profit (owners)": -21.26,
+    "OPM %": -9.227030417058625,
+    "Operating Profit": -35.309999999999945,
+    "Other Income": 36.099999999999945,
+    "Profit before tax": -14.05,
+    "Profit for PE": -21.26,
+    "Sales": 382.68,
+    "Tax": 0.21,
+    "Tax %": 1.494661921708185
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 135.79,
+    "CWIP": 0,
+    "Equity Capital": 146.2180603,
+    "Fixed Assets": 158.42,
+    "Investments": 1261.85,
+    "Other Assets": 1282.04,
+    "Other Liabilities": 422.93193969999993,
+    "Reserves": 1997.37,
+    "Total Assets": 2702.31,
+    "Total Liabilities": 2702.31
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": -31.17,
+    "Depreciation": 45.21,
+    "Expenses": 1809.27,
+    "Interest": 12.4,
+    "Net Profit": -234.81,
+    "Net Profit (owners)": -234.81,
+    "OPM %": -16.311377399488283,
+    "Operating Profit": -253.73000000000002,
+    "Other Income": 136.74,
+    "PBT as filed": -143.43,
+    "Profit before tax": -174.60000000000002,
+    "Sales": 1555.54,
+    "Tax": 60.21,
+    "Tax %": 34.48453608247422
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 434.88,
+    "Cash from Investing Activity": -277.65999999999997,
+    "Cash from Operating Activity": -98.63,
+    "Net Cash Flow": 58.59
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 13.07,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 400.88000000000005,
+    "Interest": 3.21,
+    "Net Profit": -155.74,
+    "Net Profit (owners)": -155.74,
+    "OPM %": -42.29731648445265,
+    "Operating Profit": -119.16000000000003,
+    "Other Income": 41.21000000000002,
+    "Profit before tax": -94.23,
+    "Profit for PE": -155.74,
+    "Sales": 281.72,
+    "Tax": 61.51,
+    "Tax %": 65.27645123633663
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 131.4,
+    "CWIP": 0,
+    "Equity Capital": 146.2180603,
+    "Fixed Assets": 151.69,
+    "Investments": 1776.85,
+    "Other Assets": 1134.4700000000003,
+    "Other Liabilities": 295.4819397000002,
+    "Reserves": 2489.91,
+    "Total Assets": 3063.01,
+    "Total Liabilities": 3063.01
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 42.91,
+    "Expenses": 1315.7499999999998,
+    "Interest": 11.959999999999999,
+    "Net Profit": -195.37,
+    "Net Profit (owners)": -195.37,
+    "OPM %": -21.691237675958615,
+    "Operating Profit": -234.52999999999975,
+    "Other Income": 154.23999999999972,
+    "Profit before tax": -135.16,
+    "Sales": 1081.22,
+    "Tax": 60.21,
+    "Tax %": 44.547203314590114
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 436.89,
+    "Cash from Investing Activity": -276.49,
+    "Cash from Operating Activity": -130.05,
+    "Net Cash Flow": 30.35
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": -5.31,
+    "Associates' share outside PBT": -5.31,
+    "Depreciation": 13.57,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 540.0,
+    "Interest": 3.28,
+    "Net Profit": -161.16,
+    "Net Profit (owners)": -161.16,
+    "OPM %": -26.89162515273992,
+    "Operating Profit": -114.44,
+    "Other Income": 36.74000000000001,
+    "Profit before tax": -94.55,
+    "Profit for PE": -161.16,
+    "Sales": 425.56,
+    "Tax": 61.3,
+    "Tax %": 64.83342147012164
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": -4.77,
+    "Depreciation": 15.79,
+    "Exceptional items": -5.27,
+    "Exceptional items AT": -5.796685373134328,
+    "Expenses": 625.75,
+    "Interest": 3.11,
+    "Net Profit": -92.12,
+    "Net Profit (owners)": -92.12,
+    "OPM %": -18.43699133133966,
+    "Operating Profit": -97.40999999999997,
+    "Other Income": 32.55999999999996,
+    "PBT as filed": -78.98,
+    "Profit before tax": -83.75,
+    "Profit for PE": -86.32331462686568,
+    "Sales": 528.34,
+    "Tax": 8.37,
+    "Tax %": 9.994029850746267
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 15.09,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 476.51000000000005,
+    "Interest": 3.01,
+    "Net Profit": -84.28,
+    "Net Profit (owners)": -84.28,
+    "OPM %": -26.886616605421533,
+    "Operating Profit": -100.97000000000003,
+    "Other Income": 43.16000000000003,
+    "Profit before tax": -75.91,
+    "Profit for PE": -84.28,
+    "Sales": 375.54,
+    "Tax": 8.37,
+    "Tax %": 11.026215254907125
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 0,
+    "Equity Capital": 148.28,
+    "Fixed Assets": 54.83,
+    "Investments": 1254.32,
+    "Other Assets": 1344.8,
+    "Other Liabilities": 674.1099999999997,
+    "Reserves": 1831.56,
+    "Total Assets": 2653.95,
+    "Total Liabilities": 2653.95
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 16.79,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 568.9,
+    "Interest": 3.19,
+    "Net Profit": -187.55,
+    "Net Profit (owners)": -187.55,
+    "OPM %": -54.815359076931436,
+    "Operating Profit": -201.42999999999995,
+    "Other Income": 41.009999999999934,
+    "Profit before tax": -180.4,
+    "Profit for PE": -187.55,
+    "Sales": 367.47,
+    "Tax": 7.15,
+    "Tax %": 3.9634146341463414
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 0.0,
+    "CWIP": 0,
+    "Equity Capital": 148.28,
+    "Fixed Assets": 52.45,
+    "Investments": 1776.27,
+    "Other Assets": 1154.9700000000003,
+    "Other Liabilities": 513.8999999999996,
+    "Reserves": 2321.51,
+    "Total Assets": 2983.69,
+    "Total Liabilities": 2983.69
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": -8.07,
+    "Associates' share outside PBT": -8.07,
+    "Depreciation": 17.46,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 724.93,
+    "Interest": 3.28,
+    "Minority share": 0.0,
+    "Net Profit": -182.48,
+    "Net Profit (owners)": -182.48,
+    "OPM %": -34.923411937687284,
+    "Operating Profit": -187.64,
+    "Other Income": 41.16,
+    "Profit before tax": -167.22,
+    "Profit for PE": -182.48,
+    "Sales": 537.29,
+    "Tax": 7.19,
+    "Tax %": 4.299724913287884
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  }
+ ],
  "symbol": "URBANCO",
  "timeline": [
   {

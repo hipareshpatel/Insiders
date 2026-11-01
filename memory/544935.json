@@ -7,7 +7,127 @@
  "financial_metrics": [],
  "governance": {
   "auditor": null,
-  "auditor_history": []
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-28T16:49:14+05:30",
+    "board": [
+     {
+      "appointed": "2025-04-02",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Abhishek Jindal",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-08-27",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Madan Gopal Babbar",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-09-26",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sonam Jindal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-09-29",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Abhiram Tayal",
+      "role": null,
+      "tenure_months": 12.02
+     },
+     {
+      "appointed": "2025-09-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Vijay Kaushik",
+      "role": null,
+      "tenure_months": 12.08
+     },
+     {
+      "appointed": "2026-07-20",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "CHIRANJI LAL AGGARWAL",
+      "role": null,
+      "tenure_months": 2.11
+     },
+     {
+      "appointed": "2025-09-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": "2026-07-17",
+      "cessation_reason": "Others",
+      "name": "Kuldip Bhargava",
+      "role": null,
+      "tenure_months": 9.24
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "CHIRANJI LAL AGGARWAL",
+      "Vijay Kaushik",
+      "Sonam Jindal"
+     ],
+     "corporate social responsibility committee": [
+      "CHIRANJI LAL AGGARWAL",
+      "Sonam Jindal",
+      "Abhishek Jindal"
+     ],
+     "nomination and remuneration committee": [
+      "CHIRANJI LAL AGGARWAL",
+      "Sonam Jindal",
+      "Vijay Kaushik"
+     ],
+     "stakeholders relationship committee": [
+      "CHIRANJI LAL AGGARWAL",
+      "Vijay Kaushik",
+      "Sonam Jindal"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 2.0,
+     "received": 2.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 41.0,
+     "board": 30.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1747795_28102026044935_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
  },
  "guidance": [],
  "identity": {
@@ -16,6 +136,322 @@
  },
  "industry": "Industrials > Capital Goods > Industrial Products > Iron & Steel Products",
  "last_filed_at": "2026-10-17T05:03:32+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "ANUBHAV PODDAR",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 120.0,
+    "qty": 525000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 6.3
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "INTELICORP BUSINESS CONSULTANTS",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 120.0,
+    "qty": 315000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 3.78
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "KESHAV CASTING PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 120.0,
+    "qty": 300000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 3.6
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "NEOMILE GROWTH FUND - SERIES I",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 120.0,
+    "qty": 700000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 8.4
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "NEOMILE GROWTH FUND - SERIES I",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 138.91,
+    "qty": 700000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 9.72
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ASHWIN STOCKS AND INVESTMENT PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 194.32,
+    "qty": 229374.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 4.46
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ASHWIN STOCKS AND INVESTMENT PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 194.12,
+    "qty": 310374.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 6.02
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 195.0,
+    "qty": 282349.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 5.51
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 194.66,
+    "qty": 282941.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 5.51
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 188.09,
+    "qty": 235418.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 4.43
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 190.15,
+    "qty": 260875.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 4.96
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 198.6,
+    "qty": 235522.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 4.68
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 192.43,
+    "qty": 307666.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 5.92
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 211.2,
+    "qty": 347448.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 7.34
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 210.91,
+    "qty": 367062.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 7.74
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 203.91,
+    "qty": 189117.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 3.86
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 211.48,
+    "qty": 264708.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 5.6
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 193.95,
+    "qty": 329606.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 6.39
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 193.58,
+    "qty": 330846.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 6.4
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 167.17,
+    "qty": 115456.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 1.93
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 165.13,
+    "qty": 273926.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 4.52
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "SSPL SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 170.42,
+    "qty": 429363.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 7.32
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "APRP VENTURES LLP",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 149.85,
+    "qty": 297232.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 4.45
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "CRAFT EMERGING MARKET FUND PCC-CITADEL CAPITAL FUND",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 150.0,
+    "qty": 537659.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "JSIPL",
+    "value_cr": 8.06
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "NEOMILE GROWTH FUND-SERIES I",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 149.94,
+    "qty": 1079995.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 16.19
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "POORVI MARG PRIVATE LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 150.0,
+    "qty": 300000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "JSIPL",
+    "value_cr": 4.5
+   }
+  ]
+ },
  "operating_notes": [],
  "ownership": [
   {
@@ -72,6 +508,18 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "544935",
+ "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-28T16:49:14+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:43:34+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "metals",
  "segment_mix": [],
  "symbol": "JSIPL",

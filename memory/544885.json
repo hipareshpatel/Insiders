@@ -1,4 +1,40 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-09-17T17:01:50+05:30",
@@ -91,6 +127,44 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 5
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-10T18:00:00+05:30",
@@ -870,7 +944,415 @@
   "former_names": []
  },
  "industry": "Financial Services > Capital Markets > Asset Management Company",
- "last_filed_at": "2026-10-12T04:50:33+05:30",
+ "last_filed_at": "2026-10-28T19:46:48+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 174.19,
+    "qty": 803417.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 13.99
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 174.67,
+    "qty": 808917.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 14.13
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 175.94,
+    "qty": 893454.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 15.72
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 175.6,
+    "qty": 946454.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 16.62
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 175.35,
+    "qty": 1127623.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 19.77
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 175.34,
+    "qty": 1127623.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 19.77
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 178.43,
+    "qty": 1514533.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 27.02
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 178.34,
+    "qty": 1514533.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 27.01
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "INVESCO MUTUAL FUND",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 185.0,
+    "qty": 950000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 17.57
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "INVESCO MUTUAL FUND",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 174.5,
+    "qty": 1145049.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 19.98
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "INVESCO MUTUAL FUND",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 185.0,
+    "qty": 6500000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 120.25
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 177.81,
+    "qty": 1235165.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 21.96
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 177.55,
+    "qty": 1782452.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 31.65
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 173.81,
+    "qty": 829301.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 14.41
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 173.55,
+    "qty": 829301.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 14.39
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 176.77,
+    "qty": 1186569.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 20.97
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 176.51,
+    "qty": 1197940.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 21.14
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 174.06,
+    "qty": 1387745.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 24.16
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 176.46,
+    "qty": 1387745.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 24.49
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 172.35,
+    "qty": 919600.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 15.85
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 172.16,
+    "qty": 919600.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 15.83
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 179.04,
+    "qty": 2272405.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 40.69
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 179.11,
+    "qty": 2272405.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 40.7
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 180.62,
+    "qty": 1219782.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 22.03
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 180.37,
+    "qty": 1219782.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 22.0
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 162.48,
+    "qty": 888213.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GAJA",
+    "value_cr": 14.43
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 162.34,
+    "qty": 888213.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GAJA",
+    "value_cr": 14.42
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.1472,
+     "description": "Remeasurement of post-employment benefit obligations",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.0429,
+     "description": "Tax impact on above",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.1395,
+     "description": "Exchange differences in translating the financial\nstatemengt of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.1043,
+    "oci_net_cr": -0.2438,
+    "profit_cr": 27.2153,
+    "reclassified_cr": -0.1395,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 26.9715,
+    "total_comprehensive_nci_cr": 0.3935,
+    "total_comprehensive_owners_cr": 26.578
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.1472,
+     "description": "Remeasurement of post-employment benefit obligations",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.0429,
+     "description": "Tax impact on above",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.1043,
+    "oci_net_cr": -0.1043,
+    "profit_cr": 14.0119,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 13.9076
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-17T17:01:50+05:30",
@@ -973,10 +1455,32 @@
    "at": "2026-10-16T10:40:48+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:34:30+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "nbfc",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "The Company is primarily engaged in managing and advising funds including Domestic Venture Capital Funds (DVCFs) and Alternative Investment Funds (AIFs) including offshore funds, which provide capital to companies in India.",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1434,6 +1938,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.893,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 17.696,
+    "Interest": 1.3101,
+    "Minority share": 0.3935,
+    "Net Profit": 27.2153,
+    "Net Profit (owners)": 26.8218,
+    "OPM %": -13.17327739476344,
+    "Operating Profit": -2.059800000000001,
+    "Other Income": 36.192,
+    "Profit before tax": 31.9291,
+    "Profit for PE": 26.8218,
+    "Sales": 15.6362,
+    "Tax": 4.7138,
+    "Tax %": 14.763335014140706
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.893,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 14.255,
+    "Interest": 1.3087,
+    "Net Profit": 14.0119,
+    "Net Profit (owners)": 14.0119,
+    "OPM %": -1.157402479438543,
+    "Operating Profit": -0.16310000000000002,
+    "Other Income": 20.112099999999998,
+    "Profit before tax": 17.7473,
+    "Profit for PE": 14.0119,
+    "Sales": 14.0919,
+    "Tax": 3.7354,
+    "Tax %": 21.04770866554349
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "GAJA",
  "timeline": [
   {
@@ -1449,10 +2024,24 @@
    "news_id": "nse-106783311",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/GAAML2025_17092026170116_19.pdf",
    "summary": "Gaja AMC held its Q1FY27 earnings call on September 10, 2026, reporting strong PAT growth and announcing plans for new funds."
+  },
+  {
+   "date": "2026-10-28T19:46:48+05:30",
+   "event_type": "LITIGATION_REGULATORY",
+   "id": "t_abe9b33a",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-28T23:18:46+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106833095",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/GAAML2025_28102026194521_GAJACS262026-27_signed.pdf",
+   "summary": "Punjab and Haryana High Court dismissed petitions seeking quashing of an FIR involving Gaja AMC's promoters."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T10:01:35+05:30",
+ "updated_at": "2026-10-28T23:18:46+05:30",
  "watchlist": [
   {
    "check_by": "2026-09-30",

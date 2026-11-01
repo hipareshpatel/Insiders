@@ -1,4 +1,164 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "S.R. Batliboi & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "S.R. Batliboi & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-11-29T18:00:00+05:30",
@@ -95,8 +255,584 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -113.871,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -33.488,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -8.487,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 490.537,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -44.942,
+    "AdjustmentsForFinanceCosts": 86.207,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 10.386,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -21.486,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 90.469,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 21.602,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -98.903,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 132.779,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 12.801,
+    "AdjustmentsForProvisionsNoncurrent": 4.074,
+    "AdjustmentsForReconcileProfitLoss": 488.652,
+    "AdjustmentsForSharebasedPayments": 3.91,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 2.657,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 892.133,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -400.08,
+    "CashFlowsFromUsedInInvestingActivities": -72.891,
+    "CashFlowsFromUsedInOperatingActivities": 660.811,
+    "CashFlowsFromUsedInOperations": 736.844,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 321.044,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 50.082,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 76.033,
+    "IncreaseDecreaseInCashAndCashEquivalents": 237.922,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 187.84,
+    "InterestPaidClassifiedAsFinancingActivities": 3.921,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 33.109,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.741,
+    "OtherAdjustmentsToReconcileProfitLoss": -3.13,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 21.999,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 542.618,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 368.083,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.012,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 11.377,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 305.575,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 39.441,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -72.968,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -22.834,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 95.876,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 189.199,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -32.728,
+    "AdjustmentsForFinanceCosts": 58.186,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 13.588,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -10.751,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 70.627,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 26.455,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -85.857,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 6.324,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.208,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 150.582,
+    "AdjustmentsForSharebasedPayments": 3.712,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -34.777,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 100.428,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -128.673,
+    "CashFlowsFromUsedInInvestingActivities": -235.983,
+    "CashFlowsFromUsedInOperatingActivities": 351.862,
+    "CashFlowsFromUsedInOperations": 423.086,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 601.22,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 71.224,
+    "IncreaseDecreaseInCashAndCashEquivalents": -12.794,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -12.794,
+    "InterestPaidClassifiedAsFinancingActivities": 3.367,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 29.741,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.768,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 21.999,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 541.965,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 125.303,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 8.125,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 3.24,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.153,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 184.623,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 11.368,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 92.462,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -181.138,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -39.786,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1048.384,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -34.111,
+    "AdjustmentsForFinanceCosts": 178.454,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 10.386,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -15.162,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 50.999,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 150.895,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 95.553,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -116.868,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 59.117,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 55.12,
+    "AdjustmentsForProvisionsCurrent": 5.026,
+    "AdjustmentsForProvisionsNoncurrent": 30.619,
+    "AdjustmentsForReconcileProfitLoss": 1232.17,
+    "AdjustmentsForSharebasedPayments": 12.098,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 11.339,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 973.298,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1200.522,
+    "CashFlowsFromUsedInInvestingActivities": -2626.543,
+    "CashFlowsFromUsedInOperatingActivities": 1669.592,
+    "CashFlowsFromUsedInOperations": 1916.899,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 322.899,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 75.516,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 247.307,
+    "IncreaseDecreaseInCashAndCashEquivalents": 319.087,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 243.571,
+    "InterestPaidClassifiedAsFinancingActivities": 9.743,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 58.376,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -6.08,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 15.969,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 43.792,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 8.125,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1495.134,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 782.93,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 42.973,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 2113.611,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 5.372,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 828.466,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 171.514,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 102.172,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -148.683,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -11.174,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 90.704,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 419.366,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -42.553,
+    "AdjustmentsForFinanceCosts": 128.565,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 13.588,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 28.995,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 83.298,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 103.101,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 22.013,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 36.483,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 1.531,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 629.582,
+    "AdjustmentsForSharebasedPayments": 8.981,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -4.01,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 219.607,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1817.953,
+    "CashFlowsFromUsedInInvestingActivities": -2739.423,
+    "CashFlowsFromUsedInOperatingActivities": 1027.855,
+    "CashFlowsFromUsedInOperations": 1245.993,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 655.147,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 218.138,
+    "IncreaseDecreaseInCashAndCashEquivalents": 106.385,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 106.385,
+    "InterestPaidClassifiedAsFinancingActivities": 6.045,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 69.675,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -3.797,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 7.204,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -54.353,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1506.873,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 274.295,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 8.125,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 2167.962,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.051,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 647.129,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 23.441,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Lenskart Solutions Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2025-11-29T18:00:00+05:30",
@@ -7640,6 +8376,250 @@
       "status": "No change"
      }
     ]
+   },
+   {
+    "as_of": "2026-10-28T12:08:11+05:30",
+    "board": [
+     {
+      "appointed": "2008-05-19",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Peyush Bansal",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2008-05-19",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Neha Bansal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-07-11",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Amit Chaudhary",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-09-16",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Anant Gupta",
+      "role": null,
+      "tenure_months": 0.0
+     },
+     {
+      "appointed": "2022-05-04",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Jayesh Tulsidas Merchant",
+      "role": null,
+      "tenure_months": 60.0
+     },
+     {
+      "appointed": "2025-01-14",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Bijou Kurien",
+      "role": null,
+      "tenure_months": 36.0
+     },
+     {
+      "appointed": "2025-06-24",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashish Kashyap",
+      "role": null,
+      "tenure_months": 36.0
+     },
+     {
+      "appointed": "2025-06-24",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sayali Karanjkar",
+      "role": null,
+      "tenure_months": 36.0
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Jayesh Tulsidas Merchant",
+      "Bijou Kurien",
+      "Neha Bansal"
+     ],
+     "corporate social responsibility committee": [
+      "Peyush Bansal",
+      "Jayesh Tulsidas Merchant",
+      "Sayali Karanjkar"
+     ],
+     "nomination and remuneration committee": [
+      "Bijou Kurien",
+      "Jayesh Tulsidas Merchant",
+      "Ashish Kashyap",
+      "Sayali Karanjkar"
+     ],
+     "risk management committee": [
+      "Anant Gupta",
+      "Peyush Bansal",
+      "Neha Bansal",
+      "Sayali Karanjkar",
+      "Abhishek Gupta",
+      "Ramneek Khurana",
+      "Ashwani Agarwal",
+      "Amit Chaudhary"
+     ],
+     "stakeholders relationship committee": [
+      "Bijou Kurien",
+      "Anant Gupta",
+      "Neha Bansal"
+     ]
+    },
+    "complaints": {
+     "disposed": 2.0,
+     "pending": 0.0,
+     "received": 2.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 42.0,
+     "board": 42.0,
+     "nomination and remuneration committee": 67.0,
+     "risk management committee": 69.0
+    },
+    "independent_directors": 5,
+    "material_floor_cr": 33.4105,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1747414_28102026120811_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Matter pending adjudication with Commissioner of Income Tax (Appeals)",
+      "initiated": "2016-03-23",
+      "opposing_party": "Deputy Commissioner of Income Tax",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Matter pending adjudication with Commissioner of Income Tax (Appeals)",
+      "initiated": "2025-06-25",
+      "opposing_party": "Assessment Unit, Income Tax Department",
+      "status": "During the quarter, the Commissioner of Income Tax (Appeals) issued an order in favour of the Revenue Department. The Company is currently evaluating the order and considering the appropriate course of action, including the potential filing of an appeal before the Income Tax Appellate Tribunal (ITAT)."
+     },
+     {
+      "as_last_disclosed": "Matter pending adjudication with Commissioner of Income Tax (Appeals)",
+      "initiated": "2021-09-29",
+      "opposing_party": "National Faceless Assessment Centre, Income Tax Department",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Review application filed with Dispute Resolution Panel on April 20, 2026",
+      "initiated": "2026-03-23",
+      "opposing_party": "Assessment Unit, Income Tax Department",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Matter pending adjudication. However, interim relief provided by the Court on September 9, 2025",
+      "initiated": "2025-06-30",
+      "opposing_party": "Assistant Commissioner Of Income Tax",
+      "status": "Matter pending adjudication with Assessment Unit, Income Tax Department and parallely, hearing with Delhi High Court scheduled for November 19, 2026."
+     },
+     {
+      "as_last_disclosed": "Notice received for re-assessment of income.",
+      "initiated": "2026-06-26",
+      "opposing_party": "Assistant Commissioner Of Income Tax",
+      "status": "The Company is currently evaluating the order received for re-assessment and considering the appropriate course of action, including the potential filing of writ filing with Delhi High Court."
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority",
+      "initiated": "2024-03-28",
+      "opposing_party": "Deputy Director (The Additional/Joint Commissioner, CGST Commissionerate)",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority",
+      "initiated": "2025-06-19",
+      "opposing_party": "Additional Commissioner, CGST Gurugram Commissionerate , Gurugram",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority",
+      "initiated": "2025-06-27",
+      "opposing_party": "Joint Commissioner, CGST Commissionerate, Faridabad",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority",
+      "initiated": "2025-06-29",
+      "opposing_party": "Proper Officer cum-Excise and Taxation Officer, GST Department, Haryana",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority",
+      "initiated": "2025-09-29",
+      "opposing_party": "Office Of The Deputy Commissioner, State Tax, Lucknow, Up",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority",
+      "initiated": "2025-09-29",
+      "opposing_party": "Excise & Taxation Officer of State Tax, Proper Officer, SGST, Gurugram",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the CESTAT",
+      "initiated": "2025-06-05",
+      "opposing_party": "Audit Commissionerate, Office of Commissioner of Customs-Audit, New Delhi",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Order issued wherein matter remanded back to Assessing Authority",
+      "initiated": "2025-12-11",
+      "opposing_party": "Assistant/Deputy Commissioner of Customs, ACC (Import), New Delhi",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before Commissioner Appeals, Haryana on 16.01.2026",
+      "initiated": "2025-09-12",
+      "opposing_party": "Proper Officer cum-Excise and Taxation Officer, GST Department, Haryana",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority, hearing awaited",
+      "initiated": "2025-02-27",
+      "opposing_party": "Excise and Taxation Officer, GST Department, Haryana",
+      "status": "No change"
+     },
+     {
+      "as_last_disclosed": "Appeal filed before the appellate Authority, hearing awaited",
+      "initiated": "2025-02-25",
+      "opposing_party": "Assistant Commissioner, Begumpet Division, Hyderabad",
+      "status": "No change"
+     }
+    ]
    }
   ]
  },
@@ -7688,570 +8668,6 @@
  "last_filed_at": "2026-10-16T15:35:26+05:30",
  "market_deals": {
   "events": [
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "WASATCH ADVISORS INC AC WASATCH EMERGING MARKETS SMALL CAP FUND",
-    "date": "2026-05-08",
-    "kind": "BLOCK",
-    "price": 473.4,
-    "qty": 92821.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 4.39
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "WASATCH ADVISORS LP",
-    "date": "2026-05-08",
-    "kind": "BLOCK",
-    "price": 473.4,
-    "qty": 2794.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 0.13
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "WASATCH EMERGING MARKETS SELECT MASTER FUND LTD",
-    "date": "2026-05-08",
-    "kind": "BLOCK",
-    "price": 473.4,
-    "qty": 223125.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 10.56
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "WELLINGTON EMERGING MARKETS EQUITY FUND (AUSTRALIA)",
-    "date": "2026-05-08",
-    "kind": "BLOCK",
-    "price": 473.4,
-    "qty": 1879060.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 88.95
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "WHITEOAK CAPITAL MUTUAL FUND",
-    "date": "2026-05-08",
-    "kind": "BLOCK",
-    "price": 473.4,
-    "qty": 2787240.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 131.95
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "ALPHA WAVE VENTURES II LP",
-    "date": "2026-05-08",
-    "kind": "BULK",
-    "price": 473.4,
-    "qty": 15716074.0,
-    "remarks": null,
-    "side": "SELL",
-    "symbol": "LENSKART",
-    "value_cr": 744.0
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "ALPHA WAVE VENTURES II LP",
-    "date": "2026-05-08",
-    "kind": "BULK",
-    "price": 473.4,
-    "qty": 21500000.0,
-    "remarks": null,
-    "side": "SELL",
-    "symbol": "LENSKART",
-    "value_cr": 1017.81
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "BIRDSEYE VIEW HOLDINGS II PTE LIMITED",
-    "date": "2026-05-08",
-    "kind": "BULK",
-    "price": 473.4,
-    "qty": 16669343.0,
-    "remarks": null,
-    "side": "SELL",
-    "symbol": "LENSKART",
-    "value_cr": 789.13
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "BIRDSEYE VIEW HOLDINGS II PTE LTD",
-    "date": "2026-05-08",
-    "kind": "BULK",
-    "price": 473.4,
-    "qty": 16669344.0,
-    "remarks": null,
-    "side": "SELL",
-    "symbol": "LENSKART",
-    "value_cr": 789.13
-   },
-   {
-    "as_of": "2026-05-08T15:30:00+05:30",
-    "client": "HDFC MUTUAL FUND",
-    "date": "2026-05-08",
-    "kind": "BULK",
-    "price": 473.4,
-    "qty": 9859638.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 466.76
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "ABS DIRECT EQUITY FUND LLC - INDIA SERIES 1",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 18600.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 0.95
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "APT-UNIVERSAL-FONDS",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 5267.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 0.27
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "ASHOKA INDIA EQUITY INVESTMENT TRUST PLC",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 295200.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 15.01
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "ASHOKA WHITEOAK ICAV - ASHOKA WHITEOAK INDIA OPPORTUNITIES FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 821100.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 41.76
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "BNP PARIBAS FINANCIAL MARKETS - ODI",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 2000000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 101.71
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "CANARA ROBECO MUTUAL FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 300000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 15.26
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "CANARA ROBECO MUTUAL FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 75000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 3.81
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "CANARA ROBECO MUTUAL FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 450000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 22.88
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "CANARA ROBECO MUTUAL FUND.",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 75000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 3.81
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "COMMONWEALTH OF PENNSYLVANIA PUBLIC SCHOOL EMPLOYEES' RETIREMENT SYSTEM / GE322",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 51143.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 2.6
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "COMMONWEALTH OF PENNSYLVANIA PUBLIC SCHOOL EMPLOYEES' RETIREMENT SYSTEM / GE322",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 316696.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 16.11
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "COPTHALL MAURITIUS INVESTMENT LIMITED - ODI",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 1896000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 96.42
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "DENDANA INVESTMENTS (MAURITIUS) LIMITED",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 67570.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 3.44
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FACTORY MUTUAL INSURANCE COMPANY",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 32300.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 1.64
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FIDELITY EMERGING MARKETS FOCUS INSTITUTIONAL TRUST",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 69914.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 3.56
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FIDELITY FUNDS �� EMERGING MARKETS EQUITY ESG FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 712157.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 36.22
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FIDELITY FUNDS �� INDIA FOCUS FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 1992003.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 101.3
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FIDELITY GLOBAL EMERGING MARKETS ACTIVE ETF",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 265430.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 13.5
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FIDELITY GLOBAL EMERGING MARKETS FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 597599.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 30.39
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FIDELITY INDIA FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 173699.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 8.83
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "FIDELITY INVESTMENT FUNDS - FIDELITY RESPONSIBLE EMERGING MARKETS EQUITY FD",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 84982.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 4.32
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "GOLDMAN SACHS BANK EUROPE SE - ODI",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 7100000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 361.07
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "GOLDMAN SACHS BANK EUROPESE",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 6693594.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 340.4
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "HDFC LIFE INSURANCE COMPANY LIMITED",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 1100000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 55.94
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "ICICI PRUDENTIAL LIFE INSURANCE COMPANY LIMITED",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 800000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 40.68
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "ICICI PRUDENTIAL MUTUAL FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 2350000.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 119.51
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "INDIA ACORN FUND LTD",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 132800.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 6.75
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "INTERNATIONAL MONETARY FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 759150.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 38.61
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "INTERNATIONAL MONETARY FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 987273.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 50.21
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "KOTAK FUNDS - INDIA MIDCAP FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 3062138.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 155.73
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "KOTAK INFINITY FUND - CLASS AC",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 37862.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 1.93
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "LOS ANGELES CITY EMPLOYEES' RETIREMENT SYSTEM",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 343658.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 17.48
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "MANULIFE (SINGAPORE) PTE LTD",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 14597.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 0.74
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "MANULIFE (SINGAPORE) PTE LTD",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 15502.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 0.79
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "MANULIFE (SINGAPORE) PTE LTD",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 88779.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 4.51
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "MANULIFE (SINGAPORE) PTE LTD",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 216752.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 11.02
-   },
-   {
-    "as_of": "2026-06-03T15:30:00+05:30",
-    "client": "MANULIFE PROVIDENT FUNDS UNIT TRUST SERIES- MANULIFE PACIFIC ASIA EQY FUND",
-    "date": "2026-06-03",
-    "kind": "BLOCK",
-    "price": 508.55,
-    "qty": 314370.0,
-    "remarks": null,
-    "side": "BUY",
-    "symbol": "LENSKART",
-    "value_cr": 15.99
-   },
    {
     "as_of": "2026-06-03T15:30:00+05:30",
     "client": "METZLER ASSET MANAGEMENT GMBH FOR MI-FONDS 415",
@@ -8887,9 +9303,860 @@
     "side": "SELL",
     "symbol": "LENSKART",
     "value_cr": 1960.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ALPHA WAVE VENTURES",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 4521048.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 284.83
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ALPHA WAVE VENTURES II LP",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 9838209.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 619.81
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ALPHA WAVE VENTURES II LP",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 10419555.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 656.43
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ALPHA WAVE VENTURES LP",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 4693858.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 295.71
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "BAJAJ LIFE INSURANCE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 793650.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 50.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "BOFA SECURITIES EUROPE SA",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 606642.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 38.22
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "COPTHALL MAURITIUS INVESTMENT LIMITED",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 401901.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 25.32
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "EDELWEISS MUTUAL FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 793185.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 49.97
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "GHISALLO MASTER FUND LP",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 401900.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 25.32
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "GOLDMAN SACHS BANK EUROPE SE",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 985791.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 62.1
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "HDFC STANDARD LIFE INSURANCE COMPANY LTD",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 1269838.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 80.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 1428569.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 90.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL MUTUAL FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 6031747.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 380.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "INTEGRATED CORE STRATEGIES (ASIA) PTE.LTD.",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 758301.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 47.77
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "JIGNESH VIJAY SHAH",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 396827.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "KOTAK MAHINDRA MUTUAL FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 409483.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 25.8
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "KUWAIT INVESTMENT AUTHORITY",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 340000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 21.42
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "MORGAN STANLEY ASIA SINGAPORE PTE",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 606641.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 38.22
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "MORGAN STANLEY ASIA SINGAPORE PTE",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 492896.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 31.05
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "MOTILAL OSWAL MUTUAL FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 793650.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 50.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NATIONAL PENSION SYSTEM (NPS) TRUST",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 1190476.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 75.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NATIONAL PENSION SYSTEM (NPS) TRUST",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 4761904.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 300.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NATIONAL PENSION SYSTEM (NPS) TRUST",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 1904761.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 120.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NIPPON INDIA INVESTMENT UNIT TRUST - NIPPON INDIA EQUITY FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 100000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 6.3
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NIPPON INDIA INVESTMENT UNIT TRUST - NIPPON INDIA SMALL AND MID-CAP EF",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 14981.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 0.94
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "PACE INTERNATIONAL EMERGING MARKETS EQUITY INVESTMENTS",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 47664.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 3.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "REDWHEEL EMERGING MARKETS EQUITY MASTER FUND LIMITED",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 507569.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 31.98
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "REDWHEEL FUNDS-REDWHEEL GLOBAL EMERGING MARKETS FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 343376.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 21.63
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "REDWHEEL GLOBAL EMERGING EQUITY FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 85731.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 5.4
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "RETAIL EMPLOYEES SUPERANNUATION TRUST",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 313295.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 19.74
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "SBI MUTUAL FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 555556.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 35.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "SOCIETE GENERALE",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 397352.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 25.03
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "SUSQUEHANNA PACIFIC PTY LTD",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 401903.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 25.32
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "TEACHERS RETIREMENT SYSTEM OF THE STATE OF ILLINOIS",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 56018.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 3.53
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "TM REDWHEEL GLOBAL EMERGING MARKETS FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 87123.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 5.49
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "VIRIDIAN ASIA OPPORTUNITIES MASTER FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 606639.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 38.22
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "WHITEOAK CAPITAL MUTUAL FUND",
+    "date": "2026-08-28",
+    "kind": "BLOCK",
+    "price": 630.0,
+    "qty": 1587301.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 100.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ALPHA WAVE VENTURES II LP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 630.0,
+    "qty": 9838209.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 619.81
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "ALPHA WAVE VENTURES II LP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 630.0,
+    "qty": 10419555.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 656.43
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "BLACKROCK EMERGING MARKETS FUND INC",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 662.53,
+    "qty": 307140.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 20.35
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "BLACKROCK EMERGING MARKETS FUND INC",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 662.63,
+    "qty": 28315850.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 1876.29
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "BNP PARIBAS FINANCIAL MARKETS",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 655.0,
+    "qty": 15056.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 0.99
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "BNP PARIBAS FINANCIAL MARKETS",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 662.22,
+    "qty": 12911302.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 855.01
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "INTEGRATED CORE STRATEGIES (ASIA) PTE. LTD.",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 661.15,
+    "qty": 13511695.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 893.33
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "SOCIETE GENERALE",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 662.22,
+    "qty": 30305.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LENSKART",
+    "value_cr": 2.01
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "SOCIETE GENERALE",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 661.53,
+    "qty": 14070849.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 930.83
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "PLATINUM JASMINE A 2018 TRUST",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 683.02,
+    "qty": 35000000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LENSKART",
+    "value_cr": 2390.57
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.037,
+     "description": "Remeasurement Loss on Defined Benefit Plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.06,
+     "description": "Income Tax credit",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 57.145,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.023,
+    "oci_net_cr": 57.168,
+    "profit_cr": 103.451,
+    "reclassified_cr": 57.145,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 160.619,
+    "total_comprehensive_nci_cr": 2.206,
+    "total_comprehensive_owners_cr": 158.413
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.526,
+     "description": "-Remeasurement gain/(loss) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.526,
+    "oci_net_cr": 0.394,
+    "profit_cr": 99.105,
+    "tax_not_reclassified_cr": 0.132,
+    "total_comprehensive_cr": 99.499
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.202,
+     "description": "Remeasurement (Loss) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -129.481,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.202,
+    "oci_net_cr": -129.672,
+    "profit_cr": 132.711,
+    "reclassified_cr": -129.481,
+    "tax_not_reclassified_cr": -0.011,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 3.039,
+    "total_comprehensive_nci_cr": 2.266,
+    "total_comprehensive_owners_cr": 0.773
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.032,
+     "description": "Reameasurement loss on defined benefits plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.032,
+    "oci_net_cr": -0.024,
+    "profit_cr": 108.773,
+    "tax_not_reclassified_cr": -0.008,
+    "total_comprehensive_cr": 108.749
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.319,
+     "description": "Remeasurement (Loss) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 75.389,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -1.319,
+    "oci_net_cr": 74.464,
+    "profit_cr": 203.615,
+    "reclassified_cr": 75.389,
+    "tax_not_reclassified_cr": -0.394,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 278.079,
+    "total_comprehensive_nci_cr": 0.728,
+    "total_comprehensive_owners_cr": 73.736
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.228,
+     "description": "Remeasurement (loss)/gain on Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.228,
+    "oci_net_cr": -0.171,
+    "profit_cr": 163.57,
+    "tax_not_reclassified_cr": -0.057,
+    "total_comprehensive_cr": 163.399
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.36,
+     "description": "Remeasurement (Loss) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -3.32,
+     "description": "Loss in cash flow hedges",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -40.21,
+     "description": "Exchange differences on translation of financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -1.36,
+    "oci_net_cr": -43.66,
+    "profit_cr": 228.43,
+    "reclassified_cr": -43.53,
+    "tax_not_reclassified_cr": -0.39,
+    "tax_reclassified_cr": -0.84,
+    "total_comprehensive_cr": 184.77,
+    "total_comprehensive_nci_cr": -0.09,
+    "total_comprehensive_owners_cr": -43.57
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.56,
+     "description": "Remeasurement (Loss)/gain on Defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -3.32,
+     "description": "Loss in cash flow hedges",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -1.56,
+    "oci_net_cr": -3.65,
+    "profit_cr": 151.48,
+    "reclassified_cr": -3.32,
+    "tax_not_reclassified_cr": -0.39,
+    "tax_reclassified_cr": -0.84,
+    "total_comprehensive_cr": 147.83
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-20T15:41:39+05:30",
@@ -9017,6 +10284,1878 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1400.774,
+     "approved_cr": 1400.774,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1400.774
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1383.94,
+     "approved_cr": 1383.94,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1383.94
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 585.875,
+     "approved_cr": 585.875,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 585.875
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 585.813,
+     "approved_cr": 585.813,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 585.813
+     },
+     "other_details": "Equity Issue",
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 465.846,
+     "approved_cr": 465.846,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Taiwan Ltd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 465.846
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 462.537,
+     "approved_cr": 462.537,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Taiwan Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 462.537
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 298.44,
+     "approved_cr": 298.44,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays (Thailand) Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 298.44
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 294.874,
+     "approved_cr": 294.874,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays (Thailand) Company Limited",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 294.874
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 274.985,
+     "approved_cr": 274.985,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 274.985
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 274.985,
+     "approved_cr": 274.985,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Dealskart Online Services Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 274.985
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 110.39,
+     "approved_cr": 110.39,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Hong Kong Limited",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 110.39
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 110.39,
+     "approved_cr": 110.39,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Hong Kong Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 110.39
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 90.594,
+     "approved_cr": 90.594,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 90.594
+     },
+     "other_details": "Royalty fees income",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 89.351,
+     "approved_cr": 89.351,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 89.351
+     },
+     "other_details": "Royalty fees expense",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 65.709,
+     "approved_cr": 65.709,
+     "closing_cr": 0.0,
+     "counterparty": "Baofeng Framekart Technology Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 65.709
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 48.971,
+     "approved_cr": 48.971,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Tenno Optical College Co., Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 48.971
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 48.971,
+     "approved_cr": 48.971,
+     "closing_cr": 0.0,
+     "counterparty": "Tenno Optical College Co., Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 48.971
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 45.862,
+     "approved_cr": 45.862,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 45.862
+     },
+     "other_details": "Management cross charge",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 25.187,
+     "approved_cr": 25.187,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Dealskart Online Services Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 25.187
+     },
+     "other_details": "Payment on behalf of group company",
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 22.269,
+     "approved_cr": 22.269,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 22.269
+     },
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 21.06,
+     "approved_cr": 21.06,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Trading LLC",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 21.06
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 20.969,
+     "approved_cr": 20.969,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 20.969
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 19.923,
+     "approved_cr": 19.923,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Arabia Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 19.923
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 19.724,
+     "approved_cr": 19.724,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Arabia Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 19.724
+     },
+     "other_details": "Equity Issue",
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 16.225,
+     "approved_cr": 16.225,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Malaysia Sdn Bhd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 16.225
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 15.644,
+     "approved_cr": 15.644,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Malaysia Sdn Bhd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.644
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 15.624,
+     "approved_cr": 15.624,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.624
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 15.362,
+     "approved_cr": 15.362,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.362
+     },
+     "other_details": "Management Support Services",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.335,
+     "approved_cr": 15.335,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.335
+     },
+     "other_details": "Management Support Service Cross Charge",
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.221,
+     "approved_cr": 15.221,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Lenses Cutting L.L.C",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.221
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 15.221,
+     "approved_cr": 15.221,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Trading LLC",
+     "entity": "Lenskart Optical Lenses Cutting L.L.C",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.221
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 14.613,
+     "approved_cr": 14.613,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.613
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 14.593,
+     "approved_cr": 14.593,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.593
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 14.537,
+     "approved_cr": 14.537,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.537
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 14.515,
+     "approved_cr": 14.515,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Downunder Pty Ltd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.515
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 14.223,
+     "approved_cr": 14.223,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Owndays Taiwan Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.223
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 14.018,
+     "approved_cr": 14.018,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Taiwan Ltd",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.018
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 13.726,
+     "approved_cr": 13.726,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Downunder Pty Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 13.726
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 12.702,
+     "approved_cr": 12.702,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Eyetech Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 12.702
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 12.702,
+     "approved_cr": 12.702,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Eyetech Private Limited",
+     "entity": "Dealskart Online Services Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 12.702
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 11.048,
+     "approved_cr": 11.048,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "entity": "Owndays (Thailand) Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 11.048
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 11.048,
+     "approved_cr": 11.048,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays (Thailand) Company Limited",
+     "entity": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 11.048
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 10.886,
+     "approved_cr": 10.886,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Inc",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.886
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 10.886,
+     "approved_cr": 10.886,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Owndays Inc",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.886
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 10.331,
+     "approved_cr": 10.331,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.331
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 10.331,
+     "approved_cr": 10.331,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.331
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 7.738,
+     "approved_cr": 7.738,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Trading LLC",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 7.738
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 7.341,
+     "approved_cr": 7.341,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions (Thailand) Company Limited",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 7.341
+     },
+     "other_details": "Management cross charge",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.268,
+     "approved_cr": 7.268,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 7.268
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 6.925,
+     "approved_cr": 6.925,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Optical Lenses Cutting L.L.C",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.925
+     },
+     "relationship": "Ultimate Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 6.639,
+     "approved_cr": 6.639,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical lenses cutting LLC",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.639
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 6.437,
+     "approved_cr": 6.437,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Trading LLC",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.437
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 6.304,
+     "approved_cr": 6.304,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Malaysia Sdn Bhd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.304
+     },
+     "other_details": "Royalty fee received",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.285,
+     "approved_cr": 6.285,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.285
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 6.272,
+     "approved_cr": 6.272,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Malaysia Sdn Bhd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.272
+     },
+     "other_details": "Royalty fee Paid",
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.219,
+     "approved_cr": 6.219,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.219
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.97,
+     "approved_cr": 5.97,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.97
+     },
+     "relationship": "Ultimate Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.402,
+     "approved_cr": 5.402,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Eyetech Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.402
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.402,
+     "approved_cr": 5.402,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Eyetech Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.402
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.801,
+     "approved_cr": 4.801,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Arabia Limited",
+     "entity": "Lenskart Optical Lenses Cutting L.L.C",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-29",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.801
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 350,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 357.388,
+     "approved_cr": 357.388,
+     "closing_cr": 0.0,
+     "counterparty": "Stellio Ventures UK Ltd (Meller)",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 357.388
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 349.786,
+     "approved_cr": 349.786,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 349.786
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 341.037,
+     "approved_cr": 341.037,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 341.037
+     },
+     "other_details": "Loan conversion into equity",
+     "relationship": "Wholly owned subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 103.173,
+     "approved_cr": 103.173,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Inc",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 103.173
+     },
+     "other_details": "Dividend Paid",
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 92.588,
+     "approved_cr": 92.588,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 92.588
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 59.841,
+     "approved_cr": 59.841,
+     "closing_cr": 0.0,
+     "counterparty": "Baofeng Framekart Technology Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 59.841
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 27.096,
+     "approved_cr": 27.096,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Taiwan Ltd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 27.096
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 26.169,
+     "approved_cr": 26.169,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Lenses Cutting L.L.C",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 26.169
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 24.072,
+     "approved_cr": 24.072,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Arabia Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 24.072
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 20.294,
+     "approved_cr": 20.294,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 20.294
+     },
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 19.047,
+     "approved_cr": 1.047,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Inc",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.047
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 18.464,
+     "approved_cr": 18.464,
+     "closing_cr": 0.0,
+     "counterparty": "iiNEER Corp.",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 18.464
+     },
+     "relationship": "Associate",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 17.363,
+     "approved_cr": 17.363,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays (Thailand) Company Limited",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 17.363
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 15.358,
+     "approved_cr": 15.358,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Eyetech Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.358
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 15.089,
+     "approved_cr": 15.089,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.089
+     },
+     "other_details": "Management Support Services",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 11.051,
+     "approved_cr": 11.051,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Hong Kong Limited",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 11.051
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 10.275,
+     "approved_cr": 10.275,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.275
+     },
+     "other_details": "Royalty fees income",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.963,
+     "approved_cr": 8.963,
+     "closing_cr": 0.0,
+     "counterparty": "NESO Brand Pte. Ltd",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 8.963
+     },
+     "other_details": "Loan conversion into equity",
+     "relationship": "Wholly owned subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.44,
+     "approved_cr": 8.44,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical lenses cutting LLC",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 8.44
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 8.404,
+     "approved_cr": 8.404,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Lenses Cutting L.L.C",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 8.404
+     },
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.265,
+     "approved_cr": 8.265,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Trading LLC",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 8.265
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 7.981,
+     "approved_cr": 7.981,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 7.981
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 7.72,
+     "approved_cr": 7.72,
+     "closing_cr": 0.0,
+     "counterparty": "Tango IT Solutions India Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 7.72
+     },
+     "other_details": "Professional Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.153,
+     "approved_cr": 7.153,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 7.153
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.999,
+     "approved_cr": 5.999,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Arabia Limited",
+     "entity": "Lenskart Optical Lenses Cutting L.L.C",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.999
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.899,
+     "approved_cr": 5.899,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions (Thailand) Company Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.899
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.583,
+     "approved_cr": 5.583,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Eyetech Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.583
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.561,
+     "approved_cr": 5.561,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions (Thailand) Company Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.561
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 4.945,
+     "approved_cr": 4.945,
+     "closing_cr": 0.0,
+     "counterparty": "Neso Brands Pte. Ltd.",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.945
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 4.935,
+     "approved_cr": 4.935,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays singapore Pte. Ltd",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.935
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 4.88,
+     "approved_cr": 4.88,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Trading LLC",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.88
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 4.51,
+     "approved_cr": 4.51,
+     "closing_cr": 0.0,
+     "counterparty": "Amit Chaudhary",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.51
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Yes",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 4.217,
+     "approved_cr": 4.217,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.217
+     },
+     "other_details": "Management Support Service Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.11,
+     "approved_cr": 4.11,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Arabia Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.11
+     },
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.868,
+     "approved_cr": 3.868,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Pte. Ltd.",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.868
+     },
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.623,
+     "approved_cr": 3.623,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Trading LLC",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.623
+     },
+     "other_details": "Management Support Service Cross Charge",
+     "relationship": "Step down Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.434,
+     "approved_cr": 3.434,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions (Thailand) Company Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.434
+     },
+     "other_details": "Management Support Service Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.028,
+     "approved_cr": 3.028,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Arabia Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.028
+     },
+     "other_details": "Management Support Service Cross Charge",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.772,
+     "approved_cr": 15.241,
+     "closing_cr": 0.0,
+     "counterparty": "Peyush Bansal",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.772
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Yes",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 2.611,
+     "approved_cr": 2.611,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Downunder Pty Ltd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.611
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.489,
+     "approved_cr": 2.489,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Arabia Limited",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.489
+     },
+     "other_details": "Management Support Service Cross Charge",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.367,
+     "approved_cr": 2.367,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.367
+     },
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.344,
+     "approved_cr": 2.344,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions Limited",
+     "entity": "Lenskart Solutions Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.344
+     },
+     "other_details": "Management Fees (income/exp)",
+     "relationship": "Wholly owned subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.227,
+     "approved_cr": 2.227,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays singapore Pte. Ltd",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.227
+     },
+     "other_details": "Sub lease income",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.206,
+     "approved_cr": 2.206,
+     "closing_cr": 0.0,
+     "counterparty": "ABHISHEK GUPTA",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.206
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Yes",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 2.185,
+     "approved_cr": 2.185,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Co., Ltd",
+     "entity": "Tenno Optical College Co., Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.185
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.109,
+     "approved_cr": 2.109,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Optical Lenses Cutting L.L.C",
+     "entity": "Lenskart Optical Trading LLC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.109
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.797,
+     "approved_cr": 1.797,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Malaysia Sdn Bhd",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.797
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.794,
+     "approved_cr": 1.794,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions (Thailand) Company Limited",
+     "entity": "Thai Eyewear Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.794
+     },
+     "relationship": "Holding Company",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 1.753,
+     "approved_cr": 1.753,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Solutions (Thailand) Company Limited",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.753
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 1.68,
+     "approved_cr": 1.68,
+     "closing_cr": 0.0,
+     "counterparty": "Dealskart Online Services Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.68
+     },
+     "other_details": "Lease Income",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.623,
+     "approved_cr": 1.623,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Singapore Pte. Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.623
+     },
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.579,
+     "approved_cr": 1.579,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "entity": "Owndays Singapore Pte. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.579
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.49,
+     "approved_cr": 7.51,
+     "closing_cr": 0.0,
+     "counterparty": "Neha Bansal",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.49
+     },
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Yes",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.453,
+     "approved_cr": 1.453,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.453
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.431,
+     "approved_cr": 1.431,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Eyetech Private Limited",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.431
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.252,
+     "approved_cr": 1.252,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Tech and Media (Thailand) Co., Ltd.",
+     "entity": "Owndays (Thailand) Company Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.252
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.16,
+     "approved_cr": 1.16,
+     "closing_cr": 0.0,
+     "counterparty": "Lenskart Foundation",
+     "entity": "Lenskart Solutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.16
+     },
+     "other_details": "Contribution towards CSR liability",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.077,
+     "approved_cr": 1.077,
+     "closing_cr": 0.0,
+     "counterparty": "Owndays Taiwan Ltd",
+     "entity": "Owndays Co., Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.077
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.922,
+     "approved_cr": 0.922,
+     "closing_cr": 0.0,
+     "counterparty": "Neso Brands Pte. Ltd.",
+     "entity": "Lenskart Solutions Pte Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-20",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.922
+     },
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Yes",
+     "type": "Interest received"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 216,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544600",
  "section_lab": {
@@ -9026,18 +12165,311 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-29T14:14:19+05:30",
+   "at": "2026-10-28T12:08:11+05:30",
    "by": "file",
    "doc": "other"
   },
   "market_deals": {
-   "at": "2026-06-11T15:30:00+05:30",
+   "at": "2026-11-01T14:34:34+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "consumer_services",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q2FY26",
+   "segments": [
+    {
+     "assets_cr": 9352.331,
+     "liabilities_cr": 2607.12,
+     "segment": "India"
+    },
+    {
+     "assets_cr": 6352.003,
+     "liabilities_cr": 2902.235,
+     "segment": "International"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "totals": {
+    "assets_cr": 15704.334,
+    "liabilities_cr": 5509.355,
+    "net_assets_cr": 11477.966,
+    "net_liabilities_cr": 5014.52
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 11849.851,
+     "liabilities_cr": 2898.416,
+     "segment": "India"
+    },
+    {
+     "assets_cr": 6363.547,
+     "liabilities_cr": 2673.99,
+     "segment": "International"
+    },
+    {
+     "assets_cr": -4233.057,
+     "liabilities_cr": -153.659,
+     "segment": "Inter segment elimination"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "totals": {
+    "assets_cr": 13980.341,
+    "liabilities_cr": 5418.747,
+    "net_assets_cr": 13980.341,
+    "net_liabilities_cr": 5418.747
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 12196.71,
+     "liabilities_cr": 3055.296,
+     "segment": "India"
+    },
+    {
+     "assets_cr": 6405.055,
+     "liabilities_cr": 2616.537,
+     "segment": "International"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "totals": {
+    "assets_cr": 18601.765,
+    "liabilities_cr": 5671.833,
+    "net_assets_cr": 14413.324,
+    "net_liabilities_cr": 5561.584
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 12506.87,
+     "liabilities_cr": 3198.77,
+     "segment": "India"
+    },
+    {
+     "assets_cr": 6778.19,
+     "liabilities_cr": 2735.64,
+     "segment": "International"
+    },
+    {
+     "assets_cr": -4380.64,
+     "liabilities_cr": -84.22,
+     "segment": "Inter segment elimination"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 14904.42,
+    "liabilities_cr": 5850.19,
+    "net_assets_cr": 14904.42,
+    "net_liabilities_cr": 5850.19
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 126.07,
+   "period": "Q2FY26",
+   "revenue_cr": 1230.59,
+   "segment": "India",
+   "share_pct": 58.3,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 31.09,
+   "period": "Q2FY26",
+   "revenue_cr": 879.64,
+   "segment": "International",
+   "share_pct": 41.7,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 160.83,
+   "period": "Q3FY26",
+   "revenue_cr": 1385.29,
+   "segment": "India",
+   "share_pct": 59.7,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 32.52,
+   "period": "Q3FY26",
+   "revenue_cr": 935.93,
+   "segment": "International",
+   "share_pct": 40.3,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 176.7,
+   "period": "Q4FY26",
+   "revenue_cr": 1475.01,
+   "segment": "India",
+   "share_pct": 58.3,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 73.09,
+   "period": "Q4FY26",
+   "revenue_cr": 1054.0,
+   "segment": "International",
+   "share_pct": 41.7,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 183.28,
+   "period": "Q1FY27",
+   "revenue_cr": 1530.82,
+   "segment": "India",
+   "share_pct": 56.0,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 103.67,
+   "period": "Q1FY27",
+   "revenue_cr": 1203.29,
+   "segment": "International",
+   "share_pct": 44.0,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -12506,6 +15938,514 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": -1.062,
+    "Depreciation": 253.406,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1682.83,
+    "Interest": 45.169,
+    "Minority share": 1.233,
+    "Net Profit": 103.451,
+    "Net Profit (owners)": 102.218,
+    "OPM %": 19.717863029513705,
+    "Operating Profit": 413.31500000000005,
+    "Other Income": 33.25499999999988,
+    "PBT as filed": 149.057,
+    "Profit before tax": 147.99499999999998,
+    "Profit for PE": 102.218,
+    "Sales": 2096.145,
+    "Tax": 44.544,
+    "Tax %": 30.0983141322342
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 318.61699999999996,
+    "CWIP": 66.616,
+    "Equity Capital": 321.488,
+    "Fixed Assets": 4801.595,
+    "Investments": 441.99600000000004,
+    "Other Assets": 6167.759,
+    "Other Liabilities": 4804.676,
+    "Reserves": 6033.185,
+    "Total Assets": 11477.966,
+    "Total Liabilities": 11477.966
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 98.522,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1006.205,
+    "Interest": 29.896,
+    "Net Profit": 99.105,
+    "Net Profit (owners)": 99.105,
+    "OPM %": 18.13101738507114,
+    "Operating Profit": 222.83799999999985,
+    "Other Income": 38.22600000000017,
+    "Profit before tax": 132.646,
+    "Profit for PE": 99.105,
+    "Sales": 1229.043,
+    "Tax": 33.541,
+    "Tax %": 25.286099844699425
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 91.168,
+    "CWIP": 62.265,
+    "Equity Capital": 321.488,
+    "Fixed Assets": 980.649,
+    "Investments": 4232.705,
+    "Other Assets": 3911.809,
+    "Other Liabilities": 2372.5490000000004,
+    "Reserves": 6402.223,
+    "Total Assets": 9187.428,
+    "Total Liabilities": 9187.428
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": -1.709,
+    "Depreciation": 270.335,
+    "Exceptional items": -5.323,
+    "Exceptional items AT": -3.9592687729091707,
+    "Expenses": 1845.307,
+    "Interest": 48.708,
+    "Minority share": 1.682,
+    "Net Profit": 132.711,
+    "Net Profit (owners)": 131.029,
+    "OPM %": 20.038037362240235,
+    "Operating Profit": 462.4240000000002,
+    "Other Income": 35.04099999999971,
+    "PBT as filed": 180.131,
+    "Profit before tax": 178.422,
+    "Profit for PE": 134.98826877290918,
+    "Sales": 2307.731,
+    "Tax": 45.711,
+    "Tax %": 25.61959848000807
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 110.548,
+    "Exceptional items": -5.323,
+    "Exceptional items AT": -3.943004583157408,
+    "Expenses": 1128.876,
+    "Interest": 32.544,
+    "Net Profit": 108.773,
+    "Net Profit (owners)": 108.773,
+    "OPM %": 18.242417219502304,
+    "Operating Profit": 251.88400000000001,
+    "Other Income": 38.049999999999955,
+    "Profit before tax": 146.842,
+    "Profit for PE": 112.7160045831574,
+    "Sales": 1380.76,
+    "Tax": 38.069,
+    "Tax %": 25.925144032361313
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": -2.212,
+    "Depreciation": 287.512,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1979.494,
+    "Interest": 43.539,
+    "Minority share": 3.33,
+    "Net Profit": 203.615,
+    "Net Profit (owners)": 200.285,
+    "OPM %": 21.31466715744945,
+    "Operating Profit": 536.2149999999999,
+    "Other Income": 49.030000000000086,
+    "PBT as filed": 256.406,
+    "Profit before tax": 254.19400000000002,
+    "Profit for PE": 200.285,
+    "Sales": 2515.709,
+    "Tax": 50.579,
+    "Tax %": 19.897794597826852
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 219.554,
+    "CWIP": 111.891,
+    "Equity Capital": 347.283,
+    "Fixed Assets": 5026.357,
+    "Investments": 512.9449999999999,
+    "Other Assets": 8593.523000000001,
+    "Other Liabilities": 5286.651000000002,
+    "Reserves": 8391.228,
+    "Total Assets": 14244.716,
+    "Total Liabilities": 14244.716
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": -4.399,
+    "Depreciation": 1048.384,
+    "Exceptional items": -15.709,
+    "Exceptional items AT": -11.56706826099099,
+    "Expenses": 7065.458000000001,
+    "Interest": 178.454,
+    "Minority share": 7.336,
+    "Net Profit": 500.95,
+    "Net Profit (owners)": 493.614,
+    "OPM %": 19.83859841797858,
+    "Operating Profit": 1748.5819999999994,
+    "Other Income": 158.58600000000047,
+    "PBT as filed": 684.729,
+    "Profit before tax": 680.33,
+    "Profit for PE": 505.18106826099097,
+    "Sales": 8814.04,
+    "Tax": 179.38,
+    "Tax %": 26.366616200961296
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1200.522,
+    "Cash from Investing Activity": -2551.027,
+    "Cash from Operating Activity": 1669.592,
+    "Net Cash Flow": 319.087
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 119.619,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1185.6960000000001,
+    "Interest": 37.944,
+    "Net Profit": 163.57,
+    "Net Profit (owners)": 163.57,
+    "OPM %": 19.36766957022013,
+    "Operating Profit": 284.80099999999993,
+    "Other Income": 69.82700000000006,
+    "Profit before tax": 197.065,
+    "Profit for PE": 163.57,
+    "Sales": 1470.497,
+    "Tax": 33.495,
+    "Tax %": 16.99692994697181
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 79.353,
+    "CWIP": 109.14,
+    "Equity Capital": 347.283,
+    "Fixed Assets": 1284.809,
+    "Investments": 4664.307,
+    "Other Assets": 5970.611000000002,
+    "Other Liabilities": 2830.4630000000006,
+    "Reserves": 8771.768,
+    "Total Assets": 12028.867,
+    "Total Liabilities": 12028.867
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 419.366,
+    "Exceptional items": -18.911,
+    "Exceptional items AT": -14.599743229760664,
+    "Expenses": 4266.484,
+    "Interest": 128.674,
+    "Net Profit": 475.884,
+    "Net Profit (owners)": 475.884,
+    "OPM %": 18.700111569818784,
+    "Operating Profit": 981.3509999999997,
+    "Other Income": 183.10000000000036,
+    "Profit before tax": 616.411,
+    "Profit for PE": 490.4837432297607,
+    "Sales": 5247.835,
+    "Tax": 140.527,
+    "Tax %": 22.797613929667058
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1817.953,
+    "Cash from Investing Activity": -2739.423,
+    "Cash from Operating Activity": 1027.855,
+    "Net Cash Flow": 106.385
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 131.11,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1226.35,
+    "Interest": 40.7,
+    "Net Profit": 151.48,
+    "Net Profit (owners)": 151.48,
+    "OPM %": 19.55353804372783,
+    "Operating Profit": 298.08000000000015,
+    "Other Income": 68.99999999999983,
+    "Profit before tax": 195.27,
+    "Profit for PE": 151.48,
+    "Sales": 1524.43,
+    "Tax": 43.79,
+    "Tax %": 22.425359758283403
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.47,
+    "Associates' share outside PBT": 0.47,
+    "Depreciation": 304.63,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2125.7,
+    "Interest": 53.19,
+    "Minority share": 6.59,
+    "Net Profit": 228.43,
+    "Net Profit (owners)": 221.84,
+    "OPM %": 21.681686549897208,
+    "Operating Profit": 588.48,
+    "Other Income": 68.48000000000002,
+    "Profit before tax": 299.14,
+    "Profit for PE": 221.84,
+    "Sales": 2714.18,
+    "Tax": 71.18,
+    "Tax %": 23.794878652136127
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  }
+ ],
  "symbol": "LENSKART",
  "timeline": [
   {

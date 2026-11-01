@@ -1,9 +1,300 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-09-30",
+     "name": "M/s. PSDY & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "010625S",
+     "name": "PSDY & ASSOCIATES",
+     "signed_on": "2026-05-22",
+     "signing_partner": "KUSHAL RAJ"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "As Per Auditor's report"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "As Per Auditor's report"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "As Per Auditor's report"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -150.5957,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.4922,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -0.9798,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.6015,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -3.71,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 21.7162,
+    "AdjustmentsForInterestIncome": -5.5282,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -4.704,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -0.1567,
+    "AdjustmentsForProvisionsNoncurrent": 2.8831,
+    "AdjustmentsForReconcileProfitLoss": -130.4508,
+    "CashAndCashEquivalentsCashFlowStatement": 3.5128,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsOperatingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 38.4712,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 38.4712,
+    "CashFlowsFromUsedInInvestingActivities": -1.7833,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -1.7833,
+    "CashFlowsFromUsedInOperatingActivities": -35.8766,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -35.8766,
+    "CashFlowsFromUsedInOperations": -9.6952,
+    "DividendsPaidClassifiedAsFinancingActivities": 1.2373,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 5.5344,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 26.1814,
+    "IncreaseDecreaseInCashAndCashEquivalents": 0.8113,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 0.8113,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0423,
+    "OtherAdjustmentsForNoncashItems": -1.5258,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 4.6716,
+    "PaymentForAuditServices": 0.1291,
+    "PaymentsToAuditor": 0.1291,
+    "PaymentsToCostAuditor": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 50.3591,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 6.4972,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 5.1162
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Khazanchi Jewellers Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [],
+   "has_contingent": false,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 0,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0023,
+    "DebtServiceCoverageRatio": 0.0424,
+    "InterestServiceCoverageRatio": 0.2326
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0036,
+    "DebtServiceCoverageRatio": 0.0527,
+    "InterestServiceCoverageRatio": 0.3116
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0032,
+    "DebtServiceCoverageRatio": 0.1732,
+    "InterestServiceCoverageRatio": 0.1705
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2025-08-14T18:00:00+05:30",
@@ -2023,14 +2314,573 @@
   "former_names": []
  },
  "industry": "Consumer Discretionary > Consumer Durables > Gems, Jewellery And Watches",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 9,
+   "people": [
+    {
+     "designation": "CEO",
+     "name": "AASHISH MEHTA",
+     "pay_cr": 0.108
+    },
+    {
+     "designation": "Director",
+     "name": "GOUTHAM",
+     "pay_cr": 0.09
+    },
+    {
+     "designation": "Managing Director",
+     "name": "TARACHAND MEHTA",
+     "pay_cr": 0.09
+    },
+    {
+     "designation": "Managing Director",
+     "name": "RAJESH MEHTA",
+     "pay_cr": 0.085
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "SAKSHI JAIN",
+     "pay_cr": 0.0708
+    },
+    {
+     "designation": "CFO",
+     "name": "VIKAS MEHTA",
+     "pay_cr": 0.07
+    },
+    {
+     "designation": "Independent Director",
+     "name": "NARESSH MAHENDRA KUMAR JAIN",
+     "pay_cr": 0.0125
+    },
+    {
+     "designation": "Independent Director",
+     "name": "TANUJ JAIN SUSILKUMAR",
+     "pay_cr": 0.0125
+    },
+    {
+     "designation": "Director",
+     "name": "RITHIKA BOHRA",
+     "pay_cr": 0.0125
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "totals": {
+    "ManagerialRemuneration": 0.265,
+    "RemunerationToDirectors": 0.265
+   }
+  }
+ ],
  "last_filed_at": "2026-08-13T18:00:00+05:30",
+ "oci": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.0079,
+     "description": "Re-measurement of post employment benefit obligation, net",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.0079,
+    "oci_net_cr": 0.0059,
+    "profit_cr": 15.1502,
+    "tax_not_reclassified_cr": 0.002,
+    "total_comprehensive_cr": 15.1561
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "oci_net_cr": -0.0923,
+    "profit_cr": 25.1284,
+    "tax_not_reclassified_cr": 0.0923,
+    "total_comprehensive_cr": 25.0361
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "oci_net_cr": -0.2133,
+    "profit_cr": 27.8254,
+    "tax_not_reclassified_cr": 0.2133,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 27.6121
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 34,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 15.474
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 252.4672,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 233.7313
+     },
+     "party": "PATHIK SALES PVT LTD"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 8.1,
+      "OtherRelatedPartyTransactionsExpense": 0.8081,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SUTALIYA FINANCE PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 2.4,
+      "OtherRelatedPartyTransactionsExpense": 0.3732,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "VIKAS MEHTA"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "LeasesAsLesseeRelatedPartyTransactions": 0.36,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "KHAZANCHI SILVERS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "LeasesAsLessorRelatedPartyTransactions": 0.099,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.1434,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "ASHOK KUMAR MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "LeasesAsLessorRelatedPartyTransactions": 0.033,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.1849,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "GOUTHAM"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "LeasesAsLessorRelatedPartyTransactions": 0.09,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.1209,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "AASHISH MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.2077,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "TARACHAND MEHTA"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.027
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.1604,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "RAJESH MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.1389,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "FANCY DEVI"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.1286,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "MAMTA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.1196,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SANTHOSH KUMARI"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0984,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "RANJANA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0768,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "TARACHAND MEHTA AND SONS (HUF)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0708,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SAKSHI JAIN"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0623,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SANJAY KUMAR"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "LeasesAsLessorRelatedPartyTransactions": 0.06,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SAKUNTHALA MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0563,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "MINAL MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0523,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "VIKAS MEHTA HUF"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0523,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "PRAMILA MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0495,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "RAJESH KUMAR HUF"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0344,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "ASHOK KUMAR MEHTA (HUF)"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0289,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SANJAY KUMAR HUF"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0239,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "GOUTHAM HUF"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0216,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "RITHIKA BOHRA"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0125,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "NARESSH MAHENDRA KUMAR JAIN"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0125,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "TANUJ JAIN"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0097,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SAVITHA KUAMRI"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0073,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "SAMPATRAJ MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0032,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "POOJA MEHTA"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "BIJAL YOGESH DURGAVALE"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "JAI"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "JIYA"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "YAASHI MEHTA"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "543953",
  "sector": "consumer_durables",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "buying and selling of Gold, Silver and Diamond Jewellery is the Company's only business segment.",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "wholesale and retail sale of gold and diamond products",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "buying and selling of Gold, Silver and Diamond Jewellery is the Company's only business segment.",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q2FY24",
   "Q4FY24",
@@ -2041,6 +2891,270 @@
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 65.1571,
+    "CWIP": 6.3578,
+    "Equity Capital": 24.7469,
+    "Fixed Assets": 12.9651,
+    "Investments": 0.0,
+    "Other Assets": 286.9534,
+    "Other Liabilities": 9.649100000000018,
+    "Reserves": 206.7232,
+    "Total Assets": 306.2763,
+    "Total Liabilities": 306.2763
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 0.3385,
+    "Expenses": 1707.5667999999998,
+    "Interest": 3.804,
+    "Net Profit": 44.9637,
+    "Net Profit (owners)": 44.9637,
+    "OPM %": 3.632209658310402,
+    "Operating Profit": 64.3601000000001,
+    "Other Income": 0.605599999999896,
+    "Profit before tax": 60.8232,
+    "Sales": 1771.9269,
+    "Tax": 15.8595,
+    "Tax %": 26.07475437004301
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 5.3882,
+    "Cash from Investing Activity": -4.6282,
+    "Cash from Operating Activity": 1.0796,
+    "Net Cash Flow": 1.8396
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.0401,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 382.68399999999997,
+    "Interest": 0.9075,
+    "Net Profit": 15.1502,
+    "Net Profit (owners)": 15.1502,
+    "OPM %": 5.2164583009284184,
+    "Operating Profit": 21.061200000000042,
+    "Other Income": 0.08979999999995414,
+    "Profit before tax": 20.2034,
+    "Profit for PE": 15.1502,
+    "Sales": 403.7452,
+    "Tax": 5.0532,
+    "Tax %": 25.011631705554514
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.1834,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 553.9205999999999,
+    "Interest": 1.1284,
+    "Net Profit": 25.1284,
+    "Net Profit (owners)": 25.1284,
+    "OPM %": 5.959236143721686,
+    "Operating Profit": 35.10120000000006,
+    "Other Income": 0.24109999999993903,
+    "Profit before tax": 34.0305,
+    "Profit for PE": 25.1284,
+    "Sales": 589.0218,
+    "Tax": 8.9021,
+    "Tax %": 26.15918073492896
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 0.6014,
+    "Expenses": 1924.0286999999998,
+    "Interest": 5.6362,
+    "Net Profit": 89.4176,
+    "Net Profit (owners)": 89.4176,
+    "OPM %": 6.109038475737149,
+    "Operating Profit": 125.18740000000025,
+    "Other Income": 1.8057999999997492,
+    "Profit before tax": 120.7556,
+    "Sales": 2049.2161,
+    "Tax": 31.338,
+    "Tax %": 25.95159147898731
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 38.4712,
+    "Cash from Investing Activity": -1.7833,
+    "Cash from Operating Activity": -35.8766,
+    "Net Cash Flow": 0.8113
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 110.4,
+    "CWIP": 0.0,
+    "Equity Capital": 24.7469,
+    "Fixed Assets": 25.3155,
+    "Investments": 0.0,
+    "Other Assets": 440.20570000000004,
+    "Other Liabilities": 35.55180000000004,
+    "Reserves": 294.8225,
+    "Total Assets": 465.5212,
+    "Total Liabilities": 465.5212
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.5781,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 546.3796000000001,
+    "Interest": 2.3258,
+    "Net Profit": 27.8254,
+    "Net Profit (owners)": 27.8254,
+    "OPM %": 6.716205898542208,
+    "Operating Profit": 39.33799999999985,
+    "Other Income": 0.6406000000001484,
+    "Profit before tax": 37.0747,
+    "Profit for PE": 27.8254,
+    "Sales": 585.7176,
+    "Tax": 9.2493,
+    "Tax %": 24.947740642540598
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "KHAZANCHI",
  "timeline": [],

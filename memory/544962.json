@@ -1,4 +1,76 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-10-26T18:00:00+05:30",
@@ -61,18 +133,6 @@
    "source_news_id": "nse-106828931",
    "total_assets_cr": 899.32,
    "total_liabilities_cr": 400.36
-  },
-  {
-   "as_of": "2026-10-26T19:56:39+05:30",
-   "lab": {
-    "at": "2026-10-27T00:54:21+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "slides",
-    "ok": true
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106829158"
   }
  ],
  "business_summary": null,
@@ -103,6 +163,222 @@
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -1.774,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -6.228,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 6.333,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 3.964,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 15.338,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -1.98,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -12.266,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -8.678,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.65,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 4.953,
+    "AdjustmentsForSharebasedPayments": 9.831,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.052,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 8.995,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 53.873,
+    "CashFlowsFromUsedInInvestingActivities": -24.287,
+    "CashFlowsFromUsedInOperatingActivities": -38.06,
+    "CashFlowsFromUsedInOperations": -36.665,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1.395,
+    "IncreaseDecreaseInCashAndCashEquivalents": -8.474,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -8.474,
+    "InterestPaidClassifiedAsFinancingActivities": 2.533,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.021,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -4.249,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -3.259,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -28.854,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 3.335,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 50.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 13.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.169,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": -3.377,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -1.777,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1.2,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 2.831,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 10.525,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -0.088,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -15.485,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -8.84,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -0.435,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -7.607,
+    "AdjustmentsForSharebasedPayments": 5.338,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.052,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 7.442,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 56.029,
+    "CashFlowsFromUsedInInvestingActivities": -6.55,
+    "CashFlowsFromUsedInOperatingActivities": -55.434,
+    "CashFlowsFromUsedInOperations": -57.04,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -1.606,
+    "IncreaseDecreaseInCashAndCashEquivalents": -5.955,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -5.955,
+    "InterestPaidClassifiedAsFinancingActivities": -2.503,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.673,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -1.104,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -10.683,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -7.354,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": -1.209,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 50.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 13.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.014,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": -0.117,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "AceVector Limited",
  "deals": [
   {
@@ -148,6 +424,80 @@
    "tranches": [],
    "updated_as_of": "2026-10-26T18:27:09+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
   }
  ],
  "financial_metrics": [
@@ -4619,7 +4969,546 @@
   "former_names": []
  },
  "industry": "Consumer Discretionary > Consumer Services > Retailing > E-Retail/ E-Commerce",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 10.49,
+    "after_qty": 57093520.0,
+    "as_of": "2026-10-29T23:59:00+05:30",
+    "before_pct": 10.47,
+    "before_qty": 56967520.0,
+    "category": "Promoter and Director",
+    "exchange": "NSE",
+    "filed": "2026-10-29",
+    "filing_id": "4093",
+    "from": "2026-10-29",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Kunal Bahl",
+    "qty": 126000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "to": "2026-10-29",
+    "value_cr": 0.0
+   },
+   {
+    "after_pct": 9.41,
+    "after_qty": 51208720.0,
+    "as_of": "2026-10-29T23:59:00+05:30",
+    "before_pct": 9.39,
+    "before_qty": 51082720.0,
+    "category": "Promoter and Director",
+    "exchange": "NSE",
+    "filed": "2026-10-29",
+    "filing_id": "4093",
+    "from": "2026-10-29",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Rohit Kumar Bansal",
+    "qty": 126000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "to": "2026-10-29",
+    "value_cr": 0.0
+   }
+  ],
+  "filings": [
+   "4093"
+  ]
+ },
  "last_filed_at": "2026-10-26T19:56:39+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 25.64,
+    "qty": 2890953.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 7.41
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 25.65,
+    "qty": 2890953.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 7.42
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "IDFC FIRST BANK LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 28.32,
+    "qty": 3532699.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 10.0
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "LEADING LIGHT FUND VCC - THE VINTAGE",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 25.09,
+    "qty": 5026117.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 12.61
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NECTA BLOOM VCC - NECTA BLOOM ONE",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 28.32,
+    "qty": 3042124.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.62
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NECTA BLOOM VCC - REGAL FUND",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 28.32,
+    "qty": 3042124.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.62
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NEGEN CAPITAL SERVICES PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 25.12,
+    "qty": 11856282.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 29.78
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 26.01,
+    "qty": 3235183.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.41
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 25.99,
+    "qty": 3235183.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.41
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "GOLDMAN SACHS BANK EUROPE SE",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 29.88,
+    "qty": 3217800.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 9.61
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 28.63,
+    "qty": 2959048.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.47
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 28.83,
+    "qty": 3045592.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.78
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 30.07,
+    "qty": 6163603.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 18.53
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 31.1,
+    "qty": 6463406.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 20.1
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 31.59,
+    "qty": 2890451.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 9.13
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 31.55,
+    "qty": 2890451.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 9.12
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 30.69,
+    "qty": 2479198.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 7.61
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 31.4,
+    "qty": 3014650.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 9.47
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 31.31,
+    "qty": 3495573.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 10.94
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 31.04,
+    "qty": 3621069.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 11.24
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 30.96,
+    "qty": 3058637.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 9.47
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 31.37,
+    "qty": 3174081.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 9.96
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 30.45,
+    "qty": 2362529.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 7.19
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 30.6,
+    "qty": 2897981.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.87
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 30.42,
+    "qty": 3418489.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 10.4
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 30.35,
+    "qty": 3445093.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 10.46
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 30.28,
+    "qty": 2527849.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ACEVECTOR",
+    "value_cr": 7.65
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 30.26,
+    "qty": 2830726.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.57
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "ICICI SECURITIES PRIMARY DEALERSHIP LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 26.27,
+    "qty": 3291982.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ACEVECTOR",
+    "value_cr": 8.65
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.828,
+     "description": "Re-measurement losses on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.07,
+     "description": "income Tax effect",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.758,
+    "oci_net_cr": -0.758,
+    "profit_cr": -25.356,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -26.114,
+    "total_comprehensive_nci_cr": 3.263,
+    "total_comprehensive_owners_cr": -29.377
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.444,
+     "description": "Re-measurement losses on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.444,
+    "oci_net_cr": -0.444,
+    "profit_cr": -27.842,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -28.286
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.173,
+     "description": "Re-measurement losses on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.004,
+     "description": "income Tax effect",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.169,
+    "oci_net_cr": 0.169,
+    "profit_cr": -17.598,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -17.429,
+    "total_comprehensive_nci_cr": 4.74,
+    "total_comprehensive_owners_cr": -22.169
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.167,
+     "description": "Re-measurement losses on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.167,
+    "oci_net_cr": 0.167,
+    "profit_cr": -21.591,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -21.424
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-26T19:56:39+05:30",
@@ -4632,39 +5521,481 @@
    "text": "Fashion listings increased by over 91% YoY to 95 lakh in H1 FY27, accounting for 68.4% of NMV."
   }
  ],
- "ownership": [],
+ "ownership": [
+  {
+   "aif_pct": 8.83,
+   "as_of": "2026-10-05T09:14:56+05:30",
+   "banks_pct": 1.66,
+   "dii_pct": 14.68,
+   "fii_pct": 18.96,
+   "fpi_pct": 5.51,
+   "holders": [
+    {
+     "category": "Other",
+     "name": "Nexus India Direct Investments Ii",
+     "pct": 5.55
+    },
+    {
+     "category": "Other",
+     "name": "Ebay Singapore Services Private Limited",
+     "pct": 4.14
+    },
+    {
+     "category": "Other",
+     "name": "Wonderful Stars Pte Ltd",
+     "pct": 2.88
+    },
+    {
+     "category": "AIF",
+     "name": "Negen Undiscovered Value Fund",
+     "pct": 2.3
+    },
+    {
+     "category": "Other",
+     "name": "Dunearn Investments (Mauritius) Pte Ltd",
+     "pct": 2.11
+    },
+    {
+     "category": "AIF",
+     "name": "Singularity Growth Opportunities Fund Ii",
+     "pct": 1.96
+    },
+    {
+     "category": "Mutual fund",
+     "name": "Helios Small Cap Fund",
+     "pct": 1.57
+    },
+    {
+     "category": "FPI",
+     "name": "Goldman Sachs Bank Europe Se",
+     "pct": 1.56
+    },
+    {
+     "category": "AIF",
+     "name": "Turnaround Opportunities Fund",
+     "pct": 1.15
+    }
+   ],
+   "lab": {
+    "at": "2026-10-29T07:38:32+05:30",
+    "by": "file",
+    "doc": "other",
+    "ok": true
+   },
+   "mf_pct": 2.14,
+   "period": "QUARTERENDED05.10.2026",
+   "promoter_pct": 49.96,
+   "retail_holders": 31105.0,
+   "source_news_id": "xbrl:shp:544962:QUARTERENDED01.10.2026"
+  }
+ ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 2.248,
+     "approved_cr": 5.16,
+     "closing_cr": 2.912,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.375,
+     "approved_cr": 5.01,
+     "closing_cr": 3.635,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "For the Business of the Company",
+      "RelatedPartyTransactionExplanatory": "During the half-year, AceVector Limited invested Rs, 8 crore in its wholly-owned subsidiary, Stellaro Brands Private Limited, by subscribing to Equity Shares offered through a Right issue.",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Not Appliable",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.309,
+     "approved_cr": 3.84,
+     "closing_cr": 2.531,
+     "counterparty": "Shipway Technology Private Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Step Down Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.0,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Shipway Technology Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "other_details": "Purchase of Assets",
+     "relationship": "Transaction between Subsidiary and  Step down Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.78,
+     "approved_cr": 1.56,
+     "closing_cr": 0.78,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.286,
+     "approved_cr": 0.4,
+     "closing_cr": 0.114,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.281,
+     "approved_cr": 0.562,
+     "closing_cr": 0.281,
+     "counterparty": "Shipway Technology Private Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Step Down Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.114,
+     "approved_cr": 0.6,
+     "closing_cr": 0.486,
+     "counterparty": "Ph91 Private Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Promoter Group Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.055,
+     "approved_cr": 1.0,
+     "closing_cr": 0.945,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Shipway Technology Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between Subsidiary and  Step down Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.048,
+     "approved_cr": 0.8,
+     "closing_cr": 0.752,
+     "counterparty": "Shipway Technology Private Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Step Down Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.034,
+     "approved_cr": 0.076,
+     "closing_cr": 0.042,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.027,
+     "approved_cr": 0.09,
+     "closing_cr": 0.063,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Stellaro Brand Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between Subsidiaries Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.003,
+     "approved_cr": 0.5,
+     "closing_cr": 0.497,
+     "counterparty": "B2 Professional Services LLP",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Promoter Group Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.16,
+     "closing_cr": 0.16,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.1,
+     "closing_cr": 0.1,
+     "counterparty": "Unicommerce eSolutions Limited",
+     "entity": "Acevector Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.18,
+     "closing_cr": 0.18,
+     "counterparty": "Shipway Technology Private Limited",
+     "entity": "Stellaro Brand Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between Subsidiary and  Step down Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 1.0,
+     "closing_cr": 1.0,
+     "counterparty": "Shipway Technology Private Limited",
+     "entity": "Unicommerce eSolutions Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-31",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between Subsidiary and  Step down Subsidiary Company",
+     "remarks": "Limit approved for the financial year 2026-27",
+     "type": "Purchase of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 17,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544962",
+ "section_lab": {
+  "insider_trades": {
+   "at": "2026-10-30T07:41:10+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:41:59+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "consumer_services",
  "segment_mix": [
   {
-   "as_of": "2026-10-26T18:27:09+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-26T22:00:01+05:30",
-    "by": "ai",
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
     "doc": "results",
-    "ok": true
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 861.63,
+   "pbit_cr": -27.0,
+   "period": "Q1FY27",
+   "revenue_cr": 78.26,
    "segment": "Marketplace",
-   "share_pct": 56.99,
-   "source_news_id": "nse-106828931"
+   "share_pct": 58.2,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   },
   {
-   "as_of": "2026-10-26T18:27:09+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-26T22:00:01+05:30",
-    "by": "ai",
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
     "doc": "results",
-    "ok": true
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q2FY27",
-   "revenue_cr": 61.44,
+   "pbit_cr": 4.78,
+   "period": "Q1FY27",
+   "revenue_cr": 51.37,
+   "segment": "SaaS",
+   "share_pct": 38.2,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -1.85,
+   "period": "Q1FY27",
+   "revenue_cr": 4.8,
    "segment": "Consumer Brands",
-   "share_pct": 4.06,
-   "source_news_id": "nse-106828931"
+   "share_pct": 3.6,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -18.29,
+   "period": "Q2FY27",
+   "revenue_cr": 86.16,
+   "segment": "Marketplace",
+   "share_pct": 56.9,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 8.03,
+   "period": "Q2FY27",
+   "revenue_cr": 59.08,
+   "segment": "SaaS",
+   "share_pct": 39.0,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -2.0,
+   "period": "Q2FY27",
+   "revenue_cr": 6.14,
+   "segment": "Consumer Brands",
+   "share_pct": 4.1,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
   }
  ],
  "standalone": {
@@ -6178,6 +7509,202 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.12,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 157.053,
+    "Interest": 1.387,
+    "Minority share": 3.453,
+    "Net Profit": -25.356,
+    "Net Profit (owners)": -28.809,
+    "OPM %": -16.937567477011275,
+    "Operating Profit": -22.74799999999999,
+    "Other Income": 1.7879999999999932,
+    "Profit before tax": -25.467,
+    "Profit for PE": -28.809,
+    "Sales": 134.305,
+    "Tax": -0.111,
+    "Tax %": -0.43585816939568855
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.6,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 106.98100000000001,
+    "Interest": 0.837,
+    "Net Profit": -27.842,
+    "Net Profit (owners)": -27.842,
+    "OPM %": -36.69771661491677,
+    "Operating Profit": -28.720000000000013,
+    "Other Income": 2.3150000000000155,
+    "Profit before tax": -27.842,
+    "Profit for PE": -27.842,
+    "Sales": 78.261,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.212,
+    "Exceptional items": -1.307,
+    "Exceptional items AT": -1.4240967122778774,
+    "Expenses": 162.86700000000002,
+    "Interest": 2.577,
+    "Minority share": 4.72,
+    "Net Profit": -17.598,
+    "Net Profit (owners)": -22.318,
+    "OPM %": -7.719832005026638,
+    "Operating Profit": -11.672000000000025,
+    "Other Income": 1.3100000000000254,
+    "Profit before tax": -16.151,
+    "Profit for PE": -20.893903287722125,
+    "Sales": 151.195,
+    "Tax": 1.447,
+    "Tax %": 8.959197572905703
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.6,
+    "Exceptional items": -1.307,
+    "Exceptional items AT": -1.307,
+    "Expenses": 106.59200000000001,
+    "Interest": 1.994,
+    "Net Profit": -21.591,
+    "Net Profit (owners)": -21.591,
+    "OPM %": -23.709712985852416,
+    "Operating Profit": -20.429000000000016,
+    "Other Income": 1.4320000000000164,
+    "Profit before tax": -21.591,
+    "Profit for PE": -20.284000000000002,
+    "Sales": 86.163,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 69.724,
+    "CWIP": 0.0,
+    "Equity Capital": 54.419,
+    "Fixed Assets": 255.56300000000002,
+    "Investments": 49.042,
+    "Other Assets": 594.716,
+    "Other Liabilities": 510.104,
+    "Reserves": 265.074,
+    "Total Assets": 899.321,
+    "Total Liabilities": 899.321
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 54.46,
+    "CWIP": 0.0,
+    "Equity Capital": 54.419,
+    "Fixed Assets": 4.781,
+    "Investments": 123.825,
+    "Other Assets": 492.17400000000004,
+    "Other Liabilities": 245.55099999999996,
+    "Reserves": 266.35,
+    "Total Assets": 620.78,
+    "Total Liabilities": 620.78
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "ACEVECTOR",
  "timeline": [
   {
@@ -6225,7 +7752,7 @@
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T20:24:53+05:30",
+ "updated_at": "2026-10-29T07:38:32+05:30",
  "watchlist": [
   {
    "check_by": "2026-12-31",

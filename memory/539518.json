@@ -1,4 +1,110 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "ANANT RAO & MALLIK",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "Anant Rao & Mallik",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": {
   "as_of": "2026-10-19T11:08:02+05:30",
@@ -11,8 +117,298 @@
   "text": "Uday Jewellery Industries Limited is a Hyderabad-based manufacturer and B2B supplier of natural gemstone-studded fashion jewellery and polki diamond-studded bridal jewellery, part of the Sanghi Global Group, selling mainly to organised retailers in India and exporting to the UAE and USA."
  },
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 15.911,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -2.4521,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -31.8338,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.4165,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.9267,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -0.0181,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 7.0062,
+    "AdjustmentsForInterestIncome": 0.0061,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -0.0795,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -10.1292,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 16.9989,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 10.7448,
+    "CashFlowsFromUsedInInvestingActivities": -0.6365,
+    "CashFlowsFromUsedInOperatingActivities": 5.5595,
+    "CashFlowsFromUsedInOperations": 7.8382,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 2.2787,
+    "IncreaseDecreaseInCashAndCashEquivalents": 15.6678,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 15.6678,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0061,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -0.9267,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 1.2765,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 10.395,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.6426,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -87.5248,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -43.9468,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1.5479,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 7.4619,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -0.4813,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -3.6492,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -0.0323,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -18.8867,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -0.3911,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -145.8378,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 46.3866,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 127.4474,
+    "CashFlowsFromUsedInInvestingActivities": 4.8858,
+    "CashFlowsFromUsedInOperatingActivities": -87.7078,
+    "CashFlowsFromUsedInOperations": -97.2286,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -9.5208,
+    "IncreaseDecreaseInCashAndCashEquivalents": 44.6254,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 44.6254,
+    "InterestPaidClassifiedAsFinancingActivities": -7.4619,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": -0.0323,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": -1.1277,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 109.5905,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 10.395,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": -3.7904,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Uday Jewellery Industries Limited.",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2024-11-15T18:00:00+05:30",
@@ -4771,7 +5167,89 @@
   "former_names": []
  },
  "industry": "Consumer Discretionary > Consumer Durables > Gems, Jewellery And Watches",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 21.01,
+    "after_qty": 7153318.0,
+    "as_of": "2026-09-26T23:59:00+05:30",
+    "before_pct": 16.64,
+    "before_qty": 5665422.0,
+    "category": "Promoter",
+    "exchange": null,
+    "filed": "2026-09-26",
+    "filing_id": "3694",
+    "from": "2026-09-25",
+    "instrument": "Equity",
+    "mode": "Gift",
+    "person": "Sanjay Kumar Sanghi",
+    "qty": 1487896.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "UDAYJEW",
+    "to": "2026-09-25",
+    "value_cr": 0.0
+   },
+   {
+    "after_pct": 0.0,
+    "after_qty": 0.0,
+    "as_of": "2026-09-26T23:59:00+05:30",
+    "before_pct": 4.37,
+    "before_qty": 1487896.0,
+    "category": "Promoter Group",
+    "exchange": null,
+    "filed": "2026-09-26",
+    "filing_id": "3676",
+    "from": "2026-09-25",
+    "instrument": "Equity",
+    "mode": "Gift",
+    "person": "Sarala Sanghi",
+    "qty": 1487896.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "UDAYJEW",
+    "to": "2026-09-25",
+    "value_cr": 0.0
+   }
+  ],
+  "filings": [
+   "3676",
+   "3675",
+   "3694",
+   "3693"
+  ]
+ },
  "last_filed_at": "2026-10-19T11:08:02+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "VISTAAR TRADING SERVICE PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 238.92,
+    "qty": 178501.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "UDAYJEW",
+    "value_cr": 4.26
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "VISTAAR TRADING SERVICE PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 238.45,
+    "qty": 178501.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "UDAYJEW",
+    "value_cr": 4.26
+   }
+  ]
+ },
  "operating_notes": [
   {
    "as_of": "2026-10-19T11:08:02+05:30",
@@ -4847,6 +5325,495 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 26.8547,
+     "approved_cr": 26.8547,
+     "closing_cr": 0.0,
+     "counterparty": "SanghiJewellers Private Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 26.8547
+     },
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "Nil",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 6.8769,
+     "approved_cr": 6.8769,
+     "closing_cr": 0.0,
+     "counterparty": "Narbada Gems and Jewellery Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.8769
+     },
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "Nil",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.8672,
+     "approved_cr": 5.0131,
+     "closing_cr": 0.0,
+     "counterparty": "Narbada Gems and Jewellery Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.8672
+     },
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "Nil",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.1652,
+     "approved_cr": 0.1652,
+     "closing_cr": 0.0,
+     "counterparty": "SanghiJewellers Private Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.1652
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0731,
+     "approved_cr": 0.0731,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Ritesh Kumar Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0731
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Managing Director",
+     "remarks": "Nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0731,
+     "approved_cr": 0.0731,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Sanjay Kumar Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0731
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Director",
+     "remarks": "Nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0731,
+     "approved_cr": 0.0731,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. PrithaSanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0731
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Director",
+     "remarks": "Nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0731,
+     "approved_cr": 0.0731,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Bhavna Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0731
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Promoter",
+     "remarks": "Nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0731,
+     "approved_cr": 0.0731,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. TejasSanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0731
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Promoter",
+     "remarks": "Nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0731,
+     "approved_cr": 0.0731,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Uday Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0731
+     },
+     "other_details": "Rent Paid",
+     "relationship": "Business Development Head",
+     "remarks": "Nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.003,
+     "approved_cr": 0.003,
+     "closing_cr": 0.0,
+     "counterparty": "SanghiJewellers Private Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-14",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.003
+     },
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "Nil",
+     "type": "Purchase of fixed assets"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 11,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 64.1401,
+     "approved_cr": 64.1401,
+     "closing_cr": 0.0,
+     "counterparty": "SanghiJewellers Private Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 64.1401
+     },
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "NO",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.36,
+     "approved_cr": 0.36,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Ritesh Kumar Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.36
+     },
+     "relationship": "Joint Managing Director",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.36,
+     "approved_cr": 0.36,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Sanjay Kumar Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.36
+     },
+     "relationship": "Managing Director-Corporate Affairs",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.27,
+     "approved_cr": 0.27,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. TejasSanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.27
+     },
+     "relationship": "Promoter",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.27,
+     "approved_cr": 0.27,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Uday Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.27
+     },
+     "relationship": "Business Development Head",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.2526,
+     "approved_cr": 0.2526,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Ritesh Kumar Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.2526
+     },
+     "other_details": "RENT PAID",
+     "relationship": "Joint Managing Director",
+     "remarks": "NO",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2526,
+     "approved_cr": 0.2526,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Sanjay Kumar Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.2526
+     },
+     "other_details": "RENT PAID",
+     "relationship": "Managing Director-Corporate Affairs",
+     "remarks": "NO",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2526,
+     "approved_cr": 0.2526,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. PrithaSanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.2526
+     },
+     "other_details": "RENT PAID",
+     "relationship": "Director",
+     "remarks": "NO",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2526,
+     "approved_cr": 0.2526,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Bhavna Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.2526
+     },
+     "other_details": "RENT PAID",
+     "relationship": "Director",
+     "remarks": "NO",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2526,
+     "approved_cr": 0.2526,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. TejasSanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.2526
+     },
+     "other_details": "RENT PAID",
+     "relationship": "Promoter",
+     "remarks": "NO",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2526,
+     "approved_cr": 0.2526,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Uday Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.2526
+     },
+     "other_details": "RENT PAID",
+     "relationship": "Business Development Head",
+     "remarks": "NO",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.24,
+     "approved_cr": 0.24,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. PrithaSanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.24
+     },
+     "relationship": "Director",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.24,
+     "approved_cr": 0.24,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Bhavna Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.24
+     },
+     "relationship": "Director",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.21,
+     "approved_cr": 0.21,
+     "closing_cr": 0.0,
+     "counterparty": "Ms. Sakshi Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.21
+     },
+     "relationship": "Promoter",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.21,
+     "approved_cr": 0.21,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Mahima Sanghi",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.21
+     },
+     "relationship": "Head - Designs of the Company",
+     "remarks": "NO",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.1328,
+     "approved_cr": 0.1328,
+     "closing_cr": 0.0,
+     "counterparty": "SanghiJewellers Private Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.1328
+     },
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "NO",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.1239,
+     "approved_cr": 0.1239,
+     "closing_cr": 0.0,
+     "counterparty": "SanghiJewellers Private Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.1239
+     },
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "NO",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.1145,
+     "approved_cr": 0.1145,
+     "closing_cr": 0.0,
+     "counterparty": "SanghiJewellers Private Limited",
+     "entity": "Uday Jewellery Industries Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.1145
+     },
+     "other_details": "RENT PAID",
+     "relationship": "Director and relatives\nof the Company are\ndirectors and members",
+     "remarks": "NO",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 18,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "539518",
  "section_lab": {
@@ -4854,10 +5821,385 @@
    "at": "2026-10-16T15:08:48+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "insider_trades": {
+   "at": "2026-11-01T14:10:10+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:41:55+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "consumer_durables",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "JEWELLERY",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "JEWEllERY",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "JEWELLERY",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "JEWELLERY",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:34:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Jewellery",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.2041,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 102.0132,
+    "Interest": 0.4897,
+    "Net Profit": 7.7608,
+    "Net Profit (owners)": 7.7608,
+    "OPM %": 9.641829356759649,
+    "Operating Profit": 10.885500000000008,
+    "Other Income": 0.17959999999999354,
+    "Profit before tax": 10.3713,
+    "Profit for PE": 7.7608,
+    "Sales": 112.8987,
+    "Tax": 2.6105,
+    "Tax %": 25.170422222865025
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.2124,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 127.92939999999999,
+    "Interest": 0.437,
+    "Net Profit": 5.8729,
+    "Net Profit (owners)": 5.8729,
+    "OPM %": 5.679112835383379,
+    "Operating Profit": 7.702700000000021,
+    "Other Income": 0.5428999999999782,
+    "Profit before tax": 7.5962,
+    "Profit for PE": 5.8729,
+    "Sales": 135.6321,
+    "Tax": 1.7233,
+    "Tax %": 22.686343171585797
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 25.901899999999998,
+    "CWIP": 0.0,
+    "Equity Capital": 24.6126,
+    "Fixed Assets": 6.5333000000000006,
+    "Investments": 0.0,
+    "Other Assets": 161.7415,
+    "Other Liabilities": 11.633999999999986,
+    "Reserves": 106.1263,
+    "Total Assets": 168.2748,
+    "Total Liabilities": 168.2748
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.2249,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 176.9828,
+    "Interest": 1.4223,
+    "Net Profit": 4.3134,
+    "Net Profit (owners)": 4.3134,
+    "OPM %": 2.404393883414299,
+    "Operating Profit": 4.360199999999992,
+    "Other Income": 3.124700000000008,
+    "Profit before tax": 5.8377,
+    "Profit for PE": 4.3134,
+    "Sales": 181.343,
+    "Tax": 1.5243,
+    "Tax %": 26.111310961508813
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.4325,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 211.4908,
+    "Interest": 3.2866,
+    "Net Profit": 15.1735,
+    "Net Profit (owners)": 15.1735,
+    "OPM %": 6.562925648686936,
+    "Operating Profit": 14.854899999999986,
+    "Other Income": 4.037700000000015,
+    "Profit before tax": 15.1735,
+    "Profit for PE": 15.1735,
+    "Sales": 226.3457,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 161.9819,
+    "CWIP": 0,
+    "Equity Capital": 34.3937,
+    "Fixed Assets": 12.9145,
+    "Investments": 1.4846,
+    "Other Assets": 366.1392,
+    "Other Liabilities": 11.139399999999966,
+    "Reserves": 173.0233,
+    "Total Assets": 380.5383,
+    "Total Liabilities": 380.5383
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.5479,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 676.0069,
+    "Interest": 7.4619,
+    "Net Profit": 35.7709,
+    "Net Profit (owners)": 35.7709,
+    "OPM %": 6.8387385377331675,
+    "Operating Profit": 49.624000000000024,
+    "Other Income": 7.994999999999976,
+    "Profit before tax": 48.6092,
+    "Profit for PE": 35.7709,
+    "Sales": 725.6309,
+    "Tax": 12.8383,
+    "Tax %": 26.411255482501254
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 127.4474,
+    "Cash from Investing Activity": 4.8858,
+    "Cash from Operating Activity": -87.7078,
+    "Net Cash Flow": 44.6254
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:06:08+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:06:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.4628,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 127.407,
+    "Interest": 2.2082,
+    "Net Profit": 10.6713,
+    "Net Profit (owners)": 10.6713,
+    "OPM %": 11.074336095414642,
+    "Operating Profit": 15.866599999999991,
+    "Other Income": 1.065200000000008,
+    "Profit before tax": 14.2608,
+    "Profit for PE": 10.6713,
+    "Sales": 143.2736,
+    "Tax": 3.5895,
+    "Tax %": 25.170397172669134
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "UDAYJEW",
  "timeline": [
   {

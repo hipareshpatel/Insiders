@@ -1,4 +1,56 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-10-23T18:00:00+05:30",
@@ -60,16 +112,6 @@
    "source_news_id": "nse-106826851",
    "total_assets_cr": 637.06,
    "total_liabilities_cr": 145.45
-  },
-  {
-   "as_of": "2026-10-23T19:56:37+05:30",
-   "lab": {
-    "at": "2026-10-23T19:56:37+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106826987"
   }
  ],
  "business_summary": {
@@ -82,7 +124,654 @@
   "source_news_id": "nse-106826851",
   "text": "Triveni Power Transmission Limited is engaged in the power transmission business, demerged from Triveni Engineering & Industries Limited and listed on NSE and BSE in October 2026."
  },
+ "call_memory": [
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_b755429d",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 2,
+    "quote": "Q2 FY27 revenue grew by 6% YoY and improved significantly sequentially."
+   },
+   "metric": "revenue_growth",
+   "news_id": "nse-106836577",
+   "page": 2,
+   "pages": [
+    2
+   ],
+   "period": "Q2FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Q2 FY27 revenue grew by 6% YoY and improved significantly sequentially.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Q2 FY27 revenue grew by 6% YoY and improved significantly sequentially.",
+   "topic": "q2_fy27_revenue_growth",
+   "type": "volume_price_mix",
+   "unit": "PERCENT",
+   "value": 6.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_5dbe9759",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 2,
+    "quote": "For the first half, revenue grew by 18%YoY."
+   },
+   "metric": "revenue_growth",
+   "news_id": "nse-106836577",
+   "page": 2,
+   "pages": [
+    2
+   ],
+   "period": "H1FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "For the first half, revenue grew by 18%YoY.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "For the first half, revenue grew by 18% YoY.",
+   "topic": "h1_fy27_revenue_growth",
+   "type": "guidance",
+   "unit": "PERCENT",
+   "value": 18.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_a9151139",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 2,
+    "quote": "EBITDA margins were 36.1% in Q2FY27 and 35.7% in H1FY27."
+   },
+   "metric": "ebitda_margin",
+   "news_id": "nse-106836577",
+   "page": 2,
+   "pages": [
+    2
+   ],
+   "period": "Q2FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "EBITDA margins were 36.1% in Q2FY27 and 35.7% in H1FY27.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "EBITDA margins were 36.1% in Q2 FY27 and 35.7% in H1 FY27.",
+   "topic": "ebitda_margin_h1_q2",
+   "type": "margin_driver",
+   "unit": "PERCENT",
+   "value": 36.1
+  },
+  {
+   "basis": "reported",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_f528e65f",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 3,
+    "quote": "External industry research estimates the combined OEM and aftermarket ecosystem at approximately $1.1 billion in 2026, and the two segments expected to grow between 6% and 7% through 2033."
+   },
+   "metric": "industry_growth_rate",
+   "news_id": "nse-106836577",
+   "page": 3,
+   "pages": [
+    3
+   ],
+   "period": "2033",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "External industry research estimates the combined OEM and aftermarket ecosystem at approximately $1.1 billion in 2026, and the two segments expected to grow between 6% and 7% through 2033.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "External industry research estimates the combined OEM and aftermarket ecosystem at approximately $1.1 billion in 2026, and the two segments expected to grow between 6% and 7% through 2033.",
+   "topic": "global_gearbox_market_growth",
+   "type": "competitive_view",
+   "unit": "PERCENT",
+   "value": 6.0,
+   "value_high": 7.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_83acee80",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 3,
+    "quote": "Q2FY27 aftermarket revenues was up about 41% YoY, and the H1FY27 was up 29%,  contributing 27%  to the revenue."
+   },
+   "metric": "aftermarket_revenue_growth",
+   "news_id": "nse-106836577",
+   "page": 3,
+   "pages": [
+    3
+   ],
+   "period": "Q2FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Q2FY27 aftermarket revenues was up about 41% YoY, and the H1FY27 was up 29%,  contributing 27%  to the revenue.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Q2FY27 aftermarket revenues was up about 41% YoY, and the H1FY27 was up 29%, contributing 27% to the revenue.",
+   "topic": "aftermarket_revenue_growth",
+   "type": "margin_driver",
+   "unit": "PERCENT",
+   "value": 41.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_3a5aa2c5",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 4,
+    "quote": "The order booking for Q2FY27 increased by 48% to ₹126 crores compared to the corresponding previous quarter and for H1FY27, it stood at ₹330 crores, a growth of 95% YoY."
+   },
+   "metric": "order_booking",
+   "news_id": "nse-106836577",
+   "page": 4,
+   "pages": [
+    4
+   ],
+   "period": "Q2FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "The order booking for Q2FY27 increased by 48% to ₹126 crores compared to the corresponding previous quarter and for H1FY27, it stood at ₹330 crores, a growth of 95% YoY.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "The order booking for Q2FY27 increased by 48% to ₹126 crores compared to the corresponding previous quarter and for H1FY27, it stood at ₹330 crores, a growth of 95% YoY.",
+   "topic": "q2_h1_order_booking",
+   "type": "order_book",
+   "unit": "INR_CR",
+   "value": 126.0,
+   "value_base": 1260000000.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_e4858a04",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 4,
+    "quote": "The closing order position on the 30th of September 2026 was ₹626 crores, up 57% from ₹398 crores a year earlier."
+   },
+   "metric": "order_book",
+   "news_id": "nse-106836577",
+   "page": 4,
+   "pages": [
+    4
+   ],
+   "period": "Q2FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "The closing order position on the 30th of September 2026 was ₹626 crores, up 57% from ₹398 crores a year earlier.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "The closing order position on the 30th of September 2026 was ₹626 crores, up 57% from ₹398 crores a year earlier.",
+   "topic": "closing_order_book",
+   "type": "order_book",
+   "unit": "INR_CR",
+   "value": 626.0,
+   "value_base": 6260000000.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": true,
+   "date": "2026-10-30",
+   "definition": "free cash flow after capital expenditure",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_07535c1d",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 4,
+    "quote": "We generated positive free cash flow after capital expenditure of approximately ₹13 crores in H1FY27, while continuing to invest in manufacturing infrastructure."
+   },
+   "metric": "free_cash_flow",
+   "news_id": "nse-106836577",
+   "page": 4,
+   "pages": [
+    4
+   ],
+   "period": "H1FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "We generated positive free cash flow after capital expenditure of approximately ₹13 crores in H1FY27, while continuing to invest in manufacturing infrastructure.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "We generated positive free cash flow after capital expenditure of approximately ₹13 crores in H1FY27, while continuing to invest in manufacturing infrastructure.",
+   "topic": "h1_fy27_free_cash_flow",
+   "type": "capital_allocation",
+   "unit": "INR_CR",
+   "value": 13.0,
+   "value_base": 130000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_aef7b783",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 4,
+    "quote": "Core working capital days stood at 188 days as of September end versus 193 days in March."
+   },
+   "metric": "working_capital_days",
+   "news_id": "nse-106836577",
+   "page": 4,
+   "pages": [
+    4
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "Core working capital days stood at 188 days as of September end versus 193 days in March.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Core working capital days stood at 188 days as of September end versus 193 days in March.",
+   "topic": "core_working_capital_days",
+   "type": "kpi",
+   "unit": "DAYS",
+   "value": 188.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_7ee1eb31",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "During H1FY27, the total capital expenditure was ₹41 crores, which comprises  capitalisation of ₹10 crores and capital work in progress of ₹31 crores."
+   },
+   "metric": "capex",
+   "news_id": "nse-106836577",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period": "H1FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "During H1FY27, the total capital expenditure was ₹41 crores, which comprises  capitalisation of ₹10 crores and capital work in progress of ₹31 crores.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "During H1FY27, the total capital expenditure was ₹41 crores, which comprises capitalisation of ₹10 crores and capital work in progress of ₹31 crores.",
+   "topic": "h1_fy27_capex",
+   "type": "capex_capacity",
+   "unit": "INR_CR",
+   "value": 41.0,
+   "value_base": 410000000.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_a327ab08",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 6,
+    "quote": "However, we do believe that as of the end of this quarter for FY27, ₹156 crores is for FY27 from Gears and ₹81 crores is for Defence."
+   },
+   "metric": "order_book_execution",
+   "news_id": "nse-106836577",
+   "page": 6,
+   "pages": [
+    6
+   ],
+   "period": "FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "However, we do believe that as of the end of this quarter for FY27, ₹156 crores is for FY27 from Gears and ₹81 crores is for Defence.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "However, we do believe that as of the end of this quarter for FY27, ₹156 crores is for FY27 from Gears and ₹81 crores is for Defence.",
+   "topic": "fy27_order_execution_schedule",
+   "type": "guidance",
+   "unit": "INR_CR",
+   "value": 156.0,
+   "value_base": 1560000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "AIM",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_e0399d2e",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 7,
+    "quote": "our growth ambition  is certainly to  deliver growth over a medium-term basis, let me say five - seven years basis  of over 25% year-on-year."
+   },
+   "metric": "revenue_growth",
+   "news_id": "nse-106836577",
+   "page": 7,
+   "pages": [
+    7
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "our growth ambition  is certainly to  deliver growth over a medium-term basis, let me say five - seven years basis  of over 25% year-on-year.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "Our growth ambition is certainly to deliver growth over a medium-term basis, let me say five - seven years basis of over 25% year-on-year.",
+   "topic": "medium_term_revenue_growth_target",
+   "type": "outlook",
+   "unit": "PERCENT",
+   "value": 25.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "AIM",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_bfbc52d1",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 10,
+    "quote": "our growth ambition is to maintain our margins of 35% of EBITDA plus."
+   },
+   "metric": "ebitda_margin",
+   "news_id": "nse-106836577",
+   "page": 10,
+   "pages": [
+    10
+   ],
+   "period": "medium to long-term",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "our growth ambition is to maintain our margins of 35% of EBITDA plus.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "In fact, if anything, we would like to say that our growth ambition is to maintain our margins of 35% of EBITDA plus.",
+   "topic": "long_term_ebitda_margin_target",
+   "type": "commitment",
+   "unit": "PERCENT",
+   "value": 35.0
+  },
+  {
+   "base_unit": "INR",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_dad2d50e",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 17,
+    "quote": "The total combined Capex offers us production of approximately ₹700 crores based on the mix, frankly speaking, of just gearboxes."
+   },
+   "metric": "revenue_potential",
+   "news_id": "nse-106836577",
+   "page": 17,
+   "pages": [
+    17
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "The total combined Capex offers us production of approximately ₹700 crores based on the mix, frankly speaking, of just gearboxes.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The total combined Capex offers us production of approximately ₹700 crores based on the mix, frankly speaking, of just gearboxes, and it also offers us a significant revenue from our defence capability.",
+   "topic": "capex_revenue_potential",
+   "type": "capex_capacity",
+   "unit": "INR_CR",
+   "value": 700.0,
+   "value_base": 7000000000.0
+  },
+  {
+   "base_unit": "INR",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_09b7ded6",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 17,
+    "quote": "The ₹340 crores, let me repeat, was for both, it was evenly split between gears and defence."
+   },
+   "metric": "capex",
+   "news_id": "nse-106836577",
+   "page": 17,
+   "pages": [
+    17
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "The ₹340 crores, let me repeat, was for both, it was evenly split between gears and defence.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The ₹340 crores Capex is not just for gearboxes, but it is also for our defence facility.",
+   "topic": "total_capex",
+   "type": "capex_capacity",
+   "unit": "INR_CR",
+   "value": 340.0,
+   "value_base": 3400000000.0
+  },
+  {
+   "base_unit": "INR",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_cdff4e8f",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 15,
+    "quote": "In terms of product, the total order booking is ₹132 crores. Aftermarket is ₹64 crores and difference is ₹135 crores."
+   },
+   "metric": "order_inflow",
+   "news_id": "nse-106836577",
+   "page": 15,
+   "pages": [
+    15
+   ],
+   "period": "H1FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "In terms of product, the total order booking is ₹132 crores. Aftermarket is ₹64 crores and difference is ₹135 crores.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "In terms of product, the total order booking is ₹132 crores, aftermarket is ₹64 crores and difference is ₹135 crores for H1FY27.",
+   "topic": "h1_order_inflow",
+   "type": "order_book",
+   "unit": "INR_CR",
+   "value": 132.0,
+   "value_base": 1320000000.0
+  },
+  {
+   "base_unit": "INR",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-10-30",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_dfb200eb",
+   "lab": {
+    "at": "2026-10-30T17:55:57+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 15,
+    "quote": "The only export revenue that we have given is on the product side, which as I mentioned earlier, was ₹12 crores in Q1FY27 and ₹36 crores in Q2FY27."
+   },
+   "metric": "export_revenue",
+   "news_id": "nse-106836577",
+   "page": 15,
+   "pages": [
+    15
+   ],
+   "period": "Q1FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "The only export revenue that we have given is on the product side, which as I mentioned earlier, was ₹12 crores in Q1FY27 and ₹36 crores in Q2FY27.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "The export revenue that we have given is on the product side, which was ₹12 crores in Q1FY27 and ₹36 crores in Q2FY27.",
+   "topic": "product_export_revenue",
+   "type": "volume_price_mix",
+   "unit": "INR_CR",
+   "value": 12.0,
+   "value_base": 120000000.0,
+   "value_high": 36.0
+  }
+ ],
  "call_points": [
+  {
+   "category": "Guidance",
+   "date": "2026-10-30",
+   "lab": {
+    "at": "2026-10-30T17:23:44+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106836577",
+   "text": "**Capex cycle:** Long-term capex program is largely complete; future investments will be routine and balancing."
+  },
+  {
+   "category": "Guidance",
+   "date": "2026-10-30",
+   "lab": {
+    "at": "2026-10-30T17:23:44+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106836577",
+   "text": "**Margins:** Management aims to maintain EBITDA margins at 35% plus over the medium to long term."
+  },
+  {
+   "category": "Guidance",
+   "date": "2026-10-30",
+   "lab": {
+    "at": "2026-10-30T17:23:44+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106836577",
+   "text": "**Order book:** Closing order book stood at ₹626 crores as of September 30, 2026, up 57% YoY.",
+   "versus_prior": "reiterated"
+  },
   {
    "category": "Demand & orders",
    "date": "2026-10-23",
@@ -125,6 +814,222 @@
    "source_news_id": "nse-106826851"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -15.0946,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -24.8456,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.1442,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 14.718,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 12.2152,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.1235,
+    "AdjustmentsForFinanceCosts": 0.082,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -0.1923,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 9.1043,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 2.2124,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 2.5022,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 1.103,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0966,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -1.1558,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 2.1456,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 3.2512,
+    "AdjustmentsForProvisionsCurrent": 0.3557,
+    "AdjustmentsForProvisionsNoncurrent": -1.5961,
+    "AdjustmentsForReconcileProfitLoss": 2.3425,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.6818,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 49.7674,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -0.6139,
+    "CashFlowsFromUsedInInvestingActivities": -19.3092,
+    "CashFlowsFromUsedInOperatingActivities": 43.9663,
+    "CashFlowsFromUsedInOperations": 57.5102,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -0.0365,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0386,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 13.5439,
+    "IncreaseDecreaseInCashAndCashEquivalents": 24.0067,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 24.0432,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.9336,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.3666,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -0.0588,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 11.06,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.16,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0266,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 31.3294,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.7353,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -15.0946,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -24.8934,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.1442,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 14.718,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 12.2152,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.1235,
+    "AdjustmentsForFinanceCosts": 0.082,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -0.1923,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 8.5765,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 2.2124,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 2.8869,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 1.1061,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0966,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -2.1003,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 2.1456,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 1.8484,
+    "AdjustmentsForProvisionsCurrent": 0.3557,
+    "AdjustmentsForProvisionsNoncurrent": -1.5961,
+    "AdjustmentsForReconcileProfitLoss": -0.1988,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.6818,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 49.3952,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -0.6139,
+    "CashFlowsFromUsedInInvestingActivities": -19.3092,
+    "CashFlowsFromUsedInOperatingActivities": 43.8119,
+    "CashFlowsFromUsedInOperations": 57.3558,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -0.0234,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0386,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 13.5439,
+    "IncreaseDecreaseInCashAndCashEquivalents": 23.8654,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 23.8888,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.9336,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.3666,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -0.0588,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 11.06,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.16,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0266,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 31.3294,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.7353,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Triveni Power Transmission Limited",
  "deals": [
   {
@@ -165,6 +1070,63 @@
    "usage": null
   }
  ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2026-10-12T18:00:00+05:30",
@@ -4071,14 +5033,14 @@
  "fy_end_month": 3,
  "governance": {
   "auditor": {
-   "as_of": "2026-10-23T20:32:29+05:30",
+   "as_of": "2026-10-30T16:24:06+05:30",
    "lab": {
-    "at": "2026-10-23T20:32:29+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-30T17:22:26+05:30",
+    "by": "ai",
+    "doc": "call"
    },
    "opinion": "UNMODIFIED",
-   "source_news_id": "nse-106827039"
+   "source_news_id": "nse-106836577"
   },
   "auditor_history": [
    {
@@ -4113,10 +5075,183 @@
     },
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106827039"
+   },
+   {
+    "as_of": "2026-10-30T16:24:06+05:30",
+    "lab": {
+     "at": "2026-10-30T17:22:26+05:30",
+     "by": "ai",
+     "doc": "call"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106836577"
+   }
+  ],
+  "quarters": [
+   {
+    "as_of": "2026-10-30T20:40:00+05:30",
+    "board": [
+     {
+      "appointed": "2024-12-04",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Tarun Sawhney",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-07-01",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Dhruv Manmohan Sawhney",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-06-04",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Nikhil Sawhney",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-06-04",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Siraj Azmat Chaudhry",
+      "role": null,
+      "tenure_months": 4.0
+     },
+     {
+      "appointed": "2026-06-04",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sandhya Vasudevan",
+      "role": null,
+      "tenure_months": 4.0
+     },
+     {
+      "appointed": "2026-06-04",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Mahesh Ramchand Chhabria",
+      "role": null,
+      "tenure_months": 4.0
+     },
+     {
+      "appointed": "2026-06-04",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashwath Ram",
+      "role": null,
+      "tenure_months": 4.0
+     },
+     {
+      "appointed": "2024-12-04",
+      "category": "Non-Executive - Nominee Director",
+      "ceased": "2026-07-28",
+      "cessation_reason": "Others",
+      "name": "Suresh Taneja",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-12-04",
+      "category": "Executive - Nominee Director",
+      "ceased": "2026-07-28",
+      "cessation_reason": "Others",
+      "name": "Geeta Bhalla",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 7,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Mahesh Ramchand Chhabria",
+      "Siraj Azmat Chaudhry",
+      "Tarun Sawhney",
+      "Ashwath Ram"
+     ],
+     "corporate social responsibility committee": [
+      "Sandhya Vasudevan",
+      "Tarun Sawhney",
+      "Siraj Azmat Chaudhry"
+     ],
+     "nomination and remuneration committee": [
+      "Siraj Azmat Chaudhry",
+      "Sandhya Vasudevan",
+      "Dhruv Manmohan Sawhney"
+     ],
+     "risk management committee": [
+      "Siraj Azmat Chaudhry",
+      "Dhruv Manmohan Sawhney",
+      "Tarun Sawhney"
+     ],
+     "stakeholders relationship committee": [
+      "Nikhil Sawhney",
+      "Tarun Sawhney",
+      "Sandhya Vasudevan"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "board": 53.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1750491_30102026084013_WEB.xml",
+    "tax_litigation": []
    }
   ]
  },
- "guidance": [],
+ "guidance": [
+  {
+   "due": "5-7 years",
+   "due_date": null,
+   "given_on": "2026-10-30T16:24:06+05:30",
+   "id": "g_fb4b8c7d",
+   "lab": {
+    "at": "2026-10-30T17:22:26+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "revenue_cagr",
+   "source_news_id": "nse-106836577",
+   "source_type": "CONCALL",
+   "statement": "Our growth ambition is certainly to deliver growth over a medium-term basis, let me say five - seven years basis of over 25% year-on-year.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "> 25%"
+  }
+ ],
  "identity": {
   "entities": [
    {
@@ -4134,7 +5269,95 @@
   "former_names": []
  },
  "industry": "Utilities > Power > Power - Transmission",
- "last_filed_at": "2026-10-23T20:32:29+05:30",
+ "last_filed_at": "2026-10-30T16:24:06+05:30",
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "oci_net_cr": 0.3046,
+    "profit_cr": 14.5642,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": -0.3046,
+    "total_comprehensive_cr": 14.8688,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 14.8688
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.0446,
+     "description": "Amount of item that will be reclassified to profit and loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.0,
+    "oci_net_cr": 0.0427,
+    "profit_cr": 26.0555,
+    "reclassified_cr": 0.0446,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0019,
+    "total_comprehensive_cr": 26.0982
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.0074,
+     "description": "Amount of item that will be reclassified to profit and loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.0,
+    "oci_net_cr": 0.0055,
+    "profit_cr": 28.3845,
+    "reclassified_cr": 0.0074,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0019,
+    "total_comprehensive_cr": 28.39
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-23T18:30:17+05:30",
@@ -4185,6 +5408,16 @@
    },
    "source_news_id": "nse-106827039",
    "text": "Aftermarket business contributed 26.7% to revenue."
+  },
+  {
+   "as_of": "2026-10-30T16:24:06+05:30",
+   "lab": {
+    "at": "2026-10-30T17:22:26+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106836577",
+   "text": "The company is exploring new industrial areas with specific focus on data centres and space ventures for high-speed gearboxes."
   }
  ],
  "ownership": [
@@ -4220,7 +5453,7 @@
   },
   {
    "aif_pct": 1.54,
-   "as_of": "2026-10-23T07:26:15+05:30",
+   "as_of": "2026-10-12T09:28:46+05:30",
    "banks_pct": 0.0,
    "dii_pct": 5.11,
    "fii_pct": 5.53,
@@ -4238,7 +5471,7 @@
     }
    ],
    "lab": {
-    "at": "2026-10-28T05:30:15+05:30",
+    "at": "2026-11-01T07:31:20+05:30",
     "by": "file",
     "doc": "other",
     "ok": true
@@ -4247,7 +5480,7 @@
    "period": "QUARTERENDED12.10.2026",
    "promoter_pct": 72.36,
    "retail_holders": 79017.0,
-   "source_news_id": "xbrl:shp:544824:QUARTERENDED09.10.2026"
+   "source_news_id": "xbrl:shp:544824:QUARTERENDED12.10.2026"
   }
  ],
  "predictions": [
@@ -4284,10 +5517,176 @@
    "value": 33.4
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 43.0994,
+     "approved_cr": 124.49,
+     "closing_cr": 43.0994,
+     "counterparty": "Triveni Engineering & Industries Limited",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "1. Triveni Engineering & Industries Limited (\"TEIL\") was a Holding Company of Triveni Power Transmission Limited prior to Demerger under the Composite Scheme of Arrangement (\"Scheme\"). Upon giving effect to Scheme and consequent issuance of equity shares to the shareholders of TEIL, it has ceased to"
+     },
+     "relationship": "A Company that holds substantial interest in the Company (refer note alongside).",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 38.7609,
+     "approved_cr": 129.8,
+     "closing_cr": 19.6569,
+     "counterparty": "Triveni Turbine Limited",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 21.4063,
+     "relationship": "A public company in which certain directors of Triveni Power Transmission Limited, are also directors & hold along with their relatives more than 2% of its paid-up share capital",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.9507,
+     "approved_cr": 1.9014,
+     "closing_cr": 0.9507,
+     "counterparty": "Triveni Power Transmission GmbH",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0602,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "1. Loan of USD 1 lakh given by Triveni Power Transmission Limited to Triveni Power Transmission GmbH. \n2. Interest is charged @ Six months SOFR + mark up of 215 basis points.\n3. Total laon amount approved by Audit Committee and Board is USD 2 lakhs.",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Six months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Wholly owned Foreign Subsidiary",
+     "remarks": "Approved by Audit Committee and Board",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.5957,
+     "approved_cr": 3.54,
+     "closing_cr": 0.4378,
+     "counterparty": "Triveni Engineering & Industries Limited",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Triveni Engineering & Industries Limited (\"TEIL\") was a Holding Company of Triveni Power Transmission Limited prior to Demerger under the Composite Scheme of Arrangement (\"Scheme\"). Upon giving effect to Scheme and consequent issuance of equity shares to the shareholders of TEIL, it has ceased to be"
+     },
+     "other_details": "Amounts incurred by the counterparty on behalf of the Company (net of amounts incurred by the Company on behalf of the counterparty) on reimbursable basis",
+     "relationship": "A Company that holds substantial interest in the Company (refer note alongside).",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4028,
+     "approved_cr": 15.0,
+     "closing_cr": 0.0928,
+     "counterparty": "Tarun Sawhney",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter & Key Management Person",
+     "remarks": "Approved by Audit Committee, Nomination & Remuneration Committee and Board",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0175,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Dhruv M. Sawhney",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director sitting fee paid",
+     "relationship": "Promoter & Key Management Person",
+     "remarks": "Approved by the Board",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.011,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Nikhil Sawhney",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director sitting fee paid",
+     "relationship": "Promoter & Key Management Person",
+     "remarks": "Approved by the Board",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0031,
+     "approved_cr": 0.0031,
+     "closing_cr": 0.0031,
+     "counterparty": "Triveni Power Transmission GmbH",
+     "entity": "Triveni Power Transmission Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly owned Foreign Subsidiary",
+     "remarks": "Approved by Audit Committee and Board",
+     "type": "Interest received"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 8,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544824",
+ "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-30T20:40:00+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "power",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "manufacturing of high speed and niche low speed gears & gear boxes",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY27",
+   "segment": "Manufactruing of high speed industrial Gears",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -5172,6 +6571,168 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.005,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 48.4476,
+    "Interest": 0.0423,
+    "Minority share": 0.0,
+    "Net Profit": 14.5642,
+    "Net Profit (owners)": 14.5642,
+    "OPM %": 33.290740103270224,
+    "Operating Profit": 24.1774,
+    "Other Income": 1.3778000000000006,
+    "Profit before tax": 19.5079,
+    "Profit for PE": 14.5642,
+    "Sales": 72.625,
+    "Tax": 4.9437,
+    "Tax %": 25.3420409167568
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.2102,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 77.36670000000001,
+    "Interest": 0.0397,
+    "Minority share": 0.0,
+    "Net Profit": 26.0555,
+    "Net Profit (owners)": 26.0555,
+    "OPM %": 33.396607963305875,
+    "Operating Profit": 38.7936,
+    "Other Income": 3.116100000000003,
+    "Profit before tax": 35.6598,
+    "Profit for PE": 26.0555,
+    "Sales": 116.1603,
+    "Tax": 9.6043,
+    "Tax %": 26.93312918187988
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 2.4874,
+    "CWIP": 31.2769,
+    "Equity Capital": 20.9509,
+    "Fixed Assets": 272.9749,
+    "Investments": 0.0,
+    "Other Assets": 332.8058,
+    "Other Liabilities": 142.9619999999999,
+    "Reserves": 470.6573,
+    "Total Assets": 637.0576,
+    "Total Liabilities": 637.0576
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.2102,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 75.04090000000001,
+    "Interest": 0.0397,
+    "Net Profit": 28.3845,
+    "Net Profit (owners)": 28.3845,
+    "OPM %": 35.39884108426028,
+    "Operating Profit": 41.1194,
+    "Other Income": 3.1193000000000026,
+    "Profit before tax": 37.9888,
+    "Profit for PE": 28.3845,
+    "Sales": 116.1603,
+    "Tax": 9.6043,
+    "Tax %": 25.281925199006025
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 2.4874,
+    "CWIP": 31.2769,
+    "Equity Capital": 20.9509,
+    "Fixed Assets": 272.9749,
+    "Investments": 0.2207,
+    "Other Assets": 333.3507,
+    "Other Liabilities": 140.90849999999998,
+    "Reserves": 473.4764,
+    "Total Assets": 637.8232,
+    "Total Liabilities": 637.8232
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "TRIVENIPT",
  "timeline": [
   {
@@ -5230,10 +6791,24 @@
    "pdf_url": "https://nsearchives.nseindia.com/corporate/TRIVENIPT_26102026173014_Intimation_Audio_Recording.pdf",
    "summary": "Audio recording of Analysts/ Investors Conference Call on Unaudited Financial Results for Q2 & H1 FY27 ended September 30, 2026 made available on company website on 26 October 2026.",
    "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-10-30T16:24:06+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_ecd5351f",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-30T17:22:26+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106836577",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/TRIVENIPT_30102026162353_Intimation_Transcript_Investors_call.pdf",
+   "summary": "Triveni Power Transmission held its Q2 and H1 FY27 earnings conference call on October 26, 2026."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-28T05:30:15+05:30",
+ "updated_at": "2026-11-01T07:31:20+05:30",
  "watchlist": [
   {
    "check_by": "2026-12-31",

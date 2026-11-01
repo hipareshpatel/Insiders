@@ -1,9 +1,48 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Shankesh Jewellers Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 5
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-10T18:00:00+05:30",
@@ -513,7 +552,138 @@
  "fy_end_month": 3,
  "governance": {
   "auditor": null,
-  "auditor_history": []
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-29T14:40:10+05:30",
+    "board": [
+     {
+      "appointed": "2005-07-11",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "KANTILAL KHEEMRAJ JAIN",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2009-11-19",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MANOJ KANTILAL JAIN",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-06-06",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MAHAVIR KANTILAL JAIN",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-07-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "NIKHIL RAMESH PARMAR",
+      "role": null,
+      "tenure_months": 14.0
+     },
+     {
+      "appointed": "2025-07-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SUNITA AMIT MODAK",
+      "role": null,
+      "tenure_months": 14.0
+     },
+     {
+      "appointed": "2025-07-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SANJAY BABULAL JAIN",
+      "role": null,
+      "tenure_months": 14.0
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "NIKHIL RAMESH PARMAR",
+      "SUNITA AMIT MODAK",
+      "MANOJ KANTILAL JAIN"
+     ],
+     "corporate social responsibility committee": [
+      "SANJAY BABULAL JAIN",
+      "MAHAVIR KANTILAL JAIN",
+      "MANOJ KANTILAL JAIN"
+     ],
+     "nomination and remuneration committee": [
+      "NIKHIL RAMESH PARMAR",
+      "SUNITA AMIT MODAK",
+      "SANJAY BABULAL JAIN"
+     ],
+     "other committee": [
+      "MANOJ KANTILAL JAIN",
+      "MAHAVIR KANTILAL JAIN",
+      "SANJAY BABULAL JAIN",
+      "NIKHIL RAMESH PARMAR",
+      "SANJAY BABULAL JAIN",
+      "SUNITA AMIT MODAK",
+      "MANOJ KANTILAL JAIN",
+      "MAHAVIR KANTILAL JAIN",
+      "SANJAY BABULAL JAIN"
+     ],
+     "stakeholders relationship committee": [
+      "SANJAY BABULAL JAIN",
+      "SUNITA AMIT MODAK",
+      "MAHAVIR KANTILAL JAIN"
+     ]
+    },
+    "complaints": {
+     "disposed": 1.0,
+     "pending": 0.0,
+     "received": 1.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 54.0,
+     "board": 38.0,
+     "corporate social responsibility committee": 125.0,
+     "nomination and remuneration committee": 28.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1748656_29102026024009_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Pending with CIT(A).",
+      "initiated": "2021-09-24",
+      "opposing_party": "Deputy Commissioner of Income Tax, Central Circle 3(2), Mumbai",
+      "status": "Pending with CIT(A)."
+     }
+    ]
+   }
+  ]
  },
  "guidance": [],
  "identity": {
@@ -524,6 +694,726 @@
  "last_filed_at": "2026-10-19T07:59:06+05:30",
  "market_deals": {
   "events": [
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 100.64,
+    "qty": 1863213.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 18.75
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 100.72,
+    "qty": 1868213.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 18.82
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.58,
+    "qty": 1046426.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 10.63
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.76,
+    "qty": 1046426.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 10.65
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "GADGIL RENU GOVIND",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.05,
+    "qty": 945000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 9.55
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.72,
+    "qty": 1561917.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 16.04
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.62,
+    "qty": 1562217.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 16.03
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.37,
+    "qty": 2287147.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 23.41
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.33,
+    "qty": 2287147.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 23.4
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.06,
+    "qty": 2372921.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 24.22
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.92,
+    "qty": 2450588.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 24.98
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.13,
+    "qty": 1519833.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 15.37
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 100.99,
+    "qty": 1519833.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 15.35
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.32,
+    "qty": 2136101.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 21.64
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.09,
+    "qty": 2311517.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 23.37
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "KABRA KAILASH",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 99.34,
+    "qty": 916784.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 9.11
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "KABRA KAILASH",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 100.81,
+    "qty": 916784.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 9.24
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 103.16,
+    "qty": 1172258.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 12.09
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.7,
+    "qty": 1177258.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 12.09
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.81,
+    "qty": 1698100.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 17.29
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.78,
+    "qty": 1698100.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 17.28
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "NIRAJ RAJNIKANT SHAH",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 99.86,
+    "qty": 2300000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 22.97
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.55,
+    "qty": 3514114.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 35.69
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.6,
+    "qty": 3514114.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 35.7
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "NOMURA SINGAPORE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 96.66,
+    "qty": 1617535.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 15.64
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "P.N. GADGIL & SONS LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.05,
+    "qty": 1375000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 13.89
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "PEER GLOBAL TRADE PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.25,
+    "qty": 881726.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 8.93
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "PEER GLOBAL TRADE PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 100.25,
+    "qty": 881726.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 8.84
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "PRARAMBH SECURITIES PVT. LTD.",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 99.9,
+    "qty": 1100000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 10.99
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.99,
+    "qty": 1358519.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 13.99
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 103.01,
+    "qty": 1373999.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 14.15
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "RAJASTHAN GLOBAL SECURITIES PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 103.0,
+    "qty": 13000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 0.13
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "RAJASTHAN GLOBAL SECURITIES PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 100.03,
+    "qty": 743000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 7.43
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "SHARE INDIA SECURITIES LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.26,
+    "qty": 969121.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 9.81
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "SHARE INDIA SECURITIES LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.19,
+    "qty": 979121.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 10.01
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "VORA FINANCIAL SERVICES PVT LTD",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 102.81,
+    "qty": 794000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 8.16
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "VORA FINANCIAL SERVICES PVT LTD",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 101.32,
+    "qty": 794000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 8.04
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 99.54,
+    "qty": 954935.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 9.51
+   },
+   {
+    "as_of": "2026-08-25T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-25",
+    "kind": "BULK",
+    "price": 99.67,
+    "qty": 954935.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 9.52
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 98.32,
+    "qty": 755658.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 7.43
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 99.27,
+    "qty": 781805.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 7.76
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.13,
+    "qty": 1578053.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 16.91
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.9,
+    "qty": 1578053.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 17.03
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 105.42,
+    "qty": 1351271.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 14.25
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 104.79,
+    "qty": 1478432.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 15.49
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.34,
+    "qty": 667508.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 7.17
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 108.14,
+    "qty": 891258.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 9.64
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.14,
+    "qty": 1979727.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 21.21
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.12,
+    "qty": 1991157.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 21.33
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.63,
+    "qty": 1366268.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 14.71
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.84,
+    "qty": 1366268.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 14.73
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "NIRAJ RAJNIKANT SHAH",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 103.45,
+    "qty": 1367692.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 14.15
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.38,
+    "qty": 1799129.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 19.32
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.32,
+    "qty": 1799129.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 19.31
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "PRARAMBH SECURITIES PVT. LTD.",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 103.0,
+    "qty": 1000000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 10.3
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "PRARAMBH SECURITIES PVT. LTD.",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 107.78,
+    "qty": 1640000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 17.68
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 105.16,
+    "qty": 2823884.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 29.7
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 106.34,
+    "qty": 2932019.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 31.18
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "SILVERLEAF CAPITAL SERVICES PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 108.42,
+    "qty": 918330.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SHANKESH",
+    "value_cr": 9.96
+   },
+   {
+    "as_of": "2026-09-11T15:30:00+05:30",
+    "client": "SILVERLEAF CAPITAL SERVICES PRIVATE LIMITED",
+    "date": "2026-09-11",
+    "kind": "BULK",
+    "price": 108.5,
+    "qty": 918330.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SHANKESH",
+    "value_cr": 9.96
+   },
    {
     "as_of": "2026-10-26T15:30:00+05:30",
     "client": "TIGER STRATEGIES FUND -I",
@@ -538,6 +1428,38 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.008,
+     "description": "Re-measurement of employee defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.008,
+    "oci_net_cr": 0.006,
+    "profit_cr": 43.233,
+    "tax_not_reclassified_cr": 0.002,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 43.239
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -578,16 +1500,74 @@
  "schema_version": 3,
  "scrip_code": "544882",
  "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-29T14:40:10+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "market_deals": {
-   "at": "2026-10-27T07:03:13+05:30",
+   "at": "2026-11-01T14:31:18+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "consumer_durables",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Wholesaler & Manufacturer of Gold Ornaments.",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.282,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 362.424,
+    "Interest": 2.944,
+    "Net Profit": 43.233,
+    "Net Profit (owners)": 43.233,
+    "OPM %": 14.437078588021993,
+    "Operating Profit": 61.152000000000044,
+    "Other Income": 0.03299999999995862,
+    "Profit before tax": 57.959,
+    "Profit for PE": 43.233,
+    "Sales": 423.576,
+    "Tax": 14.726,
+    "Tax %": 25.407615728359705
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "SHANKESH",
  "timeline": [],

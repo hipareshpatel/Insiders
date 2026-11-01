@@ -1,15 +1,114 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-04-21T21:10:48+05:30",
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "313105E",
+     "name": "DEOKI BIJAY &CO",
+     "signed_on": "2026-06-05",
+     "signing_partner": "ABHISHEK KEDIA"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "According to the information and explanations given to us and on the basis of our examination of the records of the Company, amounts deducted/ accrued in the books of account in respect of undisputed statutory dues including Goods & Service Tax, Provident Fund, Employees State Insurance, Income-Tax, Service Tax, Pension Fund, Professional Tax and other material statutory dues generally have been regularly deposited during the year by the Company with the appropriate authorities"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "During the course of our examination of the books and records of the Company, carried out in accordance with the generally accepted auditing practices in India and according to the information and explanations given to us, we have neither come across any instance of fraud by or on the Company, noticed or reported during the year, nor have we been informed of such case by the management."
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<p><span><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>i.<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><span>(a)</span><span> According to the information and explanations given to us and on the basis of our examination of the records of the Company, amounts deducted/ accrued in the books of account in respect of undisputed statutory dues including Goods & Service Tax, Provident Fund, Employees State Insurance, Income-Tax, Service Tax, Pension Fund, Professional Tax and other material statutory dues generally have been regularly deposited during the year by the Company with the appropriate authorities. </span></p><p><span>According to the information and explanations given to us, no undisputed amounts payable in respect of Goods & Service Tax, provident fund, Employees State Insurance, income-tax, service tax pension fund, professional tax and other material statutory dues were in arrears as at 31 March 2026 for a period o"
+    }
+   },
+   "kind": "annual",
    "lab": {
-    "at": "2026-04-21T21:10:48+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
    "period": "FY26",
-   "source_news_id": "nse-106596057"
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
   },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-01-31",
+     "name": "M/s Deoki Bijay & Co",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "Sanjay Bajoria & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
+ "balance_sheet": [
   {
    "as_of": "2026-04-23T16:22:48+05:30",
    "cash_cr": 459.1,
@@ -38,17 +137,6 @@
    "source_news_id": "nse-106598178",
    "total_assets_cr": 3258.51,
    "total_liabilities_cr": 975.27
-  },
-  {
-   "as_of": "2026-05-15T17:39:51+05:30",
-   "gross_debt_cr": 0.0,
-   "lab": {
-    "at": "2026-05-15T17:39:51+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q4FY26",
-   "source_news_id": "nse-106625115"
   },
   {
    "as_of": "2026-07-20T21:27:35+05:30",
@@ -121,27 +209,6 @@
    "total_liabilities_cr": 872.12
   },
   {
-   "as_of": "2026-10-23T14:54:07+05:30",
-   "lab": {
-    "at": "2026-10-23T14:54:07+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106826282"
-  },
-  {
-   "as_of": "2026-10-23T14:57:28+05:30",
-   "lab": {
-    "at": "2026-10-23T14:57:28+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "net_worth_cr": 2443.73,
-   "period": "Sep-2026",
-   "source_news_id": "nse-106826289"
-  },
-  {
    "as_of": "2026-10-23T18:00:00+05:30",
    "cash_cr": 464.08,
    "current_assets_cr": 2986.67,
@@ -207,7 +274,195 @@
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.0,
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.66,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -14.28,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.07,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -141.47,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 34.76,
+    "AdjustmentsForFinanceCosts": 0.08,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 135.27,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 76.33,
+    "AdjustmentsForInterestIncome": 72.84,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 40.27,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 150.93,
+    "AdjustmentsForProvisionsCurrent": -22.08,
+    "AdjustmentsForProvisionsNoncurrent": -1.77,
+    "AdjustmentsForReconcileProfitLoss": 185.8,
+    "CashAndCashEquivalentsCashFlowStatement": 459.1,
+    "CashFlowsFromUsedInFinancingActivities": -376.14,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -376.14,
+    "CashFlowsFromUsedInInvestingActivities": -161.35,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -161.35,
+    "CashFlowsFromUsedInOperatingActivities": 716.42,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 716.42,
+    "CashFlowsFromUsedInOperations": 1009.44,
+    "DividendsPaidClassifiedAsFinancingActivities": 374.91,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 293.02,
+    "IncreaseDecreaseInCashAndCashEquivalents": 178.93,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 178.93,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 72.84,
+    "OtherAdjustmentsForNoncashItems": 0.01,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -0.9,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -170.0,
+    "PaymentForAuditServices": 0.06,
+    "PaymentForOtherServices": 0.05,
+    "PaymentForReimbursementOfExpenses": 0.4,
+    "PaymentForTaxationMatters": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.33,
+    "PaymentsToAuditor": 0.51,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.11,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 64.3
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 1.4,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 22.96,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.11,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 104.77,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 15.98,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.04,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 5.59,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": -0.21,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -55.42,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 42.43,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -25.02,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 4.01,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -43.66,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -6.06,
+    "AdjustmentsForProvisionsCurrent": 0.46,
+    "AdjustmentsForProvisionsNoncurrent": -3.45,
+    "AdjustmentsForReconcileProfitLoss": -19.33,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 464.08,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -151.07,
+    "CashFlowsFromUsedInInvestingActivities": -118.05,
+    "CashFlowsFromUsedInOperatingActivities": 274.1,
+    "CashFlowsFromUsedInOperations": 400.32,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 150.65,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 126.22,
+    "IncreaseDecreaseInCashAndCashEquivalents": 4.98,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 4.98,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 42.43,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 1.6,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -137.42,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.42,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 23.06,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Central Mine Planning & Design Institute Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [],
+   "has_contingent": false,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 0,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "corporate_actions": [
   {
    "ex_date": "2026-07-24",
@@ -222,6 +477,13 @@
    "per_share": 1.06,
    "record_date": "2026-08-10",
    "subject": "Dividend - Rs 1.06 Per Share"
+  },
+  {
+   "ex_date": "2026-10-29",
+   "kind": "DIVIDEND",
+   "per_share": 1.05,
+   "record_date": "2026-10-29",
+   "subject": "Interim Dividend - Rs 1.05 Per Share"
   }
  ],
  "deals": [
@@ -263,6 +525,63 @@
    "usage": "MERCHANT_SALE"
   }
  ],
+ "dividends": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2026-04-23T16:22:48+05:30",
@@ -7445,7 +7764,151 @@
   "former_names": []
  },
  "industry": "Services > Commercial Services & Supplies > Consulting Services",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 7,
+   "people": [
+    {
+     "designation": "Director",
+     "name": "AJAY KUMAR",
+     "pay_cr": 9966328.0
+    },
+    {
+     "designation": "Director",
+     "name": "SHANKAR NAGACHARI",
+     "pay_cr": 9418914.83
+    },
+    {
+     "designation": "CFO",
+     "name": "SUDIP DASGUPTA",
+     "pay_cr": 8201790.0
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "ABHISHEK MUNDHRA",
+     "pay_cr": 3668808.0
+    },
+    {
+     "designation": "Director",
+     "name": "RAJEEV KUMAR SINHA",
+     "pay_cr": 3416055.0
+    },
+    {
+     "designation": "Director",
+     "name": "NRIPENDRA NATH",
+     "pay_cr": 2777522.0
+    },
+    {
+     "designation": "Managing Director",
+     "name": "CHAUDHARI SHIVRAJ SINGH",
+     "pay_cr": 2362319.0
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "last_filed_at": "2026-10-23T18:00:00+05:30",
+ "oci": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 22.19,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 22.19,
+    "oci_net_cr": 16.61,
+    "profit_cr": 187.82,
+    "tax_not_reclassified_cr": 5.58,
+    "total_comprehensive_cr": 204.43
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -5.34,
+     "description": "OCI on Gratuity & PRMB",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -5.34,
+    "oci_net_cr": -4.0,
+    "profit_cr": 116.27,
+    "tax_not_reclassified_cr": -1.34,
+    "total_comprehensive_cr": 112.27
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 5.38,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 5.38,
+    "oci_net_cr": 4.03,
+    "profit_cr": 194.84,
+    "tax_not_reclassified_cr": 1.35,
+    "total_comprehensive_cr": 198.87
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-21T21:10:48+05:30",
@@ -7618,11 +8081,574 @@
    "value": 28.56
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 8,
+   "parties": [
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 461.79
+     },
+     "party": "SOUTH EASTERN COALFIELDS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 326.21
+     },
+     "party": "WESTERN COALFIELDS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 185.4
+     },
+     "party": "MAHANADI COALFIELDS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 166.47
+     },
+     "party": "NORTHERN COALFIELDS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 162.22
+     },
+     "party": "CENTRAL COALFIELDS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 151.3
+     },
+     "party": "EASTERN COALFIELDS LTD"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 71.99
+     },
+     "party": "BHARAT COKING COAL LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "Parent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 39.11
+     },
+     "party": "COAL INDIA LIMITED"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 273.73,
+     "closing_cr": 169.28,
+     "counterparty": "South Easten Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 122.31,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 184.11,
+     "closing_cr": 92.61,
+     "counterparty": "Western Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 110.39,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 176.25,
+     "closing_cr": -117.87,
+     "counterparty": "Coal India Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 2.42,
+     "relationship": "Holding Company",
+     "remarks": "NIL",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 125.15,
+     "closing_cr": 88.86,
+     "counterparty": "Central Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 64.45,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 115.71,
+     "closing_cr": 52.67,
+     "counterparty": "Mahanadi Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 13.62,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 100.41,
+     "closing_cr": 32.07,
+     "counterparty": "Northern Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 31.44,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 83.83,
+     "closing_cr": 188.3,
+     "counterparty": "Eastern Coalfieds Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 145.36,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 46.39,
+     "closing_cr": 43.62,
+     "counterparty": "Bharat CokingCoal Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 37.57,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 7.09,
+     "closing_cr": 0.0,
+     "counterparty": "CMPDI Employees Group gratuity  Scheme",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Group Gratuity Scheme",
+     "relationship": "FUND",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.84,
+     "closing_cr": 0.0,
+     "counterparty": "CIL Executives Defined Contribution Pension Trust",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "CIL Executives Defined Contribution Pension Trust",
+     "relationship": "FUND",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.76,
+     "closing_cr": 0.0,
+     "counterparty": "Contributory Post Retirement Medicare Scheme for Executives",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Contributory Post Retirement Medicare Scheme for Executives",
+     "relationship": "FUND",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.56,
+     "closing_cr": 0.0,
+     "counterparty": "MANOJ KUMAR",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "FORMER CMD",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.39,
+     "closing_cr": 0.0,
+     "counterparty": "AJAY KUMAR",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.38,
+     "closing_cr": 0.0,
+     "counterparty": "SUDIP DASGUPTA",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "CFO",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.34,
+     "closing_cr": 0.0,
+     "counterparty": "RAJEEV KUMAR SINHA",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.34,
+     "closing_cr": 0.0,
+     "counterparty": "S. NAGACHARI",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "FORMER DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.28,
+     "closing_cr": 0.0,
+     "counterparty": "NRIPENDRA NATH",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.24,
+     "closing_cr": 0.0,
+     "counterparty": "CHAUDHARI SHIV RAJ SINGH",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "CMD",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.16,
+     "closing_cr": 0.0,
+     "counterparty": "ABHISHEK MUNDHRA",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "COMPANY SECRETARY",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Coal Mines Provident Fund",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Coal Mines Provident Fund",
+     "relationship": "OTHERS",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Contributory Post Retirement Medicare Scheme for Non Executives Modified",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Post Retirement Scheme",
+     "relationship": "FUND",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Coal Mines Pension Scheme",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Coal Mines Pension Scheme",
+     "relationship": "OTHERS",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 22,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 242.74,
+     "closing_cr": 119.96,
+     "counterparty": "South Easten Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 169.28,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 150.65,
+     "closing_cr": 0.0,
+     "counterparty": "Coal India Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding Company",
+     "remarks": "NIL",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 138.25,
+     "closing_cr": 64.85,
+     "counterparty": "Western Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 92.61,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 74.7,
+     "closing_cr": 38.79,
+     "counterparty": "Mahanadi Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 52.67,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 69.7,
+     "closing_cr": 37.28,
+     "counterparty": "Northern Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 32.07,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 62.31,
+     "closing_cr": 202.26,
+     "counterparty": "Eastern Coalfieds Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 188.3,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 54.01,
+     "closing_cr": 74.7,
+     "counterparty": "Central Coalfields Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 88.86,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 38.03,
+     "closing_cr": 46.23,
+     "counterparty": "Bharat CokingCoal Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 43.62,
+     "relationship": "Subsidiary of the Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 23.2,
+     "closing_cr": -41.75,
+     "counterparty": "Coal India Limited",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": -117.87,
+     "relationship": "Holding Company",
+     "remarks": "NIL",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 22.45,
+     "closing_cr": 0.0,
+     "counterparty": "Coal Mines Provident Fund (CMPF)",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Any other transaction",
+     "relationship": "OTHERS",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.96,
+     "approved_cr": 16.4,
+     "closing_cr": 0.0,
+     "counterparty": "CIL Executive Defined Contribution Pension Trust",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Any other transaction",
+     "relationship": "FUND",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.82,
+     "approved_cr": 6.93,
+     "closing_cr": 0.0,
+     "counterparty": "Coal India Superannuation Benefit Fund Trust (PRMB-Executive)",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Contribution in the fund",
+     "relationship": "FUND",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.85,
+     "closing_cr": 0.0,
+     "counterparty": "Indian Institute of Coal Management (IICM)",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "other_details": "Any other transaction",
+     "relationship": "OTHERS",
+     "remarks": "NIL",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.39,
+     "closing_cr": 0.0,
+     "counterparty": "SUDIP DASGUPTA",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "CFO",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.36,
+     "closing_cr": 0.0,
+     "counterparty": "AJAY KUMAR",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.34,
+     "closing_cr": 0.0,
+     "counterparty": "CHAUDHARI SHIV RAJ SINGH",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "CMD",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.34,
+     "closing_cr": 0.0,
+     "counterparty": "NRIPENDRA NATH",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.33,
+     "closing_cr": 0.0,
+     "counterparty": "RAJEEV KUMAR SINHA",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.27,
+     "closing_cr": 0.0,
+     "counterparty": "ABHISHEK MUNDHRA",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "COMPANY SECRETARY",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.22,
+     "closing_cr": 0.0,
+     "counterparty": "ANAND MOHAN",
+     "entity": "Central Mine Planning &Design Institute Limited",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR (TECHNICAL)",
+     "remarks": "NIL",
+     "type": "Remuneration"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 20,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544739",
  "section_lab": {
   "corporate_actions": {
-   "at": "2026-08-10",
+   "at": "2026-10-28T07:26:06+05:30",
    "by": "file",
    "doc": "other"
   },
@@ -7691,6 +8717,298 @@
   "Q4FY26",
   "Q1FY27",
   "Q2FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 75.59,
+    "CWIP": 8.31,
+    "Equity Capital": 142.8,
+    "Fixed Assets": 246.95,
+    "Investments": 0.0,
+    "Other Assets": 2427.5400000000004,
+    "Other Liabilities": 565.36,
+    "Reserves": 1899.05,
+    "Total Assets": 2682.8,
+    "Total Liabilities": 2682.8
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 33.48,
+    "Expenses": 1261.8200000000002,
+    "Interest": 0.09,
+    "Net Profit": 666.91,
+    "Net Profit (owners)": 666.91,
+    "OPM %": 39.992200726664,
+    "Operating Profit": 840.94,
+    "Other Income": 74.76999999999998,
+    "Profit before tax": 882.14,
+    "Sales": 2102.76,
+    "Tax": 215.23,
+    "Tax %": 24.39862153399687
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -201.22,
+    "Cash from Investing Activity": -456.62,
+    "Cash from Operating Activity": 671.14,
+    "Net Cash Flow": 13.3
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 9.49,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 588.89,
+    "Interest": 0.02,
+    "Net Profit": 187.82,
+    "Net Profit (owners)": 187.82,
+    "OPM %": 28.781685371517028,
+    "Operating Profit": 237.99,
+    "Other Income": 26.639999999999986,
+    "Profit before tax": 255.12,
+    "Profit for PE": 187.82,
+    "Sales": 826.88,
+    "Tax": 67.3,
+    "Tax %": 26.379742866102227
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 34.76,
+    "Expenses": 1538.97,
+    "Interest": 0.08,
+    "Net Profit": 613.18,
+    "Net Profit (owners)": 613.18,
+    "OPM %": 33.56572114326169,
+    "Operating Profit": 777.5600000000002,
+    "Other Income": 80.91999999999985,
+    "Profit before tax": 823.64,
+    "Sales": 2316.53,
+    "Tax": 210.46,
+    "Tax %": 25.55242581710456
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -376.14,
+    "Cash from Investing Activity": -161.35,
+    "Cash from Operating Activity": 716.42,
+    "Net Cash Flow": 178.93
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 1.4500000000000002,
+    "CWIP": 41.51,
+    "Equity Capital": 142.8,
+    "Fixed Assets": 242.91,
+    "Investments": 0.0,
+    "Other Assets": 2974.09,
+    "Other Liabilities": 973.8199999999999,
+    "Reserves": 2140.44,
+    "Total Assets": 3258.51,
+    "Total Liabilities": 3258.51
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 7.94,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 335.92,
+    "Interest": 0.02,
+    "Net Profit": 116.27,
+    "Net Profit (owners)": 116.27,
+    "OPM %": 30.215842283482555,
+    "Operating Profit": 145.45,
+    "Other Income": 22.650000000000006,
+    "Profit before tax": 160.14,
+    "Profit for PE": 116.27,
+    "Sales": 481.37,
+    "Tax": 43.87,
+    "Tax %": 27.39477956787811
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 8.04,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 349.41,
+    "Interest": 0.02,
+    "Net Profit": 194.84,
+    "Net Profit (owners)": 194.84,
+    "OPM %": 41.10835819386155,
+    "Operating Profit": 243.89999999999992,
+    "Other Income": 23.670000000000073,
+    "Profit before tax": 259.51,
+    "Profit for PE": 194.84,
+    "Sales": 593.31,
+    "Tax": 64.67,
+    "Tax %": 24.92004161689338
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 1.19,
+    "CWIP": 51.14,
+    "Equity Capital": 142.8,
+    "Fixed Assets": 240.35999999999999,
+    "Investments": 0.0,
+    "Other Assets": 3024.35,
+    "Other Liabilities": 870.9299999999998,
+    "Reserves": 2300.93,
+    "Total Assets": 3315.85,
+    "Total Liabilities": 3315.85
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "CMPDI",
  "timeline": [

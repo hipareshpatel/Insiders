@@ -1,4 +1,83 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "SS KOTHARI MEHTA & CO.LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "advances_cr": 6266.44,
@@ -26,16 +105,6 @@
    "total_liabilities_cr": 5240.23
   },
   {
-   "as_of": "2026-04-27T12:18:56+05:30",
-   "lab": {
-    "at": "2026-04-27T12:18:56+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "Mar-2026",
-   "source_news_id": "nse-106600909"
-  },
-  {
    "advances_cr": 6266.44,
    "as_of": "2026-04-27T18:00:00+05:30",
    "cash_cr": 620.38,
@@ -60,18 +129,6 @@
    "source_news_id": "xbrl:res:544699:Q4FY26",
    "total_assets_cr": 7772.94,
    "total_liabilities_cr": 5240.23
-  },
-  {
-   "as_of": "2026-10-21T11:47:47+05:30",
-   "cash_cr": 851.21,
-   "lab": {
-    "at": "2026-10-21T11:47:47+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "net_worth_cr": 2621.8,
-   "period": "Sep-2026",
-   "source_news_id": "nse-106823089"
   },
   {
    "advances_cr": 6849.85,
@@ -111,6 +168,44 @@
   "text": "Aye Finance is a Middle Layer NBFC registered with the RBI, lending to micro-enterprises; its equity shares listed on NSE and BSE on 16 February 2026."
  },
  "call_points": [
+  {
+   "category": "Guidance",
+   "date": "2026-10-29",
+   "lab": {
+    "at": "2026-10-30T02:00:39+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106835098",
+   "text": "Full-year AUM growth guidance maintained at 25% to 30%.",
+   "versus_prior": "reiterated"
+  },
+  {
+   "category": "Guidance",
+   "date": "2026-10-29",
+   "lab": {
+    "at": "2026-10-30T02:00:39+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106835098",
+   "text": "Credit cost guidance maintained at 3.5% to 4% for FY27.",
+   "versus_prior": "reiterated"
+  },
+  {
+   "category": "Margins & costs",
+   "date": "2026-10-29",
+   "lab": {
+    "at": "2026-10-30T02:00:39+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106835098",
+   "text": "Blended cost of borrowing declined by 15 bps QoQ to 10.63% in Q2 FY27."
+  },
   {
    "category": "Guidance",
    "date": "2026-05-06",
@@ -201,6 +296,222 @@
    "source_news_id": "nse-106600905"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -47.39,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 6.35,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 26.31,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -77.73,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 60.66,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -5.86,
+    "AdjustmentsForOtherBankBalances": -183.96,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -1697.64,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 10.44,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 12.74,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 25.65,
+    "AdjustmentsForReconcileProfitLoss": -1555.08,
+    "AdjustmentsForSharebasedPayments": 5.78,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 5.49,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 620.38,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1169.22,
+    "CashFlowsFromUsedInInvestingActivities": -125.36,
+    "CashFlowsFromUsedInOperatingActivities": -1354.64,
+    "CashFlowsFromUsedInOperations": -1307.78,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 46.86,
+    "IncreaseDecreaseInCashAndCashEquivalents": -310.78,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -310.78,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -28.34,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 320.7,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -722.63,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 18.51,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 2993.76,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 375.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 696.43,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 9374.74,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.27,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 9488.71,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 11.66,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 2154.83,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 4.42,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -7.4,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 12.6,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 271.49,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -0.55,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -3.53,
+    "AdjustmentsForOtherBankBalances": 63.45,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -746.94,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -1.01,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -1.35,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -250.56,
+    "AdjustmentsForSharebasedPayments": 0.99,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -3.84,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 851.19,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 549.9,
+    "CashFlowsFromUsedInInvestingActivities": -206.73,
+    "CashFlowsFromUsedInOperatingActivities": -112.36,
+    "CashFlowsFromUsedInOperations": -37.61,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 57.18,
+    "IncreaseDecreaseInCashAndCashEquivalents": 230.81,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 230.81,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": -148.04,
+    "InterestReceivedClassifiedAsOperatingActivities": -17.57,
+    "OtherAdjustmentsForNoncashItems": -9.81,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 163.86,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -159.35,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 9.91,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 2368.64,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 360.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": -3.13,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 4932.74,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.02,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 4987.92,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 3.53,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 2006.35,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Aye Finance Limited",
  "deals": [
   {
@@ -239,6 +550,135 @@
    "tranches": [],
    "updated_as_of": "2026-04-28T17:27:33+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.031
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0206,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0222
+   }
   }
  ],
  "financial_metrics": [
@@ -6593,21 +7033,57 @@
    "unit": "INR",
    "value": 6.53,
    "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-29T18:57:45+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T01:59:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "gnpa",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106835098",
+   "unit": "PCT",
+   "value": 4.2,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-29T18:57:45+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T01:59:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "aum",
+   "period": "Q2FY27",
+   "qoq_pct": 4.0,
+   "source_news_id": "nse-106835098",
+   "unit": "INR_CR",
+   "value": 7597.0,
+   "yoy_pct": 26.0
   }
  ],
  "fy_end_month": 3,
  "governance": {
   "auditor": {
-   "as_of": "2026-10-21T11:47:47+05:30",
-   "change": "appointed",
+   "as_of": "2026-10-29T18:57:45+05:30",
    "lab": {
-    "at": "2026-10-21T11:47:47+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-30T01:59:23+05:30",
+    "by": "ai",
+    "doc": "call"
    },
-   "name": "M S K A & Associates LLP",
    "opinion": "UNMODIFIED",
-   "source_news_id": "nse-106823089"
+   "source_news_id": "nse-106835098"
   },
   "auditor_history": [
    {
@@ -6654,6 +7130,16 @@
     "name": "M S K A & Associates LLP",
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106823089"
+   },
+   {
+    "as_of": "2026-10-29T18:57:45+05:30",
+    "lab": {
+     "at": "2026-10-30T01:59:23+05:30",
+     "by": "ai",
+     "doc": "call"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106835098"
    }
   ],
   "quarters": [
@@ -6983,6 +7469,171 @@
       "status": "The Company received an income tax demand of Rs. 1.07 crores for AY 2020-21 U/S 201(1)w.r.t 195 of the Income Tax Act,1961. The company has filed an appeal in Form-35.Appeal is pending before CIT(A)"
      }
     ]
+   },
+   {
+    "as_of": "2026-10-30T21:06:15+05:30",
+    "board": [
+     {
+      "appointed": "2023-09-01",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Govinda Rajulu Chintala",
+      "role": "Chairperson",
+      "tenure_months": 37.0
+     },
+     {
+      "appointed": "2018-05-17",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Kanika Tandon Bhal",
+      "role": null,
+      "tenure_months": 88.16
+     },
+     {
+      "appointed": "2024-10-17",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Padmaja Nair",
+      "role": null,
+      "tenure_months": 23.15
+     },
+     {
+      "appointed": "2023-09-01",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjaya Gupta",
+      "role": null,
+      "tenure_months": 37.0
+     },
+     {
+      "appointed": "2024-08-16",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Vinay Baijal",
+      "role": null,
+      "tenure_months": 25.16
+     },
+     {
+      "appointed": "2013-11-27",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjay Sharma",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-28",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Aditya Misra",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 7,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Govinda Rajulu Chintala",
+      "Sanjaya Gupta",
+      "Vinay Baijal",
+      "Aditya Misra"
+     ],
+     "nomination and remuneration committee": [
+      "Kanika Tandon Bhal",
+      "Vinay Baijal",
+      "Aditya Misra",
+      "Padmaja Nair"
+     ],
+     "risk management committee": [
+      "Sanjaya Gupta",
+      "Govinda Rajulu Chintala",
+      "Sanjay Sharma",
+      "Padmaja Nair",
+      "Aditya Misra"
+     ],
+     "stakeholders relationship committee": [
+      "Govinda Rajulu Chintala",
+      "Sanjaya Gupta",
+      "Sanjay Sharma",
+      "Kanika Tandon Bhal"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": true,
+    "exceptions": [
+     "cyber-security incident in the quarter"
+    ],
+    "gaps": {
+     "audit committee": 85.0,
+     "board": 55.0,
+     "nomination and remuneration committee": 58.0,
+     "risk management committee": 99.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 14.4865,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1750520_30102026090631_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "The Company received an income tax demand of Rs. 7.60 crores for AY 2023-24. The Company has disputed the order and filed a rectification request under Section 154 for deletion of the demand.There is error in computation of demand apparent from assessment order. AO omitted to reduce taxable income due to applicability of ICDS amounting to Rs. 14,60,19,958. There is one wrong addition in profit in intimation under section 143",
+      "initiated": "2025-03-20",
+      "opposing_party": "Income Tax",
+      "status": "In addition to the rectification application, Company filed an appeal in the matter. The proceedings in the appeal concluded as follows:- The CIT(A) has allowed relief in respect of the deduction under Section 80JJAA. For the ICDS adjustment of Rs. 14.6 crore, the CIT(A) has directed the AO to verify the relevant submissions, which have already been furnished by the Company. In respect of the bad debt recovery amount, the CIT(A) dismissed the ground on the basis that the matter does not arise from the assessment order passed under Section 143(3). The Company has filed a rectification application before the AO and has also filed appeal before the ITAT on this issue."
+     },
+     {
+      "as_last_disclosed": "The Company received an income tax demand of Rs. 5.35 crores for AY 2023-24 U/S 270A Penalty notice due to Under Reporting of Income. The company has filed an appeal in Form-35 but Hearing of appeal is pending because we have not received communication from Income Tax",
+      "initiated": "2025-09-24",
+      "opposing_party": "Income Tax",
+      "status": "Appeal has been filed with CIT(A). Order of Appeal is awaited"
+     },
+     {
+      "as_last_disclosed": "Actual Demand was of Rs.2.44 CR initially but 0.49 CR was paid earlier & appeal has also been filed.(AY-2017-18). On 10-09-2025 Order under section 271AAC(1) for drop proceedings of penalty. Conclusion drawn for Non-imposition of penalty. Hence, It will be removed from the demands soon.",
+      "initiated": "2019-12-28",
+      "opposing_party": "Income Tax",
+      "status": "The assessment order has been set aside/quashed by the ITAT."
+     },
+     {
+      "as_last_disclosed": "The Company received a demand notice of Rs. 0.54 Crores under Section 156 for AY 2018-19 due to an alleged short deduction of TDS. The company has filed an appeal by depositing 20% of Demand amount.Response submitted for change of incumbency in penalty and attached form-35 & its acknowledgement. Mentioned the reason that there was no intention to make any short deduction & company bonafied relied on the opinion of big 4.So there would be no penalty.Hearing of the appeal has also been done.",
+      "initiated": "2025-01-29",
+      "opposing_party": "Income Tax",
+      "status": "The Company has filed an appeal before the CIT(A). The hearing proceedings have been concluded, and the order is currently awaited."
+     },
+     {
+      "as_last_disclosed": "The Company received a demand notice of Rs.2.30 Crores under Section 156 for AY 2019-20 due to an alleged short deduction of TDS.The company has filed an appeal by depositing 20% of Demand amount.Response submitted for change of incumbency in penalty and attached form-35 & its acknowledgement. Mentioned the reason that there was no intention to make any short deduction & company bonafied relied on the opinion of big 4.So there would be no penalty.Hearing of the appeal has also been done.",
+      "initiated": "2025-01-29",
+      "opposing_party": "Income Tax",
+      "status": "The Company has filed an appeal before the CIT(A). The hearing proceedings have been concluded, and the order is currently awaited."
+     },
+     {
+      "as_last_disclosed": "The Company received an income tax demand of Rs. 1.07 crores for AY 2020-21 U/S 201(1)w.r.t 195 of the Income Tax Act,1961. The company has filed an appeal in Form-35.Appeal is pending before CIT(A)",
+      "initiated": "2025-12-19",
+      "opposing_party": "Income Tax",
+      "status": "The Company has filed an appeal before the CIT(A). The hearing proceedings have been concluded, and the order is currently awaited."
+     }
+    ]
    }
   ]
  },
@@ -7079,7 +7730,168 @@
   ]
  },
  "industry": "Financial Services > Finance > Non Banking Financial Company (NBFC)",
- "last_filed_at": "2026-10-21T18:00:00+05:30",
+ "last_filed_at": "2026-10-29T18:57:45+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "F3 ADVISORS PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 175.91,
+    "qty": 178081.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AYE",
+    "value_cr": 3.13
+   },
+   {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "F3 ADVISORS PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 176.88,
+    "qty": 1545081.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AYE",
+    "value_cr": 27.33
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.55,
+     "description": "Items that won't be reclassified subsequently to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.55,
+    "oci_net_cr": -0.41,
+    "profit_cr": 42.6,
+    "tax_not_reclassified_cr": -0.14,
+    "total_comprehensive_cr": 42.19
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.43,
+     "description": "Re-Measurement Income/(Loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.43,
+    "oci_net_cr": 0.32,
+    "profit_cr": 85.91,
+    "tax_not_reclassified_cr": 0.11,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 86.23
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -3.45,
+     "description": "Re-Measurement Income/(Loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -3.93,
+     "description": "Cash flow hedge reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -3.45,
+    "oci_net_cr": -5.52,
+    "profit_cr": 74.5,
+    "reclassified_cr": -3.93,
+    "tax_not_reclassified_cr": -0.87,
+    "tax_reclassified_cr": -0.99,
+    "total_comprehensive_cr": 68.98
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.91,
+     "description": "Re-measurement income /(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 4.68,
+     "description": "Cash flow hedge reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -1.91,
+    "oci_net_cr": 2.07,
+    "profit_cr": 86.72,
+    "reclassified_cr": 4.68,
+    "tax_not_reclassified_cr": -0.48,
+    "tax_reclassified_cr": 1.18,
+    "total_comprehensive_cr": 88.79
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-27T12:11:24+05:30",
@@ -7190,6 +8002,16 @@
    },
    "source_news_id": "nse-106657492",
    "text": "Approved senior secured NCD issuance up to INR equivalent of USD 15 million on private placement basis with 1.1x asset cover."
+  },
+  {
+   "as_of": "2026-10-29T18:57:45+05:30",
+   "lab": {
+    "at": "2026-10-30T01:59:23+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106835098",
+   "text": "GNPA stood at 4.20% as of September 2026, declining for seven consecutive quarters."
   }
  ],
  "ownership": [
@@ -7373,6 +8195,160 @@
    "value": 4.2
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 0.19,
+     "approved_cr": 0.19,
+     "closing_cr": 0.18,
+     "counterparty": "Sovan Satyaprakash",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.19,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-26",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Personal",
+      "TenureOfFinancialIndebtedness": "24",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.19
+     },
+     "relationship": "KMP (Interim Chief Financial Officer)",
+     "remarks": "As approved by audit",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.07,
+     "approved_cr": 0.17,
+     "closing_cr": 0.0,
+     "counterparty": "Shashwat Sharma",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of Managing Director",
+     "remarks": "As approved by audit & Board",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.02,
+     "approved_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "Foundation For Advancement of Micro Enterprises",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Wholly owned Subsidiary",
+     "remarks": "As approved by audit",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 3.47,
+     "closing_cr": 0.0,
+     "counterparty": "Foundation For Advancement of Micro Enterprises",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Amount provided for CSR",
+     "relationship": "Wholly owned Subsidiary",
+     "remarks": "As approved by audit & Board",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 4,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 4.17,
+     "approved_cr": 4.17,
+     "closing_cr": 0.0,
+     "counterparty": "Foundation For Advancement of Micro Enterprises",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Amount provided for CSR",
+     "relationship": "Wholly owned Subsidiary",
+     "remarks": "No remarks",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 20.99,
+     "closing_cr": 0.0,
+     "counterparty": "Shashwat Sharma",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of Managing Director",
+     "remarks": "No remarks",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": -0.04,
+     "approved_cr": 0.19,
+     "closing_cr": 0.14,
+     "counterparty": "Sovan Satyaprakash",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.18,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-03-26",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Personal",
+      "RelatedPartyTransactionExplanatory": "Mr. Sovan Satyaprakash was extended loan from the Company during the time he was serving as Interim -CFO of the Company who, being KMP, is considered as related party of the Company. He has ceased to be Interim-CFO and KMP of the Company w.e.f. April 27, 2026 and accordingly he has ceased as related",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24 months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.19
+     },
+     "relationship": "KMP (Interim Chief Financial Officer)",
+     "remarks": "No remarks",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.02,
+     "approved_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "Foundation For Advancement of Micro Enterprises",
+     "entity": "Aye Finance Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Income",
+     "relationship": "Wholly owned Subsidiary",
+     "remarks": "No remarks",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 4,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544699",
  "section_lab": {
@@ -7382,7 +8358,12 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-14T18:31:33+05:30",
+   "at": "2026-10-30T21:06:15+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:27:28+05:30",
    "by": "file",
    "doc": "other"
   }
@@ -7434,6 +8415,246 @@
   "Q4FY26",
   "Q1FY27",
   "Q2FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Depreciation": 7.01,
+    "Expenses": 253.44000000000005,
+    "Financing Margin %": 10.994173178553666,
+    "Financing Profit": 48.67999999999992,
+    "Interest": 140.66,
+    "Net Profit": 42.6,
+    "OPM %": 42.761642350603,
+    "Operating Profit": 189.33999999999992,
+    "Other Income": 12.170000000000073,
+    "Profit before tax": 53.84,
+    "Revenue": 442.78,
+    "Sales": 442.78,
+    "Tax": 11.24,
+    "Tax %": 20.87667161961367
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Depreciation": 7.96,
+    "Expenses": 291.88,
+    "Financing Margin %": 19.30398909999244,
+    "Financing Profit": 102.01000000000005,
+    "Interest": 134.55,
+    "Net Profit": 85.91,
+    "OPM %": 44.76572553175385,
+    "Operating Profit": 236.56000000000006,
+    "Other Income": 16.829999999999927,
+    "Profit before tax": 110.88,
+    "Revenue": 528.44,
+    "Sales": 528.44,
+    "Tax": 24.97,
+    "Tax %": 22.519841269841272
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 26.31,
+    "Expenses": 1055.56,
+    "Financing Margin %": 12.404049087192035,
+    "Financing Profit": 225.10000000000002,
+    "Interest": 534.07,
+    "Net Profit": 193.63,
+    "OPM %": 41.833771415031435,
+    "Operating Profit": 759.1700000000001,
+    "Other Income": 48.50999999999999,
+    "Profit before tax": 247.3,
+    "Revenue": 1814.73,
+    "Sales": 1814.73,
+    "Tax": 53.67,
+    "Tax %": 21.70238576627578
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 1169.22,
+    "Cash from Investing Activity": -125.36,
+    "Cash from Operating Activity": -1354.64,
+    "Net Cash Flow": -310.78
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowing": 5017.63,
+    "CWIP": 0.0,
+    "Equity Capital": 48.9,
+    "Fixed Assets": 61.73,
+    "Investments": 158.14,
+    "Other Assets": 7553.07,
+    "Other Liabilities": 222.59999999999945,
+    "Reserves": 2483.81,
+    "Total Assets": 7772.94,
+    "Total Liabilities": 7772.94
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 6.17,
+    "Expenses": 255.73,
+    "Financing Margin %": 19.069065923706976,
+    "Financing Profit": 91.03,
+    "Interest": 130.61,
+    "Net Profit": 74.5,
+    "OPM %": 46.42939439009573,
+    "Operating Profit": 221.64000000000001,
+    "Other Income": 12.289999999999992,
+    "Profit before tax": 97.15,
+    "Revenue": 477.37,
+    "Sales": 477.37,
+    "Tax": 22.65,
+    "Tax %": 23.314462171899123
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 6.43,
+    "Expenses": 260.21,
+    "Financing Margin %": 21.287350065125683,
+    "Financing Profit": 109.5,
+    "Interest": 144.68,
+    "Net Profit": 86.72,
+    "OPM %": 49.413868854371195,
+    "Operating Profit": 254.18,
+    "Other Income": 12.729999999999961,
+    "Profit before tax": 115.8,
+    "Revenue": 514.39,
+    "Sales": 514.39,
+    "Tax": 29.08,
+    "Tax %": 25.112262521588946
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 5858.32,
+    "CWIP": 2.99,
+    "Equity Capital": 49.02,
+    "Fixed Assets": 58.160000000000004,
+    "Investments": 222.96,
+    "Other Assets": 8489.400000000001,
+    "Other Liabilities": 220.57999999999993,
+    "Reserves": 2645.59,
+    "Total Assets": 8773.51,
+    "Total Liabilities": 8773.51
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "AYE",
  "timeline": [
@@ -7564,6 +8785,20 @@
    "pdf_url": "https://nsearchives.nseindia.com/corporate/AYEFINANCE_22102026165223_AYE_Intimation.pdf",
    "summary": "Aye Finance Limited shared the audio recording of its October 22, 2026, earnings conference call on strategy and outlook via its website.",
    "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-10-29T18:57:45+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_97ac781a",
+   "impact_level": "HIGH",
+   "lab": {
+    "at": "2026-10-30T01:59:23+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106835098",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/AYEFINANCE_29102026185725_AYE_Transcript.pdf",
+   "summary": "Aye Finance held its Q2FY27 earnings conference call on October 22, 2026, reporting AUM of ₹7,597 Cr and PAT of ₹87 Cr."
   }
  ],
  "upcoming_events": [
@@ -7580,7 +8815,7 @@
    "source_news_id": "nse-106657492"
   }
  ],
- "updated_at": "2026-10-27T09:57:13+05:30",
+ "updated_at": "2026-10-30T01:59:23+05:30",
  "watchlist": [
   {
    "check_by": "2026-06-30",
@@ -7666,6 +8901,25 @@
    "status_history": [],
    "target": null,
    "text": "Gross NPA ratio"
+  },
+  {
+   "check_by": "2026-12-31",
+   "check_in": "Q3FY27 results",
+   "created_on": "2026-10-29T18:57:45+05:30",
+   "id": "w_851d5c32",
+   "kind": "KPI",
+   "lab": {
+    "at": "2026-10-30T01:59:23+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "metric": "aum",
+   "period": "FY27",
+   "source_news_id": "nse-106835098",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "25-30%",
+   "text": "AUM growth"
   }
  ]
 }

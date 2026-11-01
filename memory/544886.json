@@ -1,4 +1,72 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-09-22T17:03:46+05:30",
@@ -10,6 +78,37 @@
    },
    "period": "Mar-2026",
    "source_news_id": "nse-106787805"
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "cash_cr": 96.57,
+   "current_assets_cr": 405.24,
+   "current_liabilities_cr": 116.45,
+   "cwip_cr": 5.43,
+   "equity_capital_cr": 33.53,
+   "fixed_assets_cr": 171.5,
+   "goodwill_cr": 108.28,
+   "gross_debt_cr": 40.73,
+   "inventories_cr": 139.93,
+   "investments_cr": 27.29,
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
+   "minority_interest_cr": 30.12,
+   "net_worth_cr": 618.57,
+   "noncurrent_assets_cr": 376.74,
+   "noncurrent_liabilities_cr": 16.84,
+   "payables_cr": 28.33,
+   "period": "Q2FY27",
+   "receivables_cr": 83.13,
+   "reserves_cr": 585.03,
+   "source_news_id": "nse-106837516",
+   "total_assets_cr": 781.98,
+   "total_liabilities_cr": 133.29
   }
  ],
  "business_summary": {
@@ -96,6 +195,222 @@
    "source_news_id": "nse-106787805"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -27.993,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 3.493,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 7.933,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.847,
+    "AdjustmentsForFinanceCosts": 2.471,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 28.069,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 8.356,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 1.645,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -5.496,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 14.395,
+    "AdjustmentsForSharebasedPayments": 1.139,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -1.106,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 96.574,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 47.574,
+    "CashFlowsFromUsedInInvestingActivities": -28.602,
+    "CashFlowsFromUsedInOperatingActivities": 49.09,
+    "CashFlowsFromUsedInOperations": 57.145,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 28.479,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 8.055,
+    "IncreaseDecreaseInCashAndCashEquivalents": 96.541,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 68.062,
+    "InterestPaidClassifiedAsFinancingActivities": 2.471,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.645,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.021,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.05,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 6.491,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -36.484,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 87.266,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.06,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 25.985,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 10.763,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.737,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -21.935,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -3.365,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 4.836,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 6.977,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.742,
+    "AdjustmentsForFinanceCosts": 2.322,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 27.893,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 5.683,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 1.599,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 19.958,
+    "AdjustmentsForSharebasedPayments": 0.942,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -1.075,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 84.677,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 44.835,
+    "CashFlowsFromUsedInInvestingActivities": -27.856,
+    "CashFlowsFromUsedInOperatingActivities": 49.73,
+    "CashFlowsFromUsedInOperations": 56.272,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.033,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.542,
+    "IncreaseDecreaseInCashAndCashEquivalents": 66.742,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 66.709,
+    "InterestPaidClassifiedAsFinancingActivities": 2.322,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.599,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.021,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.05,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 5.541,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -39.36,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 87.266,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.06,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 25.985,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 9.021,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.749,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Tempsens Instruments (India) Limited",
  "deals": [
   {
@@ -134,6 +449,80 @@
    "tranches": [],
    "updated_as_of": "2026-09-22T17:03:46+05:30",
    "usage": "MERCHANT_SALE"
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 4
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 4
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 4
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 4
+   }
   }
  ],
  "financial_metrics": [
@@ -808,15 +1197,712 @@
    "unit": "INR_CR",
    "value": 39.8,
    "yoy_pct": 78.3
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 10.76,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible_wip",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 10.12,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": -1.31,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 7.93,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:H1FY27",
+     "finance_cost:H1FY27",
+     "depreciation:H1FY27",
+     "other_income:H1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 48.76,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY27",
+     "revenue:H1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "PCT",
+   "value": 19.12,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 42.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR",
+   "value": 4.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 2.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 47.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": -12.22,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": -28.6,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 96.54,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 49.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 25.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 4.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 33.53,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 35.7,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 33.94,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 33.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 42.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 150.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 255.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 1.76,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 8.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 216.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 259.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR",
+   "value": 4.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR",
+   "value": 4.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_minority",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837516",
+   "unit": "INR_CR",
+   "value": 2.07,
+   "yoy_pct": null
   }
  ],
  "fy_end_month": 3,
  "governance": {
-  "auditor": null,
-  "auditor_history": [],
+  "auditor": {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "name": "Walker Chandiok & Co LLP",
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106837516"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-10-30T20:54:15+05:30",
+    "lab": {
+     "at": "2026-10-30T23:26:40+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Walker Chandiok & Co LLP",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106837516"
+   }
+  ],
   "quarters": [
    {
-    "as_of": "2026-10-26T11:10:25+05:30",
+    "as_of": "2026-10-28T17:46:43+05:30",
     "board": [
      {
       "appointed": "1990-09-14",
@@ -946,7 +2032,7 @@
     "penalties": [],
     "quarter_end": "2026-09-30",
     "related_finance": [],
-    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1745551_26102026111112_WEB.xml",
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1747928_28102026054848_WEB.xml",
     "tax_litigation": [
      {
       "as_last_disclosed": "First Time Disclosure",
@@ -965,6 +2051,18 @@
       "initiated": "2026-07-03",
       "opposing_party": "office of the Commissioner of Customs NS-1",
       "status": "Order Passed"
+     },
+     {
+      "as_last_disclosed": "First Time Disclosure",
+      "initiated": "2026-04-24",
+      "opposing_party": "Office of the Joint Commissioner, State Tax",
+      "status": "Appeal to the Appellate Tribunal"
+     },
+     {
+      "as_last_disclosed": "First Time Disclosure",
+      "initiated": "2026-09-23",
+      "opposing_party": "ASSISTANT COMMISSIONER JHANSI",
+      "status": "Appeal to the Appellate Tribunal by department"
      }
     ]
    }
@@ -1071,6 +2169,28 @@
     "name": "Victura Technologies",
     "source_news_id": "nse-106787805",
     "type": "joint venture"
+   },
+   {
+    "as_of": "2026-10-30T20:54:15+05:30",
+    "lab": {
+     "at": "2026-10-30T23:26:40+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Pyrosens Technologies India Private Limited",
+    "source_news_id": "nse-106837516",
+    "type": "Subsidiary company"
+   },
+   {
+    "as_of": "2026-10-30T20:54:15+05:30",
+    "lab": {
+     "at": "2026-10-30T23:26:40+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Tempsens Gulf LLC",
+    "source_news_id": "nse-106837516",
+    "type": "Subsidiary company"
    }
   ],
   "former_names": [
@@ -1078,7 +2198,528 @@
   ]
  },
  "industry": "Industrials > Capital Goods > Industrial Manufacturing > Industrial Products",
- "last_filed_at": "2026-10-17T11:22:41+05:30",
+ "last_filed_at": "2026-10-30T20:54:15+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 604.43,
+    "qty": 1309464.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 79.15
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 603.96,
+    "qty": 1309464.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 79.09
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 593.12,
+    "qty": 579852.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 34.39
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 592.41,
+    "qty": 579852.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 34.35
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 599.97,
+    "qty": 1505110.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 90.3
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 599.51,
+    "qty": 1505110.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 90.23
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 595.7,
+    "qty": 1647464.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 98.14
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 594.62,
+    "qty": 1706366.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 101.46
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 588.8,
+    "qty": 1374636.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 80.94
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 588.79,
+    "qty": 1397338.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 82.27
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 588.75,
+    "qty": 673241.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 39.64
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 591.74,
+    "qty": 680681.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 40.28
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 580.81,
+    "qty": 1544877.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 89.73
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 581.1,
+    "qty": 1544877.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 89.77
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 581.8,
+    "qty": 1151516.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 67.0
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 581.57,
+    "qty": 1151516.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 66.97
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "PATRONUS TRADETECH LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 599.97,
+    "qty": 764041.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 45.84
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "PATRONUS TRADETECH LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 598.3,
+    "qty": 887751.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 53.11
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 588.92,
+    "qty": 751896.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 44.28
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 588.39,
+    "qty": 763765.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 44.94
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 589.42,
+    "qty": 1033072.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 60.89
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 589.45,
+    "qty": 1033072.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 60.89
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 573.13,
+    "qty": 519518.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 29.78
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 573.27,
+    "qty": 519518.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 29.78
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 554.31,
+    "qty": 590906.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 32.75
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 554.37,
+    "qty": 594952.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 32.98
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 568.95,
+    "qty": 1288309.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 73.3
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 569.1,
+    "qty": 1292492.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 73.56
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 567.83,
+    "qty": 529946.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 30.09
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 568.49,
+    "qty": 533152.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 30.31
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 570.09,
+    "qty": 902986.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 51.48
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 569.87,
+    "qty": 902986.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 51.46
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 567.63,
+    "qty": 468489.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 26.59
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 566.94,
+    "qty": 482966.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 27.38
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 593.56,
+    "qty": 532987.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TEMPSENS",
+    "value_cr": 31.64
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 593.68,
+    "qty": 537831.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TEMPSENS",
+    "value_cr": 31.93
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.11,
+     "description": "Remeasurement gain/loss on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.028,
+     "description": "income tax effect relating to above",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.069,
+     "description": "exchange difference on translation of foreign operation",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -0.634,
+     "description": "Share of other comprehensive income of joint venture accounted for using equity method",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.082,
+    "oci_net_cr": -0.621,
+    "profit_cr": 16.266,
+    "reclassified_cr": -0.703,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 15.645,
+    "total_comprehensive_nci_cr": 1.028,
+    "total_comprehensive_owners_cr": 14.617
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.11,
+     "description": "remeasurement of defind benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.028,
+     "description": "Income tax relating to above",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.082,
+    "oci_net_cr": 0.082,
+    "profit_cr": 12.93,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 13.012
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-22T17:03:46+05:30",
@@ -1109,6 +2750,16 @@
    },
    "source_news_id": "nse-106787805",
    "text": "Mid-voltage heaters targeting explosion-proof certification by Q4FY27"
+  },
+  {
+   "as_of": "2026-10-30T20:54:15+05:30",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "source_news_id": "nse-106837516",
+   "text": "Appointed M/s P C Modi & Co as Joint Statutory Auditor."
   }
  ],
  "ownership": [
@@ -1174,6 +2825,556 @@
    "source_news_id": "nse-106787805",
    "status": "OPEN",
    "value": 25.3
+  },
+  {
+   "comparison": ">=",
+   "created_on": "2026-10-30T20:54:15+05:30",
+   "id": "p_3e47f880",
+   "kpi": "Revenue growth",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "metric": "revenue",
+   "period": "Q3FY27",
+   "source_news_id": "nse-106837516",
+   "status": "OPEN",
+   "value": 136.31
+  }
+ ],
+ "related_parties": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 8.2,
+     "approved_cr": 25.0,
+     "closing_cr": 1.424,
+     "counterparty": "Pyrosens Technologies India Pvt Ltd",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 1.513,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 8.027,
+     "approved_cr": 20.0,
+     "closing_cr": 4.127,
+     "counterparty": "Victura Tempsens Technologies Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 6.927,
+     "approved_cr": 30.0,
+     "closing_cr": 6.754,
+     "counterparty": "Tempsens Gulf LLC",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 8.596,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 4.951,
+     "approved_cr": 9.9,
+     "closing_cr": 5.039,
+     "counterparty": "Victura Tempsens Technologies Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 2.263,
+     "approved_cr": 10.0,
+     "closing_cr": 2.002,
+     "counterparty": "PT Tempsens Asia Jaya Indonesia",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 1.245,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.253,
+     "approved_cr": 12.0,
+     "closing_cr": 0.156,
+     "counterparty": "Tempsens Instruments Gmbh",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.258,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 4.0,
+     "closing_cr": 2.015,
+     "counterparty": "Tempsens Measurement and Control Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 1.483,
+     "approved_cr": 10.0,
+     "closing_cr": 0.107,
+     "counterparty": "Tempsens Measurement and Control Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.178,
+     "approved_cr": 5.0,
+     "closing_cr": 0.61,
+     "counterparty": "Pyrotech Electronics Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 1.065,
+     "relationship": "Enterprises in which directors' are interested",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.05,
+     "approved_cr": 5.0,
+     "closing_cr": 0.069,
+     "counterparty": "Accurate Optoelectronics Pvt. Ltd.",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.12,
+     "relationship": "Step-Down Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.956,
+     "approved_cr": 4.0,
+     "closing_cr": 0.924,
+     "counterparty": "Tempsens Measurement and Control Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.001,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.838,
+     "approved_cr": 5.0,
+     "closing_cr": 0.585,
+     "counterparty": "Tempsens Korea Co., Ltd.",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.441,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.716,
+     "approved_cr": 3.0,
+     "closing_cr": 0.35,
+     "counterparty": "Pyrosens Technologies India Pvt Ltd",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.324,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.65,
+     "approved_cr": 1.44,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Virender Prakash Rathi",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.65,
+     "approved_cr": 1.44,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Vinay Rathi",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.561,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "PT Tempsens Asia Jaya Indonesia",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Technical Assistance & Consultancy Fees (Income)",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.557,
+     "approved_cr": 1.34,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Aryan Rathi",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director Relative and Shareholder",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.475,
+     "approved_cr": 2.0,
+     "closing_cr": 0.317,
+     "counterparty": "Matplat Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.086,
+     "relationship": "Enterprises over which KMP and Relatives of such personnel exercise significant influence",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.429,
+     "approved_cr": 2.0,
+     "closing_cr": 0.173,
+     "counterparty": "Pyrotech Electronics Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.007,
+     "relationship": "Enterprises in which directors' are interested",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.344,
+     "approved_cr": 1.7,
+     "closing_cr": 0.0,
+     "counterparty": "Victura Tempsens Technologies Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Job receipt, Rent Income",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.325,
+     "approved_cr": 1.52,
+     "closing_cr": 0.0,
+     "counterparty": "Pyrosens Technologies India Pvt Ltd",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Job Charges, Support Service provided (Income), Rent Income",
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.31,
+     "approved_cr": 0.98,
+     "closing_cr": 0.0,
+     "counterparty": "Accurate Optoelectronics Pvt. Ltd.",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Job Charges, Support Service provided (Income), Rent Income",
+     "relationship": "Step-Down Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.307,
+     "approved_cr": 0.7,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Sonal Rathi",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director Relative and Shareholder",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.215,
+     "approved_cr": 2.0,
+     "closing_cr": 0.119,
+     "counterparty": "Tempsens Polska S.P. Z.O.O",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.001,
+     "relationship": "Step-Down Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.189,
+     "approved_cr": 0.35,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Priyanka Menaria",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Chief Financial Officer",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.186,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Victura Tempsens Technologies Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.134,
+     "approved_cr": 0.48,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Tanya Rathi",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director Relative and Shareholder",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.088,
+     "approved_cr": 0.8,
+     "closing_cr": 0.0,
+     "counterparty": "Victura Tempsens Technologies Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.078,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Tempsens Gulf LLC",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Job Receipt",
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.073,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tempsens Instruments Gmbh",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.093,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.063,
+     "approved_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Vishal Jain",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Company Secretary",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.18,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Sheela Talesara",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Director Relative",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.052,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Matplat Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.012,
+     "relationship": "Enterprises over which KMP and Relatives of such personnel exercise significant influence",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.047,
+     "closing_cr": 0.0,
+     "counterparty": "Rishabh verdia",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.047,
+     "closing_cr": 0.0,
+     "counterparty": "Deepak kabra",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.041,
+     "approved_cr": 0.5,
+     "closing_cr": 0.007,
+     "counterparty": "Pyrotech Technologies Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.007,
+     "relationship": "Enterprises in which directors' are interested",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.038,
+     "closing_cr": 0.0,
+     "counterparty": "Ruchika godha",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.036,
+     "closing_cr": 0.0,
+     "counterparty": "Bhagwat singh babel",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.028,
+     "approved_cr": 0.25,
+     "closing_cr": 1.04,
+     "counterparty": "Tempsens Gulf LLC",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 1.084,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.018,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Vinay Rathi HUF",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Expense",
+     "relationship": "Promoter HUF",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.015,
+     "approved_cr": 0.3,
+     "closing_cr": 0.0,
+     "counterparty": "Tempsens Measurement and Control Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary Companies",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.015,
+     "approved_cr": 0.05,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Sonal Rathi",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Expense",
+     "relationship": "Director Relative and Shareholder",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.015,
+     "approved_cr": 0.5,
+     "closing_cr": 0.012,
+     "counterparty": "Pyrotech Technologies Private Limited",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.052,
+     "relationship": "Enterprises in which directors' are interested",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.014,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "TEMPSENS MEXICO SA DE C.V",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Enterprises in which directors' are interested",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.3,
+     "closing_cr": 0.136,
+     "counterparty": "Accurate Optoelectronics Pvt. Ltd.",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.062,
+     "relationship": "Step-Down Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.009,
+     "approved_cr": 0.03,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs.  Nidhi Toshniwal",
+     "entity": "Tempsens Instruments (India) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent Expense",
+     "relationship": "Director Relative",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 46,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
   }
  ],
  "schema_version": 3,
@@ -1185,13 +3386,35 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-10-26T11:10:25+05:30",
+   "at": "2026-10-28T17:46:43+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:31:56+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "capital_goods",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "INDUSTRIAL PRODUCT",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1649,6 +3872,134 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.676,
+    "Depreciation": 3.85,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 94.95100000000001,
+    "Interest": 1.359,
+    "Minority share": 1.063,
+    "Net Profit": 16.266,
+    "Net Profit (owners)": 15.203,
+    "OPM %": 20.012299190443688,
+    "Operating Profit": 23.755999999999986,
+    "Other Income": 2.839000000000013,
+    "PBT as filed": 20.71,
+    "Profit before tax": 21.386,
+    "Profit for PE": 15.203,
+    "Sales": 118.707,
+    "Tax": 5.12,
+    "Tax %": 23.940895913214252
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.402,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 82.17699999999999,
+    "Interest": 1.284,
+    "Net Profit": 12.93,
+    "Net Profit (owners)": 12.93,
+    "OPM %": 19.316452464875166,
+    "Operating Profit": 19.674000000000007,
+    "Other Income": 2.2649999999999935,
+    "Profit before tax": 17.253,
+    "Profit for PE": 12.93,
+    "Sales": 101.851,
+    "Tax": 4.323,
+    "Tax %": 25.05651191097201
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 40.726,
+    "CWIP": 5.427,
+    "Equity Capital": 33.533,
+    "Fixed Assets": 323.489,
+    "Investments": 41.875,
+    "Other Assets": 411.185,
+    "Other Liabilities": 122.68499999999995,
+    "Reserves": 585.032,
+    "Total Assets": 781.976,
+    "Total Liabilities": 781.976
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 31.307,
+    "CWIP": 5.419,
+    "Equity Capital": 33.533,
+    "Fixed Assets": 280.545,
+    "Investments": 77.068,
+    "Other Assets": 349.67,
+    "Other Liabilities": 83.39299999999993,
+    "Reserves": 564.469,
+    "Total Assets": 712.702,
+    "Total Liabilities": 712.702
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "TEMPSENS",
  "timeline": [
   {
@@ -1664,6 +4015,37 @@
    "news_id": "nse-106787805",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/TEMPSENS_22092026170331_Transcript_june.pdf",
    "summary": "Tempsens Instruments Q1FY27 earnings call held on 17 Sep 2026, reporting 33% YoY revenue growth to ₹118 Cr with 78% export growth"
+  },
+  {
+   "basis": "CONSOLIDATED",
+   "date": "2026-10-30T20:54:15+05:30",
+   "event_type": "RESULTS",
+   "id": "t_1c97c2d9",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "news_id": "nse-106837516",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/TEMPSENS_30102026205356_Outcome.pdf",
+   "quarter": "H1FY27",
+   "summary": "H1FY27 results (consolidated): revenue ₹255.02 Cr, net profit to shareholders ₹33.63 Cr (includes ₹1.76 Cr from discontinued operations; continuing operations ₹33.94 Cr)."
+  },
+  {
+   "date": "2026-10-31T18:49:33+05:30",
+   "event_type": "OTHER",
+   "id": "t_858e9b1d",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-31T18:55:08+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106838482",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/TEMPSENS_31102026184920_F_Investor_Outcome.pdf",
+   "summary": "Audio recording of the Earnings Conference Call held on Saturday, 31st October 2026, for the Quarter and Half year ended 30th September 2026, is available on the company website.",
+   "tier": "TIMELINE"
   }
  ],
  "upcoming_events": [
@@ -1716,7 +4098,7 @@
    "source_news_id": "nse-106787805"
   }
  ],
- "updated_at": "2026-10-27T09:57:27+05:30",
+ "updated_at": "2026-10-31T18:55:08+05:30",
  "watchlist": [
   {
    "check_by": "2026-09-30",
@@ -1838,6 +4220,23 @@
    "status_history": [],
    "target": null,
    "text": "No order book value disclosed despite mentioning 'solid order book'"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-10-30T20:54:15+05:30",
+   "id": "w_e04df5ad",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-10-30T23:26:40+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "source_news_id": "nse-106837516",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Approval of shareholders for appointment of Executive Director and Joint Statutory Auditor"
   }
  ]
 }

@@ -1,4 +1,267 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "121750W/W100010",
+     "name": "Suresh Surana & Associates LLP",
+     "signed_on": "2026-05-20",
+     "signing_partner": "Kapil Kedar"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-03-31",
+     "name": "Suresh Surana and Associates LLP",
+     "peer_review_valid": true
+    },
+    {
+     "certificate_valid_until": "2029-02-28",
+     "name": "TAMS and Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "121750W/W100010",
+     "name": "Suresh Surana & Associates LLP",
+     "signed_on": "2026-05-20",
+     "signing_partner": "Kapil Kedar"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "According to the records of the Company examined by us and the information and explanation given to us, the Company has not defaulted in the repayment of loans or other borrowings or in the payment of interest thereon to any lender (i.e. Banks, Financial Institution, Non-Banking Financial Institution / Companies or government / state government etc.) during the year."
+    },
+    "fraud": {
+     "remark": "AuditorsDisclaimerRemark",
+     "text": "According to the information and explanation given to us and based on the audit procedures performed by us, no material fraud by the Company and no fraud on the Company has been noticed or reported during the year.\nDuring the year, no report under sub-section (12) of section 143 of the Act has been filed in Form ADT-4 as prescribed under rule 13 of Companies (Audit and Auditors) Rules, 2014 with the Central Government. As informed to us by the Company, no report under sub-section (12) of section 143 of the Act has been filed by cost auditor and secretarial auditor in Form ADT-4 as prescribed under Rule 13 of Companies (Audit and Auditors) Rules, 2014 with the Central Government.\n\nDuring the year, the Company received whistle blower complaint relating to certain operational and compliance matters. Management has investigated these matters covered in the complaint; and has taken appropriate actions based on the findings thereof. Certain other matters are still under investigation by the"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<span>\n<span>In respect of statutory dues:<br />\nThe Company is generally regular in depositing undisputed statutory dues including income-tax, goods and services tax, provident fund, employees’ state insurance, duty of custom, cess and other statutory dues to the appropriate authorities during the year. According to the information and explanations given to us and based on audit procedure performed by us, there are no undisputed amounts payable in respect of such statutory dues which have remained outstanding as at the year end for a period of more than six months from the date they became payable, except the details as mentioned in the audit report.</span>\n</span>"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-03-31",
+     "name": "Suresh Surana and Associates LLP",
+     "peer_review_valid": true
+    },
+    {
+     "certificate_valid_until": "2029-02-28",
+     "name": "TAMS and Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-11-06T18:00:00+05:30",
@@ -91,16 +354,6 @@
    "source_news_id": "nse-106632386",
    "total_assets_cr": 3114.59,
    "total_liabilities_cr": 1753.76
-  },
-  {
-   "as_of": "2026-05-25T17:38:34+05:30",
-   "lab": {
-    "at": "2026-05-25T17:38:34+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "FY26",
-   "source_news_id": "nse-106639513"
   }
  ],
  "business_summary": null,
@@ -159,7 +412,415 @@
    "source_news_id": "nse-106632386"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -169.262,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -145.899,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 23.676,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 26.146,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.128,
+    "AdjustmentsForFinanceCosts": 32.678,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 15.991,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 96.71,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 1.93,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.083,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 4.057,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 3.791,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -7.852,
+    "AdjustmentsForSharebasedPayments": 3.509,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 7.762,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 281.34,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 695.537,
+    "CashFlowsFromUsedInInvestingActivities": -617.445,
+    "CashFlowsFromUsedInOperatingActivities": 197.854,
+    "CashFlowsFromUsedInOperations": 237.906,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 40.052,
+    "IncreaseDecreaseInCashAndCashEquivalents": 275.946,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 275.946,
+    "InterestPaidClassifiedAsFinancingActivities": 31.363,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.745,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 111.192,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -16.318,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -474.011,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 3.833,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 85.735,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 660.257,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.028,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 145.207,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 15.259,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 7.407,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.999,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 115.673,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 6.631,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.035,
+    "AdjustmentsForFinanceCosts": 10.632,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 6.325,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -36.055,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 2.832,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 9.559,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 2.04,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 4.961,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 114.189,
+    "AdjustmentsForSharebasedPayments": 3.177,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 2.67,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 256.905,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 637.11,
+    "CashFlowsFromUsedInInvestingActivities": -480.918,
+    "CashFlowsFromUsedInOperatingActivities": 97.163,
+    "CashFlowsFromUsedInOperations": 131.191,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 34.028,
+    "IncreaseDecreaseInCashAndCashEquivalents": 253.355,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 253.355,
+    "InterestPaidClassifiedAsFinancingActivities": 9.394,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.506,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -6.186,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -10.847,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -477.351,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 2.846,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 660.257,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.028,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 4.101,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 10.907,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.368,
+    "AdjustmentsForDecreaseIncreaseInInventories": -47.455,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -129.626,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -293.95,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 64.16,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -5.149,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 21.441,
+    "AdjustmentsForInterestIncome": -46.833,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -4.938,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 2.28,
+    "AdjustmentsForProvisionsCurrent": 9.795,
+    "AdjustmentsForReconcileProfitLoss": -328.053,
+    "AdjustmentsForSharebasedPayments": 4.572,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 27.902,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsOperatingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 945.598,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 945.598,
+    "CashFlowsFromUsedInInvestingActivities": -896.373,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -896.373,
+    "CashFlowsFromUsedInOperatingActivities": -26.717,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -26.717,
+    "CashFlowsFromUsedInOperations": 113.6,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 1.306,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 118.529,
+    "IncreaseDecreaseInCashAndCashEquivalents": 22.508,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 22.508,
+    "InterestPaidClassifiedAsFinancingActivities": 55.802,
+    "InterestReceivedClassifiedAsInvestingActivities": 10.268,
+    "OtherAdjustmentsForNoncashItems": 0.038,
+    "OtherAdjustmentsToReconcileProfitLoss": 3.946,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -303.948,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": -21.788,
+    "PaymentForAuditServices": 1.43,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 82.056,
+    "PaymentsToAuditor": 1.43,
+    "PaymentsToCostAuditor": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 423.199,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 660.257,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.028,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 601.415
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.068,
+    "AdjustmentsForDecreaseIncreaseInInventories": -22.163,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -35.812,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 69.898,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 17.224,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -18.125,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -5.378,
+    "AdjustmentsForInterestIncome": 1.791,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -39.026,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -0.445,
+    "AdjustmentsForProvisionsCurrent": 4.739,
+    "AdjustmentsForReconcileProfitLoss": -29.406,
+    "AdjustmentsForSharebasedPayments": 4.034,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 4.461,
+    "CashAndCashEquivalentsCashFlowStatement": 6.158,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsOperatingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 643.782,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 643.782,
+    "CashFlowsFromUsedInInvestingActivities": -643.429,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -643.429,
+    "CashFlowsFromUsedInOperatingActivities": 2.255,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 2.255,
+    "CashFlowsFromUsedInOperations": 55.852,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 251.6,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 53.597,
+    "IncreaseDecreaseInCashAndCashEquivalents": 2.608,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 2.608,
+    "InterestPaidClassifiedAsFinancingActivities": 23.478,
+    "InterestReceivedClassifiedAsInvestingActivities": 13.322,
+    "OtherAdjustmentsForNoncashItems": 2.391,
+    "OtherAdjustmentsToReconcileProfitLoss": -9.413,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 392.06,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -5.285,
+    "PaymentForAuditServices": 0.597,
+    "PaymentForOtherServices": 0.255,
+    "PaymentForReimbursementOfExpenses": 0.011,
+    "PaymentForTaxationMatters": 0.03,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 4.258,
+    "PaymentsToAuditor": 0.893,
+    "PaymentsToCostAuditor": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 660.257,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.028,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 7.834,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": -11.261
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Saatvik Green Energy Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 970.011,
+     "class": "ContingentLiabilityForGuarantees",
+     "description": "Performance guarantee"
+    },
+    {
+     "amount_cr": 47.891,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "Outstanding foreign Letter of Credit against which materials not dispatched"
+    },
+    {
+     "amount_cr": 12.033,
+     "class": "LegalProceedingsContingentLiability",
+     "description": "Litigation & claims"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 3,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "total_cr": 1029.934
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 965.227,
+     "class": "OtherGuaranteesGiven",
+     "description": "Performance guarantees issued through bank and Corporate guarantees issued by company on behalf of subsidaries and and entities on which controlling entity or one or more KMP have control [Refer below note (c)]"
+    },
+    {
+     "amount_cr": 12.033,
+     "class": "LegalProceedingsContingentLiability",
+     "description": "Litigation & claims"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 2,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 977.26
+  }
+ ],
  "deals": [
   {
    "amount_cr": 71.25,
@@ -271,6 +932,188 @@
    "tranches": [],
    "updated_as_of": "2026-05-26T15:50:01+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
   }
  ],
  "financial_metrics": [
@@ -7838,6 +8681,164 @@
       "status": "Matter remanded back for passing of speaking order"
      }
     ]
+   },
+   {
+    "as_of": "2026-10-28T17:33:57+05:30",
+    "board": [
+     {
+      "appointed": "2015-11-02",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Neelesh Garg",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-01-15",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manik Garg",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-24",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manavika Garg",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-10-24",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sudhir Kumar Bassi",
+      "role": null,
+      "tenure_months": 23.08
+     },
+     {
+      "appointed": "2024-10-24",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Narendra Mairpady",
+      "role": null,
+      "tenure_months": 23.08
+     },
+     {
+      "appointed": "2025-12-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ritu Lal",
+      "role": null,
+      "tenure_months": 9.21
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Sudhir Kumar Bassi",
+      "Narendra Mairpady",
+      "Manik Garg"
+     ],
+     "corporate social responsibility committee": [
+      "Manik Garg",
+      "Neelesh Garg",
+      "Narendra Mairpady",
+      "Ritu Lal"
+     ],
+     "nomination and remuneration committee": [
+      "Narendra Mairpady",
+      "Sudhir Kumar Bassi",
+      "Manavika Garg",
+      "Ritu Lal"
+     ],
+     "risk management committee": [
+      "Neelesh Garg",
+      "Prashant Mathur",
+      "Sudhir Kumar Bassi"
+     ],
+     "stakeholders relationship committee": [
+      "Narendra Mairpady",
+      "Sudhir Kumar Bassi",
+      "Neelesh Garg"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [
+     "guarantee or comfort to promoter group: ₹101.5 Cr outstanding"
+    ],
+    "gaps": {
+     "audit committee": 61.0,
+     "board": 61.0,
+     "nomination and remuneration committee": 112.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 12.387,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [
+     {
+      "given_cr": 0.0,
+      "kind": "guarantee or comfort",
+      "outstanding_cr": 101.5,
+      "party": "promoter group"
+     }
+    ],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1747890_28102026053356_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Appeal is now listed for 04.08.2026",
+      "initiated": "2025-03-25",
+      "opposing_party": "Commissioner of Customs, Custom House, Ludhiana",
+      "status": "Appeal allowed, demand dropped, our classification upheld by the CESTAT, Chandigarh"
+     },
+     {
+      "as_last_disclosed": "Appeal was filed on 12.09.2022 which inadvertently got mentioned as 12.08.2022; Pending for Listing",
+      "initiated": "2022-08-12",
+      "opposing_party": "Assistant Commissioner of Customs, Customs House, Mundra, Gujarat",
+      "status": "Appeal was filed on 12.09.2022 which inadvertently got mentioned as 12.08.2022; Pending for Listing"
+     },
+     {
+      "as_last_disclosed": "Appeal is now listed for hearing on 03.08.2026",
+      "initiated": "2025-04-21",
+      "opposing_party": "Principal Commissioner of Custom, Mundra",
+      "status": "Appeal was last listed on 03.08.2026; next date of hearing has not been fixed by the tribunal yet"
+     },
+     {
+      "as_last_disclosed": "Appeal is now listed for hearing on 03.08.2026",
+      "initiated": "2025-04-21",
+      "opposing_party": "Principal Commissioner of Custom, Mundra",
+      "status": "Appeal was last listed on 03.08.2026; next date of hearing has not been fixed by the tribunal yet"
+     },
+     {
+      "as_last_disclosed": "Matter remanded back for passing of speaking order",
+      "initiated": "2025-05-07",
+      "opposing_party": "Superintendent, Custom Commissionerate mundra",
+      "status": "Matter remanded back for passing of speaking order"
+     }
+    ]
    }
   ]
  },
@@ -7883,7 +8884,405 @@
   ]
  },
  "industry": "Industrials > Capital Goods > Electrical Equipment > Other Electrical Equipment",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 8,
+   "people": [
+    {
+     "designation": "CEO",
+     "name": "Prashant Mathur",
+     "pay_cr": 20.299
+    },
+    {
+     "designation": "CFO",
+     "name": "Abani Kant Jha",
+     "pay_cr": 3.301
+    },
+    {
+     "designation": "Managing Director",
+     "name": "Neelesh Garg",
+     "pay_cr": 3.0
+    },
+    {
+     "designation": "Managing Director",
+     "name": "Manik Garg",
+     "pay_cr": 3.0
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Sudhir Kumar Bassi",
+     "pay_cr": 0.22
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Narendra Mairpady",
+     "pay_cr": 0.208
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "Manavika Garg",
+     "pay_cr": 0.096
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Ritu Lal",
+     "pay_cr": 0.016
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "last_filed_at": "2026-10-22T20:27:48+05:30",
+ "oci": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.154,
+     "description": "Remeasurement gain / (loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.001,
+     "description": "Net loss due to foreign currency translation differences",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -1.154,
+    "oci_net_cr": -0.867,
+    "profit_cr": 118.824,
+    "reclassified_cr": -0.001,
+    "tax_not_reclassified_cr": -0.288,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 117.957,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 117.957
+   }
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.12,
+     "description": "Remeasurement of the net defined benefit liability/(assets)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.282,
+     "description": "Income tax expenses relating to the above",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.838,
+    "oci_net_cr": -0.838,
+    "profit_cr": 8.124,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.286
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.51,
+     "description": "Remeasurement gain / (loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.003,
+     "description": "Net loss due to foreign currency translation differences",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.51,
+    "oci_net_cr": 0.384,
+    "profit_cr": 83.238,
+    "reclassified_cr": 0.003,
+    "tax_not_reclassified_cr": 0.129,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 83.622,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 83.622
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.498,
+     "description": "Remeasurement of the net defined benefit liability/(assets)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.498,
+    "oci_net_cr": 0.373,
+    "profit_cr": 3.436,
+    "tax_not_reclassified_cr": 0.125,
+    "total_comprehensive_cr": 3.809
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.059,
+     "description": "Remeasurement gain / (loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.002,
+     "description": "Net loss due to foreign currency translation differences",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.059,
+    "oci_net_cr": 0.047,
+    "profit_cr": 98.72,
+    "reclassified_cr": 0.002,
+    "tax_not_reclassified_cr": 0.014,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 98.767,
+    "total_comprehensive_owners_cr": 98.767
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.038,
+     "description": "Remeasurement of the net defined benefit liability/(assets)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.038,
+    "oci_net_cr": 0.028,
+    "profit_cr": 39.881,
+    "tax_not_reclassified_cr": 0.01,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 39.909
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.559,
+     "description": "Remeasurement of net defined benefit liability/(assets)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.279,
+     "description": "Net loss due to foreign currency translation differences",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -1.559,
+    "oci_net_cr": -1.459,
+    "profit_cr": 60.42,
+    "reclassified_cr": -0.279,
+    "tax_not_reclassified_cr": -0.379,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 58.961,
+    "total_comprehensive_nci_cr": -0.1885,
+    "total_comprehensive_owners_cr": 59.1497
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.258,
+     "description": "Remeasurement of the net defined benefit liability/(assets)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -1.258,
+    "oci_net_cr": -0.941,
+    "profit_cr": 11.458,
+    "tax_not_reclassified_cr": -0.317,
+    "total_comprehensive_cr": 10.517
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.847,
+     "description": "Remeasurement of net defined benefit liability/(assets)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.847,
+    "oci_net_cr": 0.653,
+    "profit_cr": 5.363,
+    "reclassified_cr": 0.0,
+    "tax_not_reclassified_cr": 0.194,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 6.016,
+    "total_comprehensive_nci_cr": -0.147,
+    "total_comprehensive_owners_cr": 6.163
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.58,
+     "description": "Remeasurement of the net defined benefit liability/(assets)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.58,
+    "oci_net_cr": 0.434,
+    "profit_cr": 6.857,
+    "tax_not_reclassified_cr": 0.146,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.291
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-21T12:40:25+05:30",
@@ -8019,6 +9418,1306 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 425.77,
+     "approved_cr": 1500.0,
+     "closing_cr": 28.526,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 315.72,
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 241.905,
+     "approved_cr": 1500.0,
+     "closing_cr": 0.0,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 10.343,
+     "approved_cr": 200.0,
+     "closing_cr": 13.793,
+     "counterparty": "Saatvik Cleantech EPC Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 19.382,
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 9.843,
+     "closing_cr": 0.0,
+     "counterparty": "Prashant Mathur",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Incentives paid",
+     "relationship": "Chief Executive Officer",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.0,
+     "approved_cr": 3.0,
+     "closing_cr": 3.0,
+     "counterparty": "Neelesh Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Salary Advance",
+     "relationship": "Chairman and Managing Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.0,
+     "approved_cr": 3.0,
+     "closing_cr": 3.0,
+     "counterparty": "Manik Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Salary Advance",
+     "relationship": "Managing Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.887,
+     "closing_cr": 5.89,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 4.192,
+     "other_details": "Interest Income",
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.882,
+     "closing_cr": 0.0,
+     "counterparty": "Abani Kant Jha",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Chief Financial Officer",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 3.5,
+     "closing_cr": 0.0,
+     "counterparty": "Neelesh Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Chairman and Managing Director",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 3.5,
+     "closing_cr": 0.0,
+     "counterparty": "Manik Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.464,
+     "closing_cr": 0.0,
+     "counterparty": "Prashant Mathur",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Chief Executive Officer",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": -0.45,
+     "closing_cr": 7.39,
+     "counterparty": "Ultravibrant Solar Energy Project Two Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 7.84,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital Support",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayable on demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.347,
+     "closing_cr": 0.646,
+     "counterparty": "Ultravibrant Solar Energy Project Two Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.333,
+     "other_details": "Interest Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.332,
+     "closing_cr": 0.574,
+     "counterparty": "Saatvik Cleantech EPC Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.242,
+     "other_details": "Stock Option granted to employees of subsidiary",
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.24,
+     "approved_cr": 0.78,
+     "closing_cr": 0.24,
+     "counterparty": "Saatvik Social Foundation",
+     "entity": "Saatvik Solar Industries Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Payment of CSR expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.197,
+     "closing_cr": 0.0,
+     "counterparty": "Bhagya Hasija",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Company Secretary",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.098,
+     "closing_cr": 0.334,
+     "counterparty": "Saatvik Green Energy Limited",
+     "entity": "Saatvik Green Energy USA Inc.",
+     "opening_cr": 0.223,
+     "other_details": "Interest expense",
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.094,
+     "closing_cr": 0.0,
+     "counterparty": "Sudhir Kumar Bassi",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.088,
+     "closing_cr": 0.0,
+     "counterparty": "Narendra Mairpady",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.068,
+     "closing_cr": 0.0,
+     "counterparty": "Sarita Rajesh Zele",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Independent Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.15,
+     "closing_cr": 0.06,
+     "counterparty": "Saatvik Cleantech EPC Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sub lease rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.05,
+     "approved_cr": 0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Manavika Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Non Executive Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.048,
+     "approved_cr": 0.115,
+     "closing_cr": 0.048,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sub lease rental Income",
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.045,
+     "approved_cr": 0.045,
+     "closing_cr": 0.04,
+     "counterparty": "Saatvik Vision Venture Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": -0.005,
+     "other_details": "Royalty Expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.045,
+     "approved_cr": 0.045,
+     "closing_cr": 0.04,
+     "counterparty": "Saatvik Vision Venture Private Limited",
+     "entity": "Saatvik Solar Industries Private Limited",
+     "opening_cr": -0.005,
+     "other_details": "Royalty Expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.045,
+     "approved_cr": 0.045,
+     "closing_cr": 0.04,
+     "counterparty": "Saatvik Vision Venture Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": -0.005,
+     "other_details": "Royalty Expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.014,
+     "approved_cr": 0.1,
+     "closing_cr": 0.016,
+     "counterparty": "Stockwell Alwar Two Private Limited",
+     "entity": "Saatvik Solar Industries Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Stockwell Alwar two Private Limited ceased to be part of the promoter group w.e.f September 27, 2025."
+     },
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.015,
+     "closing_cr": 0.009,
+     "counterparty": "Saatvik Social Foundation",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.003,
+     "other_details": "Sub lease rental Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "closing_cr": 0.006,
+     "counterparty": "Saatvik Social Foundation",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-06",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.006
+     },
+     "other_details": "Payment of CSR expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.015,
+     "closing_cr": 0.006,
+     "counterparty": "Saatvik Agro Processors Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sub lease rental Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.015,
+     "closing_cr": 0.006,
+     "counterparty": "Saatvik Energy Infra Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sub lease rental Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.002,
+     "closing_cr": 0.0,
+     "counterparty": "Sarita Rajesh Zele",
+     "entity": "Saatvik Solar Industries Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Non Executive Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 32,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 15,
+   "parties": [
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 21.549,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Prashant Mathur"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 6.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Neelesh Garg"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 6.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Manik Garg"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.301,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Abani Kant Jha"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.012,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 3.046
+     },
+     "party": "Saatvik Agro Processors Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.45,
+      "OtherRelatedPartyTransactionsExpense": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.679,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Ultravibrant Solar Energy Project Two Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.902,
+      "OtherRelatedPartyTransactionsIncome": 0.012,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Social Foundation"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.28,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Bhagya Hasija"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.22,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Sudhir Kumar Bassi"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.216,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Narendra Mairpady"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.137,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Vision Venture Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.096,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Manavika Garg"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.07,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Sarita Rajesh Zele"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.016,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Ritu Lal"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.012,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Energy Infra Private Limited"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 19,
+   "parties": [
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 643.66,
+      "OtherRelatedPartyTransactionsIncome": 109.883,
+      "PurchasesOfGoodsRelatedPartyTransactions": 446.096,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 1222.858
+     },
+     "party": "Saatvik Solar Industries Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 21.549,
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Prashant Mathur"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.538,
+      "OtherRelatedPartyTransactionsIncome": 0.12,
+      "PurchasesOfGoodsRelatedPartyTransactions": 16.177,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.282
+     },
+     "party": "Saatvik Cleantech EPC Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 6.0,
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Neelesh Garg"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 6.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Manik Garg"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.301,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Abani Kant Jha"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.244,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Green Energy USA Inc."
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.012,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 2.239
+     },
+     "party": "Saatvik Agro Processors Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.517,
+      "OtherRelatedPartyTransactionsIncome": 0.012,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Social Foundation"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.28,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Bhagya Hasija"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.22,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Sudhir Kumar Bassi"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.208,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Narendra Mairpady"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.1,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Power Storage Solutions Limited"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.096,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Manavika Garg"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.068,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Sarita Rajesh Zele"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.046,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Vision Venture Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.033
+     },
+     "party": "Intelligent Hydel Solutions Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.016,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Ritu Lal"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.012,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Saatvik Energy Infra Private Limited"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 887.723,
+     "approved_cr": 1500.0,
+     "closing_cr": 94.436,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 28.526,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 392.06,
+     "closing_cr": 392.06,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Investment in Unsecured Non-Convertible redeeemable debentures",
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 251.6,
+     "closing_cr": 251.61,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Investment in Equity Shares",
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 204.191,
+     "approved_cr": 1500.0,
+     "closing_cr": 0.0,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 23.238,
+     "approved_cr": 23.238,
+     "closing_cr": 40.064,
+     "counterparty": "Intelligent Hydel Solutions Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26.(3) The transaction has been approved by the Board of Directors. (3) The Intelligent Hydel "
+     },
+     "relationship": "Subsidary",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 15.018,
+     "closing_cr": 7.939,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 5.834,
+     "approved_cr": 200.0,
+     "closing_cr": 42.851,
+     "counterparty": "Saatvik Cleantech EPC Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 13.793,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": -3.0,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "Neelesh Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 3.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Salary Advance",
+     "relationship": "Chairman and Managing Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -3.0,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "Manik Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 3.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Salary Advance",
+     "relationship": "Managing Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.239,
+     "closing_cr": 2.35,
+     "counterparty": "Saatvik Agro Processors Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.869,
+     "closing_cr": 7.581,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 5.89,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Interest Income",
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 3.5,
+     "closing_cr": 0.0,
+     "counterparty": "Neelesh Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Chairman and Managing Director",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 3.5,
+     "closing_cr": 0.0,
+     "counterparty": "Manik Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Managing Director",
+     "remarks": "-",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.306,
+     "closing_cr": 1.306,
+     "counterparty": "Intelligent Hydel Solutions Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.807,
+     "closing_cr": 0.879,
+     "counterparty": "Saatvik Agro Processors Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.511,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Saatvik Social Foundation",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.006,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-06",
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26.",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.006
+     },
+     "other_details": "Payment of CSR expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.426,
+     "closing_cr": 0.0,
+     "counterparty": "Saatvik Solar Industries Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.048,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Sub lease rental Income",
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.332,
+     "closing_cr": 0.911,
+     "counterparty": "Ultravibrant Solar Energy Project Two Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.646,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Interest Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.282,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "Saatvik Cleantech EPC Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.206,
+     "closing_cr": 0.78,
+     "counterparty": "Saatvik Cleantech EPC Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.574,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Stock Option granted to employees of subsidiary",
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.145,
+     "approved_cr": 0.78,
+     "closing_cr": 0.0,
+     "counterparty": "Saatvik Social Foundation",
+     "entity": "Saatvik Solar Industries Private Limited",
+     "opening_cr": 0.24,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Payment of CSR expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.123,
+     "closing_cr": 0.0,
+     "counterparty": "Intelligent Hydel Solutions Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Advance to vendor",
+     "relationship": "Subsidary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.103,
+     "closing_cr": 0.46,
+     "counterparty": "Saatvik Green Energy Limited",
+     "entity": "Saatvik Green Energy USA Inc.",
+     "opening_cr": 0.334,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Interest expense",
+     "relationship": "Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1,
+     "closing_cr": 0.1,
+     "counterparty": "Saatvik Power Storage Solutions Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "Saatvik Cleantech EPC Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.06,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Sub lease rental Income",
+     "relationship": "Wholly-owned Subsidiary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.046,
+     "approved_cr": 0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Manavika Garg",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Director Sitting Fees",
+     "relationship": "Non Executive Director",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.033,
+     "approved_cr": 0.033,
+     "closing_cr": 71.697,
+     "counterparty": "Intelligent Hydel Solutions Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26.(3) The transaction has been approved by the Board of Directors."
+     },
+     "relationship": "Step Down Subsidary",
+     "remarks": "-",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.009,
+     "closing_cr": 0.058,
+     "counterparty": "Intelligent Hydel Solutions Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Interest Income",
+     "relationship": "Subsidary",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.015,
+     "closing_cr": 0.015,
+     "counterparty": "Saatvik Social Foundation",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.009,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Sub lease rental Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.015,
+     "closing_cr": 0.015,
+     "counterparty": "Saatvik Agro Processors Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.006,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Sub lease rental Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 0.015,
+     "closing_cr": 0.015,
+     "counterparty": "Saatvik Energy Infra Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.006,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Sub lease rental Income",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.045,
+     "closing_cr": 0.037,
+     "counterparty": "Saatvik Vision Venture Private Limited",
+     "entity": "Saatvik Green Energy Limited",
+     "opening_cr": 0.04,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Royalty Expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.045,
+     "closing_cr": 0.037,
+     "counterparty": "Saatvik Vision Venture Private Limited",
+     "entity": "Saatvik Solar Industries Private Limited",
+     "opening_cr": 0.04,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Royalty Expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.045,
+     "closing_cr": 0.037,
+     "counterparty": "Saatvik Vision Venture Private Limited",
+     "entity": "Saatvik Cleantech EPC Private Limited",
+     "opening_cr": 0.04,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "(1) The approval of the Audit Committee has been obtained, wherever applicable.  (2) The value of the related party transactions as approved by the Audit Committee represents the entire financial year 2025-26."
+     },
+     "other_details": "Royalty Expense",
+     "relationship": "Promoter Group Entity",
+     "remarks": "-",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 34,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544526",
  "section_lab": {
@@ -8028,13 +10727,94 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-24T16:03:52+05:30",
+   "at": "2026-10-28T17:33:57+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "capital_goods",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "Manufacturing of Solar Photovoltaic PV modules Engineering Procurement and Construction EPC and services design construction procurement and commissioning of Solar Photovoltaic Water Pumping Systems SPWPS",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Engaged in the manufacturing of Solar Photovoltaic (PV) modules, Engineering, Procurement and Construction (EPC) and services, design, construction, procurement and commissioning of Solar Photovoltaic Water Pumping Systems (SPWPS)",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Engaged in the manufacturing of Solar Photovoltaic (PV) modules, Engineering, Procurement and Construction (EPC) and services, design, construction, procurement and commissioning of Solar Photovoltaic Water Pumping Systems (SPWPS) and Solar Inverter",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Engaged in the manufacturing of Solar Photovoltaic (PV) modules, Engineering, Procurement and Construction (EPC) and services, design, construction, procurement and commissioning of Solar Photovoltaic Water Pumping Systems (SPWPS) and Solar Inverter",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Engaged in the manufacturing of Solar Photovoltaic (PV) modules, Engineering, Procurement and Construction (EPC) and services, design, construction, procurement and commissioning of Solar Photovoltaic Water Pumping Systems (SPWPS) and Solar Inverter",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -11783,6 +14563,740 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 502.664,
+    "CWIP": 1.545,
+    "Equity Capital": 22.4094,
+    "Fixed Assets": 319.736,
+    "Investments": 0.0,
+    "Other Assets": 1317.6309999999999,
+    "Other Liabilities": 795.4196,
+    "Reserves": 318.419,
+    "Total Assets": 1638.912,
+    "Total Liabilities": 1638.912
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 31.162,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1831.29,
+    "Interest": 45.801,
+    "Net Profit": 217.148,
+    "Net Profit (owners)": 217.148,
+    "OPM %": 15.154971705814592,
+    "Operating Profit": 327.1039999999998,
+    "Other Income": 34.07100000000014,
+    "Profit before tax": 284.212,
+    "Profit for PE": 217.148,
+    "Sales": 2158.394,
+    "Tax": 67.064,
+    "Tax %": 23.596470240524678
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 148.601,
+    "Cash from Investing Activity": -198.14,
+    "Cash from Operating Activity": 42.601,
+    "Net Cash Flow": -6.938
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 160.731,
+    "CWIP": 0.0,
+    "Equity Capital": 22.4094,
+    "Fixed Assets": 59.802,
+    "Investments": 0.269,
+    "Other Assets": 753.698,
+    "Other Liabilities": 374.2386,
+    "Reserves": 256.39,
+    "Total Assets": 813.769,
+    "Total Liabilities": 813.769
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 12.289,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1781.417,
+    "Interest": 28.285999999999998,
+    "Net Profit": 155.934,
+    "Net Profit (owners)": 155.934,
+    "OPM %": 9.771061575319225,
+    "Operating Profit": 192.913,
+    "Other Income": 57.111999999999966,
+    "Profit before tax": 209.45,
+    "Profit for PE": 155.934,
+    "Sales": 1974.33,
+    "Tax": 53.516,
+    "Tax %": 25.550728097397947
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -97.799,
+    "Cash from Investing Activity": 3.472,
+    "Cash from Operating Activity": 87.719,
+    "Net Cash Flow": -6.608
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.459,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 738.676,
+    "Interest": 19.044,
+    "Minority share": 0.0,
+    "Net Profit": 118.824,
+    "Net Profit (owners)": 118.824,
+    "OPM %": 19.334562228085186,
+    "Operating Profit": 177.0519999999999,
+    "Other Income": 4.006000000000114,
+    "Profit before tax": 149.555,
+    "Profit for PE": 118.824,
+    "Sales": 915.728,
+    "Tax": 30.731,
+    "Tax %": 20.54829327003444
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.504,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 368.76,
+    "Interest": 5.83,
+    "Net Profit": 8.124,
+    "Net Profit (owners)": 8.124,
+    "OPM %": 2.3917669853571772,
+    "Operating Profit": 9.036000000000001,
+    "Other Income": 11.829,
+    "Profit before tax": 11.531,
+    "Profit for PE": 8.124,
+    "Sales": 377.796,
+    "Tax": 3.407,
+    "Tax %": 29.546440031220186
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 13.687,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 659.658,
+    "Interest": 13.634,
+    "Minority share": 0.0,
+    "Net Profit": 83.238,
+    "Net Profit (owners)": 83.238,
+    "OPM %": 14.11027448182295,
+    "Operating Profit": 108.37099999999998,
+    "Other Income": 15.15300000000002,
+    "Profit before tax": 96.203,
+    "Profit for PE": 83.238,
+    "Sales": 768.029,
+    "Tax": 12.965,
+    "Tax %": 13.476710705487355
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 528.571,
+    "CWIP": 33.387,
+    "Equity Capital": 25.422,
+    "Fixed Assets": 403.06399999999996,
+    "Investments": 0.0,
+    "Other Assets": 2360.389,
+    "Other Liabilities": 1065.263,
+    "Reserves": 1177.584,
+    "Total Assets": 2796.84,
+    "Total Liabilities": 2796.84
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.127,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 558.673,
+    "Interest": 4.802,
+    "Net Profit": 3.436,
+    "Net Profit (owners)": 3.436,
+    "OPM %": -0.6235467236780231,
+    "Operating Profit": -3.461999999999989,
+    "Other Income": 16.861999999999988,
+    "Profit before tax": 5.471,
+    "Profit for PE": 3.436,
+    "Sales": 555.211,
+    "Tax": 2.035,
+    "Tax %": 37.196125022847745
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 131.496,
+    "CWIP": 0.0,
+    "Equity Capital": 25.422,
+    "Fixed Assets": 56.245,
+    "Investments": 0.601,
+    "Other Assets": 1351.339,
+    "Other Liabilities": 321.765,
+    "Reserves": 929.502,
+    "Total Assets": 1408.185,
+    "Total Liabilities": 1408.185
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.695,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1103.702,
+    "Interest": 23.124,
+    "Net Profit": 98.72,
+    "Net Profit (owners)": 98.72,
+    "OPM %": 12.1970816739882,
+    "Operating Profit": 153.31999999999994,
+    "Other Income": 11.43900000000005,
+    "Profit before tax": 126.94,
+    "Profit for PE": 98.72,
+    "Sales": 1257.022,
+    "Tax": 28.22,
+    "Tax %": 22.230975263904206
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.056,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 690.9359999999999,
+    "Interest": 8.221,
+    "Net Profit": 39.881,
+    "Net Profit (owners)": 39.881,
+    "OPM %": 3.6440160319970696,
+    "Operating Profit": 26.13000000000011,
+    "Other Income": 38.950999999999894,
+    "Profit before tax": 53.804,
+    "Profit for PE": 39.881,
+    "Sales": 717.066,
+    "Tax": 13.923,
+    "Tax %": 25.877258196416623
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 23.32,
+    "Exceptional items": -3.946,
+    "Exceptional items AT": -3.2294492455232575,
+    "Expenses": 1500.025,
+    "Interest": 15.501,
+    "Minority share": -0.1885,
+    "Net Profit": 60.42,
+    "Net Profit (owners)": 60.6089,
+    "OPM %": 6.694960429992208,
+    "Operating Profit": 107.63199999999983,
+    "Other Income": 5.015000000000157,
+    "Profit before tax": 73.826,
+    "Profit for PE": 63.838349245523254,
+    "Sales": 1607.657,
+    "Tax": 13.406,
+    "Tax %": 18.158914203668086
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 939.436,
+    "CWIP": 384.139,
+    "Equity Capital": 25.4210008,
+    "Fixed Assets": 450.84499999999997,
+    "Investments": 0.0,
+    "Other Assets": 2279.474,
+    "Other Liabilities": 813.9549992000001,
+    "Reserves": 1335.646,
+    "Total Assets": 3114.458,
+    "Total Liabilities": 3114.458
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 64.16,
+    "Exceptional items": -3.946,
+    "Exceptional items AT": -3.190685424982962,
+    "Expenses": 4005.588,
+    "Interest": 72.64999999999999,
+    "Net Profit": 357.115,
+    "Net Profit (owners)": 357.115,
+    "OPM %": 11.93484706944385,
+    "Operating Profit": 542.8489999999997,
+    "Other Income": 35.61400000000026,
+    "Profit before tax": 441.653,
+    "Profit for PE": 360.305685424983,
+    "Sales": 4548.437,
+    "Tax": 84.538,
+    "Tax %": 19.141271541232594
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 945.598,
+    "Cash from Investing Activity": -896.373,
+    "Cash from Operating Activity": -26.717,
+    "Net Cash Flow": 22.508
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 7.537,
+    "Exceptional items": -3.946,
+    "Exceptional items AT": -2.960533525405972,
+    "Expenses": 627.8889999999999,
+    "Interest": 6.344,
+    "Net Profit": 11.458,
+    "Net Profit (owners)": 11.458,
+    "OPM %": -2.5716045328981187,
+    "Operating Profit": -15.741999999999848,
+    "Other Income": 44.894999999999854,
+    "Profit before tax": 15.272,
+    "Profit for PE": 14.418533525405973,
+    "Sales": 612.147,
+    "Tax": 3.814,
+    "Tax %": 24.9738082765846
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 166.826,
+    "CWIP": 0.0,
+    "Equity Capital": 25.4210008,
+    "Fixed Assets": 43.379,
+    "Investments": 644.567,
+    "Other Assets": 800.6500000000001,
+    "Other Liabilities": 317.23499919999995,
+    "Reserves": 979.114,
+    "Total Assets": 1488.596,
+    "Total Liabilities": 1488.596
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 17.224,
+    "Exceptional items": -3.946,
+    "Exceptional items AT": -2.882739566961458,
+    "Expenses": 2246.4619999999995,
+    "Interest": 25.775,
+    "Net Profit": 62.285,
+    "Net Profit (owners)": 62.285,
+    "OPM %": 0.6965723934895929,
+    "Operating Profit": 15.758000000000266,
+    "Other Income": 112.49899999999974,
+    "Profit before tax": 85.258,
+    "Profit for PE": 65.16773956696146,
+    "Sales": 2262.22,
+    "Tax": 22.973,
+    "Tax %": 26.945271997935677
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 643.782,
+    "Cash from Investing Activity": -643.429,
+    "Cash from Operating Activity": 2.255,
+    "Net Cash Flow": 2.608
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 13.407,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 477.181,
+    "Interest": 21.735,
+    "Minority share": -0.147,
+    "Net Profit": 5.363,
+    "Net Profit (owners)": 5.51,
+    "OPM %": 6.620027005342362,
+    "Operating Profit": 33.82900000000001,
+    "Other Income": 8.719999999999992,
+    "Profit before tax": 7.407,
+    "Profit for PE": 5.51,
+    "Sales": 511.01,
+    "Tax": 2.044,
+    "Tax %": 27.595517753476443
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.868,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 336.001,
+    "Interest": 3.694,
+    "Net Profit": 6.857,
+    "Net Profit (owners)": 6.857,
+    "OPM %": -0.8294397080756197,
+    "Operating Profit": -2.763999999999953,
+    "Other Income": 19.461999999999954,
+    "Profit before tax": 9.136,
+    "Profit for PE": 6.857,
+    "Sales": 333.237,
+    "Tax": 2.279,
+    "Tax %": 24.94527145359019
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "SAATVIKGL",
  "timeline": [
   {

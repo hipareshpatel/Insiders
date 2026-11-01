@@ -1,9 +1,83 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Lohia Corp Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 105.65
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 105.65
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-08-19T18:00:00+05:30",
@@ -796,6 +870,87 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.443,
+     "description": "Re-measurement gains/(losses) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 3.007,
+     "description": "Net gain/ (loss) on cash flow hedges",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -1.521,
+     "description": "Foreign currency translation reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.443,
+    "oci_net_cr": 1.376,
+    "profit_cr": 66.261,
+    "reclassified_cr": 1.486,
+    "tax_not_reclassified_cr": 0.363,
+    "tax_reclassified_cr": 1.19,
+    "total_comprehensive_cr": 67.637,
+    "total_comprehensive_nci_cr": -0.309,
+    "total_comprehensive_owners_cr": 67.946
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.437,
+     "description": "Re-measurement gains/(losses) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 3.007,
+     "description": "Net gain/ (loss) on cash flow hedges",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 1.437,
+    "oci_net_cr": 2.892,
+    "profit_cr": 73.274,
+    "reclassified_cr": 3.007,
+    "tax_not_reclassified_cr": 0.362,
+    "tax_reclassified_cr": 1.19,
+    "total_comprehensive_cr": 76.166
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -870,7 +1025,24 @@
   }
  },
  "sector": "capital_goods",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Manufacturing of Machines",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1328,6 +1500,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 13.052,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 402.8419999999999,
+    "Interest": 2.422,
+    "Minority share": -0.352,
+    "Net Profit": 66.261,
+    "Net Profit (owners)": 66.613,
+    "OPM %": 19.915629932686855,
+    "Operating Profit": 100.18000000000006,
+    "Other Income": 6.557999999999936,
+    "Profit before tax": 91.264,
+    "Profit for PE": 66.613,
+    "Sales": 503.022,
+    "Tax": 25.003,
+    "Tax %": 27.396344670406734
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.808,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 394.664,
+    "Interest": 1.636,
+    "Net Profit": 73.274,
+    "Net Profit (owners)": 73.274,
+    "OPM %": 21.027871880196336,
+    "Operating Profit": 105.08699999999999,
+    "Other Income": 7.010000000000019,
+    "Profit before tax": 98.653,
+    "Profit for PE": 73.274,
+    "Sales": 499.751,
+    "Tax": 25.379,
+    "Tax %": 25.725522792008352
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "LCL",
  "timeline": [],
  "upcoming_events": [],

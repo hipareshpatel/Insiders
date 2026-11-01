@@ -1,4 +1,164 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-05-31",
+     "name": "Ramaswamy Vijayanand",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-05-31",
+     "name": "Ramaswamy Vijayanand",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-12-12T18:00:00+05:30",
@@ -61,34 +221,589 @@
    "source_news_id": "xbrl:res:544617:Q4FY26",
    "total_assets_cr": 678.22,
    "total_liabilities_cr": 99.89
-  },
-  {
-   "as_of": "2026-08-07T22:15:58+05:30",
-   "gross_debt_cr": 0.0,
-   "lab": {
-    "at": "2026-08-07T22:15:58+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q4FY26",
-   "source_news_id": "nse-106732537"
-  },
-  {
-   "as_of": "2026-08-10T17:42:32+05:30",
-   "gross_debt_cr": 0.0,
-   "lab": {
-    "at": "2026-08-10T17:42:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q4FY26",
-   "source_news_id": "nse-106734877"
   }
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -5.913,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -4.309,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 12.075,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 1.974,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -2.007,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 8.417,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -4.953,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 2.302,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -9.264,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.016,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 12.375,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 7.793,
+    "CashFlowsFromUsedInInvestingActivities": -9.957,
+    "CashFlowsFromUsedInOperatingActivities": 6.129,
+    "CashFlowsFromUsedInOperations": 12.678,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.549,
+    "IncreaseDecreaseInCashAndCashEquivalents": 3.965,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 3.965,
+    "InterestPaidClassifiedAsFinancingActivities": 1.974,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 8.338,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -0.511,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 1.226,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 10.993,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 6.97,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 10.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.814,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -8.47,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 12.075,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 1.974,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 2.543,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 8.414,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -6.054,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -5.222,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 2.302,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -9.282,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.016,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 5.227,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 7.793,
+    "CashFlowsFromUsedInInvestingActivities": -10.028,
+    "CashFlowsFromUsedInOperatingActivities": 5.357,
+    "CashFlowsFromUsedInOperations": 11.864,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.507,
+    "IncreaseDecreaseInCashAndCashEquivalents": 3.122,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 3.122,
+    "InterestPaidClassifiedAsFinancingActivities": 1.974,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 8.335,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -0.59,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 1.226,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 10.993,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 6.97,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 10.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.803,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -11.262,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 24.128,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.683,
+    "AdjustmentsForFinanceCosts": 3.526,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 10.709,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -11.468,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -9.064,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 10.031,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 3.272,
+    "AdjustmentsForProvisionsNoncurrent": 4.042,
+    "AdjustmentsForReconcileProfitLoss": 22.726,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.505,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 3.992,
+    "CashAndCashEquivalentsCashFlowStatement": 32.696,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 130.32,
+    "CashFlowsFromUsedInInvestingActivities": -156.207,
+    "CashFlowsFromUsedInOperatingActivities": 50.173,
+    "CashFlowsFromUsedInOperations": 82.069,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 14.192,
+    "IncreaseDecreaseInCashAndCashEquivalents": 24.286,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 24.286,
+    "InterestPaidClassifiedAsFinancingActivities": 3.526,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 18.409,
+    "InterestReceivedClassifiedAsOperatingActivities": -18.56,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -2.327,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 1.543,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.856,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 17.238,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 180.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": -12.24,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.011,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 107.142,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 52.796,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 26.589,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -9.251,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -15.364,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 24.117,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.226,
+    "AdjustmentsForFinanceCosts": 3.526,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 9.895,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 16.043,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -11.463,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 4.128,
+    "AdjustmentsForProvisionsNoncurrent": 3.627,
+    "AdjustmentsForReconcileProfitLoss": 23.527,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.505,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 3.992,
+    "CashAndCashEquivalentsCashFlowStatement": 24.99,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 130.326,
+    "CashFlowsFromUsedInInvestingActivities": -156.211,
+    "CashFlowsFromUsedInOperatingActivities": 48.77,
+    "CashFlowsFromUsedInOperations": 81.46,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 14.147,
+    "IncreaseDecreaseInCashAndCashEquivalents": 22.885,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 22.885,
+    "InterestPaidClassifiedAsFinancingActivities": 3.526,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 18.392,
+    "InterestReceivedClassifiedAsOperatingActivities": -18.543,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -2.321,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 1.525,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 17.238,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -26.589,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 180.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": -12.24,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.011,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 107.202,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 52.705,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Excelsoft Technologies Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2025-12-12T18:00:00+05:30",
@@ -6177,6 +6892,59 @@
   ]
  },
  "industry": "Information Technology > IT - Services > IT Enabled Services",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 0.82,
+    "after_qty": 945000.0,
+    "as_of": "2026-08-19T23:59:00+05:30",
+    "before_pct": 0.8,
+    "before_qty": 915000.0,
+    "category": "Promoter Group",
+    "exchange": "BSE",
+    "filed": "2026-08-19",
+    "filing_id": "2380",
+    "from": "2026-08-14",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Mysore Sudhindratheertha Adarsh",
+    "qty": 30000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "EXCELSOFT",
+    "to": "2026-08-14",
+    "value_cr": 0.2247
+   },
+   {
+    "after_pct": 0.83,
+    "after_qty": 955000.0,
+    "as_of": "2026-09-04T23:59:00+05:30",
+    "before_pct": 0.82,
+    "before_qty": 945000.0,
+    "category": "Promoter Group",
+    "exchange": "BSE",
+    "filed": "2026-09-04",
+    "filing_id": "2998",
+    "from": "2026-09-04",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Mysore Sudhindratheertha Adarsh",
+    "qty": 10000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "EXCELSOFT",
+    "to": "2026-09-04",
+    "value_cr": 0.0714
+   }
+  ],
+  "filings": [
+   "2380",
+   "2998",
+   "2995"
+  ]
+ },
  "last_filed_at": "2026-10-14T12:15:01+05:30",
  "market_deals": {
   "events": [
@@ -6227,9 +6995,335 @@
     "side": "BUY",
     "symbol": "EXCELSOFT",
     "value_cr": 4.81
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 76.35,
+    "qty": 1136597.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "EXCELSOFT",
+    "value_cr": 8.68
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 76.41,
+    "qty": 1136597.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "EXCELSOFT",
+    "value_cr": 8.68
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.704,
+     "description": "Re-measurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.381,
+     "description": "Foreign currency translation reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.704,
+    "oci_net_cr": 1.265,
+    "profit_cr": 10.612,
+    "reclassified_cr": 0.381,
+    "tax_not_reclassified_cr": -0.18,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 11.877,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 11.877
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.704,
+     "description": "Re-measurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.004,
+     "description": "Foreign currency translation reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.704,
+    "oci_net_cr": 0.88,
+    "profit_cr": 10.108,
+    "reclassified_cr": -0.004,
+    "tax_not_reclassified_cr": -0.18,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.988
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.078,
+     "description": "i) Items not to be reclassified to profit or loss in subsequent periods / year",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.328,
+     "description": "ii) Items to be reclassified to profit or loss in subsequent periods / year",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.25,
+    "oci_net_cr": 0.25,
+    "profit_cr": 10.296,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.546,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 10.546
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.078,
+     "description": "Items not to be reclassified to profit or loss in subsequent periods / year",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.006,
+     "description": "Items to be reclassified to profit or loss in subsequent periods / year",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.072,
+    "oci_net_cr": -0.072,
+    "profit_cr": 11.03,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.958
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.077,
+     "description": "Re-measurement gains / (lossess) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -1.718,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.077,
+    "oci_net_cr": -0.912,
+    "profit_cr": 16.599,
+    "reclassified_cr": -1.718,
+    "tax_not_reclassified_cr": 0.271,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 15.687
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.077,
+     "description": "Re-measurement gains/(lossess) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -1.48,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 1.077,
+    "oci_net_cr": -0.674,
+    "profit_cr": 15.504,
+    "reclassified_cr": -1.48,
+    "tax_not_reclassified_cr": 0.271,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 14.83
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.109,
+     "description": "Re-measurement gains / (lossess) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.279,
+     "description": "Income tax relating to the items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.057,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.83,
+    "oci_net_cr": -0.773,
+    "profit_cr": 9.228,
+    "reclassified_cr": 0.057,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 8.455
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.109,
+     "description": "Re-measurement gains/(lossess) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.279,
+     "description": "Income tax relating to the items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.007,
+     "description": "Exchange differences on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.83,
+    "oci_net_cr": -0.837,
+    "profit_cr": 8.648,
+    "reclassified_cr": -0.007,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.811
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -6322,6 +7416,1242 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 9.574,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 4.649,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of marketing and order securing expenses",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.135,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.383,
+     "closing_cr": 0.0,
+     "counterparty": "Excel Education and E-learning Trust",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.217,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of marketing and order securing expenses",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Dhananjaya Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Chairman and Managing Director",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.138,
+     "closing_cr": 0.0,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Rental expenses",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.539,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.473,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Ravi Subramaniam",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.426,
+     "closing_cr": 0.0,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Lease Liability Notional Interest",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.261,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Colin Hughes",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Professional consultancy fee",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.23,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Adarsh M S",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses",
+     "relationship": "Relatives of KMP",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.229,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Venkatesh Dayananda",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.18,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Shruthi Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Whole-time Director",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.172,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Adarsh M S",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Relatives of KMP",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "TIE Mysuru Association",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Donations",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.076,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Colin Hughes",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Travel and others",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.063,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Limited (formerly known as Meteor Online Learning Limited)",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of marketing and order securing expenses",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.037,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Dhananjaya Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Rental expenses",
+     "relationship": "Chairman and Managing Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.028,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Shivkumarpundaleeka Divate",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.025,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Doreswamy Palaniswamy",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.025,
+     "closing_cr": 0.0,
+     "counterparty": "Desiadda Craftsworks LLP",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Business promotion expenses",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.023,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Arun Kumarbangarpet Venkataramanappa",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.022,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Colin Hughes",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.019,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Adarsh M S",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Travel and others",
+     "relationship": "Relatives of KMP",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Desiraju Srilakshmi",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Lajwanti Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.005,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Software Purchase and License Fee",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.567,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.63,
+     "other_details": "Lease deposit",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 7.073,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 7.809,
+     "other_details": "Lease liability",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.2,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 2.293,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 9.31,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 5.877,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 3.383,
+     "counterparty": "Excel Education and E-learning Trust",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 1.736,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.075,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.952,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 1.796,
+     "other_details": "Trade receivables - Unbilled",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 4.504,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 2.979,
+     "other_details": "Trade receivables - Unbilled",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.457,
+     "other_details": "Trade receivables - Unbilled",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Freedom to Learn Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.243,
+     "other_details": "Loans - credit impaired",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.298,
+     "counterparty": "Mr. Ravi Subramaniam",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.298,
+     "other_details": "Salary advance",
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.23,
+     "counterparty": "Mr. Venkatesh Dayananda",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.23,
+     "other_details": "Salary advance",
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.015,
+     "other_details": "Reimbursement receivable against statutory payments",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.005,
+     "other_details": "Expenses payable",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Limited (formerly known as Meteor Online Learning Limited)",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.065,
+     "other_details": "Expenses payable",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Freedom to Learn Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.076,
+     "other_details": "Expenses payable",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 3.045,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 1.752,
+     "other_details": "Trade payables",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 8.951,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 4.425,
+     "other_details": "Trade payables",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Limited (formerly known as Meteor Online Learning Limited)",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.056,
+     "other_details": "Trade payables",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.212,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.638,
+     "other_details": "Trade payables",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.006,
+     "counterparty": "Desiadda Craftsworks LLP",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.033,
+     "other_details": "Trade payables",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.208,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.532,
+     "other_details": "Unearned revenue",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.049,
+     "other_details": "Unearned revenue",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 51,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 14.636,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of marketing and order securing expenses",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.544,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 4.966,
+     "closing_cr": 0.0,
+     "counterparty": "Training Qualifications UK Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.9,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.471,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of marketing and order securing expenses",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.505,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Jambardi Ramanna Maheshkumar",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.505,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Ajay Ramesh Kulkarni",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.294,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Limited (Branch)",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of marketing and order securing expenses",
+     "relationship": "Branch Office",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.2,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Dhananjaya Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Chairman and Managing Director",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.179,
+     "closing_cr": 0.0,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Rental expenses",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.074,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Prashanth H M",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.037,
+     "closing_cr": 0.0,
+     "counterparty": "AQA Education",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.607,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Shivakumar Srikantaiah",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.601,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Ravi Subramaniam",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.507,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. S M Adithya Jain",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.281,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Adarsh M S",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Relatives of KMP",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.223,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Shruthi Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Whole-time Director",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.201,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Colin Hughes",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Professional consultancy fee",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.191,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Venkatesh Dayananda",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.136,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Ajay Ramesh Kulkarni",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Travel and others",
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.112,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Colin Hughes",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Travel and others",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.061,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Adarsh M S",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses",
+     "relationship": "Relatives of KMP",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.06,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Shivkumarpundaleeka Divate",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.053,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Doreswamy Palaniswamy",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.048,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Colin Hughes",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.045,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Arun Kumarbangarpet Venkataramanappa",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.044,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Jambardi Ramanna Maheshkumar",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Travel and others",
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "Desiadda Craftsworks LLP",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Business promotion expenses",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.038,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Dhananjaya Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Rental expenses",
+     "relationship": "Chairman and Managing Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.037,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Desiraju Srilakshmi",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.037,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Lajwanti Sudhanva",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Non-Executive Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.033,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Shivakumar Srikantaiah",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses",
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.016,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Limited (formerly known as Meteor Online Learning Limited)",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of marketing and order securing expenses",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.012,
+     "closing_cr": 0.0,
+     "counterparty": "Desiadda Craftsworks LLP",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Staff Welfare Expenses",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Desiadda Craftsworks LLP",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Professional consultancy fee",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Jayakumar Karuppusamy",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Directors Sitting Fee",
+     "relationship": "Independent Director",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.008,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Adarsh M S",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Travel and others",
+     "relationship": "Relatives of KMP",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.008,
+     "closing_cr": 0.0,
+     "counterparty": "Desiadda Craftsworks LLP",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Marketing Expenses",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.003,
+     "closing_cr": 0.0,
+     "counterparty": "TIE Mysuru Association",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Subscription and membership fee",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excel Education and E-learning Trust",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Software Purchase and License Fee",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "TIE Mysuru Association",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Donations",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Lease Liability Notional Interest",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.53,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.567,
+     "other_details": "Lease deposit",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 6.533,
+     "counterparty": "Pedanta Technologies Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 7.073,
+     "other_details": "Lease liability",
+     "relationship": "Holding Company",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 2.49,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 1.2,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 11.652,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 9.31,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excel Education and E-learning Trust",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 3.383,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Enterprises in which KMP are having control",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.083,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.075,
+     "other_details": "Trade receivables - Billed",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Pte Ltd",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.952,
+     "other_details": "Trade receivables - Unbilled",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Inc",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 4.504,
+     "other_details": "Trade receivables - Unbilled",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Trade receivables - Unbilled",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Freedom to Learn Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Loans - credit impaired",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.298,
+     "counterparty": "Mr. Ravi Subramaniam",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.298,
+     "other_details": "Salary advance",
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.23,
+     "counterparty": "Mr. Venkatesh Dayananda",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.23,
+     "other_details": "Salary advance",
+     "relationship": "Key management personnel (KMP)",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement receivable against statutory payments",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.028,
+     "counterparty": "Enhanzed Education Private Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Expenses payable",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Excelsoft Technologies Limited (formerly known as Meteor Online Learning Limited)",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Expenses payable",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Freedom to Learn Limited",
+     "entity": "Excelsoft Technologies Limited (Formerly Excelsoft Technologies Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Expenses payable",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "No Comments",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 74,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544617",
  "section_lab": {
@@ -6335,14 +8665,308 @@
    "by": "file",
    "doc": "other"
   },
+  "insider_trades": {
+   "at": "2026-11-01T13:55:02+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "market_deals": {
-   "at": "2026-07-02T15:30:00+05:30",
+   "at": "2026-11-01T14:31:35+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "it",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 19.45,
+   "period": "Q2FY26",
+   "revenue_cr": 34.64,
+   "segment": "Educational technology services",
+   "share_pct": 53.6,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 10.47,
+   "period": "Q2FY26",
+   "revenue_cr": 18.38,
+   "segment": "Assessment and proctoring solutions",
+   "share_pct": 28.4,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 0.49,
+   "period": "Q2FY26",
+   "revenue_cr": 8.1,
+   "segment": "Learning and student success solutions",
+   "share_pct": 12.5,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 0.97,
+   "period": "Q2FY26",
+   "revenue_cr": 3.49,
+   "segment": "Learning design and content solutions",
+   "share_pct": 5.4,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 29.55,
+   "period": "Q3FY26",
+   "revenue_cr": 46.65,
+   "segment": "Educational technology services",
+   "share_pct": 65.7,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 5.53,
+   "period": "Q3FY26",
+   "revenue_cr": 14.96,
+   "segment": "Assessment and proctoring solutions",
+   "share_pct": 21.1,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -0.08,
+   "period": "Q3FY26",
+   "revenue_cr": 6.86,
+   "segment": "Learning and student success solutions",
+   "share_pct": 9.7,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 0.28,
+   "period": "Q3FY26",
+   "revenue_cr": 2.57,
+   "segment": "Learning design and content solutions",
+   "share_pct": 3.6,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 21.28,
+   "period": "Q4FY26",
+   "revenue_cr": 43.56,
+   "segment": "Educational technology services",
+   "share_pct": 53.7,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 14.53,
+   "period": "Q4FY26",
+   "revenue_cr": 23.78,
+   "segment": "Assessment and proctoring solutions",
+   "share_pct": 29.3,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 4.46,
+   "period": "Q4FY26",
+   "revenue_cr": 11.61,
+   "segment": "Learning and student success solutions",
+   "share_pct": 14.3,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -0.84,
+   "period": "Q4FY26",
+   "revenue_cr": 2.21,
+   "segment": "Learning design and content solutions",
+   "share_pct": 2.7,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 25.71,
+   "period": "Q1FY27",
+   "revenue_cr": 50.89,
+   "segment": "Educational technology services",
+   "share_pct": 63.4,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 9.12,
+   "period": "Q1FY27",
+   "revenue_cr": 18.88,
+   "segment": "Assessment and proctoring solutions",
+   "share_pct": 23.5,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -1.81,
+   "period": "Q1FY27",
+   "revenue_cr": 7.42,
+   "segment": "Learning and student success solutions",
+   "share_pct": 9.2,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 1.41,
+   "period": "Q1FY27",
+   "revenue_cr": 3.07,
+   "segment": "Learning design and content solutions",
+   "share_pct": 3.8,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -9811,6 +12435,509 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.044,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 47.097,
+    "Interest": 1.192,
+    "Minority share": 0.0,
+    "Net Profit": 10.612,
+    "Net Profit (owners)": 10.612,
+    "OPM %": 27.1023263733032,
+    "Operating Profit": 17.509999999999998,
+    "Other Income": 4.018000000000001,
+    "Profit before tax": 14.292,
+    "Profit for PE": 10.612,
+    "Sales": 64.607,
+    "Tax": 3.68,
+    "Tax %": 25.748670584942627
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 37.582,
+    "CWIP": 0.0,
+    "Equity Capital": 100.084,
+    "Fixed Assets": 123.34100000000001,
+    "Investments": 0.0,
+    "Other Assets": 366.57599999999996,
+    "Other Liabilities": 64.64099999999996,
+    "Reserves": 287.61,
+    "Total Assets": 489.917,
+    "Total Liabilities": 489.917
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.044,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 47.771,
+    "Interest": 1.192,
+    "Net Profit": 10.108,
+    "Net Profit (owners)": 10.108,
+    "OPM %": 26.228090494942467,
+    "Operating Profit": 16.983999999999995,
+    "Other Income": 4.020000000000007,
+    "Profit before tax": 13.768,
+    "Profit for PE": 10.108,
+    "Sales": 64.755,
+    "Tax": 3.66,
+    "Tax %": 26.583381754793724
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 37.582,
+    "CWIP": 0.0,
+    "Equity Capital": 100.084,
+    "Fixed Assets": 110.91300000000001,
+    "Investments": 15.141,
+    "Other Assets": 367.371,
+    "Other Liabilities": 74.46700000000004,
+    "Reserves": 281.292,
+    "Total Assets": 493.425,
+    "Total Liabilities": 493.425
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 5.959,
+    "Exceptional items": -4.072,
+    "Exceptional items AT": -3.142826986506747,
+    "Expenses": 51.363,
+    "Interest": 0.944,
+    "Minority share": 0.0,
+    "Net Profit": 10.296,
+    "Net Profit (owners)": 10.296,
+    "OPM %": 27.69237266661036,
+    "Operating Profit": 19.671000000000006,
+    "Other Income": 0.5719999999999921,
+    "Profit before tax": 13.34,
+    "Profit for PE": 13.438826986506747,
+    "Sales": 71.034,
+    "Tax": 3.044,
+    "Tax %": 22.818590704647676
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 5.954,
+    "Exceptional items": -4.072,
+    "Exceptional items AT": -3.218960796961227,
+    "Expenses": 51.04,
+    "Interest": 0.944,
+    "Net Profit": 11.03,
+    "Net Profit (owners)": 11.03,
+    "OPM %": 28.440238345601127,
+    "Operating Profit": 20.285000000000004,
+    "Other Income": 0.5659999999999954,
+    "Profit before tax": 13.953,
+    "Profit for PE": 14.248960796961226,
+    "Sales": 71.325,
+    "Tax": 2.923,
+    "Tax %": 20.948899878162404
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.095,
+    "Exceptional items": -0.672,
+    "Exceptional items AT": -0.490913123844732,
+    "Expenses": 56.594,
+    "Interest": 0.608,
+    "Minority share": 0.0,
+    "Net Profit": 16.599,
+    "Net Profit (owners)": 16.599,
+    "OPM %": 30.27032355043001,
+    "Operating Profit": 24.568000000000005,
+    "Other Income": 4.856999999999996,
+    "Profit before tax": 22.722,
+    "Profit for PE": 17.08991312384473,
+    "Sales": 81.162,
+    "Tax": 6.123,
+    "Tax %": 26.947451808819647
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 24.128,
+    "Exceptional items": -4.744,
+    "Exceptional items AT": -3.4679652865544375,
+    "Expenses": 199.39299999999997,
+    "Interest": 3.526,
+    "Minority share": 0.0,
+    "Net Profit": 43.381,
+    "Net Profit (owners)": 43.381,
+    "OPM %": 26.83389536953117,
+    "Operating Profit": 73.12800000000004,
+    "Other Income": 13.868999999999957,
+    "Profit before tax": 59.343,
+    "Profit for PE": 46.84896528655444,
+    "Sales": 272.521,
+    "Tax": 15.962,
+    "Tax %": 26.89786495458605
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 130.32,
+    "Cash from Investing Activity": -156.207,
+    "Cash from Operating Activity": 50.173,
+    "Net Cash Flow": 24.286
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.088,
+    "Exceptional items": -0.672,
+    "Exceptional items AT": -0.4840498048689835,
+    "Expenses": 57.85600000000001,
+    "Interest": 0.608,
+    "Net Profit": 15.504,
+    "Net Profit (owners)": 15.504,
+    "OPM %": 28.79787338781135,
+    "Operating Profit": 23.39999999999999,
+    "Other Income": 4.820000000000011,
+    "Profit before tax": 21.524,
+    "Profit for PE": 15.988049804868982,
+    "Sales": 81.256,
+    "Tax": 6.02,
+    "Tax %": 27.968779037353652
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 24.117,
+    "Exceptional items": -4.744,
+    "Exceptional items AT": -3.4598371221928774,
+    "Expenses": 201.32,
+    "Interest": 3.526,
+    "Net Profit": 42.251,
+    "Net Profit (owners)": 42.251,
+    "OPM %": 26.28233295251487,
+    "Operating Profit": 71.77600000000001,
+    "Other Income": 13.799999999999983,
+    "Profit before tax": 57.933,
+    "Profit for PE": 45.71083712219288,
+    "Sales": 273.096,
+    "Tax": 15.682,
+    "Tax %": 27.069200628312018
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 130.326,
+    "Cash from Investing Activity": -156.211,
+    "Cash from Operating Activity": 48.77,
+    "Net Cash Flow": 22.885
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 6.577,
+    "CWIP": 12.24,
+    "Equity Capital": 115.084,
+    "Fixed Assets": 163.796,
+    "Investments": 0.0,
+    "Other Assets": 502.18499999999995,
+    "Other Liabilities": 93.31799999999993,
+    "Reserves": 463.242,
+    "Total Assets": 678.221,
+    "Total Liabilities": 678.221
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 6.577,
+    "CWIP": 12.24,
+    "Equity Capital": 115.084,
+    "Fixed Assets": 151.294,
+    "Investments": 15.141,
+    "Other Assets": 502.40299999999996,
+    "Other Liabilities": 102.93999999999994,
+    "Reserves": 456.477,
+    "Total Assets": 681.078,
+    "Total Liabilities": 681.078
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.529,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 67.23200000000001,
+    "Interest": 0.505,
+    "Minority share": 0.0,
+    "Net Profit": 9.228,
+    "Net Profit (owners)": 9.228,
+    "OPM %": 16.235376200740056,
+    "Operating Profit": 13.030999999999992,
+    "Other Income": 5.834000000000007,
+    "Profit before tax": 11.831,
+    "Profit for PE": 9.228,
+    "Sales": 80.263,
+    "Tax": 2.603,
+    "Tax %": 22.00152142676021
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.52,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 68.01400000000001,
+    "Interest": 0.505,
+    "Net Profit": 8.648,
+    "Net Profit (owners)": 8.648,
+    "OPM %": 15.34334897499407,
+    "Operating Profit": 12.326999999999984,
+    "Other Income": 5.807000000000013,
+    "Profit before tax": 11.109,
+    "Profit for PE": 8.648,
+    "Sales": 80.341,
+    "Tax": 2.461,
+    "Tax %": 22.15320910973085
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "EXCELSOFT",
  "timeline": [
   {

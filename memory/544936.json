@@ -1,4 +1,40 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-10-01T17:41:34+05:30",
@@ -12,22 +48,50 @@
    "rating_agency": "CRISIL Ratings Limited",
    "rating_outlook": "Stable",
    "source_news_id": "nse-106805122"
-  },
-  {
-   "as_of": "2026-10-13T21:12:19+05:30",
-   "lab": {
-    "at": "2026-10-13T21:12:19+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106816460"
   }
  ],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Hero Motors Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-13T21:12:19+05:30",
@@ -1375,6 +1439,1062 @@
  "market_deals": {
   "events": [
    {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 118.03,
+    "qty": 2550010.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 30.1
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 117.89,
+    "qty": 3050010.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 35.96
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 112.82,
+    "qty": 5292730.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 59.71
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 112.88,
+    "qty": 5301771.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 59.85
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 113.74,
+    "qty": 3404179.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 38.72
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 113.85,
+    "qty": 3438426.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 39.15
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 113.43,
+    "qty": 2117178.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 24.02
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 113.04,
+    "qty": 3169077.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 35.82
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 117.7,
+    "qty": 3520209.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 41.43
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 115.54,
+    "qty": 4020209.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 46.45
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 136.73,
+    "qty": 2157262.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 29.5
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 137.17,
+    "qty": 3137787.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 43.04
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 141.18,
+    "qty": 2381876.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 33.63
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 139.87,
+    "qty": 3279458.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 45.87
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 137.2,
+    "qty": 4679260.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 64.2
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 137.14,
+    "qty": 4679260.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 64.17
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 141.13,
+    "qty": 2016120.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 28.45
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 141.2,
+    "qty": 2316189.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 32.7
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 141.66,
+    "qty": 2000355.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 28.34
+   },
+   {
+    "as_of": "2026-09-25T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-25",
+    "kind": "BULK",
+    "price": 138.15,
+    "qty": 2500355.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 34.54
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.84,
+    "qty": 3649143.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 49.21
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.93,
+    "qty": 3649143.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 49.24
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.38,
+    "qty": 3233715.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 43.45
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.44,
+    "qty": 3233715.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 43.47
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 135.14,
+    "qty": 2715728.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 36.7
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 135.67,
+    "qty": 4904679.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 66.54
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 136.92,
+    "qty": 5114270.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 70.02
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.99,
+    "qty": 5114270.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 69.04
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.59,
+    "qty": 3086608.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 41.54
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.66,
+    "qty": 3134934.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 42.22
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 135.5,
+    "qty": 2292757.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 31.07
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 134.82,
+    "qty": 2318298.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 31.26
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 129.23,
+    "qty": 3354864.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 43.35
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 131.49,
+    "qty": 3355802.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 44.13
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 135.93,
+    "qty": 2716638.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 36.93
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 136.0,
+    "qty": 2716638.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 36.95
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 131.44,
+    "qty": 2842609.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 37.36
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 131.7,
+    "qty": 2842624.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 37.44
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.69,
+    "qty": 3422587.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 47.13
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.64,
+    "qty": 3422587.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 47.11
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.04,
+    "qty": 5495307.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 75.31
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.96,
+    "qty": 5495307.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 75.81
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.56,
+    "qty": 4294328.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 59.07
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.61,
+    "qty": 4294328.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 59.09
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.88,
+    "qty": 2215184.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 30.54
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 137.79,
+    "qty": 2465049.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 33.97
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 147.38,
+    "qty": 2530539.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 37.3
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 147.52,
+    "qty": 2530539.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 37.33
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "ARHAM SHARE PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 152.51,
+    "qty": 610264.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 9.31
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "ARHAM SHARE PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 151.67,
+    "qty": 2274263.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 34.49
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 147.68,
+    "qty": 3708808.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 54.77
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 146.89,
+    "qty": 3708808.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 54.48
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 152.23,
+    "qty": 2654796.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 40.41
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 152.53,
+    "qty": 2654811.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 40.49
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 147.92,
+    "qty": 2509640.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 37.12
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 147.99,
+    "qty": 2511178.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 37.16
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 146.41,
+    "qty": 3488945.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 51.08
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 146.34,
+    "qty": 3488945.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 51.06
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 147.42,
+    "qty": 1991416.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 29.36
+   },
+   {
+    "as_of": "2026-09-30T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-30",
+    "kind": "BULK",
+    "price": 147.79,
+    "qty": 2317765.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 34.25
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 164.01,
+    "qty": 2518933.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 41.31
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 164.71,
+    "qty": 3339477.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 55.0
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 163.5,
+    "qty": 3246509.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 53.08
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 163.6,
+    "qty": 3255738.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 53.26
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 168.74,
+    "qty": 3385167.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 57.12
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 168.83,
+    "qty": 3385167.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 57.15
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 168.39,
+    "qty": 3280117.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 55.23
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 170.0,
+    "qty": 4069437.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 69.18
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 167.61,
+    "qty": 6372732.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 106.81
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 168.66,
+    "qty": 7636321.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 128.79
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 168.54,
+    "qty": 3745073.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 63.12
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 168.41,
+    "qty": 3834341.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 64.57
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 167.79,
+    "qty": 2341381.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 39.29
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 167.07,
+    "qty": 2345245.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 39.18
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 167.64,
+    "qty": 4934676.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 82.72
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 167.83,
+    "qty": 4934676.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 82.82
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 169.0,
+    "qty": 4830376.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 81.63
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 169.1,
+    "qty": 4832854.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 81.72
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 167.17,
+    "qty": 2896375.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 48.42
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 166.03,
+    "qty": 2896375.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 48.09
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 166.26,
+    "qty": 3233905.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 53.77
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 166.19,
+    "qty": 3233905.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 53.74
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 169.72,
+    "qty": 3520642.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 59.75
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 170.96,
+    "qty": 3531533.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 60.38
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 162.36,
+    "qty": 4548329.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 73.85
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 163.02,
+    "qty": 4550128.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 74.18
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 162.6,
+    "qty": 3136753.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 51.0
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 162.54,
+    "qty": 3138139.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 51.01
+   },
+   {
     "as_of": "2026-10-22T15:30:00+05:30",
     "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
     "date": "2026-10-22",
@@ -1520,6 +2640,70 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.5886,
+     "description": "re-measurement gains/losses on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.5886,
+    "oci_net_cr": 0.5213,
+    "profit_cr": 9.571,
+    "tax_not_reclassified_cr": 0.1472,
+    "tax_reclassified_cr": -0.0799,
+    "total_comprehensive_cr": 10.0923,
+    "total_comprehensive_nci_cr": -0.6225,
+    "total_comprehensive_owners_cr": 10.7148
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.5498,
+     "description": "Re-measurement gains/Losses on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.5498,
+    "oci_net_cr": 0.4114,
+    "profit_cr": 23.4048,
+    "tax_not_reclassified_cr": 0.1384,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 23.8162
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -1574,51 +2758,84 @@
  "scrip_code": "544936",
  "section_lab": {
   "market_deals": {
-   "at": "2026-10-27T07:02:57+05:30",
+   "at": "2026-11-01T14:42:07+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "auto_components",
+ "segment_balance": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 948.1818,
+     "liabilities_cr": 329.0321,
+     "segment": "Powertain solutions"
+    },
+    {
+     "assets_cr": 350.0305,
+     "liabilities_cr": 176.3888,
+     "segment": "Alloy and Metallics"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 1298.2123,
+    "liabilities_cr": 505.4209,
+    "net_assets_cr": 1420.6509,
+    "net_liabilities_cr": 939.5467
+   }
+  }
+ ],
  "segment_mix": [
   {
-   "as_of": "2026-10-14T19:27:57+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-14T19:27:57+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
+   "pbit_cr": 33.5,
    "period": "Q1FY27",
-   "revenue_cr": 155.6,
-   "segment": "Gears & Transmissions",
-   "share_pct": 51.0,
-   "source_news_id": "nse-106817751"
+   "revenue_cr": 170.53,
+   "segment": "Powertain solutions",
+   "share_pct": 50.7,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   },
   {
-   "as_of": "2026-10-14T19:27:57+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-14T19:27:57+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
+   "pbit_cr": -2.55,
    "period": "Q1FY27",
-   "revenue_cr": 39.3,
-   "segment": "Bike Powertrain",
-   "share_pct": 12.17,
-   "source_news_id": "nse-106817751"
-  },
-  {
-   "as_of": "2026-10-14T19:27:57+05:30",
-   "lab": {
-    "at": "2026-10-14T19:27:57+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": 107.6,
-   "segment": "Alloys & Metallics",
-   "share_pct": 49.0,
-   "source_news_id": "nse-106817751"
+   "revenue_cr": 165.91,
+   "segment": "Alloy and Metallics",
+   "share_pct": 49.3,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -2078,6 +3295,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.5096,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 283.37600000000003,
+    "Interest": 11.1705,
+    "Minority share": -0.6323,
+    "Net Profit": 9.571,
+    "Net Profit (owners)": 10.2033,
+    "OPM %": 11.257281418099717,
+    "Operating Profit": 35.94709999999998,
+    "Other Income": 3.320100000000025,
+    "Profit before tax": 15.5871,
+    "Profit for PE": 10.2033,
+    "Sales": 319.3231,
+    "Tax": 6.0161,
+    "Tax %": 38.596660058638236
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.2147,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 236.51760000000002,
+    "Interest": 8.0348,
+    "Net Profit": 23.4048,
+    "Net Profit (owners)": 23.4048,
+    "OPM %": 14.981820403923123,
+    "Operating Profit": 41.6789,
+    "Other Income": 3.7297999999999973,
+    "Profit before tax": 31.1592,
+    "Profit for PE": 23.4048,
+    "Sales": 278.1965,
+    "Tax": 7.7544,
+    "Tax %": 24.886389894477396
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "HEROMOTORS",
  "timeline": [
   {

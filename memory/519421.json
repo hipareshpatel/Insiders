@@ -1,8 +1,498 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "003978S",
+     "name": "Sridhar & Co",
+     "signed_on": "2025-05-27",
+     "signing_partner": "SRINIVASAN RAJAGOPALAN"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer text block"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer text block"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer text block"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY25",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY25:standalone"
+  },
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "Sridhar & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "Sridhar & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "003978S",
+     "name": "Sridhar & Co",
+     "signed_on": "2026-05-19",
+     "signing_partner": "Jayasindhu Indu"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer text block"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer text block"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Refer text block"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "Sridhar & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-08-31",
+     "name": "Sridhar & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY25",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 43.3366,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 1.6187,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 5.6218,
+    "AdjustmentsForFairValueGainsLosses": -2.4022,
+    "AdjustmentsForFinanceCosts": 2.4278,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 3.6885,
+    "AdjustmentsForInterestIncome": 0.1981,
+    "AdjustmentsForReconcileProfitLoss": 54.2222,
+    "CashAndCashEquivalentsCashFlowStatement": 16.3877,
+    "CashFlowsFromUsedInFinancingActivities": -18.5616,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -18.5616,
+    "CashFlowsFromUsedInInvestingActivities": -118.1866,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -118.1866,
+    "CashFlowsFromUsedInOperatingActivities": 142.6681,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 142.6681,
+    "CashFlowsFromUsedInOperations": 176.9383,
+    "DividendsPaidClassifiedAsFinancingActivities": 18.768,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 31.4942,
+    "IncreaseDecreaseInCashAndCashEquivalents": 5.9199,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 5.9199,
+    "InterestPaidClassifiedAsFinancingActivities": 2.58,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.1172,
+    "OtherAdjustmentsForNoncashItems": 0.1291,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 2.6588,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -104.4433,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": -2.776,
+    "PaymentForAuditServices": 0.218,
+    "PaymentsToAuditor": 0.218,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.1276,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.5041,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 14.3646,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -29.3071,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -9.5274,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 3.6565,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -4.1373,
+    "AdjustmentsForFinanceCosts": 1.297,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 9.7281,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.4554,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -30.64,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0328,
+    "CashAndCashEquivalentsCashFlowStatement": 11.7607,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -16.915,
+    "CashFlowsFromUsedInInvestingActivities": -37.8136,
+    "CashFlowsFromUsedInOperatingActivities": 50.1016,
+    "CashFlowsFromUsedInOperations": 65.0691,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 16.122,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 14.9675,
+    "IncreaseDecreaseInCashAndCashEquivalents": -4.627,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -4.627,
+    "InterestPaidClassifiedAsFinancingActivities": 0.9767,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.484,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -1.8944,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.122,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 30.995,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.3507,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 106.5134,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0129,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 169.2927,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 6.4934,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.289,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -31.1226,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 2.328,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 7.9858,
+    "AdjustmentsForFairValueGainsLosses": -5.31,
+    "AdjustmentsForFinanceCosts": 2.5915,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 3.2536,
+    "AdjustmentsForInterestIncome": 0.6395,
+    "AdjustmentsForReconcileProfitLoss": -20.2719,
+    "CashAndCashEquivalentsCashFlowStatement": 27.7689,
+    "CashFlowsFromUsedInFinancingActivities": -33.2231,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -33.2231,
+    "CashFlowsFromUsedInInvestingActivities": -8.9196,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -8.9196,
+    "CashFlowsFromUsedInOperatingActivities": 53.5239,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 53.5239,
+    "CashFlowsFromUsedInOperations": 93.7964,
+    "DividendsPaidClassifiedAsFinancingActivities": 31.5218,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 33.9923,
+    "IncreaseDecreaseInCashAndCashEquivalents": 11.3812,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 11.3812,
+    "InterestPaidClassifiedAsFinancingActivities": 2.0339,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.6443,
+    "OtherAdjustmentsForNoncashItems": 0.6413,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.4546,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1.324,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": -6.2802,
+    "PaymentForAuditServices": 0.13,
+    "PaymentForOtherServices": 0.1027,
+    "PaymentForTaxationMatters": 0.01,
+    "PaymentsToAuditor": 0.2427,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -0.122,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0129,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 8.2528
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "KSE Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 0.6172,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "1.Goods and Service Tax (GST)  2.Freight/demurrage demanded by Indian\nRailways 3.Demand of Fine by BSE Limited"
+    },
+    {
+     "amount_cr": 0.497,
+     "class": "OtherGuaranteesGiven",
+     "description": "Bank Guarantees in favour of KSEB"
+    },
+    {
+     "amount_cr": 0.254,
+     "class": "ContingentLiabilityOnDisputedSalesTax",
+     "description": "Kerala General Sales Tax"
+    },
+    {
+     "amount_cr": 0.029,
+     "class": "ContingentLiabilityOnDisputedLiabilityRelatingToEmployeesAndOtherStaff",
+     "description": "ESI"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 4,
+   "period": "FY25",
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "total_cr": 1.3972
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 0.9913,
+     "class": "OtherGuaranteesGiven",
+     "description": "Bank Guarantees in favour of KSEB"
+    },
+    {
+     "amount_cr": 0.5924,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "1.Goods and Service Tax (GST)  2.Freight/demurrage demanded by Indian\nRailways"
+    },
+    {
+     "amount_cr": 0.254,
+     "class": "ContingentLiabilityOnDisputedSalesTax",
+     "description": "Kerala General Sales Tax"
+    },
+    {
+     "amount_cr": 0.0176,
+     "class": "ContingentLiabilityOnDisputedLiabilityRelatingToEmployeesAndOtherStaff",
+     "description": "ESI"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 4,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 1.8553
+  }
+ ],
  "corporate_actions": [
   {
    "ex_date": "2026-08-21",
@@ -13,6 +503,98 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2024-11-09T18:00:00+05:30",
@@ -4681,10 +5263,1746 @@
   "former_names": []
  },
  "industry": "Fast Moving Consumer Goods > Food Products > Animal Feed",
+ "kmp_pay": [
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 19,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "MAMPILLY PAUL JACKSON",
+     "pay_cr": 0.6257
+    },
+    {
+     "designation": "Whole Time Director",
+     "name": "PAUL FRANCIS",
+     "pay_cr": 0.4846
+    },
+    {
+     "designation": "CFO",
+     "name": "Senthil Kumar Nallamuthu",
+     "pay_cr": 0.4064
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "SRIVIDYA DAMODARAN",
+     "pay_cr": 0.1432
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "DONY AKKARAKARAN GEORGE",
+     "pay_cr": 0.0735
+    },
+    {
+     "designation": "Independent Director",
+     "name": "NINA PAUL",
+     "pay_cr": 0.0675
+    },
+    {
+     "designation": "Independent Director",
+     "name": "JOSE JOHN",
+     "pay_cr": 0.062
+    },
+    {
+     "designation": "Independent Director",
+     "name": "JOSE PAUL THALIYATH",
+     "pay_cr": 0.062
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "TOM JOSE",
+     "pay_cr": 0.0595
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "MARYKUTTY VARGHESE",
+     "pay_cr": 0.058
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "KOLLARA CHATHUNNY PYARELAL",
+     "pay_cr": 0.058
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "SEEMA DAVIS",
+     "pay_cr": 0.058
+    },
+    {
+     "designation": "Independent Director",
+     "name": "PAUL JOSE",
+     "pay_cr": 0.055
+    },
+    {
+     "designation": "Director",
+     "name": "SHAJI PUTHENPURAYIL JACOB",
+     "pay_cr": 0.0475
+    },
+    {
+     "designation": "Director",
+     "name": "KRISHNAN HARIKUMAR",
+     "pay_cr": 0.04
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "DANESA RAGHULAL THANDASSERY",
+     "pay_cr": 0.0365
+    },
+    {
+     "designation": "Director",
+     "name": "POKKATH DEVASSY ANTO",
+     "pay_cr": 0.0285
+    },
+    {
+     "designation": "Director",
+     "name": "CHEERAN VERGHESE VERGHESE",
+     "pay_cr": 0.022
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "SIMI DAVIS",
+     "pay_cr": 0.018
+    }
+   ],
+   "period": "FY25",
+   "source_news_id": "xbrl-facts:FY25:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 16,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "MAMPILLY PAUL JACKSON",
+     "pay_cr": 0.8475
+    },
+    {
+     "designation": "Whole Time Director",
+     "name": "PAUL FRANCIS",
+     "pay_cr": 0.5474
+    },
+    {
+     "designation": "CFO",
+     "name": "Senthil Kumar Nallamuthu",
+     "pay_cr": 0.4064
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "DONY AKKARAKARAN GEORGE",
+     "pay_cr": 0.2828
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "SRIVIDYA DAMODARAN",
+     "pay_cr": 0.1432
+    },
+    {
+     "designation": "Director",
+     "name": "SHAJI PUTHENPURAYIL JACOB",
+     "pay_cr": 0.072
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "TOM JOSE",
+     "pay_cr": 0.067
+    },
+    {
+     "designation": "Director",
+     "name": "KRISHNAN HARIKUMAR",
+     "pay_cr": 0.067
+    },
+    {
+     "designation": "Independent Director",
+     "name": "JOSE PAUL THALIYATH",
+     "pay_cr": 0.0645
+    },
+    {
+     "designation": "Independent Director",
+     "name": "JOSE JOHN",
+     "pay_cr": 0.0595
+    },
+    {
+     "designation": "Independent Director",
+     "name": "NINA PAUL",
+     "pay_cr": 0.057
+    },
+    {
+     "designation": "Independent Director",
+     "name": "PAUL JOSE",
+     "pay_cr": 0.057
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "KOLLARA CHATHUNNY PYARELAL",
+     "pay_cr": 0.056
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "MARYKUTTY VARGHESE",
+     "pay_cr": 0.0445
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "DANESA RAGHULAL THANDASSERY",
+     "pay_cr": 0.0325
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "SEEMA DAVIS",
+     "pay_cr": 0.0205
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "last_filed_at": null,
+ "oci": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.1013,
+     "description": "Amount of items that will not be reclassified to profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -1.1013,
+    "oci_net_cr": -0.8241,
+    "profit_cr": 38.5543,
+    "tax_not_reclassified_cr": -0.2772,
+    "total_comprehensive_cr": 37.7302
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.2723,
+     "description": "Amount of items that will not be reclassified to profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.2723,
+    "oci_net_cr": 0.2037,
+    "profit_cr": 32.8718,
+    "tax_not_reclassified_cr": 0.0686,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 33.0755
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.2306,
+     "description": "Amount of items that will not be reclassified to profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.2306,
+    "oci_net_cr": -0.1725,
+    "profit_cr": 16.3484,
+    "tax_not_reclassified_cr": -0.0581,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 16.1759
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 2.0129,
+     "description": "Amount of items that will not be reclassified to profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 2.0129,
+    "oci_net_cr": 1.5063,
+    "profit_cr": -3.7342,
+    "tax_not_reclassified_cr": 0.5066,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -2.2279
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.6952,
+     "description": "Amount of items that will not be reclassified to profit and loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.6952,
+    "oci_net_cr": -0.5202,
+    "profit_cr": 0.9443,
+    "tax_not_reclassified_cr": -0.175,
+    "total_comprehensive_cr": 0.4241
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 2,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.6257
+     },
+     "party": "Mr. M.P. Jackson"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.4846
+     },
+     "party": "Mr. Paul Francis"
+    }
+   ],
+   "period": "FY25",
+   "source_news_id": "xbrl-facts:FY25:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 6.1692,
+     "closing_cr": 0.1033,
+     "counterparty": "KLF Nirmal Industries Private Limited",
+     "entity": "KSE Limited",
+     "opening_cr": 0.1171,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.0167,
+     "closing_cr": 0.0519,
+     "counterparty": "KPL Oil Mills Private Limited",
+     "entity": "KSE Limited",
+     "opening_cr": 0.1006,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.1175,
+     "closing_cr": 0.0016,
+     "counterparty": "KLF Oil Mills LLP",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0001,
+     "relationship": "An LLP in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.6576,
+     "closing_cr": 0.057,
+     "counterparty": "Emceepee Traders, Irinjalakuda",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0002,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.3235,
+     "closing_cr": 0.0,
+     "counterparty": "Yamuna Roller Flour Mills P. Ltd",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.3008,
+     "closing_cr": 0.0414,
+     "counterparty": "M P Jackson",
+     "entity": "KSE Limited",
+     "opening_cr": 0.081,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Remuneration - closing balance represents Bonus payable"
+     },
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.2441,
+     "closing_cr": 0.0336,
+     "counterparty": "Paul Francis",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0654,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Remuneration - closing balance represents Bonus payable"
+     },
+     "relationship": "Executive Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.192,
+     "closing_cr": 0.0,
+     "counterparty": "Delicious Cashew Company",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.1429,
+     "closing_cr": 0.0006,
+     "counterparty": "K.L. Francis & Sons",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0006,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.121,
+     "closing_cr": 0.0162,
+     "counterparty": "MCP Rose Supermarket P. Ltd.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0672,
+     "closing_cr": 0.012,
+     "counterparty": "DONY A G",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Remuneration - closing balance represents Bonus payable"
+     },
+     "relationship": "Whole-Time Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0602,
+     "closing_cr": 0.1527,
+     "counterparty": "Bellraj Eapen",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0986,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0545,
+     "closing_cr": 0.1171,
+     "counterparty": "Shaji P Jacob",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0681,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Non Executive Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0457,
+     "closing_cr": 0.0299,
+     "counterparty": "A P George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0211,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0357,
+     "closing_cr": 0.0493,
+     "counterparty": "Soja Jose",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0252,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0288,
+     "closing_cr": 0.0889,
+     "counterparty": "Nina Paul",
+     "entity": "KSE Limited",
+     "opening_cr": 0.063,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Non-Executive - Independent Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0205,
+     "closing_cr": 0.0,
+     "counterparty": "MARYKUTTY VARGHESE",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fee",
+     "relationship": "Non-Executive - Non Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0195,
+     "closing_cr": 0.0,
+     "counterparty": "DONY A G",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fee",
+     "relationship": "Whole-Time Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "A P George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Professional Fee",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "M P Jackson",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Paul Francis",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Executive Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0145,
+     "closing_cr": 0.0,
+     "counterparty": "PYARELAL K C",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fee",
+     "relationship": "Non-Executive - Non Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.012,
+     "closing_cr": 0.0,
+     "counterparty": "DANESA RAGHULAL",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fee",
+     "relationship": "Non-Executive - Non Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.8875,
+     "counterparty": "A P George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.8875,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.009,
+     "closing_cr": 0.0,
+     "counterparty": "DONY A G",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Whole-Time Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0086,
+     "closing_cr": 0.0265,
+     "counterparty": "A G Antony",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0187,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0051,
+     "closing_cr": 0.0,
+     "counterparty": "MCP Rose Supermarket P. Ltd.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.005,
+     "closing_cr": 0.07,
+     "counterparty": "Thresiamma George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.07,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0035,
+     "closing_cr": 0.0009,
+     "counterparty": "Thresiamma George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0007,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0032,
+     "closing_cr": 0.0,
+     "counterparty": "MCP Rose Supermarket P. Ltd.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Advertisement",
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0027,
+     "closing_cr": 0.0,
+     "counterparty": "POLJO Vyapar Kendra P. Ltd.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0016,
+     "closing_cr": 0.0,
+     "counterparty": "M C Paul and Sons",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0012,
+     "closing_cr": 0.0,
+     "counterparty": "Delicious Cashew Company",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0011,
+     "closing_cr": 0.0027,
+     "counterparty": "Alpho Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0016,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0008,
+     "closing_cr": 0.003,
+     "counterparty": "Sawmiya Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0022,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.001,
+     "counterparty": "Emceepee Traders, Irinjalakuda",
+     "entity": "KSE Limited",
+     "opening_cr": 0.001,
+     "other_details": "Security Deposit",
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0002,
+     "counterparty": "Emceepee Agencies, Ijk.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0002,
+     "other_details": "Security Deposit",
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.001,
+     "counterparty": "K.L. Francis & Sons",
+     "entity": "KSE Limited",
+     "opening_cr": 0.001,
+     "other_details": "Security Deposit",
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0001,
+     "counterparty": "KLF Oil Mills LLP",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0001,
+     "other_details": "Security Deposit",
+     "relationship": "An LLP in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "K.L. Francis & Co",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.1496,
+     "counterparty": "A G Antony",
+     "entity": "KSE Limited",
+     "opening_cr": 0.1496,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.0802,
+     "counterparty": "Bellraj Eapen",
+     "entity": "KSE Limited",
+     "opening_cr": 1.0802,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0197,
+     "counterparty": "Alpho Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0197,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0129,
+     "counterparty": "Sawmiya Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0129,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.4981,
+     "counterparty": "Nina Paul",
+     "entity": "KSE Limited",
+     "opening_cr": 0.4981,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Non-Executive - Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.7,
+     "counterparty": "Soja Jose",
+     "entity": "KSE Limited",
+     "opening_cr": 0.7,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.0,
+     "counterparty": "Shaji P Jacob",
+     "entity": "KSE Limited",
+     "opening_cr": 1.0,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Non Executive Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 47,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 15,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.8475
+     },
+     "party": "Mr. M.P. Jackson"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.5474
+     },
+     "party": "Mr. Paul Francis"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.2828
+     },
+     "party": "Mr. Dony Akkarakaran George"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.072
+     },
+     "party": "Mr. Shaji P Jacob"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.067
+     },
+     "party": "Mr. Krishnan Harikumar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.067
+     },
+     "party": "Mr. Tom Jose"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0645
+     },
+     "party": "Dr. Jose Paul Thaliyath"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0595
+     },
+     "party": "Mr. Jose John"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.057
+     },
+     "party": "Mr. Paul Jose"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.057
+     },
+     "party": "Mrs. Nina Paul"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.056
+     },
+     "party": "Dr. K.C. Pyarelal"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0445
+     },
+     "party": "Mrs. Marykutty Varghese"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0325
+     },
+     "party": "Ms. Danesa Raghulal"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.024
+     },
+     "party": "Mrs. Seena Sabu"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0205
+     },
+     "party": "Ms. Seema Davis"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 5.7132,
+     "closing_cr": 0.0277,
+     "counterparty": "KLF Nirmal Industries Private Limited",
+     "entity": "KSE Limited",
+     "opening_cr": 0.1033,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.9756,
+     "closing_cr": 0.0449,
+     "counterparty": "KPL Oil Mills Private Limited",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0519,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.0404,
+     "closing_cr": 0.0348,
+     "counterparty": "KLF Oil Mills LLP",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0016,
+     "relationship": "An LLP in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.5857,
+     "closing_cr": 0.0,
+     "counterparty": "Emceepee Traders, Irinjalakuda",
+     "entity": "KSE Limited",
+     "opening_cr": 0.057,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.4441,
+     "closing_cr": 0.2093,
+     "counterparty": "M P Jackson",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0414,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Remuneration - closing balance represents Bonus & Gratuity payable"
+     },
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.1982,
+     "closing_cr": 0.0354,
+     "counterparty": "Paul Francis",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0336,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Remuneration - closing balance represents Bonus payable"
+     },
+     "relationship": "Executive Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.19,
+     "closing_cr": 0.8875,
+     "counterparty": "A P George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.8875,
+     "other_details": "Deposits taken/Repaid/renewed",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1661,
+     "closing_cr": 0.0,
+     "counterparty": "Delicious Cashew Company",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.1475,
+     "closing_cr": 0.0,
+     "counterparty": "MCP Rose Supermarket P. Ltd.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0162,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.1475,
+     "closing_cr": 0.0006,
+     "counterparty": "K.L. Francis & Sons",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0006,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.1344,
+     "closing_cr": 0.024,
+     "counterparty": "DONY A G",
+     "entity": "KSE Limited",
+     "opening_cr": 0.012,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Remuneration - closing balance represents Bonus payable"
+     },
+     "relationship": "Whole-Time Director",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0633,
+     "closing_cr": 0.2097,
+     "counterparty": "Bellraj Eapen",
+     "entity": "KSE Limited",
+     "opening_cr": 0.1527,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0572,
+     "closing_cr": 0.1686,
+     "counterparty": "Shaji P Jacob",
+     "entity": "KSE Limited",
+     "opening_cr": 0.1171,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Non Executive Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0456,
+     "closing_cr": 0.0391,
+     "counterparty": "A P George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0299,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0371,
+     "closing_cr": 0.0746,
+     "counterparty": "Soja Jose",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0493,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0315,
+     "closing_cr": 0.0,
+     "counterparty": "PYARELAL K C",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fee",
+     "relationship": "Non-Executive - Non Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0302,
+     "closing_cr": 0.1161,
+     "counterparty": "Nina Paul",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0889,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Non-Executive - Independent Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.024,
+     "closing_cr": 0.0,
+     "counterparty": "MARYKUTTY VARGHESE",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fee",
+     "relationship": "Non-Executive - Non Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0205,
+     "closing_cr": 0.0,
+     "counterparty": "DANESA RAGHULAL",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fee",
+     "relationship": "Non-Executive - Non Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0197,
+     "closing_cr": 0.0,
+     "counterparty": "Alpho Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0197,
+     "other_details": "Deposit repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "M P Jackson",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Managing Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "Paul Francis",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Executive Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.018,
+     "closing_cr": 0.0,
+     "counterparty": "DONY A G",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Whole-Time Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0146,
+     "closing_cr": 0.0,
+     "counterparty": "MCP Rose Supermarket P. Ltd.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0091,
+     "closing_cr": 0.0347,
+     "counterparty": "A G Antony",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0265,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0055,
+     "closing_cr": 0.0,
+     "counterparty": "KPL Oil Mills Private Limited",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0036,
+     "closing_cr": 0.0012,
+     "counterparty": "Thresiamma George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0009,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": -0.0008,
+     "closing_cr": 0.0,
+     "counterparty": "Alpho Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0027,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0008,
+     "closing_cr": 0.0038,
+     "counterparty": "Sawmiya Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.003,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Opening and Closing balance represents Interest accured/payable"
+     },
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0007,
+     "closing_cr": 0.0,
+     "counterparty": "POLJO Vyapar Kendra P. Ltd.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0006,
+     "closing_cr": 0.0,
+     "counterparty": "Delicious Cashew Company",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0005,
+     "closing_cr": 0.0,
+     "counterparty": "KLF Nirmal Industries Private Limited",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A company in which Director of KSE Limited is a Director",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0004,
+     "closing_cr": 0.0,
+     "counterparty": "M C Paul and Sons",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0,
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.001,
+     "counterparty": "Emceepee Traders, Irinjalakuda",
+     "entity": "KSE Limited",
+     "opening_cr": 0.001,
+     "other_details": "Security Deposit",
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0002,
+     "counterparty": "Emceepee Agencies, Ijk.",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0002,
+     "other_details": "Security Deposit",
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.001,
+     "counterparty": "K.L. Francis & Sons",
+     "entity": "KSE Limited",
+     "opening_cr": 0.001,
+     "other_details": "Security Deposit",
+     "relationship": "A firm in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0001,
+     "counterparty": "KLF Oil Mills LLP",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0001,
+     "other_details": "Security Deposit",
+     "relationship": "An LLP in which director of KSE Limited/his relative is a Partner",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.07,
+     "counterparty": "Thresiamma George",
+     "entity": "KSE Limited",
+     "opening_cr": 0.07,
+     "other_details": "Deposits taken/Repaid",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.1496,
+     "counterparty": "A G Antony",
+     "entity": "KSE Limited",
+     "opening_cr": 0.1496,
+     "other_details": "Deposits",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.0802,
+     "counterparty": "Bellraj Eapen",
+     "entity": "KSE Limited",
+     "opening_cr": 1.0802,
+     "other_details": "Deposits",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0129,
+     "counterparty": "Sawmiya Varghese",
+     "entity": "KSE Limited",
+     "opening_cr": 0.0129,
+     "other_details": "Deposits",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.4981,
+     "counterparty": "Nina Paul",
+     "entity": "KSE Limited",
+     "opening_cr": 0.4981,
+     "other_details": "Deposits",
+     "relationship": "Non-Executive - Independent Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.7,
+     "counterparty": "Soja Jose",
+     "entity": "KSE Limited",
+     "opening_cr": 0.7,
+     "other_details": "Deposits taken/Repaid/renewed",
+     "relationship": "Relative of Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 1.0,
+     "counterparty": "Shaji P Jacob",
+     "entity": "KSE Limited",
+     "opening_cr": 1.0,
+     "other_details": "Deposits",
+     "relationship": "Non Executive Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 44,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "519421",
  "section_lab": {
@@ -4695,7 +7013,924 @@
   }
  },
  "sector": "fmcg",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q1FY26",
+   "segments": [
+    {
+     "assets_cr": 120.968,
+     "liabilities_cr": 27.4098,
+     "segment": "Animal Feed Division"
+    },
+    {
+     "assets_cr": 43.0479,
+     "liabilities_cr": 3.8221,
+     "segment": "Oil Cake Processing Division"
+    },
+    {
+     "assets_cr": 18.9273,
+     "liabilities_cr": 3.2084,
+     "segment": "Dairy Division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "totals": {
+    "assets_cr": 182.9432,
+    "liabilities_cr": 34.4403,
+    "net_assets_cr": 409.3926,
+    "net_liabilities_cr": 74.9155
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q2FY26",
+   "segments": [
+    {
+     "assets_cr": 130.8996,
+     "liabilities_cr": 31.2607,
+     "segment": "Animal Feed Division"
+    },
+    {
+     "assets_cr": 76.1704,
+     "liabilities_cr": 5.4855,
+     "segment": "Oil Cake Processing Division"
+    },
+    {
+     "assets_cr": 18.7767,
+     "liabilities_cr": 2.7555,
+     "segment": "Dairy Division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "totals": {
+    "assets_cr": 225.8467,
+    "liabilities_cr": 39.5017,
+    "net_assets_cr": 430.5577,
+    "net_liabilities_cr": 79.0054
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 122.8055,
+     "liabilities_cr": 23.076,
+     "segment": "Animal Feed Division"
+    },
+    {
+     "assets_cr": 42.2287,
+     "liabilities_cr": 4.9578,
+     "segment": "Oil Cake Processing Division"
+    },
+    {
+     "assets_cr": 17.9727,
+     "liabilities_cr": 3.321,
+     "segment": "Dairy Division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "totals": {
+    "assets_cr": 183.0069,
+    "liabilities_cr": 31.3548,
+    "net_assets_cr": 435.5179,
+    "net_liabilities_cr": 67.7899
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 119.5038,
+     "liabilities_cr": 22.12,
+     "segment": "Animal Feed Division"
+    },
+    {
+     "assets_cr": 78.8301,
+     "liabilities_cr": 3.674,
+     "segment": "Oil Cake Processing Division"
+    },
+    {
+     "assets_cr": 16.1892,
+     "liabilities_cr": 3.4296,
+     "segment": "Dairy Division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "totals": {
+    "assets_cr": 214.5231,
+    "liabilities_cr": 29.2236,
+    "net_assets_cr": 414.9762,
+    "net_liabilities_cr": 65.476
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 135.3085,
+     "liabilities_cr": 28.5657,
+     "segment": "Animal Feed Division"
+    },
+    {
+     "assets_cr": 67.6735,
+     "liabilities_cr": 5.7379,
+     "segment": "Oil Cake Processing Division"
+    },
+    {
+     "assets_cr": 17.2131,
+     "liabilities_cr": 3.4594,
+     "segment": "Dairy Division"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "totals": {
+    "assets_cr": 220.1951,
+    "liabilities_cr": 37.763,
+    "net_assets_cr": 420.5051,
+    "net_liabilities_cr": 70.5809
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 21.73,
+   "period": "Q1FY26",
+   "revenue_cr": 338.19,
+   "segment": "Animal Feed Division",
+   "share_pct": 73.7,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 29.89,
+   "period": "Q1FY26",
+   "revenue_cr": 105.28,
+   "segment": "Oil Cake Processing Division",
+   "share_pct": 22.9,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -2.32,
+   "period": "Q1FY26",
+   "revenue_cr": 15.65,
+   "segment": "Dairy Division",
+   "share_pct": 3.4,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 14.14,
+   "period": "Q2FY26",
+   "revenue_cr": 348.98,
+   "segment": "Animal Feed Division",
+   "share_pct": 73.9,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 29.64,
+   "period": "Q2FY26",
+   "revenue_cr": 108.76,
+   "segment": "Oil Cake Processing Division",
+   "share_pct": 23.0,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -1.72,
+   "period": "Q2FY26",
+   "revenue_cr": 14.19,
+   "segment": "Dairy Division",
+   "share_pct": 3.0,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 5.74,
+   "period": "Q3FY26",
+   "revenue_cr": 333.76,
+   "segment": "Animal Feed Division",
+   "share_pct": 70.4,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 17.09,
+   "period": "Q3FY26",
+   "revenue_cr": 125.17,
+   "segment": "Oil Cake Processing Division",
+   "share_pct": 26.4,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -1.64,
+   "period": "Q3FY26",
+   "revenue_cr": 15.02,
+   "segment": "Dairy Division",
+   "share_pct": 3.2,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 1.77,
+   "period": "Q4FY26",
+   "revenue_cr": 340.58,
+   "segment": "Animal Feed Division",
+   "share_pct": 75.9,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -5.92,
+   "period": "Q4FY26",
+   "revenue_cr": 91.93,
+   "segment": "Oil Cake Processing Division",
+   "share_pct": 20.5,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -2.38,
+   "period": "Q4FY26",
+   "revenue_cr": 15.98,
+   "segment": "Dairy Division",
+   "share_pct": 3.6,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 3.09,
+   "period": "Q1FY27",
+   "revenue_cr": 376.13,
+   "segment": "Animal Feed Division",
+   "share_pct": 74.0,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -3.74,
+   "period": "Q1FY27",
+   "revenue_cr": 113.39,
+   "segment": "Oil Cake Processing Division",
+   "share_pct": 22.3,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:00:19+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 0.61,
+   "period": "Q1FY27",
+   "revenue_cr": 18.88,
+   "segment": "Dairy Division",
+   "share_pct": 3.7,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY24",
+   "rows": {
+    "Borrowings": 20.8427,
+    "CWIP": 5.9126,
+    "Equity Capital": 3.2,
+    "Fixed Assets": 43.0723,
+    "Investments": 36.7562,
+    "Other Assets": 192.15470000000002,
+    "Other Liabilities": 32.215100000000014,
+    "Reserves": 221.638,
+    "Total Assets": 277.8958,
+    "Total Liabilities": 277.8958
+   },
+   "source_news_id": "xbrl-facts:Q4FY24:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY24",
+   "rows": {
+    "Depreciation": 4.736,
+    "Exceptional items": -4.0954,
+    "Exceptional items AT": -2.97487431378858,
+    "Expenses": 1651.4763,
+    "Interest": 2.9127,
+    "Net Profit": 17.6091,
+    "Net Profit (owners)": 17.6091,
+    "OPM %": 1.9014055476071035,
+    "Operating Profit": 32.009900000000016,
+    "Other Income": -0.11940000000001305,
+    "Profit before tax": 24.2418,
+    "Profit for PE": 20.58397431378858,
+    "Sales": 1683.4862,
+    "Tax": 6.6327,
+    "Tax %": 27.360592035244906
+   },
+   "source_news_id": "xbrl-facts:FY24:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY24",
+   "rows": {
+    "Cash from Financing Activity": -7.1722,
+    "Cash from Investing Activity": 23.7308,
+    "Cash from Operating Activity": -15.016,
+    "Net Cash Flow": 1.5426
+   },
+   "source_news_id": "xbrl-facts:FY24:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 5.6218,
+    "Exceptional items": 2.5075,
+    "Exceptional items AT": 1.8657132580810503,
+    "Expenses": 1529.3073000000002,
+    "Interest": 2.4568,
+    "Net Profit": 91.3073,
+    "Net Profit (owners)": 91.3073,
+    "OPM %": 7.288187893748991,
+    "Operating Profit": 120.22069999999985,
+    "Other Income": 10.574000000000126,
+    "Profit before tax": 122.7161,
+    "Profit for PE": 89.44158674191895,
+    "Sales": 1649.528,
+    "Tax": 31.4088,
+    "Tax %": 25.594685619898286
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -18.5616,
+    "Cash from Investing Activity": -118.1866,
+    "Cash from Operating Activity": 142.6681,
+    "Net Cash Flow": 5.9199
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 24.0611,
+    "CWIP": 4.1665,
+    "Equity Capital": 3.2,
+    "Fixed Assets": 57.655699999999996,
+    "Investments": 113.32430000000001,
+    "Other Assets": 181.58430000000004,
+    "Other Liabilities": 35.92370000000001,
+    "Reserves": 293.546,
+    "Total Assets": 356.7308,
+    "Total Liabilities": 356.7308
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.5178,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 366.4056,
+    "Interest": 0.6459,
+    "Net Profit": 38.5543,
+    "Net Profit (owners)": 38.5543,
+    "OPM %": 11.921032065879366,
+    "Operating Profit": 49.59109999999998,
+    "Other Income": 4.5367000000000175,
+    "Profit before tax": 51.9641,
+    "Profit for PE": 38.5543,
+    "Sales": 415.9967,
+    "Tax": 13.4098,
+    "Tax %": 25.805892914531377
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.1387,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 384.48609999999996,
+    "Interest": 0.6511,
+    "Net Profit": 32.8718,
+    "Net Profit (owners)": 32.8718,
+    "OPM %": 10.039446028852531,
+    "Operating Profit": 42.908000000000015,
+    "Other Income": 3.6267999999999816,
+    "Profit before tax": 43.745,
+    "Profit for PE": 32.8718,
+    "Sales": 427.3941,
+    "Tax": 10.8732,
+    "Tax %": 24.855869242199113
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 24.122799999999998,
+    "CWIP": 3.0576,
+    "Equity Capital": 3.2,
+    "Fixed Assets": 62.0848,
+    "Investments": 182.1322,
+    "Other Assets": 183.2831,
+    "Other Liabilities": 54.88260000000001,
+    "Reserves": 348.3523,
+    "Total Assets": 430.5577,
+    "Total Liabilities": 430.5577
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.1892,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 405.77309999999994,
+    "Interest": 0.6487,
+    "Net Profit": 16.3484,
+    "Net Profit (owners)": 16.3484,
+    "OPM %": 5.177360236581589,
+    "Operating Profit": 22.155400000000043,
+    "Other Income": 3.7286999999999573,
+    "Profit before tax": 23.0462,
+    "Profit for PE": 16.3484,
+    "Sales": 427.9285,
+    "Tax": 6.6978,
+    "Tax %": 29.062491864168496
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.1401,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 414.4401,
+    "Interest": 0.6458,
+    "Net Profit": -3.7342,
+    "Net Profit (owners)": -3.7342,
+    "OPM %": -1.2894829457136956,
+    "Operating Profit": -5.276099999999985,
+    "Other Income": 3.374999999999985,
+    "Profit before tax": -4.687,
+    "Profit for PE": -3.7342,
+    "Sales": 409.164,
+    "Tax": -0.9528,
+    "Tax %": -20.328568380627267
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 24.8716,
+    "CWIP": 2.4732,
+    "Equity Capital": 3.2,
+    "Fixed Assets": 60.099,
+    "Investments": 150.0264,
+    "Other Assets": 202.3776,
+    "Other Liabilities": 40.6044,
+    "Reserves": 346.3002,
+    "Total Assets": 414.9762,
+    "Total Liabilities": 414.9762
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 7.9858,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1570.9115,
+    "Interest": 2.7849,
+    "Net Profit": 84.0403,
+    "Net Profit (owners)": 84.0403,
+    "OPM %": 6.520255214675454,
+    "Operating Profit": 109.57180000000017,
+    "Other Income": 15.267199999999818,
+    "Profit before tax": 114.0683,
+    "Profit for PE": 84.0403,
+    "Sales": 1680.4833,
+    "Tax": 30.028,
+    "Tax %": 26.324579221396302
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -33.2231,
+    "Cash from Investing Activity": -8.9196,
+    "Cash from Operating Activity": 53.5239,
+    "Net Cash Flow": 11.3812
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T06:41:42+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:41:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.8268,
+    "Exceptional items": 0.4717,
+    "Exceptional items AT": 0.34303142857142854,
+    "Expenses": 453.9028,
+    "Interest": 0.6699,
+    "Net Profit": 0.9443,
+    "Net Profit (owners)": 0.9443,
+    "OPM %": -0.05157947824493051,
+    "Operating Profit": -0.2340000000000373,
+    "Other Income": 4.029200000000038,
+    "Profit before tax": 1.2985,
+    "Profit for PE": 0.6012685714285715,
+    "Sales": 453.6688,
+    "Tax": 0.3542,
+    "Tax %": 27.277628032345014
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "KSE",
  "timeline": [],
  "upcoming_events": [],

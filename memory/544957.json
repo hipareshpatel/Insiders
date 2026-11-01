@@ -1,9 +1,83 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "German Green Steel and Power Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-24T18:00:00+05:30",
@@ -1528,6 +1602,754 @@
  },
  "industry": "Industrials > Capital Goods > Industrial Products > Iron & Steel Products",
  "last_filed_at": "2026-10-24T18:44:50+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "AFFLUENCE FINCON SERVICE PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 142.0,
+    "qty": 1110000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 15.76
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 135.58,
+    "qty": 383678.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 5.2
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 135.49,
+    "qty": 383678.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 5.2
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "CRESCENT TECHNOLOGIES",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 131.86,
+    "qty": 390000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 5.14
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "DELTAX BROKING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 128.54,
+    "qty": 202167.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 2.6
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "DELTAX BROKING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 142.0,
+    "qty": 1800000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 25.56
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 134.95,
+    "qty": 398351.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 5.38
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 134.67,
+    "qty": 398351.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 5.36
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 135.08,
+    "qty": 808430.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 10.92
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 135.03,
+    "qty": 808430.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 10.92
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 134.85,
+    "qty": 1022128.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 13.78
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 135.69,
+    "qty": 1121438.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 15.22
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 134.1,
+    "qty": 458065.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 6.14
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 134.01,
+    "qty": 474072.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 6.35
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 136.27,
+    "qty": 380962.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 5.19
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 136.05,
+    "qty": 380962.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 5.18
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 134.41,
+    "qty": 1176340.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 15.81
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 134.54,
+    "qty": 1176340.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 15.83
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "SAROJDEVI S KABRA",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 131.44,
+    "qty": 584236.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 7.68
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "SAROJDEVI S KABRA",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 131.41,
+    "qty": 584236.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 7.68
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.21,
+    "qty": 800833.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 9.31
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.16,
+    "qty": 800833.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 9.3
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "D3 STOCK VISION LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 122.82,
+    "qty": 292680.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 3.59
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "D3 STOCK VISION LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 122.95,
+    "qty": 506680.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 6.23
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "IMC INDIA SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 117.92,
+    "qty": 198720.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 2.34
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "IMC INDIA SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 120.41,
+    "qty": 422571.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 5.09
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.52,
+    "qty": 430478.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 5.02
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.44,
+    "qty": 430478.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 5.01
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.63,
+    "qty": 673256.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 7.85
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.62,
+    "qty": 675721.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 7.88
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "LAXMI TRADE SOLUTIONS",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 120.5,
+    "qty": 366775.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 4.42
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "LAXMI TRADE SOLUTIONS",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 121.44,
+    "qty": 376775.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 4.58
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 115.59,
+    "qty": 365489.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 4.22
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.92,
+    "qty": 420027.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 4.91
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 117.2,
+    "qty": 697988.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 8.18
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 117.07,
+    "qty": 697988.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 8.17
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 123.03,
+    "qty": 500004.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 6.15
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 123.03,
+    "qty": 515788.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 6.35
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 118.08,
+    "qty": 744072.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 8.79
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 116.87,
+    "qty": 800412.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 9.35
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 123.03,
+    "qty": 374912.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 4.61
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 123.01,
+    "qty": 566143.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 6.96
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 122.96,
+    "qty": 805596.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 9.91
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 123.03,
+    "qty": 839026.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 10.32
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 124.92,
+    "qty": 885163.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 11.06
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 125.11,
+    "qty": 885163.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 11.07
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 124.42,
+    "qty": 971390.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 12.09
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 124.78,
+    "qty": 1092528.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 13.63
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "INDRA KIRAN VENTURES",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 125.16,
+    "qty": 471267.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 5.9
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "INDRA KIRAN VENTURES",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 124.31,
+    "qty": 621267.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 7.72
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 124.49,
+    "qty": 709626.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 8.83
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 124.66,
+    "qty": 709724.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 8.85
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "MARWADI SHARES AND FINANCE LTD.",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 123.63,
+    "qty": 622168.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 7.69
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "MARWADI SHARES AND FINANCE LTD.",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 126.58,
+    "qty": 653003.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 8.27
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 125.07,
+    "qty": 649131.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 8.12
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 125.23,
+    "qty": 649131.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 8.13
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 125.15,
+    "qty": 663871.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "GERMAN",
+    "value_cr": 8.31
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 124.19,
+    "qty": 668663.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "GERMAN",
+    "value_cr": 8.3
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "oci_net_cr": 0.067,
+    "profit_cr": 21.6371,
+    "tax_not_reclassified_cr": -0.067,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 21.7041,
+    "total_comprehensive_nci_cr": 0.0947,
+    "total_comprehensive_owners_cr": 21.6094
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "oci_net_cr": 0.033,
+    "profit_cr": 18.0163,
+    "tax_not_reclassified_cr": -0.033,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 18.0493
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -1599,7 +2421,7 @@
     }
    ],
    "lab": {
-    "at": "2026-10-27T07:18:25+05:30",
+    "at": "2026-10-29T07:37:01+05:30",
     "by": "file",
     "doc": "other",
     "ok": true
@@ -1623,10 +2445,32 @@
    "at": "2026-10-27T16:44:32+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:42:06+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "metals",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Manufacturers of Iron and Steel Products",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -2004,6 +2848,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 5.8499,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 418.5589,
+    "Interest": 11.4432,
+    "Minority share": 0.0938,
+    "Net Profit": 21.6371,
+    "Net Profit (owners)": 21.5433,
+    "OPM %": 9.61045753779414,
+    "Operating Profit": 44.50229999999999,
+    "Other Income": 4.545900000000003,
+    "Profit before tax": 31.7551,
+    "Profit for PE": 21.5433,
+    "Sales": 463.0612,
+    "Tax": 10.118,
+    "Tax %": 31.86259844875312
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.4988,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 283.23929999999996,
+    "Interest": 6.1141,
+    "Net Profit": 18.0163,
+    "Net Profit (owners)": 18.0163,
+    "OPM %": 9.37183429377755,
+    "Operating Profit": 29.28970000000004,
+    "Other Income": 3.9212999999999596,
+    "Profit before tax": 23.5981,
+    "Profit for PE": 18.0163,
+    "Sales": 312.529,
+    "Tax": 5.5818,
+    "Tax %": 23.653599230446524
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "GERMAN",
  "timeline": [
   {
@@ -2022,6 +2937,6 @@
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T10:04:41+05:30",
+ "updated_at": "2026-10-29T07:37:01+05:30",
  "watchlist": []
 }

@@ -1,4 +1,108 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-03-31",
+     "name": "ASA & ASSOCIATES LLP, CHARTERED ACCOUNTANTS",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-03-31",
+     "name": "ASA & Associates LLP, Chartered Accountants",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-03-31",
+     "name": "ASA & Associates LLP, Chartered Accountants",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-03-31",
+     "name": "ASA & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-06-30T18:00:00+05:30",
@@ -34,8 +138,298 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -488.25,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -0.71,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -154.12,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 77.2,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 90.31,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.04,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 97.61,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 5.79,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -211.39,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 6.67,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 3.58,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -645.7,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 4.03,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.2,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 5.57,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 547.88,
+    "CashFlowsFromUsedInInvestingActivities": -138.15,
+    "CashFlowsFromUsedInOperatingActivities": -405.93,
+    "CashFlowsFromUsedInOperations": -341.46,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 4.03,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 64.47,
+    "IncreaseDecreaseInCashAndCashEquivalents": 3.8,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 3.8,
+    "InterestPaidClassifiedAsFinancingActivities": 85.51,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 5.78,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -57.02,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 7.8,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 9.34,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 587.28,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 140.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 12.52,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 2.44,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 1.63,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 10.5,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 134.93,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 84.55,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -28.45,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -181.9,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -97.23,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 25.87,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 48.59,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.04,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -51.3,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 3.79,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 13.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 2.95,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -351.58,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 2.32,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 271.55,
+    "CashFlowsFromUsedInInvestingActivities": -53.71,
+    "CashFlowsFromUsedInOperatingActivities": -216.48,
+    "CashFlowsFromUsedInOperations": -183.39,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 33.09,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1.36,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1.36,
+    "InterestPaidClassifiedAsFinancingActivities": 47.67,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 13.13,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -60.94,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 7.8,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 1.96,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 6.56,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 325.78,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.24,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 61.24,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "CMR Green Technologies Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-06-30T18:00:00+05:30",
@@ -2161,6 +2555,166 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.65,
+     "description": "a) Re-measurement gain/(loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.2,
+     "description": "a) Exchange differences on translation of foreign operations (FCTR)",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": -68.53,
+     "description": "b) Net movement in effective portion of cash flow hedge reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.65,
+    "oci_net_cr": -52.3,
+    "profit_cr": 65.98,
+    "reclassified_cr": -68.73,
+    "tax_not_reclassified_cr": 0.16,
+    "tax_reclassified_cr": -15.94,
+    "total_comprehensive_cr": 13.68,
+    "total_comprehensive_nci_cr": -8.76,
+    "total_comprehensive_owners_cr": 22.44
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.34,
+     "description": "Re-measurement gain/(loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -9.57,
+     "description": "Net movement in effective portion of cash flow hedge reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.34,
+    "oci_net_cr": -6.91,
+    "profit_cr": 40.27,
+    "reclassified_cr": -9.57,
+    "tax_not_reclassified_cr": 0.09,
+    "tax_reclassified_cr": -2.41,
+    "total_comprehensive_cr": 33.36
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.31,
+     "description": "Re-measurement gain/(loss) on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.09,
+     "description": "Exchange difference on translation of foreign operations (FCTR)",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 290.99,
+     "description": "Net movement in effective portion of cash flow hedge reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.31,
+    "oci_net_cr": 220.9,
+    "profit_cr": 68.18,
+    "reclassified_cr": 290.9,
+    "tax_not_reclassified_cr": 0.08,
+    "tax_reclassified_cr": 70.23,
+    "total_comprehensive_cr": 289.08,
+    "total_comprehensive_nci_cr": 33.5,
+    "total_comprehensive_owners_cr": 187.4
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.22,
+     "description": "Re-measurement gains on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 108.03,
+     "description": "Net movement in effective portion of cash flow hedge reserve",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.22,
+    "oci_net_cr": 81.0,
+    "profit_cr": 35.25,
+    "reclassified_cr": 108.03,
+    "tax_not_reclassified_cr": 0.06,
+    "tax_reclassified_cr": 27.19,
+    "total_comprehensive_cr": 116.25
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -2192,6 +2746,657 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 323.73,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 262.18,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 179.24,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 142.6,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 109.48,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 70.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 36.03,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 33.79,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commodity Gain / loss",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 33.14,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commodity Gain / loss",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 32.37,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Green LLC",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of JV Partner",
+     "remarks": "NO REMARKS",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 20.39,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 18.88,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Guarantee Given",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 13.55,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of raw materials and traded goods",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 11.23,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 7.72,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Procurement and Sales Commission Received",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.46,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Procurement and Sales Commission Received",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.53,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Repayment of Loan",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.55,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 1.59,
+     "closing_cr": 0.0,
+     "counterparty": "CMR welfare Foundation",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "CSR Expenses",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.55,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of store items",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 1.43,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Mohan Agarwal",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "rent payment",
+     "relationship": "Managing Director",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.18,
+     "closing_cr": 0.0,
+     "counterparty": "Mr Mohan Agarwal",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.91,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Guarantee Given",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.63,
+     "closing_cr": 0.0,
+     "counterparty": "Mr G.S Agarwala",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Chairman Emeritus",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.61,
+     "closing_cr": 0.0,
+     "counterparty": "Mr Akshay Agarwal",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Executive Director",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.6,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.51,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.41,
+     "closing_cr": 0.0,
+     "counterparty": "Mr Raghav Agarwal",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Executive Director",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.33,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.11,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Mandakini Agarwal",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Manager-Legal",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.11,
+     "closing_cr": 0.0,
+     "counterparty": "Ms Srishti Saxena",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Company Secretary",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Ekas Aggarwal",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Manager-Legal",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.09,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by Other behalf of us",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.09,
+     "closing_cr": 0.0,
+     "counterparty": "Ms. Rashmi Verma",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees",
+     "relationship": "Independent Director",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Satpal Arora",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees",
+     "relationship": "Independent Director",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Balvinder Kumar",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees",
+     "relationship": "Independent Director",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.03,
+     "closing_cr": 0.0,
+     "counterparty": "Nikkei CMR Aluminium India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Assosciate of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.02,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Nikkei India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.02,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Gyan Mohan",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sitting fees",
+     "relationship": "Independent Director",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "CMR - Toyotsu Aluminium India (P) Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Commodity Gain / loss",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Aluminium Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by Other behalf of us",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Nikkei CMR Aluminium India Private Limited",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Corporate Guarantee for Working Capital facility",
+     "relationship": "Assosciate of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Tech Solutions Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of Expense",
+     "relationship": "A private Company in which Director is member",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR Tech Solutions Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "A private Company in which Director is member",
+     "remarks": "NO REMARKS",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Mrs. Rajni Bagla",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Relative of Managing Director",
+     "remarks": "NO REMARKS",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of property, plant and equipment",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR NLM Eco Aluminium Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by Others on behalf of the Company",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjivani Metal Trading Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate Company",
+     "remarks": "NO REMARKS",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjivani Metal Trading Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Associate Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjivani Metal Trading Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjivani Metal Trading Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate Company",
+     "remarks": "NO REMARKS",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjivani Metal Trading Pvt. Ltd.",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate Company",
+     "remarks": "NO REMARKS",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "CMR welfare Foundation",
+     "entity": "CMR Green Technologies Limited",
+     "opening_cr": 0.0,
+     "other_details": "Expenses made by us on behalf of the Company",
+     "relationship": "Subsidiary of Holding Company",
+     "remarks": "NO REMARKS",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 61,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544777",
  "section_lab": {
@@ -2207,7 +3412,40 @@
   }
  },
  "sector": "metals",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "MANUFACTURE AND SALE ON ALUMINIUM INGOTS AND ZINC INGOTS",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Manufacture and sale of Aluminium Ingots and Zinc Ingots",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -3719,6 +4957,318 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": -0.74,
+    "Depreciation": 20.61,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2236.3699999999994,
+    "Interest": 24.25,
+    "Minority share": 1.67,
+    "Net Profit": 65.98,
+    "Net Profit (owners)": 64.31,
+    "OPM %": 5.42570422088497,
+    "Operating Profit": 128.30000000000064,
+    "Other Income": 3.569999999999368,
+    "PBT as filed": 87.75,
+    "Profit before tax": 87.01,
+    "Profit for PE": 64.31,
+    "Sales": 2364.67,
+    "Tax": 21.03,
+    "Tax %": 24.16963567406045
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": -4.03,
+    "Depreciation": 77.2,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 8190.75,
+    "Interest": 91.08,
+    "Minority share": 15.98,
+    "Net Profit": 228.38,
+    "Net Profit (owners)": 212.4,
+    "OPM %": 5.201737461791934,
+    "Operating Profit": 449.4400000000005,
+    "Other Income": 19.0499999999995,
+    "PBT as filed": 304.24,
+    "Profit before tax": 300.21000000000004,
+    "Profit for PE": 212.4,
+    "Sales": 8640.19,
+    "Tax": 71.83,
+    "Tax %": 23.92658472402651
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 547.88,
+    "Cash from Investing Activity": -138.15,
+    "Cash from Operating Activity": -405.93,
+    "Net Cash Flow": 3.8
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.55,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1243.12,
+    "Interest": 12.7,
+    "Net Profit": 40.27,
+    "Net Profit (owners)": 40.27,
+    "OPM %": 4.8737000788178895,
+    "Operating Profit": 63.690000000000055,
+    "Other Income": 7.959999999999937,
+    "Profit before tax": 52.4,
+    "Profit for PE": 40.27,
+    "Sales": 1306.81,
+    "Tax": 12.13,
+    "Tax %": 23.14885496183206
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 25.87,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 4873.83,
+    "Interest": 48.87,
+    "Net Profit": 126.8,
+    "Net Profit (owners)": 126.8,
+    "OPM %": 3.881553646968332,
+    "Operating Profit": 196.8199999999997,
+    "Other Income": 46.1100000000003,
+    "Profit before tax": 168.19,
+    "Profit for PE": 126.8,
+    "Sales": 5070.65,
+    "Tax": 41.39,
+    "Tax %": 24.609073072120815
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 271.55,
+    "Cash from Investing Activity": -53.71,
+    "Cash from Operating Activity": -216.48,
+    "Net Cash Flow": 1.36
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 1425.98,
+    "CWIP": 67.6,
+    "Equity Capital": 43.81,
+    "Fixed Assets": 774.58,
+    "Investments": 37.31,
+    "Other Assets": 2915.9100000000003,
+    "Other Liabilities": 838.0100000000002,
+    "Reserves": 1487.6,
+    "Total Assets": 3795.4,
+    "Total Liabilities": 3795.4
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 737.4100000000001,
+    "CWIP": 14.99,
+    "Equity Capital": 43.81,
+    "Fixed Assets": 162.89000000000001,
+    "Investments": 904.98,
+    "Other Assets": 1628.4700000000003,
+    "Other Liabilities": 452.5799999999999,
+    "Reserves": 1477.53,
+    "Total Assets": 2711.33,
+    "Total Liabilities": 2711.33
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 1.49,
+    "Depreciation": 19.22,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2989.1400000000003,
+    "Interest": 32.44,
+    "Minority share": 6.81,
+    "Net Profit": 68.18,
+    "Net Profit (owners)": 61.37,
+    "OPM %": 4.2779875301418855,
+    "Operating Profit": 133.5899999999997,
+    "Other Income": 7.730000000000302,
+    "PBT as filed": 88.17,
+    "Profit before tax": 89.66,
+    "Profit for PE": 61.37,
+    "Sales": 3122.73,
+    "Tax": 21.48,
+    "Tax %": 23.957171536917244
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.35,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1559.54,
+    "Interest": 17.16,
+    "Net Profit": 35.25,
+    "Net Profit (owners)": 35.25,
+    "OPM %": 3.3382918061237215,
+    "Operating Profit": 53.86000000000013,
+    "Other Income": 16.669999999999874,
+    "Profit before tax": 47.02,
+    "Profit for PE": 35.25,
+    "Sales": 1613.4,
+    "Tax": 11.77,
+    "Tax %": 25.031901318587835
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "CMRGREEN",
  "timeline": [],
  "upcoming_events": [],

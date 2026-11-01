@@ -1,15 +1,259 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-04-24T17:53:27+05:30",
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "BSR & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-04-24T17:53:27+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Mar-2026",
-   "source_news_id": "nse-106599728"
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
   },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "BSR & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "101248W/W-100022",
+     "name": "B S R & Co. LLP",
+     "signed_on": "2026-05-26",
+     "signing_partner": "SAMPAD GUHA THAKURTA"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "BSR & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "101248W/W-100022",
+     "name": "B S R & Co. LLP",
+     "signed_on": "2026-05-26",
+     "signing_partner": "SAMPAD GUHA THAKURTA"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "(ix) (a)\tAccording to the information and explanations given to us and on the basis of our examination of the records of the Company, the Company has not defaulted in repayment of loans and borrowing or in the payment of interest thereon to any lender."
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "(xi) (a)\tDuring the course of our examination of the books and records of the Company and according to the information and explanations given to us, considering the principles of materiality outlined in Standards on Auditing, we report that no fraud by the Company or on the Company has been noticed or reported during the year.\n(b)\tAccording to the information and explanations given to us, no report under sub-section (12) of Section 143 of the Act has been filed by the auditors in Form ADT-4 as prescribed under Rule 13 of the Companies (Audit and Auditors) Rules, 2014 with the Central Government.\n(c)\tWe have taken into consideration the whistle blower complaints received by the Company during the year while determining the nature, timing and extent of our audit procedures."
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<span /><table class=\"bordered\"><tbody><tr><td class=\"bordered\">\n<p><span>(vii) (a)<span>&nbsp; </span>The Company does not have liability in respect of Service tax, Duty of excise, Sales tax and Value added tax during the year since effective 1 July 2017, these statutory dues has been subsumed into GST.</span></p>\n<p><span>According to the information and explanations given to us and on the basis of our examination of the records of the Company, in our opinion, the undisputed statutory dues including Goods and Services Tax, Provident Fund, Employees State Insurance, Income-Tax, Duty of Customs or Cess or other statutory dues have been regularly deposited by the Company with the appropriate authorities.</span></p>\n<p><span>According to the information and explanations given to us and on the basis of our examination of the records of the Company, no undisputed amounts payable in respect of Goods and Services Tax, Provident Fund, Employees State Insurance, Income-Tax, Duty of Customs or"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "BSR & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "BSR & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "BSR & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
+ "balance_sheet": [
   {
    "as_of": "2026-05-07T17:53:30+05:30",
    "credit_rating": "CARE BBB- (RWD)",
@@ -137,19 +381,6 @@
    "source_news_id": "nse-106828522",
    "total_assets_cr": 2773.94,
    "total_liabilities_cr": 1381.81
-  },
-  {
-   "as_of": "2026-10-26T16:23:01+05:30",
-   "lab": {
-    "at": "2026-10-26T17:15:08+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "slides",
-    "ok": true
-   },
-   "net_worth_cr": 1392.1,
-   "period": "Sep-2026",
-   "source_news_id": "nse-106828542"
   },
   {
    "as_of": "2026-10-26T18:00:00+05:30",
@@ -455,7 +686,412 @@
    "source_news_id": "nse-106820617"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -148.993,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -21.261,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -88.701,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 137.691,
+    "AdjustmentsForFinanceCosts": 87.035,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -1.108,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 3.697,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 78.575,
+    "AdjustmentsForInterestIncome": 12.071,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 5.141,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -4.915,
+    "AdjustmentsForProvisionsCurrent": 7.183,
+    "AdjustmentsForReconcileProfitLoss": 9.499,
+    "AdjustmentsForSharebasedPayments": 4.33,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -46.863,
+    "AdjustmentsToEquityForRestatement": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 301.489,
+    "CashFlowsFromUsedInFinancingActivities": 703.973,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 703.973,
+    "CashFlowsFromUsedInInvestingActivities": -370.696,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -370.696,
+    "CashFlowsFromUsedInOperatingActivities": -98.751,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -98.751,
+    "CashFlowsFromUsedInOperations": -73.791,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 10.1,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 6.02,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 24.96,
+    "IncreaseDecreaseInCashAndCashEquivalents": 240.546,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 234.526,
+    "InterestPaidClassifiedAsFinancingActivities": 78.562,
+    "InterestReceivedClassifiedAsInvestingActivities": 12.071,
+    "OtherAdjustmentsToReconcileProfitLoss": 9.759,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -34.753,
+    "PaymentForAuditServices": 1.051,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 80.065,
+    "PaymentsToAuditor": 1.051,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 276.101,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 3.212,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 35.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 904.487,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1.425,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 342.551,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 352.988
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -7.239,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -3.746,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -6.784,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 9.45,
+    "AdjustmentsForFinanceCosts": 4.951,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -23.514,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 7.717,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 8.081,
+    "AdjustmentsForInterestIncome": 20.833,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.047,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.53,
+    "AdjustmentsForProvisionsNoncurrent": 1.364,
+    "AdjustmentsForReconcileProfitLoss": -54.408,
+    "AdjustmentsForSharebasedPayments": 3.117,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.838,
+    "AdjustmentsToEquityForRestatement": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 136.481,
+    "CashAndCashEquivalentsCashFlowStatement": 99.882,
+    "CashFlowsFromUsedInFinancingActivities": 880.798,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 880.798,
+    "CashFlowsFromUsedInInvestingActivities": -792.949,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -792.949,
+    "CashFlowsFromUsedInOperatingActivities": -4.792,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -4.792,
+    "CashFlowsFromUsedInOperations": 1.621,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 627.732,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 6.413,
+    "IncreaseDecreaseInCashAndCashEquivalents": 83.057,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 83.057,
+    "InterestPaidClassifiedAsFinancingActivities": 4.973,
+    "InterestReceivedClassifiedAsInvestingActivities": 10.561,
+    "OtherAdjustmentsForNoncashItems": -29.387,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -29.053,
+    "PaymentForAuditServices": 0.2,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 7.319,
+    "PaymentsToAuditor": 0.2,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 4.403,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 900.024,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 10.244,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 11.337
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -106.691,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -2.37,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -42.051,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 91.874,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 38.131,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -0.088,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -21.586,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 57.322,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 7.353,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -1.755,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 6.415,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 7.953,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 17.282,
+    "AdjustmentsForSharebasedPayments": 3.916,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 4.998,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 170.97,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 98.871,
+    "CashFlowsFromUsedInInvestingActivities": -149.644,
+    "CashFlowsFromUsedInOperatingActivities": -80.831,
+    "CashFlowsFromUsedInOperations": -68.087,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 1.084,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 12.744,
+    "IncreaseDecreaseInCashAndCashEquivalents": -130.52,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -131.604,
+    "InterestPaidClassifiedAsFinancingActivities": 40.3,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 7.353,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -9.842,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -1.395,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.196,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 9.3,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -38.024,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 11.265,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 25.991,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 237.286,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 1.629,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.736,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 5.135,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 164.833,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 35.729,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -17.198,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -2.98,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -5.777,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 5.269,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 2.221,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.115,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.686,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 4.06,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 13.271,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.289,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -0.775,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 1.225,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -30.894,
+    "AdjustmentsForSharebasedPayments": 1.266,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.081,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 71.248,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 10.948,
+    "CashFlowsFromUsedInInvestingActivities": -12.798,
+    "CashFlowsFromUsedInOperatingActivities": -26.784,
+    "CashFlowsFromUsedInOperations": -24.214,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 2.57,
+    "IncreaseDecreaseInCashAndCashEquivalents": -28.634,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -28.634,
+    "InterestPaidClassifiedAsFinancingActivities": 2.155,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.909,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -5.365,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 28.548,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -3.024,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 23.02,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 4.115,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 18.579,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 1.663,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 10.179,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Aequs Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 8.058,
+     "class": "OtherContingentLiabilities",
+     "description": "Labour related matters"
+    },
+    {
+     "amount_cr": 6.9,
+     "class": "TaxContingentLiability",
+     "description": "Tax matters"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 2,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "total_cr": 14.958
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 2.523,
+     "class": "TaxContingentLiability",
+     "description": "Tax matters"
+    },
+    {
+     "amount_cr": 2.0,
+     "class": "OtherContingentLiabilities",
+     "description": "Labour related matters"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 2,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 4.523
+  }
+ ],
  "deals": [
   {
    "amount_cr": 10.0,
@@ -530,6 +1166,220 @@
    "tranches": [],
    "updated_as_of": "2026-05-22T15:14:11+05:30",
    "usage": null
+  }
+ ],
+ "discontinued": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "after_tax_cr": -0.031,
+    "before_tax_cr": -0.031,
+    "continuing_profit_cr": -42.648,
+    "profit_cr": -42.679,
+    "tax_cr": 0.0
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "after_tax_cr": 0.368,
+    "before_tax_cr": 0.368,
+    "continuing_profit_cr": -54.089,
+    "profit_cr": -53.721,
+    "tax_cr": 0.0
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "after_tax_cr": -0.196,
+    "before_tax_cr": -0.196,
+    "continuing_profit_cr": -54.007,
+    "profit_cr": -52.392,
+    "tax_cr": 0.0
+   }
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
   }
  ],
  "financial_metrics": [
@@ -11222,7 +12072,367 @@
   ]
  },
  "industry": "Industrials > Capital Goods > Aerospace & Defense",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 14.99,
+    "after_qty": 100513070.0,
+    "as_of": "2026-09-21T23:59:00+05:30",
+    "before_pct": 14.99,
+    "before_qty": 100513070.0,
+    "category": "Promoter",
+    "exchange": null,
+    "filed": "2026-09-21",
+    "filing_id": "3471",
+    "from": "2026-09-21",
+    "instrument": "Equity",
+    "mode": "Pledge Creation",
+    "person": "Melligeri Private Family Foundation (Mellwood Trustee Services Private Limited)",
+    "qty": 100513070.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "PLEDGE",
+    "symbol": "AEQUS",
+    "to": "2026-09-21",
+    "value_cr": 2300.7442
+   },
+   {
+    "after_pct": 14.99,
+    "after_qty": 100513070.0,
+    "as_of": "2026-10-09T23:59:00+05:30",
+    "before_pct": 14.99,
+    "before_qty": 100513070.0,
+    "category": "Promoter",
+    "exchange": null,
+    "filed": "2026-10-09",
+    "filing_id": "3969",
+    "from": "2026-10-08",
+    "instrument": "Equity",
+    "mode": "Pledge Release",
+    "person": "Melligeri Private Family Foundation (Mellwood Trustee Services Private Limited)",
+    "qty": 100513070.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "PLEDGE",
+    "symbol": "AEQUS",
+    "to": "2026-10-08",
+    "value_cr": 2317.3288
+   },
+   {
+    "after_pct": 14.99,
+    "after_qty": 100513070.0,
+    "as_of": "2026-10-15T23:59:00+05:30",
+    "before_pct": 14.99,
+    "before_qty": 100513070.0,
+    "category": "Promoter",
+    "exchange": null,
+    "filed": "2026-10-15",
+    "filing_id": "3985",
+    "from": "2026-10-14",
+    "instrument": "Equity",
+    "mode": "Pledge Creation",
+    "person": "Melligeri Private Family Foundation (Mellwood Trustee Services Private Limited)",
+    "qty": 100513070.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "PLEDGE",
+    "symbol": "AEQUS",
+    "to": "2026-10-14",
+    "value_cr": 2300.7442
+   }
+  ],
+  "filings": [
+   "3471",
+   "3969",
+   "3985"
+  ]
+ },
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 6,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "RAJEEV KAUL",
+     "pay_cr": 1.797
+    },
+    {
+     "designation": "CFO",
+     "name": "DINESH VENKATACHALAM IYER",
+     "pay_cr": 1.734
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "RAVI MALLIKARJUN HUGAR",
+     "pay_cr": 1.734
+    },
+    {
+     "designation": "Director",
+     "name": "ANUP WADHAWAN",
+     "pay_cr": 0.45
+    },
+    {
+     "designation": "Director",
+     "name": "EBERHARD KLAUS RICHTER",
+     "pay_cr": 0.39
+    },
+    {
+     "designation": "Director",
+     "name": "VIDYA SARATHY",
+     "pay_cr": 0.25
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "last_filed_at": "2026-10-26T18:00:00+05:30",
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.623,
+     "description": "Remeasurements of post-employment benefit obligations",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -3.469,
+     "description": "Exchange differences on translating financial results of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.623,
+    "oci_net_cr": -2.846,
+    "profit_cr": -42.679,
+    "reclassified_cr": -3.469,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -45.525,
+    "total_comprehensive_nci_cr": 0.003,
+    "total_comprehensive_owners_cr": -45.528
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.339,
+     "description": "Remeasurements of post-employment benefit obligations",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.339,
+    "oci_net_cr": -0.339,
+    "profit_cr": -6.382,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -6.721
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 2.123,
+     "description": "Remeasurements of post-employment benefit obligations",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 5.109,
+     "description": "Exchange difference on translation of foreign operation",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 2.123,
+    "oci_net_cr": 7.232,
+    "profit_cr": -53.721,
+    "reclassified_cr": 5.109,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -46.489,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -46.489
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.454,
+     "description": "Remeasurements of post-employment benefit obligations",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.454,
+    "oci_net_cr": 0.454,
+    "profit_cr": 52.164,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 52.618
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 2.667,
+     "description": "Exchange differences on translating financial results of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "oci_net_cr": 2.667,
+    "profit_cr": -53.228,
+    "reclassified_cr": 2.667,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -50.561,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 2.667
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.094,
+     "description": "Exchange differences on translating financial results of foreign operations",
+     "group": "reclassified"
+    },
+    {
+     "amount_cr": 0.29,
+     "description": "Remeasurements of post-employment benefit obligations, net of tax",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "oci_net_cr": -0.804,
+    "profit_cr": -52.392,
+    "reclassified_cr": -0.804,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -53.196,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -0.804
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.018,
+     "description": "Remeasurements of post-employment benefit obligations",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.018,
+    "oci_net_cr": 0.018,
+    "profit_cr": 1.791,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 1.809
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-20T12:21:04+05:30",
@@ -11526,6 +12736,2318 @@
    "value": 5.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 24,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 4.312,
+      "AmountsReceivableRelatedPartyTransactions": 45.22
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "LeasesAsLesseeRelatedPartyTransactions": 30.722,
+      "OtherRelatedPartyTransactionsContributionMade": 1.278,
+      "OtherRelatedPartyTransactionsContributionReceived": 1.479,
+      "OtherRelatedPartyTransactionsExpense": 27.039,
+      "ServicesReceivedRelatedPartyTransactions": 32.837,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.128,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.267
+     },
+     "party": "AEQUS SEZ PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 15.19,
+      "AmountsReceivableRelatedPartyTransactions": 9.584
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.09,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.07,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 2.112,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 44.131,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.004,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.003
+     },
+     "party": "AEROSPACE PROCESSING INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 5.974,
+      "AmountsReceivableRelatedPartyTransactions": 99.875
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.09,
+      "OtherRelatedPartyTransactionsIncome": 0.12,
+      "PurchasesOfGoodsRelatedPartyTransactions": 16.29,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 9.884,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.005,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 0.006,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.002
+     },
+     "party": "SQUAD FORGING INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.683,
+      "AmountsReceivableRelatedPartyTransactions": 3.844
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "LeasesAsLesseeRelatedPartyTransactions": 1.894,
+      "OtherRelatedPartyTransactionsContributionMade": 1.031,
+      "OtherRelatedPartyTransactionsExpense": 4.202,
+      "ServicesReceivedRelatedPartyTransactions": 17.669,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.003
+     },
+     "party": "HUBBALLI DURABLE GOODS CLUSTER PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 10.04
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 10.01,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.03
+     },
+     "party": "AJNA AEROSPACE & DEFENCE PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 9.274
+     },
+     "party": "ARAVIND S MELLIGERI"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.007,
+      "AmountsReceivableRelatedPartyTransactions": 45.861
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 4.069,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.003,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.039,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.004,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.194
+     },
+     "party": "AEQUS COOKWARE PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 34.277
+     },
+     "category": "Parent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 3.441
+     },
+     "party": "Aequs Manufacturing Investments Private Limited"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 0.197
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 2.673,
+      "OtherRelatedPartyTransactionsExpense": 0.029,
+      "ServicesReceivedRelatedPartyTransactions": 0.257
+     },
+     "party": "MFRE PRIVATE TRUST"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.768
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 2.762
+     },
+     "party": "QUEST GLOBAL ENGINEERING SERVICES LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 1.797
+     },
+     "party": "RAJEEV KAUL"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 1.734
+     },
+     "party": "DINESH VENKATACHALAM IYER"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 1.537
+     },
+     "party": "MFRE TARIS, LLC"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 1.0
+     },
+     "party": "MFO IP holdings Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.78
+     },
+     "party": "RAVI MALLIKARJUN HUGAR"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.45
+     },
+     "party": "ANUP WADHAWAN"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.39
+     },
+     "party": "Eberhard Klaus Richter"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.25
+     },
+     "party": "VIDYA SARATHY"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.869,
+      "AmountsReceivableRelatedPartyTransactions": 0.006
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.219
+     },
+     "party": "MELLIGERI INVESTMENTS LLC"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.136,
+      "AmountsReceivableRelatedPartyTransactions": 3.449
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.086
+     },
+     "party": "AUTOMOTIVE END SOLUTION PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 0.002
+     },
+     "category": "Associates",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 0.001
+     },
+     "party": "AEQUS FOUNDATION"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 14.762
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0
+     },
+     "party": "AEQUS STOCK OPTION PLAN TRUST"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 0.0,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "INDUSTRIAL KNOWLEDGE CENTRE PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "AJAY ARAVIND PRABHU"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 29,
+   "parties": [
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 809.318
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 431.892,
+      "OtherRelatedPartyTransactionsExpense": 0.007,
+      "OtherRelatedPartyTransactionsIncome": 31.984,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.691,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.5,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.019
+     },
+     "party": "AEQUS CONSUMER PRODUCTS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.719,
+      "AmountsReceivableRelatedPartyTransactions": 457.696
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 264.095,
+      "OtherRelatedPartyTransactionsExpense": 0.893,
+      "OtherRelatedPartyTransactionsIncome": 5.08,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.428,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 1.362,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.043,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.138,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.554
+     },
+     "party": "AEROSTRUCTURES MANUFACTURING INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 429.468
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 134.698,
+      "OtherRelatedPartyTransactionsExpense": 0.587,
+      "OtherRelatedPartyTransactionsIncome": 6.792
+     },
+     "party": "Aequs Aerospace BV"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 345.371
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 43.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.035,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.03,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "AEQUS ENGINEERED PLASTICS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.848,
+      "AmountsReceivableRelatedPartyTransactions": 79.811
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 0.09,
+      "OtherRelatedPartyTransactionsIncome": 23.678,
+      "PurchasesOfGoodsRelatedPartyTransactions": 8.395,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 1.188,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 4.735,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "SQUAD FORGING INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.049,
+      "AmountsReceivableRelatedPartyTransactions": 266.531
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 27.5,
+      "OtherRelatedPartyTransactionsExpense": 0.528,
+      "OtherRelatedPartyTransactionsIncome": 2.378,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.054
+     },
+     "party": "AEQUS MANUFACTURING PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 2.708,
+      "AmountsReceivableRelatedPartyTransactions": 3.39
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "LeasesAsLesseeRelatedPartyTransactions": 2.305,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.45,
+      "OtherRelatedPartyTransactionsExpense": 2.249,
+      "ServicesReceivedRelatedPartyTransactions": 8.144,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.126,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.097
+     },
+     "party": "AEQUS SEZ PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 10.04
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 10.01,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.03
+     },
+     "party": "AJNA AEROSPACE & DEFENCE PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.65,
+      "AmountsReceivableRelatedPartyTransactions": 2.969
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 3.639,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 2.776,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 1.367
+     },
+     "party": "AEQUS AEROSPACE FRANCE SAS"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.112,
+      "AmountsReceivableRelatedPartyTransactions": 9.584
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.069,
+      "OtherRelatedPartyTransactionsIncome": 0.09,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 2.112,
+      "ServicesReceivedRelatedPartyTransactions": 2.997,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.001
+     },
+     "party": "AEROSPACE PROCESSING INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 276.631
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 3.0,
+      "OtherRelatedPartyTransactionsIncome": 1.005
+     },
+     "party": "AEQUS FORCE CONSUMER PRODUCTS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 1.797
+     },
+     "party": "RAJEEV KAUL"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 1.734
+     },
+     "party": "DINESH VENKATACHALAM IYER"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 14.961
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 1.535,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "KOPPAL TOYS MOLDING COE PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 1.0
+     },
+     "party": "MFO IP Holding\n(Earlier name\nAequs Limited)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.78
+     },
+     "party": "RAVI MALLIKARJUN HUGAR"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.054,
+      "AmountsReceivableRelatedPartyTransactions": 24.462
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 0.27,
+      "OtherRelatedPartyTransactionsExpense": 0.12,
+      "OtherRelatedPartyTransactionsIncome": 0.27,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.016,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.064
+     },
+     "party": "AEROSTRUCTURES ASSEMBLIES INDIA PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 4.166
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 0.643
+     },
+     "party": "AEQUS COOKWARE PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.45
+     },
+     "party": "Anup Wadhawan"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.39
+     },
+     "party": "Eberhard Klaus Richter"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.25
+     },
+     "party": "VIDYA SARATHY"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 1.992
+     },
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.089,
+      "OtherRelatedPartyTransactionsIncome": 0.089
+     },
+     "party": "AEQUS RAJAS EXTRUSION PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 164.591
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.128
+     },
+     "party": "Aequs Oil and Gas LLC"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.136,
+      "AmountsReceivableRelatedPartyTransactions": 3.448
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.086
+     },
+     "party": "AUTOMOTIVE END SOLUTION PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.223,
+      "AmountsReceivableRelatedPartyTransactions": 0.084
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.025
+     },
+     "party": "Aequs Aero Machine Inc"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.055,
+      "AmountsReceivableRelatedPartyTransactions": 151.779
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "AEROSPACE MANUFACTURING HOLDINGS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 0.001
+     },
+     "category": "Associates",
+     "flows": {
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "AEQUS FOUNDATION"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "AJAY ARAVIND PRABHU"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 0.0,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "INDUSTRIAL KNOWLEDGE CENTRE PRIVATE LIMITED"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 60.0,
+     "approved_cr": 122.76,
+     "closing_cr": 111.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 51.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 60.0,
+     "approved_cr": 93.0,
+     "closing_cr": 111.0,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 51.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 50.0,
+     "approved_cr": 60.0,
+     "closing_cr": 60.0,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 50.0,
+     "approved_cr": 79.2,
+     "closing_cr": 60.0,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 10.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 40.402,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AEROSPACE BV",
+     "entity": "Aequs Aerospace LLP",
+     "opening_cr": 25.364,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 40.402
+     },
+     "other_details": "Loan Write off",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 39.311,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Aerospace LLP",
+     "entity": "AEQUS AEROSPACE BV",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 39.311
+     },
+     "other_details": "Write Back of Loans/Advances taken",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 35.532,
+     "approved_cr": 62.966,
+     "closing_cr": 53.254,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 34.605,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 9.894
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 35.532,
+     "approved_cr": 62.966,
+     "closing_cr": 53.254,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 34.605,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 9.894
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 29.97,
+     "approved_cr": 29.97,
+     "closing_cr": 29.97,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 29.97,
+     "approved_cr": 39.56,
+     "closing_cr": 29.97,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 29.031,
+     "approved_cr": 33.301,
+     "closing_cr": 23.387,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 10.525,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.846
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 26.0,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 36.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 23.836,
+     "approved_cr": 42.513,
+     "closing_cr": 14.059,
+     "counterparty": "AEROSPACE PROCESSING I PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 12.537,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 20.798,
+     "approved_cr": 29.675,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.94
+     },
+     "other_details": "Financial guarantee expense",
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 18.386,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 20.714
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 15.567,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AEROSPACE BV",
+     "entity": "AEQUS AEROSPACE FRANCE SAS",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.567
+     },
+     "other_details": "Write off of loan given",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.567,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "AEQUS AEROSPACE BV",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.567
+     },
+     "other_details": "Write Back of Loans/Advances taken",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.527,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEQUS AEROSPACE FRANCE SAS",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.527
+     },
+     "other_details": "Write Back of Loans/Advances taken",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.527,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.527
+     },
+     "other_details": "Write off of advances given",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 14.55,
+     "approved_cr": 30.649,
+     "closing_cr": 1.68,
+     "counterparty": "HUBBALLI DURABLE GOODS CLUSTER PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 1.424,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 13.22,
+     "approved_cr": 27.598,
+     "closing_cr": 0.574,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.776,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 12.818,
+     "approved_cr": 5.481,
+     "closing_cr": 4.393,
+     "counterparty": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "entity": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "opening_cr": 3.004,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 9.908
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 11.822,
+     "approved_cr": 32.425,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.275
+     },
+     "other_details": "Financial guarantee income",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 11.233,
+     "approved_cr": 4.163,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 7.07
+     },
+     "other_details": "Fair value of financial guarantee issued",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 11.233,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 11.233
+     },
+     "other_details": "Fair value of financial guarantee received",
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.452,
+     "approved_cr": 16.406,
+     "closing_cr": 28.275,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 12.81,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.161
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 10.349,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AEROSPACE BV",
+     "entity": "Aequs Aerospace LLP",
+     "opening_cr": 25.364,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.349
+     },
+     "other_details": "Loan Write off",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.349,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Aerospace LLP",
+     "entity": "AEQUS AEROSPACE BV",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.349
+     },
+     "other_details": "Write Back of Loans/Advances taken",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 10.01,
+     "closing_cr": 0.0,
+     "counterparty": "AJNA Aerospace Defence Private Limited",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 10.01
+     },
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 9.274,
+     "approved_cr": 6.486,
+     "closing_cr": 53.254,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 34.605,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 15.728
+     },
+     "other_details": "Management Fees",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.354,
+     "approved_cr": 16.487,
+     "closing_cr": 0.232,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 0.263,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 6.246,
+     "approved_cr": 14.365,
+     "closing_cr": 0.011,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEQUS FORCE CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.082,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 6.152,
+     "approved_cr": 5.423,
+     "closing_cr": 0.489,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.032,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.729
+     },
+     "other_details": "Marketing Fees",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.035,
+     "approved_cr": 13.456,
+     "closing_cr": 0.004,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "Aequs Toys PVT LTD",
+     "opening_cr": 0.006,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.9,
+     "approved_cr": 8.166,
+     "closing_cr": 5.097,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 2.264,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.173
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 5.9,
+     "approved_cr": 8.166,
+     "closing_cr": 5.097,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 2.264,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.173
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 5.615,
+     "approved_cr": 8.453,
+     "closing_cr": 1.848,
+     "counterparty": "SQUAD FORGING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.955,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.56
+     },
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.738,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Arvind Melligeri",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 0.0,
+     "relationship": "Executive Chairman & CEO",
+     "remarks": "Not Applicable",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 4.663,
+     "approved_cr": 5.024,
+     "closing_cr": 28.275,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 12.81,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.25
+     },
+     "other_details": "Management Fees",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.54,
+     "approved_cr": 4.773,
+     "closing_cr": 4.393,
+     "counterparty": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 3.004,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.339,
+     "approved_cr": 7.611,
+     "closing_cr": 2.315,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "opening_cr": 1.963,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.485
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.335,
+     "approved_cr": 0.924,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.874
+     },
+     "other_details": "Financial guarantee expense",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.187,
+     "approved_cr": 9.236,
+     "closing_cr": 0.227,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.238,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Toys PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 9.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 3.687,
+     "approved_cr": 1.488,
+     "closing_cr": 3.344,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.028,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.227
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 3.687,
+     "approved_cr": 1.488,
+     "closing_cr": 3.344,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.028,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.227
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 3.317,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AEROSPACE BV",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 2.374,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.317
+     },
+     "other_details": "Loan Write off",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.308,
+     "approved_cr": 3.323,
+     "closing_cr": 0.748,
+     "counterparty": "SQUAD FORGING INDIA PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.415,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.654
+     },
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.228,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEQUS AEROSPACE BV",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 3.228
+     },
+     "other_details": "Write Back of Loans/Advances taken",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.04,
+     "approved_cr": 8.282,
+     "closing_cr": 39.559,
+     "counterparty": "AEQUS AEROSPACE BV",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 34.869,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 3.04,
+     "approved_cr": 8.282,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS AEROSPACE BV",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 3.0,
+     "approved_cr": 10.0,
+     "closing_cr": 14.5,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "Aequs Toys PVT LTD",
+     "opening_cr": 11.5,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 3.0,
+     "approved_cr": 10.0,
+     "closing_cr": 14.5,
+     "counterparty": "Aequs Toys PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 11.5,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 2.894,
+     "approved_cr": 10.702,
+     "closing_cr": 0.0,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AEROSPACE FRANCE SAS",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.221
+     },
+     "other_details": "Salaries, wages and bonus",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.811,
+     "approved_cr": 0.976,
+     "closing_cr": 4.393,
+     "counterparty": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 3.004,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 6.375
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.776,
+     "approved_cr": 2.7,
+     "closing_cr": 2.947,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.075
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.776,
+     "approved_cr": 1.986,
+     "closing_cr": 2.968,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS AEROSPACE FRANCE SAS",
+     "opening_cr": 0.021,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.79
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.673,
+     "closing_cr": 0.0,
+     "counterparty": "MFRE Private Trust",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.673
+     },
+     "other_details": "Fair value of financial guarantee received",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.41,
+     "approved_cr": 4.719,
+     "closing_cr": 1.065,
+     "counterparty": "SQUAD FORGING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.907,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.209,
+     "approved_cr": 3.726,
+     "closing_cr": 0.65,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.198,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-23",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 310,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 34.302,
+     "approved_cr": 71.487,
+     "closing_cr": 34.446,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 28.275,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 34.302,
+     "approved_cr": 71.487,
+     "closing_cr": 46.655,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 28.6,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 28.902,
+     "approved_cr": 67.0,
+     "closing_cr": 15.405,
+     "counterparty": "AEROSPACE PROCESSING I PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 14.059,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 25.0,
+     "approved_cr": 11.0,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-10-26",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years or On demand  Whichever is earlier",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 25.0,
+     "approved_cr": 11.0,
+     "closing_cr": 0.0,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-10-26",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years or On demand  Whichever is earlier",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 14.0
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 18.277,
+     "approved_cr": 4.505,
+     "closing_cr": 0.0,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-10-26",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 13.772
+     },
+     "other_details": "Fair value of Corporate Guarantee issued",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 18.277,
+     "approved_cr": 4.505,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-10-26",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 13.772
+     },
+     "other_details": "Fair value of Corporate Guarantee received",
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 14.342,
+     "approved_cr": 15.765,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other_details": "Fair value of Corporate Guarantee received",
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 14.342,
+     "approved_cr": 15.765,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Fair value of Corporate Guarantee issued",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 13.963,
+     "approved_cr": 94.719,
+     "closing_cr": 35.741,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 53.254,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 13.963,
+     "approved_cr": 94.719,
+     "closing_cr": 35.741,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 53.254,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 13.018,
+     "approved_cr": 26.791,
+     "closing_cr": 1.731,
+     "counterparty": "HUBBALLI DURABLE GOODS CLUSTER PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 1.683,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 10.948,
+     "approved_cr": 28.878,
+     "closing_cr": 35.741,
+     "counterparty": "AEQUS AERO MACHINE, INC",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 53.254,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 10.948,
+     "approved_cr": 28.878,
+     "closing_cr": 46.655,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 28.6,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 10.0,
+     "approved_cr": 9.3,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Cookware PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-10-26",
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose of Subsidiary",
+      "RelatedPartyTransactionExplanatory": "Investment in equity of Subsidiary",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Not Applicable",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.7
+     },
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 9.641,
+     "approved_cr": 15.895,
+     "closing_cr": 0.351,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.838,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 9.3,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS FORCE CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose of Subsidiary",
+      "RelatedPartyTransactionExplanatory": "Investment in equity of Subsidiary",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Not Applicable",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 9.3,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS FORCE CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose of Subsidiary",
+      "RelatedPartyTransactionExplanatory": "Investment in equity of Subsidiary",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Not Applicable",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 9.232,
+     "approved_cr": 21.0,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose of Subsidiary",
+      "RelatedPartyTransactionExplanatory": "Investment in equity of Subsidiary",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Not Applicable",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 9.232,
+     "approved_cr": 21.0,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose of Subsidiary",
+      "RelatedPartyTransactionExplanatory": "Investment in equity of Subsidiary",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Not Applicable",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 9.045,
+     "approved_cr": 74.589,
+     "closing_cr": 11.108,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 5.097,
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 9.045,
+     "approved_cr": 71.213,
+     "closing_cr": 11.108,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 5.097,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 7.629,
+     "approved_cr": 3.265,
+     "closing_cr": 0.0,
+     "counterparty": "MFRE Private Trust",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-10-26",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.364
+     },
+     "other_details": "Fair value of Corporate Guarantee received",
+     "relationship": "Promoter Group Entity",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.76,
+     "approved_cr": 20.0,
+     "closing_cr": 1.355,
+     "counterparty": "SQUAD FORGING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 1.848,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 6.434,
+     "approved_cr": 13.712,
+     "closing_cr": 0.351,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.838,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.753,
+     "approved_cr": 13.132,
+     "closing_cr": 0.344,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 0.262,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.459,
+     "approved_cr": 5.459,
+     "closing_cr": 0.0,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.0,
+     "other_details": "Fair value of Corporate Guarantee received",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.459,
+     "approved_cr": 5.459,
+     "closing_cr": 0.0,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other_details": "Fair value of Corporate Guarantee received",
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.161,
+     "approved_cr": 13.208,
+     "closing_cr": 1.731,
+     "counterparty": "HUBBALLI DURABLE GOODS CLUSTER PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 1.683,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.958,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Arvind Melligeri",
+     "entity": "AEQUS AERO MACHINE, INC",
+     "opening_cr": 0.0,
+     "relationship": "Executive Chairman & CEO",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 4.932,
+     "approved_cr": 9.192,
+     "closing_cr": 7.405,
+     "counterparty": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 3.344,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 4.932,
+     "approved_cr": 9.192,
+     "closing_cr": 7.405,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 3.344,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 4.726,
+     "approved_cr": 9.588,
+     "closing_cr": 0.003,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "Aequs Manufacturing Private Limited (Formerly known as Aequs Toys PVT LTD)",
+     "opening_cr": 0.004,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.652,
+     "approved_cr": 43.705,
+     "closing_cr": 6.568,
+     "counterparty": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 4.405,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.652,
+     "approved_cr": 26.49,
+     "closing_cr": 6.568,
+     "counterparty": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "entity": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "opening_cr": 4.726,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 4.284,
+     "approved_cr": 7.463,
+     "closing_cr": 0.012,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEQUS FORCE CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.011,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.784,
+     "approved_cr": 7.769,
+     "closing_cr": 2.811,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 1.188,
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 3.784,
+     "approved_cr": 7.821,
+     "closing_cr": 2.811,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 1.188,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 3.65,
+     "approved_cr": 21.249,
+     "closing_cr": 0.928,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.489,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.65,
+     "approved_cr": 14.2,
+     "closing_cr": 0.928,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "AEQUS AEROSPACE FRANCE SAS",
+     "opening_cr": 0.489,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.109,
+     "approved_cr": 5.147,
+     "closing_cr": 0.344,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEQUS ENGINEERED PLASTICS PVT LTD",
+     "opening_cr": 0.262,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.804,
+     "approved_cr": 5.711,
+     "closing_cr": 1.044,
+     "counterparty": "SQUAD FORGING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 1.065,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.77,
+     "approved_cr": 5.635,
+     "closing_cr": 2.857,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "opening_cr": 2.321,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.626,
+     "approved_cr": 4.728,
+     "closing_cr": 0.31,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.37,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.318,
+     "approved_cr": 7.001,
+     "closing_cr": 1.166,
+     "counterparty": "SQUAD FORGING INDIA PVT LTD",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.748,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.293,
+     "approved_cr": 10.032,
+     "closing_cr": 2.873,
+     "counterparty": "Quest Global Engineering Services Private Limited",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.448,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.039,
+     "approved_cr": 25.842,
+     "closing_cr": 0.0,
+     "counterparty": "HUBBALLI DURABLE GOODS CLUSTER PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Lease",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Lease Term",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Secured"
+     },
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 1.917,
+     "approved_cr": 6.115,
+     "closing_cr": 0.961,
+     "counterparty": "AEROSPACE PROCESSING I PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 1.112,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.86,
+     "approved_cr": 1.86,
+     "closing_cr": 0.0,
+     "counterparty": "AUTOMOTIVE END SOLUTIONS PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.0,
+     "other_details": "Loan / Balances written off / back",
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.803,
+     "approved_cr": 3.501,
+     "closing_cr": 0.0,
+     "counterparty": "Aequs Cookware PVT LTD",
+     "entity": "AEQUS CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.0,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 1.643,
+     "approved_cr": 2.861,
+     "closing_cr": 2.857,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "KOPPAL TOYS MOLDING COE PVT LTD",
+     "opening_cr": 2.321,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.492,
+     "approved_cr": 3.347,
+     "closing_cr": 4.248,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS AEROSPACE FRANCE SAS",
+     "opening_cr": 2.968,
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.492,
+     "approved_cr": 3.347,
+     "closing_cr": 4.248,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 2.968,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.468,
+     "approved_cr": 3.183,
+     "closing_cr": 1.518,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "opening_cr": 0.065,
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.468,
+     "approved_cr": 3.183,
+     "closing_cr": 1.58,
+     "counterparty": "AEROSTRUCTURES MANUFACTURING INDIA PVT LTD",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 0.068,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.44,
+     "approved_cr": 5.776,
+     "closing_cr": 0.829,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "AEQUS AEROSPACE FRANCE SAS",
+     "opening_cr": 0.685,
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.44,
+     "approved_cr": 11.551,
+     "closing_cr": 2.3,
+     "counterparty": "AEQUS AEROSPACE FRANCE SAS",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 4.341,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.369,
+     "approved_cr": 3.322,
+     "closing_cr": 0.012,
+     "counterparty": "AEQUS SEZ PRIVATE LIMITED",
+     "entity": "AEQUS FORCE CONSUMER PRODUCTS PVT LTD",
+     "opening_cr": 0.011,
+     "relationship": "Group Company",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.354,
+     "approved_cr": 5.803,
+     "closing_cr": 2.064,
+     "counterparty": "Aequs Manufacturing Private Limited (Formerly known as Aequs Toys PVT LTD)",
+     "entity": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "opening_cr": 1.279,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 1.354,
+     "approved_cr": 5.803,
+     "closing_cr": 2.064,
+     "counterparty": "Aequs Limited (formerly known as Aequs Private Limited)",
+     "entity": "Aequs Manufacturing Private Limited (Formerly known as Aequs Toys PVT LTD)",
+     "opening_cr": 1.279,
+     "relationship": "Transaction between listed entity and its subsidiary",
+     "remarks": "Approved",
+     "type": "Interest paid"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 154,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544634",
  "section_lab": {
@@ -11539,6 +15061,11 @@
    "by": "file",
    "doc": "other"
   },
+  "insider_trades": {
+   "at": "2026-11-01T14:12:29+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "pledges": {
    "at": "2026-10-21T14:12:42+05:30",
    "by": "file",
@@ -11546,6 +15073,144 @@
   }
  },
  "sector": "capital_goods",
+ "segment_balance": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 1803.984,
+     "liabilities_cr": 900.609,
+     "segment": "Aerospace"
+    },
+    {
+     "assets_cr": 1466.45,
+     "liabilities_cr": 858.672,
+     "segment": "Consumer"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "totals": {
+    "assets_cr": 3270.434,
+    "liabilities_cr": 1759.281,
+    "net_assets_cr": 3072.08,
+    "net_liabilities_cr": 1541.125
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 1378.342,
+     "liabilities_cr": 474.199,
+     "segment": "Aerospace"
+    },
+    {
+     "assets_cr": 1286.86,
+     "liabilities_cr": 720.293,
+     "segment": "Consumer"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "totals": {
+    "assets_cr": 2665.202,
+    "liabilities_cr": 1194.492,
+    "net_assets_cr": 2690.47,
+    "net_liabilities_cr": 1204.924
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 1426.173,
+     "liabilities_cr": 505.251,
+     "segment": "Aerospace"
+    },
+    {
+     "assets_cr": 1267.207,
+     "liabilities_cr": 756.319,
+     "segment": "Consumer"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 2693.38,
+    "liabilities_cr": 1261.57,
+    "net_assets_cr": 2717.802,
+    "net_liabilities_cr": 1284.594
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q2FY27",
+   "segments": [
+    {
+     "assets_cr": 1500.089,
+     "liabilities_cr": 558.225,
+     "segment": "Aerospace"
+    },
+    {
+     "assets_cr": 1247.795,
+     "liabilities_cr": 800.109,
+     "segment": "Consumer"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "totals": {
+    "assets_cr": 2747.884,
+    "liabilities_cr": 1358.334,
+    "net_assets_cr": 2773.936,
+    "net_liabilities_cr": 1381.805
+   }
+  }
+ ],
  "segment_mix": [
   {
    "as_of": "2026-06-02T16:24:19+05:30",
@@ -11559,32 +15224,6 @@
    "segment": "Consumer",
    "share_pct": 15.0,
    "source_news_id": "nse-106652503"
-  },
-  {
-   "as_of": "2026-07-29T16:24:52+05:30",
-   "lab": {
-    "at": "2026-07-29T16:24:52+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": 322.2,
-   "segment": "Aerospace",
-   "share_pct": 81.0,
-   "source_news_id": "nse-106715420"
-  },
-  {
-   "as_of": "2026-07-29T16:24:52+05:30",
-   "lab": {
-    "at": "2026-07-29T16:24:52+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q1FY27",
-   "revenue_cr": 73.4,
-   "segment": "Consumer",
-   "share_pct": 19.0,
-   "source_news_id": "nse-106715420"
   },
   {
    "as_of": "2026-10-26T16:23:01+05:30",
@@ -11613,6 +15252,150 @@
    "segment": "Consumer",
    "share_pct": 16.0,
    "source_news_id": "nse-106828542"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 63.32,
+   "period": "Q3FY26",
+   "revenue_cr": 268.47,
+   "segment": "Aerospace",
+   "share_pct": 82.3,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -15.85,
+   "period": "Q3FY26",
+   "revenue_cr": 57.7,
+   "segment": "Consumer",
+   "share_pct": 17.7,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 100.99,
+   "period": "Q4FY26",
+   "revenue_cr": 303.95,
+   "segment": "Aerospace",
+   "share_pct": 82.8,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -47.31,
+   "period": "Q4FY26",
+   "revenue_cr": 63.15,
+   "segment": "Consumer",
+   "share_pct": 17.2,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 73.06,
+   "period": "Q1FY27",
+   "revenue_cr": 322.16,
+   "segment": "Aerospace",
+   "share_pct": 81.4,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -36.14,
+   "period": "Q1FY27",
+   "revenue_cr": 73.39,
+   "segment": "Consumer",
+   "share_pct": 18.6,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 59.22,
+   "period": "Q2FY27",
+   "revenue_cr": 351.41,
+   "segment": "Aerospace",
+   "share_pct": 85.9,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -67.57,
+   "period": "Q2FY27",
+   "revenue_cr": 57.67,
+   "segment": "Consumer",
+   "share_pct": 14.1,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
   }
  ],
  "standalone": {
@@ -15082,6 +18865,682 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 785.047,
+    "CWIP": 395.09,
+    "Equity Capital": 581.82894,
+    "Fixed Assets": 525.186,
+    "Investments": 76.89699999999999,
+    "Other Assets": 862.6670000000001,
+    "Other Liabilities": 357.8740599999999,
+    "Reserves": 135.09,
+    "Total Assets": 1859.84,
+    "Total Liabilities": 1859.84
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Associates' share": 8.524,
+    "Depreciation": 103.406,
+    "Exceptional items": -48.265,
+    "Exceptional items AT": -52.546961789673,
+    "Expenses": 845.4990000000001,
+    "Interest": 64.334,
+    "Minority share": 0.0,
+    "Net Profit": -102.346,
+    "Net Profit (owners)": -102.346,
+    "OPM %": 8.555752396155754,
+    "Operating Profit": 79.10699999999986,
+    "Other Income": -5.372999999999848,
+    "PBT as filed": -102.603,
+    "Profit before tax": -94.006,
+    "Profit for PE": -49.799038210327005,
+    "Sales": 924.606,
+    "Tax": 8.34,
+    "Tax %": 8.871774142076038
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 25.401,
+    "Cash from Investing Activity": -69.87299999999999,
+    "Cash from Operating Activity": 26.141,
+    "Net Cash Flow": -18.331
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 51.68000000000001,
+    "CWIP": 0,
+    "Equity Capital": 581.82894,
+    "Fixed Assets": 40.474000000000004,
+    "Investments": 851.95,
+    "Other Assets": 159.034,
+    "Other Liabilities": 90.24006000000008,
+    "Reserves": 327.709,
+    "Total Assets": 1051.458,
+    "Total Liabilities": 1051.458
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 10.212,
+    "Exceptional items": -82.492,
+    "Exceptional items AT": -86.61595691060369,
+    "Expenses": 83.209,
+    "Interest": 6.449,
+    "Net Profit": -74.078,
+    "Net Profit (owners)": -74.078,
+    "OPM %": 9.789785231843364,
+    "Operating Profit": 9.030000000000001,
+    "Other Income": -62.92,
+    "Profit before tax": -70.551,
+    "Profit for PE": 12.537956910603683,
+    "Sales": 92.239,
+    "Tax": 3.527,
+    "Tax %": 4.999220422105994
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -7.55,
+    "Cash from Investing Activity": -6.185,
+    "Cash from Operating Activity": 0.27,
+    "Net Cash Flow": -13.465
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 35.037,
+    "Exceptional items": -15.247,
+    "Exceptional items AT": -19.71719883040936,
+    "Expenses": 297.152,
+    "Interest": 20.766,
+    "Minority share": 0.003,
+    "Net Profit": -42.679,
+    "Net Profit (owners)": -42.682,
+    "OPM %": 8.897425599298536,
+    "Operating Profit": 29.021000000000015,
+    "Other Income": -6.221000000000018,
+    "PBT as filed": -32.972,
+    "Profit before tax": -33.003,
+    "Profit for PE": -22.964801169590643,
+    "Sales": 326.173,
+    "Tax": 9.676,
+    "Tax %": 29.31854679877587
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.35,
+    "Exceptional items": -13.681,
+    "Exceptional items AT": -11.859839989133388,
+    "Expenses": 29.866,
+    "Interest": 1.653,
+    "Net Profit": -6.382,
+    "Net Profit (owners)": -6.382,
+    "OPM %": 3.3306360252468035,
+    "Operating Profit": 1.029,
+    "Other Income": -4.388,
+    "Profit before tax": -7.362,
+    "Profit for PE": 5.477839989133388,
+    "Sales": 30.895,
+    "Tax": -0.98,
+    "Tax %": -13.311600108666124
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 45.498,
+    "Exceptional items": 15.923,
+    "Exceptional items AT": 25.99287377313197,
+    "Expenses": 362.902,
+    "Interest": 35.838,
+    "Minority share": 0.0,
+    "Net Profit": -53.721,
+    "Net Profit (owners)": -53.721,
+    "OPM %": 1.1443654778086862,
+    "Operating Profit": 4.201000000000022,
+    "Other Income": 44.22599999999998,
+    "PBT as filed": -33.277,
+    "Profit before tax": -32.909,
+    "Profit for PE": -79.71387377313197,
+    "Sales": 367.103,
+    "Tax": 20.812,
+    "Tax %": 63.24105867695768
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 700.931,
+    "CWIP": 78.659,
+    "Equity Capital": 670.665635,
+    "Fixed Assets": 1070.1850000000002,
+    "Investments": 105.57300000000001,
+    "Other Assets": 1436.0529999999994,
+    "Other Liabilities": 503.05436499999996,
+    "Reserves": 815.819,
+    "Total Assets": 2690.47,
+    "Total Liabilities": 2690.47
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 11.754,
+    "Depreciation": 137.691,
+    "Exceptional items": -7.695,
+    "Exceptional items AT": -12.189212370441862,
+    "Expenses": 1139.229,
+    "Interest": 94.358,
+    "Minority share": 0.002,
+    "Net Profit": -113.248,
+    "Net Profit (owners)": -113.25,
+    "OPM %": 7.412575704872085,
+    "Operating Profit": 91.20699999999988,
+    "Other Income": 69.34900000000013,
+    "PBT as filed": -83.29,
+    "Profit before tax": -71.493,
+    "Profit for PE": -101.06078762955813,
+    "Sales": 1230.436,
+    "Tax": 41.755,
+    "Tax %": 58.404319303987805
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 703.973,
+    "Cash from Investing Activity": -364.67600000000004,
+    "Cash from Operating Activity": -98.751,
+    "Net Cash Flow": 240.546
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.357,
+    "Exceptional items": 32.426,
+    "Exceptional items AT": 29.369875399361025,
+    "Expenses": 38.32,
+    "Interest": 2.822,
+    "Net Profit": 52.164,
+    "Net Profit (owners)": 52.164,
+    "OPM %": -4.38856956059821,
+    "Operating Profit": -1.610999999999997,
+    "Other Income": 64.382,
+    "Profit before tax": 57.592,
+    "Profit for PE": 22.794124600638977,
+    "Sales": 36.709,
+    "Tax": 5.428,
+    "Tax %": 9.424920127795527
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 35.397999999999996,
+    "CWIP": 0,
+    "Equity Capital": 670.665635,
+    "Fixed Assets": 35.428,
+    "Investments": 1519.429,
+    "Other Assets": 441.96000000000004,
+    "Other Liabilities": 93.72136500000025,
+    "Reserves": 1197.032,
+    "Total Assets": 1996.817,
+    "Total Liabilities": 1996.817
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 9.45,
+    "Exceptional items": 18.745,
+    "Exceptional items AT": 16.66069812061611,
+    "Expenses": 122.565,
+    "Interest": 9.093,
+    "Net Profit": 49.799,
+    "Net Profit (owners)": 49.799,
+    "OPM %": 1.0439374121978446,
+    "Operating Profit": 1.2930000000000064,
+    "Other Income": 73.279,
+    "Profit before tax": 56.029,
+    "Profit for PE": 33.13830187938389,
+    "Sales": 123.858,
+    "Tax": 6.23,
+    "Tax %": 11.119241821199735
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 880.798,
+    "Cash from Investing Activity": -792.949,
+    "Cash from Operating Activity": -4.792,
+    "Net Cash Flow": 83.057
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 2.902,
+    "Depreciation": 45.342,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 380.781,
+    "Interest": 18.851,
+    "Minority share": 0.0,
+    "Net Profit": -53.228,
+    "Net Profit (owners)": -53.228,
+    "OPM %": 3.7325715152511116,
+    "Operating Profit": 14.76400000000001,
+    "Other Income": 9.623999999999988,
+    "PBT as filed": -42.707,
+    "Profit before tax": -39.805,
+    "Profit for PE": -53.228,
+    "Sales": 395.545,
+    "Tax": 13.423,
+    "Tax %": 33.721894234392664
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.45,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 39.222,
+    "Interest": 0.979,
+    "Net Profit": 4.066,
+    "Net Profit (owners)": 4.066,
+    "OPM %": -1.817143450495828,
+    "Operating Profit": -0.7000000000000028,
+    "Other Income": 9.330000000000002,
+    "Profit before tax": 5.201,
+    "Profit for PE": 4.066,
+    "Sales": 38.522,
+    "Tax": 1.135,
+    "Tax %": 21.82272639876947
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 1.811,
+    "Depreciation": 46.532,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 395.224,
+    "Interest": 20.598,
+    "Minority share": 0.0,
+    "Net Profit": -52.392,
+    "Net Profit (owners)": -52.392,
+    "OPM %": 3.386876373512211,
+    "Operating Profit": 13.855000000000018,
+    "Other Income": 12.22799999999998,
+    "PBT as filed": -42.662,
+    "Profit before tax": -41.047,
+    "Profit for PE": -52.392,
+    "Sales": 409.079,
+    "Tax": 11.345,
+    "Tax %": 27.6390479206763
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 836.422,
+    "CWIP": 123.56,
+    "Equity Capital": 670.666,
+    "Fixed Assets": 1062.036,
+    "Investments": 117.492,
+    "Other Assets": 1470.8480000000002,
+    "Other Liabilities": 544.444,
+    "Reserves": 722.404,
+    "Total Assets": 2773.936,
+    "Total Liabilities": 2773.936
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.819,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 39.903999999999996,
+    "Interest": 1.657,
+    "Net Profit": 1.791,
+    "Net Profit (owners)": 1.791,
+    "OPM %": -12.260169920666172,
+    "Operating Profit": -4.357999999999997,
+    "Other Income": 10.312999999999997,
+    "Profit before tax": 1.479,
+    "Profit for PE": 1.791,
+    "Sales": 35.546,
+    "Tax": -0.312,
+    "Tax %": -21.095334685598374
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 49.81,
+    "CWIP": 0.0,
+    "Equity Capital": 670.666,
+    "Fixed Assets": 41.723,
+    "Investments": 1583.239,
+    "Other Assets": 426.6590000000001,
+    "Other Liabilities": 126.05400000000003,
+    "Reserves": 1205.091,
+    "Total Assets": 2051.621,
+    "Total Liabilities": 2051.621
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "AEQUS",
  "timeline": [
   {

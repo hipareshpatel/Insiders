@@ -1,16 +1,41 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-08-25T15:32:10+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-08-25T15:32:10+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106755644"
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
   }
  ],
+ "balance_sheet": [],
  "business_summary": {
   "as_of": "2026-08-25T15:32:10+05:30",
   "lab": {
@@ -81,6 +106,44 @@
  "capital_actions": [],
  "company_name": "Xtranet Technologies Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-08-25T15:32:10+05:30",
@@ -670,7 +733,125 @@
  "fy_end_month": 3,
  "governance": {
   "auditor": null,
-  "auditor_history": []
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-30T12:37:35+05:30",
+    "board": [
+     {
+      "appointed": "2002-01-29",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sukhbir Singh Kukreja",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2003-06-26",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Jogendrapal Singh Alagh",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-01-20",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shiney Sukhbir",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-07-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Girish Chander Dalakoti",
+      "role": null,
+      "tenure_months": 14.0
+     },
+     {
+      "appointed": "2025-08-18",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjay Kumar Sinha",
+      "role": null,
+      "tenure_months": 13.0
+     },
+     {
+      "appointed": "2025-08-18",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shikha Jain",
+      "role": null,
+      "tenure_months": 13.0
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Girish Chander Dalakoti",
+      "Sanjay Kumar Sinha",
+      "Sukhbir Singh Kukreja"
+     ],
+     "corporate social responsibility committee": [
+      "Sukhbir Singh Kukreja",
+      "Jogendrapal Singh Alagh",
+      "Girish Chander Dalakoti"
+     ],
+     "nomination and remuneration committee": [
+      "Girish Chander Dalakoti",
+      "Shiney Sukhbir",
+      "Sanjay Kumar Sinha"
+     ],
+     "other committee": [
+      "Sukhbir Singh Kukreja",
+      "Jogendrapal Singh Alagh",
+      "Girish Chander Dalakoti"
+     ],
+     "stakeholders relationship committee": [
+      "Shiney Sukhbir",
+      "Jogendrapal Singh Alagh",
+      "Girish Chander Dalakoti"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 34.0,
+     "board": 21.0,
+     "other committee": 10.0,
+     "stakeholders relationship committee": 38.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749627_30102026123920_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
  },
  "guidance": [
   {
@@ -799,6 +980,522 @@
     "value_cr": 12.69
    },
    {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "GINNI FINANCE PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 167.82,
+    "qty": 50000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 0.84
+   },
+   {
+    "as_of": "2026-08-27T15:30:00+05:30",
+    "client": "GINNI FINANCE PRIVATE LIMITED",
+    "date": "2026-08-27",
+    "kind": "BULK",
+    "price": 159.29,
+    "qty": 460960.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 7.34
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 197.11,
+    "qty": 330016.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 6.5
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 197.1,
+    "qty": 330016.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 6.5
+   },
+   {
+    "as_of": "2026-08-28T15:30:00+05:30",
+    "client": "TIGER STRATEGIES FUND -I",
+    "date": "2026-08-28",
+    "kind": "BULK",
+    "price": 182.02,
+    "qty": 274240.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 4.99
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 197.07,
+    "qty": 287738.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 5.67
+   },
+   {
+    "as_of": "2026-08-31T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-31",
+    "kind": "BULK",
+    "price": 198.97,
+    "qty": 291031.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 5.79
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 234.04,
+    "qty": 347770.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 8.14
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 233.25,
+    "qty": 347770.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 8.11
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 266.47,
+    "qty": 519159.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 13.83
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 265.99,
+    "qty": 539701.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 14.36
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 267.79,
+    "qty": 735698.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 19.7
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 267.59,
+    "qty": 741597.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 19.84
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 267.29,
+    "qty": 444944.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 11.89
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 267.08,
+    "qty": 444944.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 11.88
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 267.87,
+    "qty": 579766.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 15.53
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 268.07,
+    "qty": 580802.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 15.57
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 265.79,
+    "qty": 685408.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 18.22
+   },
+   {
+    "as_of": "2026-09-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-07",
+    "kind": "BULK",
+    "price": 270.66,
+    "qty": 687749.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 18.61
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 277.09,
+    "qty": 460085.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 12.75
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 272.57,
+    "qty": 489561.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 13.34
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "IMC INDIA SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 276.85,
+    "qty": 249528.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 6.91
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "IMC INDIA SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 276.85,
+    "qty": 274495.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 7.6
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 279.52,
+    "qty": 539633.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 15.08
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 279.41,
+    "qty": 554021.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 15.48
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 281.39,
+    "qty": 263221.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 7.41
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 281.45,
+    "qty": 263221.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 7.41
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 276.72,
+    "qty": 429562.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 11.89
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 276.89,
+    "qty": 429562.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 11.89
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 279.27,
+    "qty": 558614.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 15.6
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 277.6,
+    "qty": 560377.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 15.56
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 284.07,
+    "qty": 294947.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 8.38
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 284.41,
+    "qty": 304067.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 8.65
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 284.82,
+    "qty": 451022.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 12.85
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 283.89,
+    "qty": 454509.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 12.9
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 293.02,
+    "qty": 399847.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 11.72
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 290.99,
+    "qty": 404178.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 11.76
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 292.2,
+    "qty": 291832.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 8.53
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 292.14,
+    "qty": 295290.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 8.63
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 293.09,
+    "qty": 512600.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 15.02
+   },
+   {
+    "as_of": "2026-09-10T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-10",
+    "kind": "BULK",
+    "price": 290.58,
+    "qty": 515716.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 14.99
+   },
+   {
+    "as_of": "2026-09-15T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-15",
+    "kind": "BULK",
+    "price": 280.5,
+    "qty": 288218.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "XTRANET",
+    "value_cr": 8.08
+   },
+   {
+    "as_of": "2026-09-15T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-15",
+    "kind": "BULK",
+    "price": 279.25,
+    "qty": 296751.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "XTRANET",
+    "value_cr": 8.29
+   },
+   {
     "as_of": "2026-10-26T15:30:00+05:30",
     "client": "NEO APEX SHARE BROKING SERVICES LLP",
     "date": "2026-10-26",
@@ -924,14 +1621,36 @@
    "by": "file",
    "doc": "other"
   },
+  "governance_quarters": {
+   "at": "2026-10-30T12:37:35+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "market_deals": {
-   "at": "2026-10-27T07:03:11+05:30",
+   "at": "2026-11-01T14:33:16+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "it",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "ITeS",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1389,6 +2108,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.68,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 40.0721,
+    "Interest": 1.7222,
+    "Minority share": -0.0331,
+    "Net Profit": 6.0374,
+    "Net Profit (owners)": 6.0705,
+    "OPM %": 20.58467386328279,
+    "Operating Profit": 10.386800000000001,
+    "Other Income": 0.4566999999999979,
+    "Profit before tax": 7.4413,
+    "Profit for PE": 6.0705,
+    "Sales": 50.4589,
+    "Tax": 1.4039,
+    "Tax %": 18.866327120261243
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.17,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 33.914899999999996,
+    "Interest": 1.5681,
+    "Net Profit": 5.3805,
+    "Net Profit (owners)": 5.3805,
+    "OPM %": 21.812732700886436,
+    "Operating Profit": 9.461600000000004,
+    "Other Income": 0.42649999999999544,
+    "Profit before tax": 7.15,
+    "Profit for PE": 5.3805,
+    "Sales": 43.3765,
+    "Tax": 1.7695,
+    "Tax %": 24.74825174825175
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "XTRANET",
  "timeline": [
   {
@@ -1404,6 +2194,21 @@
    "news_id": "nse-106826490",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/XTRANET_23102026161711_Intimation_WOS.pdf",
    "summary": "Xtranet Technologies incorporated its wholly owned subsidiary, Xtranet Data Centre Private Limited, on October 22, 2026."
+  },
+  {
+   "date": "2026-10-30T13:51:05+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_f0900bec",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-30T14:05:41+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106836225",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/XTRANET_30102026135010_Earnings_call_XTL_4112026.pdf",
+   "summary": "Xtranet Technologies Limited scheduled an earnings conference call for the quarter and half year ended September 30, 2026, on Wednesday, November 04, 2026 at 05:00 P.M. (IST).",
+   "tier": "TIMELINE"
   }
  ],
  "upcoming_events": [
@@ -1420,7 +2225,7 @@
    "source_news_id": "nse-106826490"
   }
  ],
- "updated_at": "2026-10-27T09:56:19+05:30",
+ "updated_at": "2026-10-30T14:05:41+05:30",
  "watchlist": [
   {
    "check_by": null,

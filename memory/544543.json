@@ -1,4 +1,102 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-02-29",
+     "name": "AD V & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-11-26T18:00:00+05:30",
@@ -62,6 +160,222 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -27.2978,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 3.4413,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.1202,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -49.5661,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 3.0648,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.5007,
+    "AdjustmentsForFinanceCosts": 17.4173,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 14.4071,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 2.1824,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.6566,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 6.9868,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -1.215,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 26.6027,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -6.0653,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 232.2497,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 219.0308,
+    "CashFlowsFromUsedInInvestingActivities": -9.2651,
+    "CashFlowsFromUsedInOperatingActivities": 10.0497,
+    "CashFlowsFromUsedInOperations": 14.4328,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": -0.6566,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 4.3831,
+    "IncreaseDecreaseInCashAndCashEquivalents": 219.8154,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 219.8154,
+    "InterestPaidClassifiedAsFinancingActivities": 17.4173,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -0.8113,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1.2909,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 32.5873,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 203.8608,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0531,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 8.6839,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 4.3373,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -95.5645,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 6.3564,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 30.0644,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 7.2158,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.7224,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 2.158,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 9.846,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -0.4764,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 7.047,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -30.7988,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 0.6594,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -6.8465,
+    "CashFlowsFromUsedInInvestingActivities": -12.555,
+    "CashFlowsFromUsedInOperatingActivities": 7.6267,
+    "CashFlowsFromUsedInOperations": 19.1197,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 13.0073,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 11.493,
+    "IncreaseDecreaseInCashAndCashEquivalents": -11.7748,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -11.7748,
+    "InterestPaidClassifiedAsFinancingActivities": 30.0644,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.7224,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.6937,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.3667,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -24.9929,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 1.5724,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -170.4419,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 231.66,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": -0.431,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0531,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 14.4719,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "BMW Ventures Limited",
  "corporate_actions": [
   {
@@ -73,6 +387,98 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2025-11-26T18:00:00+05:30",
@@ -5019,7 +5425,309 @@
   "former_names": []
  },
  "industry": "Commodities > Metals & Mining > Metals & Minerals Trading > Trading - Metals",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 0.1,
+    "after_qty": 85000.0,
+    "as_of": "2026-08-06T23:59:00+05:30",
+    "before_pct": 0.0,
+    "before_qty": 0.0,
+    "category": "Promoter Group",
+    "exchange": "NSE",
+    "filed": "2026-08-06",
+    "filing_id": "2089",
+    "from": "2026-08-05",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "SHIVANSH KISHOREPURIA",
+    "qty": 85000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "BMWVENTLTD",
+    "to": "2026-08-05",
+    "value_cr": 0.5108
+   },
+   {
+    "after_pct": 0.17,
+    "after_qty": 150000.0,
+    "as_of": "2026-08-07T23:59:00+05:30",
+    "before_pct": 0.1,
+    "before_qty": 85000.0,
+    "category": "Promoter Group",
+    "exchange": "NSE",
+    "filed": "2026-08-07",
+    "filing_id": "2105",
+    "from": "2026-08-06",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "SHIVANSH KISHOREPURIA",
+    "qty": 65000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "BMWVENTLTD",
+    "to": "2026-08-06",
+    "value_cr": 0.3915
+   },
+   {
+    "after_pct": 0.38,
+    "after_qty": 335000.0,
+    "as_of": "2026-09-18T23:59:00+05:30",
+    "before_pct": 0.17,
+    "before_qty": 150000.0,
+    "category": "Promoter Group",
+    "exchange": "NSE",
+    "filed": "2026-09-18",
+    "filing_id": "3391",
+    "from": "2026-08-16",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "SHIVANSH KISHOREPURIA",
+    "qty": 185000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "BMWVENTLTD",
+    "to": "2026-08-16",
+    "value_cr": 0.9959
+   },
+   {
+    "after_pct": 0.45,
+    "after_qty": 391504.0,
+    "as_of": "2026-09-19T23:59:00+05:30",
+    "before_pct": 0.38,
+    "before_qty": 335000.0,
+    "category": "Promoter Group",
+    "exchange": "NSE",
+    "filed": "2026-09-19",
+    "filing_id": "3427",
+    "from": "2026-09-18",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "SHIVANSH KISHOREPURIA",
+    "qty": 56504.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "BMWVENTLTD",
+    "to": "2026-09-18",
+    "value_cr": 0.2959
+   },
+   {
+    "after_pct": 0.49,
+    "after_qty": 431063.0,
+    "as_of": "2026-09-22T23:59:00+05:30",
+    "before_pct": 0.45,
+    "before_qty": 391504.0,
+    "category": "Promoter Group",
+    "exchange": "NSE",
+    "filed": "2026-09-22",
+    "filing_id": "3501",
+    "from": "2026-09-21",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "SHIVANSH KISHOREPURIA",
+    "qty": 39559.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "BMWVENTLTD",
+    "to": "2026-09-21",
+    "value_cr": 0.2064
+   },
+   {
+    "after_pct": 0.6,
+    "after_qty": 526500.0,
+    "as_of": "2026-09-23T23:59:00+05:30",
+    "before_pct": 0.49,
+    "before_qty": 431063.0,
+    "category": "Promoter Group",
+    "exchange": "NSE",
+    "filed": "2026-09-23",
+    "filing_id": "3531",
+    "from": "2026-09-22",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "SHIVANSH KISHOREPURIA",
+    "qty": 95437.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "BMWVENTLTD",
+    "to": "2026-09-22",
+    "value_cr": 0.4987
+   }
+  ],
+  "filings": [
+   "2089",
+   "2087",
+   "2105",
+   "3391",
+   "3427",
+   "3501",
+   "3531"
+  ]
+ },
  "last_filed_at": "2026-10-24T12:34:03+05:30",
+ "oci": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.1116,
+     "description": "Re-measurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.1116,
+    "oci_net_cr": -0.0835,
+    "profit_cr": 8.0258,
+    "tax_not_reclassified_cr": -0.0281,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.9423
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.6108,
+     "description": "Re-measurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.6108,
+    "oci_net_cr": 0.4571,
+    "profit_cr": 7.1139,
+    "tax_not_reclassified_cr": 0.1537,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.571
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0728,
+     "description": "Re-measurement gain/loss on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0728,
+    "oci_net_cr": -0.0545,
+    "profit_cr": 11.4963,
+    "tax_not_reclassified_cr": -0.0183,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 11.4418
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.3564,
+     "description": "Re-measurement gain/{loss) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.3564,
+    "oci_net_cr": 0.2667,
+    "profit_cr": 10.8472,
+    "tax_not_reclassified_cr": 0.0897,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 11.1139
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.4105,
+     "description": "Re-measurement gain/(loss) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.1033,
+     "description": "Income tax relating to re-measurement gain on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.3072,
+    "oci_net_cr": -0.3072,
+    "profit_cr": 10.5769,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 10.2697
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -5048,6 +5756,815 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 39.8967,
+     "approved_cr": 39.8967,
+     "closing_cr": 14.8041,
+     "counterparty": "BMW Enterprise",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 6.8209,
+     "approved_cr": 6.8209,
+     "closing_cr": 1.5257,
+     "counterparty": "BMW Logistics pvt ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 1.0296,
+     "other_details": "Transportation Charges paid",
+     "relationship": "GROUP COMPANY",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.8095,
+     "approved_cr": 4.8095,
+     "closing_cr": 2.5529,
+     "counterparty": "BMW Hardware & Steel",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 1.1843,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.1995,
+     "approved_cr": 2.1995,
+     "closing_cr": 14.8041,
+     "counterparty": "BMW Enterprise",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 2.1982,
+     "approved_cr": 2.1982,
+     "closing_cr": 2.1963,
+     "counterparty": "Jai Basukinath Traders Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "GROUP COMPANY",
+     "remarks": "na",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.953,
+     "approved_cr": 0.953,
+     "closing_cr": 2.5529,
+     "counterparty": "BMW Hardware & Steel",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 1.1843,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.8137,
+     "approved_cr": 0.8137,
+     "closing_cr": 0.1241,
+     "counterparty": "Nitin Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Remunaration/Salary",
+     "relationship": "MANAGING DIRECTOR",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.72,
+     "approved_cr": 0.72,
+     "closing_cr": 0.084,
+     "counterparty": "Nitin Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "MANAGING DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.6658,
+     "approved_cr": 0.6658,
+     "closing_cr": 14.8041,
+     "counterparty": "BMW Enterprise",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Storage,Bending, Loading & Unloading charges Received",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6592,
+     "approved_cr": 0.6592,
+     "closing_cr": 0.129,
+     "counterparty": "BMW Vyapar Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0369,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.6588,
+     "approved_cr": 0.6588,
+     "closing_cr": 0.1005,
+     "counterparty": "Bijay Kumar Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Remunaration/Salary",
+     "relationship": "DIRECTOR",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6513,
+     "approved_cr": 0.6513,
+     "closing_cr": 0.0593,
+     "counterparty": "Jai Basukinath Traders Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Storage,Bending, Loading & Unloading charges Received",
+     "relationship": "GROUP COMPANY",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6,
+     "approved_cr": 0.6,
+     "closing_cr": 0.05,
+     "counterparty": "Bijay Kumar Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.5967,
+     "approved_cr": 0.5967,
+     "closing_cr": 2.5529,
+     "counterparty": "BMW Hardware & Steel",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 1.1843,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.5553,
+     "approved_cr": 0.5553,
+     "closing_cr": 0.0593,
+     "counterparty": "Jai Basukinath Traders Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Storage,Bending, Loading & Unloading charges Received",
+     "relationship": "GROUP COMPANY",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.5264,
+     "approved_cr": 0.5264,
+     "closing_cr": 0.129,
+     "counterparty": "BMW Vyapar Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0369,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.5148,
+     "approved_cr": 0.5148,
+     "closing_cr": 0.1247,
+     "counterparty": "Jagdamba Value Steels Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent Paid",
+     "relationship": "GROUP COMPANY",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.5126,
+     "approved_cr": 0.5126,
+     "closing_cr": 14.8041,
+     "counterparty": "BMW Enterprise",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Sales",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.48,
+     "approved_cr": 0.48,
+     "closing_cr": 0.056,
+     "counterparty": "Rachna Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.4363,
+     "approved_cr": 0.4363,
+     "closing_cr": 0.066,
+     "counterparty": "Sabita devi Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent Paid",
+     "relationship": "DIRECTOR",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2144,
+     "approved_cr": 0.2144,
+     "closing_cr": 0.0,
+     "counterparty": "Rachna Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent Paid",
+     "relationship": "DIRECTOR",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0973,
+     "approved_cr": 0.0973,
+     "closing_cr": 1.5257,
+     "counterparty": "BMW Logistics pvt ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 1.0296,
+     "relationship": "GROUP COMPANY",
+     "remarks": "na",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0617,
+     "approved_cr": 0.0617,
+     "closing_cr": 2.5529,
+     "counterparty": "BMW Hardware & Steel",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 1.1843,
+     "other_details": "Storage,Bending, Loading  charges Received",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.048,
+     "approved_cr": 0.048,
+     "closing_cr": 0.0,
+     "counterparty": "Bijay Kumar Kishorepuria (HUF)",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent Paid",
+     "relationship": "HUF OF DIRECTOR",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.035,
+     "approved_cr": 0.035,
+     "closing_cr": 0.0,
+     "counterparty": "Mediversal Healthcare Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Medical Expenses",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "na",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0294,
+     "approved_cr": 0.0294,
+     "closing_cr": 0.0049,
+     "counterparty": "Birendra Yadav",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.04,
+     "relationship": "CFO",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.027,
+     "approved_cr": 0.027,
+     "closing_cr": 0.0045,
+     "counterparty": "Ruchika Maheshwari Kejriwal",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0225,
+     "relationship": "COMPANY SECRETARY",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0108,
+     "approved_cr": 0.0108,
+     "closing_cr": 0.0,
+     "counterparty": "Sabita devi Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0108,
+     "relationship": "DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0108,
+     "approved_cr": 0.0108,
+     "closing_cr": 0.0,
+     "counterparty": "Yogesh Tulsyan",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0108,
+     "relationship": "NDEPENDENT DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0108,
+     "approved_cr": 0.0108,
+     "closing_cr": 0.0,
+     "counterparty": "Arpit Jagdishshchandra Kabra",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0108,
+     "relationship": "NDEPENDENT DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0108,
+     "approved_cr": 0.0108,
+     "closing_cr": 0.0,
+     "counterparty": "Sourabh Ajmera",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0108,
+     "relationship": "NDEPENDENT DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0108,
+     "approved_cr": 0.0108,
+     "closing_cr": 0.0,
+     "counterparty": "Ravi Jagetiya",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0108,
+     "relationship": "NDEPENDENT DIRECTOR",
+     "remarks": "na",
+     "type": "Remuneration"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 32,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 7.4069,
+     "approved_cr": 7.4069,
+     "closing_cr": 0.4927,
+     "counterparty": "BMW Logistics pvt ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 1.5284,
+     "other_details": "Any Other Tranaction",
+     "relationship": "GROUP COMPANY",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.4456,
+     "approved_cr": 4.4456,
+     "closing_cr": 0.0,
+     "counterparty": "BMW Enterprise",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 14.8041,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.6903,
+     "approved_cr": 3.6903,
+     "closing_cr": 0.2769,
+     "counterparty": "BMW Hardware & Steel",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 2.5529,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.4333,
+     "approved_cr": 1.4333,
+     "closing_cr": 0.0,
+     "counterparty": "Jai Basukinath Traders Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0594,
+     "relationship": "GROUP COMPANY",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.3465,
+     "approved_cr": 1.3465,
+     "closing_cr": 0.0,
+     "counterparty": "BMW Enterprise",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 14.8041,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.1848,
+     "approved_cr": 1.1848,
+     "closing_cr": 0.0,
+     "counterparty": "BMW Enterprise",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 14.8041,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.8174,
+     "approved_cr": 0.8174,
+     "closing_cr": 0.0,
+     "counterparty": "Jagdamba Value Steels Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.1247,
+     "other_details": "Any Other Tranaction",
+     "relationship": "GROUP COMPANY",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.8138,
+     "approved_cr": 0.8138,
+     "closing_cr": 0.0,
+     "counterparty": "Nitin Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.1241,
+     "other_details": "Any Other Tranaction",
+     "relationship": "MANAGING DIRECTOR",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.72,
+     "approved_cr": 0.72,
+     "closing_cr": 0.0,
+     "counterparty": "Nitin Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.084,
+     "relationship": "MANAGING DIRECTOR",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.6589,
+     "approved_cr": 0.6589,
+     "closing_cr": 0.0,
+     "counterparty": "Bijay Kumar Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.1001,
+     "other_details": "Any Other Tranaction",
+     "relationship": "DIRECTOR",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6513,
+     "approved_cr": 0.6513,
+     "closing_cr": 0.0,
+     "counterparty": "Jai Basukinath Traders Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0594,
+     "other_details": "Any Other Tranaction",
+     "relationship": "GROUP COMPANY",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.6,
+     "approved_cr": 0.6,
+     "closing_cr": 0.0,
+     "counterparty": "Bijay Kumar Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": -0.05,
+     "relationship": "WHOLE TIME DIRECTOR",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.4991,
+     "approved_cr": 0.4991,
+     "closing_cr": 0.4987,
+     "counterparty": "Jai Basukinath Traders Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 2.1964,
+     "relationship": "GROUP COMPANY",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.48,
+     "approved_cr": 0.48,
+     "closing_cr": 0.0,
+     "counterparty": "Rachna Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.056,
+     "relationship": "WHOLE TIME DIRECTOR",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.4615,
+     "approved_cr": 0.4615,
+     "closing_cr": 0.0,
+     "counterparty": "Jai Basukinath Traders Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0594,
+     "other_details": "Any Other Tranaction",
+     "relationship": "GROUP COMPANY",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.4364,
+     "approved_cr": 0.4364,
+     "closing_cr": 0.0,
+     "counterparty": "Sabita devi Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.067,
+     "other_details": "Any Other Tranaction",
+     "relationship": "NON EXECUTIVE DIRECTOR",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2145,
+     "approved_cr": 0.2145,
+     "closing_cr": 0.0,
+     "counterparty": "Rachna Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "WHOLE TIME DIRECTOR",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2002,
+     "approved_cr": 0.2002,
+     "closing_cr": 0.0,
+     "counterparty": "BMW Hardware & Steel",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0847,
+     "approved_cr": 0.0847,
+     "closing_cr": 0.0,
+     "counterparty": "Birendra yadav",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0049,
+     "relationship": "CFO",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0649,
+     "approved_cr": 0.0649,
+     "closing_cr": 0.0,
+     "counterparty": "Ruchika Maheshwari Kejriwal",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0045,
+     "relationship": "COMPANY SECRETARY",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.05,
+     "approved_cr": 0.048,
+     "closing_cr": 0.0,
+     "counterparty": "Bijay Kumar Kishorepuria (HUF)",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "HUF OF DIRECTOR",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0304,
+     "approved_cr": 0.0304,
+     "closing_cr": 0.0,
+     "counterparty": "Mediversal Healthcare Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.1247,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0115,
+     "approved_cr": 0.0115,
+     "closing_cr": 0.0,
+     "counterparty": "Sourabh Ajmera",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "INDEPENDENT DIRECTOR",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.011,
+     "approved_cr": 0.011,
+     "closing_cr": 0.0,
+     "counterparty": "Yogesh Tulsyan",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "INDEPENDENT DIRECTOR",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.011,
+     "approved_cr": 0.011,
+     "closing_cr": 0.0,
+     "counterparty": "Ravi Jagetiya",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "INDEPENDENT DIRECTOR",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.009,
+     "approved_cr": 0.009,
+     "closing_cr": 0.0,
+     "counterparty": "Sabita devi Kishorepuria",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "NON EXECUTIVE DIRECTOR",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.008,
+     "approved_cr": 0.008,
+     "closing_cr": 0.0,
+     "counterparty": "Arpit Jagdishshchandra Kabra",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "INDEPENDENT DIRECTOR",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 0.0014,
+     "closing_cr": 0.0,
+     "counterparty": "BMW Hardware & Steel",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 0.0014,
+     "closing_cr": 0.0,
+     "counterparty": "BMW project private limited",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 0.0014,
+     "closing_cr": 0.0,
+     "counterparty": "Nupur Heights Private Limited",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 0.0014,
+     "closing_cr": 0.0,
+     "counterparty": "Rachna Heights Private Limited",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 0.0014,
+     "closing_cr": 0.0,
+     "counterparty": "JBT Real Estate Developers LLP",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 0.0014,
+     "closing_cr": 0.0,
+     "counterparty": "JBT Relaty LLP",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0014,
+     "approved_cr": 0.0014,
+     "closing_cr": 0.0,
+     "counterparty": "Ridhi sidhi Fincon Private Limited",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Any Other Tranaction",
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0037,
+     "counterparty": "BMW Vyapar Pvt Ltd",
+     "entity": "BMW VENTURES LIMITED",
+     "opening_cr": 0.1291,
+     "relationship": "PROMOTER GROUP",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 35,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544543",
  "section_lab": {
@@ -5060,16 +6577,386 @@
    "at": "2026-10-21T12:31:44+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "insider_trades": {
+   "at": "2026-11-01T14:01:04+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "metals",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "Manufacturing and Distribution of Tata Steel",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Manufacturing and distribution  of Tata Steel and",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Manufacturing and distribution  of Tata Steel",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Manufacturing and Distribution of Tata Steel",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Manufacturing and distribution  of Tata Steel",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q1FY26",
   "Q2FY26",
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.5178,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 465.3447,
+    "Interest": 7.8059,
+    "Net Profit": 8.0258,
+    "Net Profit (owners)": 8.0258,
+    "OPM %": 3.9716189411767644,
+    "Operating Profit": 19.246100000000013,
+    "Other Income": 0.612299999999987,
+    "Profit before tax": 10.5347,
+    "Profit for PE": 8.0258,
+    "Sales": 484.5908,
+    "Tax": 2.5089,
+    "Tax %": 23.815580889821256
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.547,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 481.8895,
+    "Interest": 9.6114,
+    "Net Profit": 7.1139,
+    "Net Profit (owners)": 7.1139,
+    "OPM %": 3.9779194217906135,
+    "Operating Profit": 19.963300000000004,
+    "Other Income": 1.1585999999999963,
+    "Profit before tax": 9.9635,
+    "Profit for PE": 7.1139,
+    "Sales": 501.8528,
+    "Tax": 2.8496,
+    "Tax %": 28.600391428714815
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 460.9728,
+    "CWIP": 3.0694,
+    "Equity Capital": 86.715,
+    "Fixed Assets": 143.0756,
+    "Investments": 4.2818,
+    "Other Assets": 820.2076000000001,
+    "Other Liabilities": 80.16969999999992,
+    "Reserves": 342.7769,
+    "Total Assets": 970.6344,
+    "Total Liabilities": 970.6344
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.7052,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 541.3685,
+    "Interest": 6.4447,
+    "Net Profit": 11.4963,
+    "Net Profit (owners)": 11.4963,
+    "OPM %": 3.87114290259984,
+    "Operating Profit": 21.801099999999906,
+    "Other Income": 1.679400000000097,
+    "Profit before tax": 15.3306,
+    "Profit for PE": 11.4963,
+    "Sales": 563.1696,
+    "Tax": 3.8343,
+    "Tax %": 25.01076278814919
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.5864,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 707.4892,
+    "Interest": 6.2024,
+    "Net Profit": 10.8472,
+    "Net Profit (owners)": 10.8472,
+    "OPM %": 2.9008721487589675,
+    "Operating Profit": 21.13650000000007,
+    "Other Income": 0.7420999999999296,
+    "Profit before tax": 14.0898,
+    "Profit for PE": 10.8472,
+    "Sales": 728.6257,
+    "Tax": 3.2426,
+    "Tax %": 23.013811409672243
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 257.9436,
+    "CWIP": 0,
+    "Equity Capital": 86.715,
+    "Fixed Assets": 148.6413,
+    "Investments": 5.0388,
+    "Other Assets": 598.3743999999999,
+    "Other Liabilities": 52.26439999999991,
+    "Reserves": 355.1315,
+    "Total Assets": 752.0545,
+    "Total Liabilities": 752.0545
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.3564,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2196.0831,
+    "Interest": 30.0644,
+    "Net Profit": 37.4831,
+    "Net Profit (owners)": 37.4831,
+    "OPM %": 3.6057333982960538,
+    "Operating Profit": 82.14690000000019,
+    "Other Income": 4.192399999999822,
+    "Profit before tax": 49.9185,
+    "Profit for PE": 37.4831,
+    "Sales": 2278.23,
+    "Tax": 12.4354,
+    "Tax %": 24.911405591113514
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -6.8465,
+    "Cash from Investing Activity": -12.555,
+    "Cash from Operating Activity": 7.6267,
+    "Net Cash Flow": -11.7748
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.72,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 588.1936000000001,
+    "Interest": 5.8548,
+    "Net Profit": 10.5769,
+    "Net Profit (owners)": 10.5769,
+    "OPM %": 3.400052948251938,
+    "Operating Profit": 20.70279999999991,
+    "Other Income": 1.0211000000000894,
+    "Profit before tax": 14.1491,
+    "Profit for PE": 10.5769,
+    "Sales": 608.8964,
+    "Tax": 3.5722,
+    "Tax %": 25.24683548776954
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "BMWVENTLTD",
  "timeline": [],

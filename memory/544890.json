@@ -1,4 +1,40 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
@@ -92,6 +128,172 @@
    ],
    "updated_as_of": "2026-10-15T21:27:10+05:30",
    "usage": null
+  },
+  {
+   "amount_cr": 0.0076,
+   "as_of": "2026-10-28T18:30:24+05:30",
+   "counterparty": "Sageroute Logistics Private Limited",
+   "discount_pct": null,
+   "execution_by": "Within 30 days",
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 0.0076,
+     "as_of": "2026-10-28T18:30:24+05:30",
+     "lab": {
+      "at": "2026-10-28T21:49:21+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106832839",
+     "stage": "CONTRACT"
+    }
+   ],
+   "id": "d_53dba331",
+   "includes_gst": false,
+   "issue_price": null,
+   "kind": "ACQUISITION",
+   "lab": {
+    "at": "2026-10-28T21:49:21+05:30",
+    "by": "ai",
+    "doc": "other",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "Logistics",
+   "seller": null,
+   "source_news_id": "nse-106832839",
+   "stage": "CONTRACT",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-28T18:30:24+05:30",
+   "usage": null
+  },
+  {
+   "amount_cr": 3.13,
+   "as_of": "2026-10-29T19:56:53+05:30",
+   "counterparty": "Skyways SLS Cargo Services LLC",
+   "discount_pct": null,
+   "execution_by": "Within 30 days approximate",
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 3.13,
+     "as_of": "2026-10-29T19:56:53+05:30",
+     "lab": {
+      "at": "2026-10-30T02:52:48+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106835239",
+     "stage": "PROPOSED"
+    }
+   ],
+   "id": "d_d7ad039e",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "ACQUISITION",
+   "lab": {
+    "at": "2026-10-30T02:52:48+05:30",
+    "by": "ai",
+    "doc": "other",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "Logistics",
+   "seller": null,
+   "source_news_id": "nse-106835239",
+   "stage": "PROPOSED",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-29T19:56:53+05:30",
+   "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0212,
+    "DebtServiceCoverageRatio": 0.0143,
+    "InterestServiceCoverageRatio": 0.0317
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0159,
+    "DebtServiceCoverageRatio": 0.0116,
+    "InterestServiceCoverageRatio": 0.0254
+   }
   }
  ],
  "financial_metrics": [
@@ -640,8 +842,186 @@
  ],
  "fy_end_month": 3,
  "governance": {
-  "auditor": null,
-  "auditor_history": []
+  "auditor": {
+   "as_of": "2026-10-29T19:56:53+05:30",
+   "lab": {
+    "at": "2026-10-30T02:52:48+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106835239"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-10-29T19:56:53+05:30",
+    "lab": {
+     "at": "2026-10-30T02:52:48+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106835239"
+   }
+  ],
+  "quarters": [
+   {
+    "as_of": "2026-10-30T18:25:08+05:30",
+    "board": [
+     {
+      "appointed": "1995-03-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Yashpal Sharma",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2013-02-14",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Tarun Sharma",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2021-04-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Himanshu Chhabra",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2021-04-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rohit Sehgal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-12-07",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rajiv Gul Hariramani",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-05-31",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ranjit Kumar Pachnanda",
+      "role": null,
+      "tenure_months": 16.0
+     },
+     {
+      "appointed": "2025-05-31",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Subir Bikas Mitra",
+      "role": null,
+      "tenure_months": 16.0
+     },
+     {
+      "appointed": "2025-05-31",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rajni",
+      "role": null,
+      "tenure_months": 16.0
+     },
+     {
+      "appointed": "2025-05-31",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rupinder Kaur",
+      "role": null,
+      "tenure_months": 16.0
+     },
+     {
+      "appointed": "2025-05-31",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Santosh Ramanuj Tiwari",
+      "role": null,
+      "tenure_months": 16.0
+     }
+    ],
+    "board_size": 10,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Santosh Ramanuj Tiwari",
+      "Rajni",
+      "Rupinder Kaur",
+      "Yashpal Sharma"
+     ],
+     "corporate social responsibility committee": [
+      "Yashpal Sharma",
+      "Subir Bikas Mitra",
+      "Himanshu Chhabra"
+     ],
+     "nomination and remuneration committee": [
+      "Santosh Ramanuj Tiwari",
+      "Rajni",
+      "Rupinder Kaur"
+     ],
+     "risk management committee": [
+      "Yashpal Sharma",
+      "Tarun Sharma",
+      "Himanshu Chhabra",
+      "Santosh Ramanuj Tiwari"
+     ],
+     "stakeholders relationship committee": [
+      "Ranjit Kumar Pachnanda",
+      "Rajni",
+      "Rupinder Kaur",
+      "Yashpal Sharma",
+      "Himanshu Chhabra"
+     ]
+    },
+    "complaints": {
+     "disposed": 1.0,
+     "pending": 6.0,
+     "received": 7.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 82.0,
+     "board": 58.0,
+     "nomination and remuneration committee": 82.0
+    },
+    "independent_directors": 5,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1750217_30102026062507_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
  },
  "guidance": [],
  "identity": {
@@ -678,14 +1058,855 @@
     "name": "Proposed wholly owned subsidiary of Avito Global Freight Private Limited in Masdar City Free Zone, Abu Dhabi",
     "source_news_id": "nse-106819304",
     "type": "proposed step-down subsidiary"
+   },
+   {
+    "as_of": "2026-10-28T18:30:24+05:30",
+    "lab": {
+     "at": "2026-10-28T21:49:21+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "Sageroute Logistics Private Limited",
+    "source_news_id": "nse-106832839",
+    "type": "step-down subsidiary (76%)"
+   },
+   {
+    "as_of": "2026-10-29T19:56:53+05:30",
+    "lab": {
+     "at": "2026-10-30T02:52:48+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "Skyways SLS Cargo Services LLC",
+    "source_news_id": "nse-106835239",
+    "type": "subsidiary (90%)"
    }
   ],
   "former_names": []
  },
  "industry": "Services > Transport Services > Logistics Solution Provider",
- "last_filed_at": "2026-10-21T08:46:28+05:30",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 24.48,
+    "after_qty": 35575004.0,
+    "as_of": "2026-09-30T23:59:00+05:30",
+    "before_pct": 24.47,
+    "before_qty": 35558004.0,
+    "category": "Promoter and Director",
+    "exchange": "NSE",
+    "filed": "2026-09-30",
+    "filing_id": "3866",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Tarun Sharma",
+    "qty": 17000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "to": "2026-09-30",
+    "value_cr": 0.1951
+   },
+   {
+    "after_pct": 32.36,
+    "after_qty": 47038758.0,
+    "as_of": "2026-09-30T23:59:00+05:30",
+    "before_pct": 32.35,
+    "before_qty": 47020758.0,
+    "category": "Promoter and Director",
+    "exchange": "NSE",
+    "filed": "2026-09-30",
+    "filing_id": "3866",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Purchase",
+    "person": "Yashpal sharma",
+    "qty": 18000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "to": "2026-09-30",
+    "value_cr": 0.2058
+   }
+  ],
+  "filings": [
+   "3866"
+  ]
+ },
+ "last_filed_at": "2026-10-29T19:56:53+05:30",
  "market_deals": {
   "events": [
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GOLDENDUNES LAND DEVELOPERS PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 124.96,
+    "qty": 1619026.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 20.23
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 129.38,
+    "qty": 827248.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 10.7
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 129.2,
+    "qty": 827248.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 10.69
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 129.82,
+    "qty": 1378596.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 17.9
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 129.75,
+    "qty": 1378596.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 17.89
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 129.56,
+    "qty": 1314057.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 17.02
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 128.92,
+    "qty": 1539254.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 19.84
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 130.25,
+    "qty": 2870089.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 37.38
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 130.21,
+    "qty": 2879064.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 37.49
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "KABRA PRIYA",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 127.92,
+    "qty": 730456.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 9.34
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "KABRA PRIYA",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 127.82,
+    "qty": 730456.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 9.34
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 132.17,
+    "qty": 1075536.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 14.22
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 132.1,
+    "qty": 1075536.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 14.21
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 128.87,
+    "qty": 2060680.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 26.56
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 128.79,
+    "qty": 2060680.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 26.54
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 131.57,
+    "qty": 1414638.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 18.61
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 131.23,
+    "qty": 1487838.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 19.52
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 130.29,
+    "qty": 1086834.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 14.16
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 130.35,
+    "qty": 1086834.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 14.17
+   },
+   {
+    "as_of": "2026-09-04T15:30:00+05:30",
+    "client": "GOLDENDUNES LAND DEVELOPERS PRIVATE LIMITED",
+    "date": "2026-09-04",
+    "kind": "BULK",
+    "price": 131.0,
+    "qty": 900000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 11.79
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 130.16,
+    "qty": 3982290.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 51.83
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.51,
+    "qty": 3982290.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 51.57
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.31,
+    "qty": 2131623.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 27.56
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 128.83,
+    "qty": 2143806.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 27.62
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "IMC INDIA SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.94,
+    "qty": 781028.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 10.15
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "IMC INDIA SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.45,
+    "qty": 785261.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 10.17
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.39,
+    "qty": 1023904.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 13.25
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.88,
+    "qty": 1247314.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 16.2
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 128.73,
+    "qty": 752793.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 9.69
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 128.84,
+    "qty": 752793.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 9.7
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.15,
+    "qty": 1301485.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 16.81
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.54,
+    "qty": 1301485.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 16.86
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.48,
+    "qty": 6266066.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 81.13
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.57,
+    "qty": 6283142.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 81.41
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MARWADI SHARES AND FINANCE LTD.",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.66,
+    "qty": 1030574.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 13.36
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MARWADI SHARES AND FINANCE LTD.",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 128.56,
+    "qty": 1030574.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 13.25
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.94,
+    "qty": 733904.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 9.54
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.27,
+    "qty": 738910.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 9.55
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.52,
+    "qty": 3995824.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 51.75
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.37,
+    "qty": 3995824.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 51.69
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.18,
+    "qty": 1988379.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 25.69
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.26,
+    "qty": 1988379.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 25.7
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.08,
+    "qty": 3781776.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 48.82
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.39,
+    "qty": 3889724.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 50.33
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "SILVERLEAF CAPITAL SERVICES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.43,
+    "qty": 954300.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 12.35
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "SILVERLEAF CAPITAL SERVICES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 129.74,
+    "qty": 954300.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 12.38
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 131.28,
+    "qty": 1603555.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 21.05
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 132.13,
+    "qty": 1603555.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 21.19
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 131.08,
+    "qty": 844367.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 11.07
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 130.63,
+    "qty": 946127.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 12.36
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 131.01,
+    "qty": 1257101.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 16.47
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 130.92,
+    "qty": 1257101.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 16.46
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 131.21,
+    "qty": 2081872.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 27.32
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 130.2,
+    "qty": 2167495.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 28.22
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 128.38,
+    "qty": 891632.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 11.45
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 128.36,
+    "qty": 1048543.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 13.46
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 128.56,
+    "qty": 1104496.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 14.2
+   },
+   {
+    "as_of": "2026-09-22T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-22",
+    "kind": "BULK",
+    "price": 128.68,
+    "qty": 1161815.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 14.95
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 131.05,
+    "qty": 880984.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 11.55
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 131.47,
+    "qty": 1046493.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 13.76
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 131.53,
+    "qty": 902946.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 11.88
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 132.22,
+    "qty": 917197.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 12.13
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "GOLDENDUNES BUILDERS AND DEVELOPERS PRIVATE LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 104.5,
+    "qty": 1192840.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SKYWAYS",
+    "value_cr": 12.47
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "GOLDENDUNES BUILDHOME PRIVATE LIMITED",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 104.5,
+    "qty": 1192840.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SKYWAYS",
+    "value_cr": 12.47
+   },
    {
     "as_of": "2026-10-23T15:30:00+05:30",
     "client": "GOLDENDUNES BUILDHOME PRIVATE LIMITED",
@@ -712,6 +1933,75 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.2201,
+     "description": "Remeasurement gain/loss of the defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.2134,
+     "description": "Exchange differences in translating the financial information of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.2201,
+    "oci_net_cr": 0.3781,
+    "profit_cr": 26.7896,
+    "reclassified_cr": 0.2134,
+    "tax_not_reclassified_cr": 0.0554,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 27.1677,
+    "total_comprehensive_nci_cr": 7.1807,
+    "total_comprehensive_owners_cr": 19.987
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.0902,
+     "description": "Remeasurement gain/loss of the defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.0902,
+    "oci_net_cr": 0.0675,
+    "profit_cr": 14.0493,
+    "tax_not_reclassified_cr": 0.0227,
+    "total_comprehensive_cr": 14.1168
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-15T21:27:10+05:30",
@@ -742,6 +2032,26 @@
    },
    "source_news_id": "nse-106819304",
    "text": "Board approved a corporate guarantee to Techombank of up to VND 30,000,000,000 (≈₹11.00 Cr) for Skyways SLS Logistik Company Limited (Vietnam)."
+  },
+  {
+   "as_of": "2026-10-28T18:30:24+05:30",
+   "lab": {
+    "at": "2026-10-28T21:49:21+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106832839",
+   "text": "Material subsidiary Brace Port Logistics agreed to acquire a 76% stake in Sageroute Logistics Private Limited for ₹76,000 with a subsequent capital infusion of ₹75.24 lakh."
+  },
+  {
+   "as_of": "2026-10-29T19:56:53+05:30",
+   "lab": {
+    "at": "2026-10-30T02:52:48+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106835239",
+   "text": "Invested ₹3.13 Cr in Dubai subsidiary Skyways SLS Cargo Services LLC for working capital, raising stake to 90%."
   }
  ],
  "ownership": [
@@ -805,14 +2115,41 @@
    "by": "file",
    "doc": "other"
   },
+  "governance_quarters": {
+   "at": "2026-10-30T18:25:08+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "insider_trades": {
+   "at": "2026-11-01T14:01:31+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "market_deals": {
-   "at": "2026-10-23T15:30:00+05:30",
+   "at": "2026-11-01T14:43:48+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "consumer_services",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Logistics Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1270,6 +2607,78 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.1811,
+    "Depreciation": 4.4136,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1166.5920999999998,
+    "Interest": 17.0726,
+    "Minority share": 7.117,
+    "Net Profit": 26.7896,
+    "Net Profit (owners)": 19.6726,
+    "OPM %": 4.105324401735163,
+    "Operating Profit": 49.94270000000006,
+    "Other Income": 8.819499999999948,
+    "PBT as filed": 37.0949,
+    "Profit before tax": 37.276,
+    "Profit for PE": 19.6726,
+    "Sales": 1216.5348,
+    "Tax": 10.4864,
+    "Tax %": 28.131773795471613
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.2487,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 648.2476,
+    "Interest": 12.2601,
+    "Net Profit": 14.0493,
+    "Net Profit (owners)": 14.0493,
+    "OPM %": 4.086074134156287,
+    "Operating Profit": 27.61629999999991,
+    "Other Income": 5.816600000000086,
+    "Profit before tax": 18.9241,
+    "Profit for PE": 14.0493,
+    "Sales": 675.8639,
+    "Tax": 4.8748,
+    "Tax %": 25.759745509693985
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "SKYWAYS",
  "timeline": [
   {
@@ -1285,10 +2694,38 @@
    "news_id": "nse-106819304",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/SKYWAYS_15102026212621_124.pdf",
    "summary": "Skyways Air approved a 40% stake dilution in subsidiary Avito Global Freight to its core team, incorporation of a UAE step-down subsidiary, and a ₹11 crore guarantee for its Vietnam subsidiary."
+  },
+  {
+   "date": "2026-10-28T18:30:24+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_53dba331",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-28T21:49:21+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106832839",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SKYWAYS_28102026183000_Disclosure_under_Reg_30_-_28102026.pdf",
+   "summary": "Skyways Air's material subsidiary Brace Port Logistics agreed to acquire a 76% stake in Sageroute Logistics Private Limited."
+  },
+  {
+   "date": "2026-10-29T19:56:53+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_d7ad039e",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-30T02:52:48+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106835239",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SKYWAYS_29102026195637_11111111.pdf",
+   "summary": "Skyways Air made a further investment of ₹3.13 crore in its Dubai subsidiary Skyways SLS Cargo Services LLC."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T10:01:49+05:30",
+ "updated_at": "2026-10-30T02:52:48+05:30",
  "watchlist": [
   {
    "check_by": null,

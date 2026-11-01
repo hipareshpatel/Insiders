@@ -1,9 +1,83 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Caliber Mining and Logistics Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-08-11T18:00:00+05:30",
@@ -649,6 +723,141 @@
     "quarter_end": "2026-06-30",
     "related_finance": [],
     "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1704965_30072026022413_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Open",
+      "initiated": "2026-06-19",
+      "opposing_party": "Income Tax Department, Ministry of Finance",
+      "status": "scrutiny notice issued; no further order received to date"
+     }
+    ]
+   },
+   {
+    "as_of": "2026-10-30T14:52:41+05:30",
+    "board": [
+     {
+      "appointed": "2014-07-03",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Mohit Satishkumar Chadda",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2014-07-03",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rahul Roshanlal Chadda",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2017-03-29",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manish Krishanlal Chadda",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-02",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Kawal K Jaggi",
+      "role": null,
+      "tenure_months": 24.0
+     },
+     {
+      "appointed": "2024-11-13",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Kumar Anil Jha",
+      "role": null,
+      "tenure_months": 22.0
+     },
+     {
+      "appointed": "2024-11-13",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Priya Anuj Chadda",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-02",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rajendra Prasad Shukla",
+      "role": null,
+      "tenure_months": 24.0
+     },
+     {
+      "appointed": "2025-04-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Balasubramanyam Danturti",
+      "role": null,
+      "tenure_months": 17.0
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Rajendra Prasad Shukla",
+      "Balasubramanyam Danturti",
+      "Manish Krishanlal Chadda"
+     ],
+     "corporate social responsibility committee": [
+      "Rahul Roshanlal Chadda",
+      "Kumar Anil Jha",
+      "Priya Anuj Chadda",
+      "Manish Krishanlal Chadda"
+     ],
+     "nomination and remuneration committee": [
+      "Kumar Anil Jha",
+      "Rajendra Prasad Shukla",
+      "Kawal K Jaggi"
+     ],
+     "stakeholders relationship committee": [
+      "Rajendra Prasad Shukla",
+      "Manish Krishanlal Chadda",
+      "Rahul Roshanlal Chadda"
+     ]
+    },
+    "complaints": {
+     "disposed": 3.0,
+     "pending": 0.0,
+     "received": 3.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 41.0,
+     "board": 23.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749755_30102026025417_WEB.xml",
     "tax_litigation": [
      {
       "as_last_disclosed": "Open",
@@ -1363,6 +1572,222 @@
     "side": "SELL",
     "symbol": "CMLL",
     "value_cr": 40.55
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 631.37,
+    "qty": 1459788.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 92.17
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 631.87,
+    "qty": 1459788.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 92.24
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 635.7,
+    "qty": 397435.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 25.26
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 635.17,
+    "qty": 408335.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 25.94
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 635.1,
+    "qty": 504844.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 32.06
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 633.28,
+    "qty": 529235.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 33.52
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 628.5,
+    "qty": 505297.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 31.76
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 629.35,
+    "qty": 543832.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 34.23
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 630.07,
+    "qty": 455930.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 28.73
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 630.86,
+    "qty": 534252.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 33.7
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 631.3,
+    "qty": 683177.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 43.13
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 631.52,
+    "qty": 691259.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 43.65
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 633.54,
+    "qty": 2099164.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 132.99
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 633.26,
+    "qty": 2099164.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 132.93
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 632.55,
+    "qty": 564054.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 35.68
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 632.3,
+    "qty": 564054.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 35.67
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 628.92,
+    "qty": 689639.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 43.37
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 629.14,
+    "qty": 697263.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 43.87
    }
   ]
  },
@@ -1476,18 +1901,35 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-30T14:24:06+05:30",
+   "at": "2026-10-30T14:52:41+05:30",
    "by": "file",
    "doc": "other"
   },
   "market_deals": {
-   "at": "2026-07-28T15:30:00+05:30",
+   "at": "2026-11-01T14:41:30+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "oil_gas",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Mining and Logistics",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1945,6 +2387,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 45.2304,
+    "Exceptional items": 0.4395,
+    "Exceptional items AT": 0.3312657228244352,
+    "Expenses": 546.6791,
+    "Interest": 28.0283,
+    "Minority share": 0.0,
+    "Net Profit": 29.7604,
+    "Net Profit (owners)": 29.7604,
+    "OPM %": 16.798034002551105,
+    "Operating Profit": 110.37160000000006,
+    "Other Income": 2.371099999999956,
+    "Profit before tax": 39.484,
+    "Profit for PE": 29.429134277175564,
+    "Sales": 657.0507,
+    "Tax": 9.7236,
+    "Tax %": 24.626684226522134
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 45.2304,
+    "Exceptional items": 0.4395,
+    "Exceptional items AT": 0.33115623756151114,
+    "Expenses": 546.5940999999999,
+    "Interest": 28.0283,
+    "Net Profit": 29.7205,
+    "Net Profit (owners)": 29.7205,
+    "OPM %": 16.796015298981974,
+    "Operating Profit": 110.33850000000007,
+    "Other Income": 2.364299999999929,
+    "Profit before tax": 39.4441,
+    "Profit for PE": 29.38934376243849,
+    "Sales": 656.9326,
+    "Tax": 9.7236,
+    "Tax %": 24.65159554914423
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "CMLL",
  "timeline": [
   {

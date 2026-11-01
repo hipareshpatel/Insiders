@@ -1,9 +1,83 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Rays of Belief Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-28T18:00:00+05:30",
@@ -658,6 +732,906 @@
  "market_deals": {
   "events": [
    {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "CAPACIOUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 239.0,
+    "qty": 225000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.38
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "LONGTHRIVE CAPITAL VCC - TRENDVIEW CAPITAL FUND",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 239.0,
+    "qty": 143401.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.43
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "PRAGYA MERCANTILE PVT LTD",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 239.0,
+    "qty": 410000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 9.8
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "SACHCHIYAY STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 239.0,
+    "qty": 275000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 6.57
+   },
+   {
+    "as_of": "2026-09-08T15:30:00+05:30",
+    "client": "SANTOSH BHANSALI HUF",
+    "date": "2026-09-08",
+    "kind": "BULK",
+    "price": 239.0,
+    "qty": 190000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.54
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "RAMESH KUMAR",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 235.28,
+    "qty": 117973.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.78
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 217.75,
+    "qty": 170430.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.71
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "SACHCHIYAY STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 217.15,
+    "qty": 275000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.97
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 257.69,
+    "qty": 160000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.12
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 254.17,
+    "qty": 149168.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.79
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 267.61,
+    "qty": 149168.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.99
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 255.94,
+    "qty": 158001.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.04
+   },
+   {
+    "as_of": "2026-09-29T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-29",
+    "kind": "BULK",
+    "price": 255.53,
+    "qty": 158001.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.04
+   },
+   {
+    "as_of": "2026-10-12T15:30:00+05:30",
+    "client": "SHAH SANJAY JAYKANT",
+    "date": "2026-10-12",
+    "kind": "BULK",
+    "price": 212.07,
+    "qty": 240000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.09
+   },
+   {
+    "as_of": "2026-10-12T15:30:00+05:30",
+    "client": "VINEY GROWTH FUND",
+    "date": "2026-10-12",
+    "kind": "BULK",
+    "price": 211.8,
+    "qty": 313813.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 6.65
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 214.03,
+    "qty": 222018.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.75
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 209.85,
+    "qty": 222018.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.66
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "L7 HITECH PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 215.19,
+    "qty": 145000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.12
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 216.12,
+    "qty": 108826.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.35
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 215.09,
+    "qty": 153900.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.31
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "VISTAAR TRADING SERVICE PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 209.03,
+    "qty": 105401.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.2
+   },
+   {
+    "as_of": "2026-10-13T15:30:00+05:30",
+    "client": "VISTAAR TRADING SERVICE PRIVATE LIMITED",
+    "date": "2026-10-13",
+    "kind": "BULK",
+    "price": 214.21,
+    "qty": 105401.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.26
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "ARHAM SHARE PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 247.38,
+    "qty": 91555.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.26
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "ARHAM SHARE PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 250.91,
+    "qty": 109255.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.74
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "CAPACIOUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 250.05,
+    "qty": 100.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 0.0
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "CAPACIOUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 250.69,
+    "qty": 194250.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.87
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "L7 HITECH PRIVATE LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 243.33,
+    "qty": 110000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.68
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "MADANLAL LIMITED",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 240.74,
+    "qty": 600000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 14.44
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "PRAGYA MERCANTILE PVT LTD",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 240.0,
+    "qty": 410000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 9.84
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 249.13,
+    "qty": 10352.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 0.26
+   },
+   {
+    "as_of": "2026-10-15T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-15",
+    "kind": "BULK",
+    "price": 244.53,
+    "qty": 112101.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 2.74
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 276.42,
+    "qty": 459969.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 12.71
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 276.32,
+    "qty": 459969.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 12.71
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "ANKITA VISHAL SHAH",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 297.03,
+    "qty": 190658.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.66
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "ANKITA VISHAL SHAH",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 296.42,
+    "qty": 204658.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 6.07
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "CAPACIOUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 257.7,
+    "qty": 100.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 0.0
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "CAPACIOUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 274.88,
+    "qty": 119100.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.27
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 277.08,
+    "qty": 141594.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.92
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 276.3,
+    "qty": 141909.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.92
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 277.46,
+    "qty": 121160.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.36
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 278.44,
+    "qty": 131785.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.67
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 277.31,
+    "qty": 263541.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 7.31
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 277.41,
+    "qty": 263541.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 7.31
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 276.56,
+    "qty": 360529.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 9.97
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 276.48,
+    "qty": 365791.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 10.11
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "LRSD CAPITAL PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 275.14,
+    "qty": 134000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.69
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "MARWADI SHARES AND FINANCE LTD.",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 277.97,
+    "qty": 108731.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.02
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "MARWADI SHARES AND FINANCE LTD.",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 278.04,
+    "qty": 108731.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.02
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 280.14,
+    "qty": 314170.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 8.8
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 280.17,
+    "qty": 314170.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 8.8
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 278.3,
+    "qty": 259909.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 7.23
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 278.13,
+    "qty": 259909.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 7.23
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 289.47,
+    "qty": 129646.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.75
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 274.21,
+    "qty": 129646.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.56
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 278.12,
+    "qty": 293377.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 8.16
+   },
+   {
+    "as_of": "2026-10-16T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-16",
+    "kind": "BULK",
+    "price": 275.15,
+    "qty": 294285.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 8.1
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 286.3,
+    "qty": 258460.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 7.4
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 286.66,
+    "qty": 258460.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 7.41
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "DEALMONEY COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 287.37,
+    "qty": 23875.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 0.69
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "DEALMONEY COMMODITIES PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 269.51,
+    "qty": 216166.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.83
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 281.9,
+    "qty": 324557.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 9.15
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 285.34,
+    "qty": 333411.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 9.51
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 286.51,
+    "qty": 216272.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 6.2
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "J4S FINANCIAL SOLUTIONS LLP",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 286.46,
+    "qty": 216272.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 6.2
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 286.02,
+    "qty": 179847.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.14
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 285.89,
+    "qty": 181146.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.18
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 275.07,
+    "qty": 205424.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.65
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 291.17,
+    "qty": 205424.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 5.98
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 284.26,
+    "qty": 397871.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 11.31
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 284.49,
+    "qty": 403104.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 11.47
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "QICAP MARKETS LLP",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 283.16,
+    "qty": 145108.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.11
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "QICAP MARKETS LLP",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 283.43,
+    "qty": 145143.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.11
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "STACKIN PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 282.15,
+    "qty": 154135.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.35
+   },
+   {
+    "as_of": "2026-10-19T15:30:00+05:30",
+    "client": "STACKIN PRIVATE LIMITED",
+    "date": "2026-10-19",
+    "kind": "BULK",
+    "price": 282.92,
+    "qty": 154135.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 4.36
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "PROGNOSIS SECURITIES PVT. LTD",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 278.82,
+    "qty": 142261.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MOMSBELIEF",
+    "value_cr": 3.97
+   },
+   {
     "as_of": "2026-10-22T15:30:00+05:30",
     "client": "MKJ ENTERPRISES LTD.",
     "date": "2026-10-22",
@@ -695,6 +1669,62 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.007,
+     "description": "Income tax relating to items that will not be reclassified to Profit or Loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "oci_net_cr": -0.073,
+    "profit_cr": 2.787,
+    "reclassified_cr": -0.007,
+    "tax_not_reclassified_cr": -0.028,
+    "tax_reclassified_cr": 0.094,
+    "total_comprehensive_cr": 2.714,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -0.073
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "oci_net_cr": 0.021,
+    "profit_cr": 1.419,
+    "tax_not_reclassified_cr": -0.028,
+    "tax_reclassified_cr": 0.007,
+    "total_comprehensive_cr": 1.44
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -766,13 +1796,86 @@
    "doc": "other"
   },
   "market_deals": {
-   "at": "2026-10-22T15:30:00+05:30",
+   "at": "2026-11-01T14:43:38+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "hospitals",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 35.562,
+     "liabilities_cr": 9.981,
+     "segment": "India"
+    },
+    {
+     "assets_cr": 14.828,
+     "liabilities_cr": 9.283,
+     "segment": "USA"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 50.39,
+    "liabilities_cr": 19.264,
+    "net_assets_cr": 55.38,
+    "net_liabilities_cr": 19.264
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 1.81,
+   "period": "Q1FY27",
+   "revenue_cr": 12.82,
+   "segment": "USA",
+   "share_pct": 50.7,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 2.18,
+   "period": "Q1FY27",
+   "revenue_cr": 12.49,
+   "segment": "India",
+   "share_pct": 49.3,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1230,6 +2333,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.083,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 20.287000000000003,
+    "Interest": 0.244,
+    "Minority share": 0.0,
+    "Net Profit": 2.787,
+    "Net Profit (owners)": 2.787,
+    "OPM %": 19.858576281899335,
+    "Operating Profit": 5.0269999999999975,
+    "Other Income": 0.05000000000000249,
+    "Profit before tax": 3.75,
+    "Profit for PE": 2.787,
+    "Sales": 25.314,
+    "Tax": 0.963,
+    "Tax %": 25.68
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.455,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 9.889999999999999,
+    "Interest": 0.153,
+    "Net Profit": 1.419,
+    "Net Profit (owners)": 1.419,
+    "OPM %": 20.82299255463935,
+    "Operating Profit": 2.601000000000001,
+    "Other Income": 0.034999999999999254,
+    "Profit before tax": 2.028,
+    "Profit for PE": 1.419,
+    "Sales": 12.491,
+    "Tax": 0.609,
+    "Tax %": 30.029585798816566
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "MOMSBELIEF",
  "timeline": [],
  "upcoming_events": [],

@@ -1,5 +1,117 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "101248W/W-100022",
+     "name": "B S R & Co. Lllp",
+     "signed_on": "2026-05-18",
+     "signing_partner": "Kalpesh Rameshchandra Khandelwal"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "(ix) (a)\tAccording to the information and explanations given to us and on the basis of our examination of the records of the Company, the Company has not defaulted in repayment of loans and borrowing or in the payment of interest thereon to any lender."
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "(xi) (a)\tDuring the course of our examination of the books and records of the Company and according to the information and explanations given to us, no fraud by the Company or on the Company has been noticed or reported during the year."
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "As Mentioned Below."
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-07-31",
+     "name": "B S R & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "nse-106627744"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "cash_cr": 7.34,
+   "current_assets_cr": 415.54,
+   "current_liabilities_cr": 300.89,
+   "cwip_cr": 20.27,
+   "equity_capital_cr": 44.16,
+   "fixed_assets_cr": 166.46,
+   "goodwill_cr": 0.0,
+   "gross_debt_cr": 50.63,
+   "inventories_cr": 188.31,
+   "investments_cr": 0.0,
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
+   "net_worth_cr": 449.2,
+   "noncurrent_assets_cr": 398.16,
+   "noncurrent_liabilities_cr": 63.61,
+   "payables_cr": 226.34,
+   "period": "Q4FY26",
+   "receivables_cr": 133.72,
+   "reserves_cr": 405.04,
+   "source_news_id": "nse-106627744",
+   "total_assets_cr": 813.7,
+   "total_liabilities_cr": 364.5
+  },
   {
    "as_of": "2026-05-18T18:00:00+05:30",
    "cash_cr": 7.34,
@@ -29,26 +141,6 @@
    "source_news_id": "xbrl:res:544723:Q4FY26",
    "total_assets_cr": 813.7,
    "total_liabilities_cr": 364.5
-  },
-  {
-   "as_of": "2026-05-22T16:44:32+05:30",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "FY26",
-   "source_news_id": "nse-106636261"
-  },
-  {
-   "as_of": "2026-07-28T22:53:49+05:30",
-   "lab": {
-    "at": "2026-07-28T22:53:49+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106714487"
   }
  ],
  "business_summary": {
@@ -61,6 +153,881 @@
   "source_news_id": "nse-106714487",
   "text": "SEDEMAC Mechatronics designs and supplies control-intensive electronic control units (ECUs) to vehicle and industrial OEMs in India, the US and Europe."
  },
+ "call_memory": [
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "RAISED",
+   "figure_beside_quote": false,
+   "id": "cm_3bee5480",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 3,
+    "quote": "In FY26, we sold more than 3.9 million of this control intensive ECUs, which was more than 60% compared to FY25."
+   },
+   "metric": "cumulative_ecu_sales",
+   "news_id": "nse-106636261",
+   "page": 3,
+   "pages": [
+    3
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "prior_id": "cm_36156277",
+   "quarter": "Q4FY26",
+   "quote": "In FY26, we sold more than 3.9 million of this control intensive ECUs, which was more than 60% compared to FY25.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "In FY26, SEDEMAC sold more than 3.9 million control-intensive ECUs.",
+   "topic": "cumulative_ecu_sales",
+   "type": "kpi",
+   "unit": "MILLION",
+   "value": 3.9,
+   "value_base": 3900000.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_1655d0a3",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 4,
+    "quote": "So our FY26 revenue was 1,058 crore, the first time that we have crossed 1,000 crore in revenue, highest ever. And it was a 61% up compared to FY25 revenue."
+   },
+   "metric": "revenue",
+   "news_id": "nse-106636261",
+   "page": 4,
+   "pages": [
+    4
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "So our FY26 revenue was 1,058 crore, the first time that we have crossed 1,000 crore in revenue, highest ever. And it was a 61% up compared to FY25 revenue.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "FY26 revenue was 1,058 crore, the first time crossing 1,000 crore, up 61% compared to FY25 revenue.",
+   "topic": "fy26_revenue",
+   "type": "kpi",
+   "unit": "INR_CR",
+   "value": 1058.0,
+   "value_base": 10580000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_096623b6",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 4,
+    "quote": "Our RoCE for FY26 was 40%."
+   },
+   "metric": "roce",
+   "news_id": "nse-106636261",
+   "page": 4,
+   "pages": [
+    4
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "Our RoCE for FY26 was 40%.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "RoCE for FY26 was 40%.",
+   "topic": "roce",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 40.0
+  },
+  {
+   "basis": "industry",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_83dcfc63",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "And finally, in terms of just the number of two, three-wheelers produced with ISG in India, it was 8.4 million in FY26 compared to if you look at three years back, it was 5.1 million."
+   },
+   "metric": "isg_production_volume",
+   "news_id": "nse-106636261",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "And finally, in terms of just the number of two, three-wheelers produced with ISG in India, it was 8.4 million in FY26 compared to if you look at three years back, it was 5.1 million.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "The number of two, three-wheelers produced with ISG in India was 8.4 million in FY26 compared to 5.1 million three years back.",
+   "topic": "isg_two_three_wheeler_production",
+   "type": "kpi",
+   "unit": "MILLION",
+   "value": 8.4,
+   "value_base": 8400000.0
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_7d864701",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 10,
+    "quote": "SEDEMAC ISG issue is going to get introduced on three popular That is, you know, models that consistently feature in the top 10 sold in India, motorcycle models of three of the top four OEMs."
+   },
+   "metric": "launches",
+   "news_id": "nse-106636261",
+   "page": 10,
+   "pages": [
+    10
+   ],
+   "period": "FY27",
+   "period_stated": true,
+   "prior_id": "cm_0bf21bd0",
+   "quarter": "Q4FY26",
+   "quote": "SEDEMAC ISG issue is going to get introduced on three popular That is, you know, models that consistently feature in the top 10 sold in India, motorcycle models of three of the top four OEMs.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "SEDEMAC ISG ECU is going to get introduced on 3 popular motorcycle models of three of the top four OEMs, with two launches expected in Q1 and the third launch expected in Q4 of FY27.",
+   "topic": "isg_ecu_launches",
+   "type": "catalyst",
+   "unit": "UNITS",
+   "value": 3.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_68a0203b",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 11,
+    "quote": "As you know, everybody would be aware, over the last year there has been significant inflation of commodity prices. And in addition, we are also seeing some tightening of the semiconductor supply chain. And as a result of that, some RM cost increase is likely and it will, you know, it is expected to put a mild pressure on EBITDA percentage."
+   },
+   "metric": "ebitda_margin",
+   "news_id": "nse-106636261",
+   "page": 11,
+   "pages": [
+    11
+   ],
+   "period_stated": false,
+   "prior_id": "cm_df5a625e",
+   "quarter": "Q4FY26",
+   "quote": "As you know, everybody would be aware, over the last year there has been significant inflation of commodity prices. And in addition, we are also seeing some tightening of the semiconductor supply chain. And as a result of that, some RM cost increase is likely and it will, you know, it is expected to put a mild pressure on EBITDA percentage.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Inflation of commodity prices and tightening of the semiconductor supply chain are expected to put a mild pressure on EBITDA percentage in FY27.",
+   "topic": "fy27_margin_headwinds",
+   "type": "margin_driver"
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "condition": "if that happens",
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_ace01229",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 11,
+    "quote": "Secondly, there are reports of a strong El Nino in CY26 being active. So if that happens, then it could potentially have negative impact on Indian monsoon and also on the US hurricane season."
+   },
+   "metric": "weather_risk",
+   "news_id": "nse-106636261",
+   "page": 11,
+   "pages": [
+    11
+   ],
+   "period_stated": false,
+   "prior_id": "cm_86ae8486",
+   "quarter": "Q4FY26",
+   "quote": "Secondly, there are reports of a strong El Nino in CY26 being active. So if that happens, then it could potentially have negative impact on Indian monsoon and also on the US hurricane season.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "A strong El Nino in CY26 could have a negative impact on the Indian monsoon, affecting India's two-wheeler market, and impact the US hurricane season, affecting the US home standby generator market.",
+   "topic": "monsoon_and_weather_risk",
+   "type": "risk"
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_28298f39",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 6,
+    "quote": "Then there is also this MF4, which is a plant that is made for manufacturing of electric machines / electric motors. And we expect the shipments to start from Q3 of this financial year."
+   },
+   "metric": "plant_shipment_date",
+   "news_id": "nse-106636261",
+   "page": 6,
+   "pages": [
+    6
+   ],
+   "period_stated": false,
+   "prior_id": "cm_47f00300",
+   "quarter": "Q4FY26",
+   "quote": "Then there is also this MF4, which is a plant that is made for manufacturing of electric machines / electric motors. And we expect the shipments to start from Q3 of this financial year.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Shipments of electric machines from the MF4 plant are expected to start from Q3 of this financial year.",
+   "topic": "mf4_chakan_shipments",
+   "type": "capex_capacity"
+  },
+  {
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_feab879c",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 7,
+    "quote": "In addition, we have also acquired land in Shoolagiri for future shipments to customers who have plants in the southern India region."
+   },
+   "metric": "land_acquisition",
+   "news_id": "nse-106636261",
+   "page": 7,
+   "pages": [
+    7
+   ],
+   "period_stated": false,
+   "prior_id": "cm_a6de9a62",
+   "quarter": "Q4FY26",
+   "quote": "In addition, we have also acquired land in Shoolagiri for future shipments to customers who have plants in the southern India region.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "SEDEMAC acquired land in Shoolagiri for future shipments to customers who have plants in the southern India region.",
+   "topic": "shoolagiri_land_acquisition",
+   "type": "capex_capacity"
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_caf55110",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 6,
+    "quote": "On the commercial vehicle, our after treatment controller is likely to get into production in H2 of FY27."
+   },
+   "metric": "sop_date",
+   "news_id": "nse-106636261",
+   "page": 6,
+   "pages": [
+    6
+   ],
+   "period": "H2FY27",
+   "period_stated": true,
+   "prior_id": "cm_c0cbde96",
+   "quarter": "Q4FY26",
+   "quote": "On the commercial vehicle, our after treatment controller is likely to get into production in H2 of FY27.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "After treatment controller for commercial vehicles is likely to get into production in H2 of FY27.",
+   "topic": "acu_commercial_vehicles_sop",
+   "type": "catalyst"
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_33b3fad6",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 6,
+    "quote": "The start of production is likely to happen over the next four to five quarters."
+   },
+   "metric": "sop_period",
+   "news_id": "nse-106636261",
+   "page": 6,
+   "pages": [
+    6
+   ],
+   "period_stated": false,
+   "prior_id": "cm_c87f9611",
+   "quarter": "Q4FY26",
+   "quote": "The start of production is likely to happen over the next four to five quarters.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "Start of production for power tool motor controllers is likely to happen over the next four to five quarters.",
+   "topic": "efi_ecu_powertool_mcu_sop",
+   "type": "catalyst",
+   "unit": "QUARTERS",
+   "value": 4.0,
+   "value_high": 5.0
+  },
+  {
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "MAINTAINED",
+   "figure_beside_quote": false,
+   "id": "cm_ed6bbb69",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 6,
+    "quote": "Importantly, on the power tool side, we have had the first BizWin done with a small but established power tool maker for the motor controller with the sensorless control technology."
+   },
+   "metric": "business_win",
+   "news_id": "nse-106636261",
+   "page": 6,
+   "pages": [
+    6
+   ],
+   "period_stated": false,
+   "prior_id": "cm_91dd2dbd",
+   "quarter": "Q4FY26",
+   "quote": "Importantly, on the power tool side, we have had the first BizWin done with a small but established power tool maker for the motor controller with the sensorless control technology.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "SEDEMAC secured its first business win with a small but established power tool maker for motor controllers with sensorless control technology.",
+   "topic": "power_tool_mcu_win",
+   "type": "order_book"
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_be6715dd",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 10,
+    "quote": "In FY26, we had about 7.4% of the two three-wheeler revenue coming from EV products, that is EV MCU essentially."
+   },
+   "metric": "ev_revenue_share",
+   "news_id": "nse-106636261",
+   "page": 10,
+   "pages": [
+    10
+   ],
+   "period": "FY26",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "In FY26, we had about 7.4% of the two three-wheeler revenue coming from EV products, that is EV MCU essentially.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "In FY26, 7.4% of the two three-wheeler revenue came from EV products, primarily EV MCUs.",
+   "topic": "ev_revenue_share",
+   "type": "dependence",
+   "unit": "PERCENT",
+   "value": 7.4
+  },
+  {
+   "base_unit": "INR",
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_46fc0522",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 8,
+    "quote": "and roughly 13 crore to 15 crore or maybe 12 to 15 crore. in working capital."
+   },
+   "metric": "working_capital_intensity",
+   "news_id": "nse-106636261",
+   "page": 8,
+   "pages": [
+    8
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "and roughly 13 crore to 15 crore or maybe 12 to 15 crore. in working capital.",
+   "quote_assembled": false,
+   "section": "PREPARED",
+   "speaker": "MANAGEMENT",
+   "statement": "For 100 crore of additional revenue, SEDEMAC requires a one-time working capital investment of about 12 crore to 15 crore.",
+   "topic": "working_capital_to_revenue_ratio",
+   "type": "capital_allocation",
+   "unit": "INR_CR",
+   "value": 12.0,
+   "value_base": 120000000.0,
+   "value_high": 15.0
+  },
+  {
+   "basis": "reported",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_a5603925",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 41,
+    "quote": "in the RHP, I think it's very clear if we are doing 85 to 90% from control intensive ECUs, and the rest of it from non-critical components."
+   },
+   "metric": "revenue_mix",
+   "news_id": "nse-106636261",
+   "page": 41,
+   "pages": [
+    41
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "in the RHP, I think it's very clear if we are doing 85 to 90% from control intensive ECUs, and the rest of it from non-critical components.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "Control-intensive ECUs account for 85% to 90% of revenue, with the remainder from non-critical components.",
+   "topic": "revenue_mix_breakdown",
+   "type": "kpi",
+   "unit": "PERCENT",
+   "value": 85.0,
+   "value_high": 90.0
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-22",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_7bf0efda",
+   "lab": {
+    "at": "2026-11-01T03:50:38+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 43,
+    "quote": "We do want to mention to you that we do not intend to meet you every quarter. We intend to meet you every six months."
+   },
+   "news_id": "nse-106636261",
+   "page": 43,
+   "pages": [
+    43
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "We do want to mention to you that we do not intend to meet you every quarter. We intend to meet you every six months.",
+   "quote_assembled": false,
+   "section": "QA",
+   "speaker": "MANAGEMENT",
+   "statement": "Management intends to hold investor calls every six months rather than every quarter, unless significant developments warrant an earlier meeting.",
+   "topic": "investor_call_frequency",
+   "type": "outlook"
+  },
+  {
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_36156277",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": ">12 million Control-intensive ECUs sold cumulatively to major vehicle & industrial OEMs in India, the US and Europe."
+   },
+   "metric": "cumulative_ecu_sales",
+   "news_id": "nse-106627693",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": ">12 million Control-intensive ECUs sold cumulatively to major vehicle & industrial OEMs in India, the US and Europe.",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Cumulative control-intensive ECUs sold exceeded 12 million to major vehicle and industrial OEMs in India, the US, and Europe.",
+   "topic": "cumulative_ecu_sales",
+   "type": "kpi",
+   "unit": "MILLION",
+   "value": 12.0,
+   "value_base": 12000000.0
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_0bf21bd0",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 14,
+    "quote": "Two launches expected in Q1FY27. For one production, at our end, is already underway. Third launch expected in Q4FY27"
+   },
+   "metric": "product_launch",
+   "news_id": "nse-106627693",
+   "page": 14,
+   "pages": [
+    14
+   ],
+   "period": "Q1FY27",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "Two launches expected in Q1FY27. For one production, at our end, is already underway. Third launch expected in Q4FY27",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "SEDEMAC expects launch of sensorless ISG ECU on two top-10 2W motorcycle models in Q1FY27 and a third launch in Q4FY27.",
+   "topic": "isg_ecu_launches",
+   "type": "catalyst",
+   "unit": "LAUNCHES",
+   "value": 2.0
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_61f5000f",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 10,
+    "quote": "Expected start of shipments of ECUs from Q2FY27 120000 sq ft"
+   },
+   "metric": "plant_commissioning",
+   "news_id": "nse-106627693",
+   "page": 10,
+   "pages": [
+    10
+   ],
+   "period": "Q2FY27",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "Expected start of shipments of ECUs from Q2FY27 120000 sq ft",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Start of ECU shipments from the 120,000 sq ft MF3 Chakan plant is expected in Q2FY27.",
+   "topic": "mf3_chakan_shipments",
+   "type": "catalyst",
+   "unit": "SQ_FT",
+   "value": 120000.0
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_47f00300",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 10,
+    "quote": "Expected start of shipments of Electric Machines from Q3FY27 9000 sq ft"
+   },
+   "metric": "plant_commissioning",
+   "news_id": "nse-106627693",
+   "page": 10,
+   "pages": [
+    10
+   ],
+   "period": "Q3FY27",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "Expected start of shipments of Electric Machines from Q3FY27 9000 sq ft",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Start of Electric Machines shipments from the 9,000 sq ft MF4 Chakan plant is expected in Q3FY27.",
+   "topic": "mf4_chakan_shipments",
+   "type": "catalyst",
+   "unit": "SQ_FT",
+   "value": 9000.0
+  },
+  {
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_a6de9a62",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 10,
+    "quote": "Shoolagiri Land (SIPCOT) ~13 acre Future shipments to customers with plants in South India"
+   },
+   "metric": "land_acquisition",
+   "news_id": "nse-106627693",
+   "page": 10,
+   "pages": [
+    10
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Shoolagiri Land (SIPCOT) ~13 acre Future shipments to customers with plants in South India",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "SEDEMAC acquired approximately 13 acres of land in Shoolagiri (SIPCOT) for future shipments to South India OEM plants.",
+   "topic": "shoolagiri_land_acquisition",
+   "type": "capex_capacity",
+   "unit": "ACRE",
+   "value": 13.0
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_c0cbde96",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 9,
+    "quote": "ACU: SOP likely in H2FY27 ➔ First SOP for CV market"
+   },
+   "metric": "product_sop",
+   "news_id": "nse-106627693",
+   "page": 9,
+   "pages": [
+    9
+   ],
+   "period": "H2FY27",
+   "period_stated": true,
+   "quarter": "Q4FY26",
+   "quote": "ACU: SOP likely in H2FY27 ➔ First SOP for CV market",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Airbag Control Unit (ACU) Start of Production (SOP) for commercial vehicles is likely in H2FY27.",
+   "topic": "acu_commercial_vehicles_sop",
+   "type": "catalyst"
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_c87f9611",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 9,
+    "quote": "EFI ECU: SOP likely over the next 4-5Q"
+   },
+   "metric": "product_sop",
+   "news_id": "nse-106627693",
+   "page": 9,
+   "pages": [
+    9
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "EFI ECU: SOP likely over the next 4-5Q",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Commercial Vehicle EFI ECU SOP and Power Tool MCU SOP with SLC Technology are both likely over the next 4 to 5 quarters.",
+   "topic": "efi_ecu_powertool_mcu_sop",
+   "type": "catalyst",
+   "unit": "QUARTERS",
+   "value": 4.0,
+   "value_high": 5.0
+  },
+  {
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_91dd2dbd",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 9,
+    "quote": "First bizwin done with a small but established powertool maker; MCU with SLC"
+   },
+   "metric": "business_win",
+   "news_id": "nse-106627693",
+   "page": 9,
+   "pages": [
+    9
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "First bizwin done with a small but established powertool maker; MCU with SLC",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "SEDEMAC secured its first business win with an established power tool maker for MCUs featuring SLC technology.",
+   "topic": "power_tool_mcu_win",
+   "type": "order_book"
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_df5a625e",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 14,
+    "quote": "Semi-conductor supply chain tightening, commodity price inflation ➔ Some RM Cost ↑ likely ➔ Mild EBITDA % pressure likely"
+   },
+   "metric": "ebitda_margin_outlook",
+   "news_id": "nse-106627693",
+   "page": 14,
+   "pages": [
+    14
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Semi-conductor supply chain tightening, commodity price inflation ➔ Some RM Cost ↑ likely ➔ Mild EBITDA % pressure likely",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Semi-conductor supply chain tightening and raw material commodity price inflation may exert mild pressure on EBITDA margins in FY27.",
+   "topic": "fy27_margin_headwinds",
+   "type": "outlook"
+  },
+  {
+   "certainty": "EXPECT",
+   "company_defined": false,
+   "date": "2026-05-18",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_86ae8486",
+   "lab": {
+    "at": "2026-11-01T03:47:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 14,
+    "quote": "Reports of strong El Nino in CY26 ➔ potential negative impact Indian monsoon, US hurricane season ➔ potential negative impact on India 2W, US home-standby generator markets"
+   },
+   "metric": "demand_risk",
+   "news_id": "nse-106627693",
+   "page": 14,
+   "pages": [
+    14
+   ],
+   "period_stated": false,
+   "quarter": "Q4FY26",
+   "quote": "Reports of strong El Nino in CY26 ➔ potential negative impact Indian monsoon, US hurricane season ➔ potential negative impact on India 2W, US home-standby generator markets",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "El Nino in CY26 could negatively impact the Indian monsoon and 2W market demand, while the US hurricane season poses risk to home-standby generator demand.",
+   "topic": "monsoon_and_weather_risk",
+   "type": "risk"
+  }
+ ],
  "call_points": [
   {
    "category": "Margins & costs",
@@ -140,105 +1107,328 @@
    "text": "The US hurricane season could affect the US home-standby generator market; no adverse effect seen so far."
   },
   {
-   "category": "Guidance",
+   "category": "Demand & orders",
    "date": "2026-05-22",
    "lab": {
-    "at": "2026-05-22",
+    "at": "2026-11-01T03:18:14+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "news_id": "nse-106636261",
-   "text": "FY27 dampeners: commodity inflation and tighter semiconductor supply expected to put mild pressure on EBITDA percentage."
+   "text": "ISG ECUs will be introduced on three popular top-10 motorcycle models across three top-four OEMs in FY27."
   },
   {
    "category": "Capex & capacity",
    "date": "2026-05-22",
    "lab": {
-    "at": "2026-05-22",
+    "at": "2026-11-01T03:18:14+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "news_id": "nse-106636261",
-   "text": "Land acquired in Shoolagiri for future shipments to southern India customers."
+   "text": "MF3 plant will become the mother ECU plant offering 3x space (120,000 sq ft) with shipments starting Q2FY27."
+  },
+  {
+   "category": "Capex & capacity",
+   "date": "2026-05-22",
+   "lab": {
+    "at": "2026-11-01T03:18:14+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106636261",
+   "text": "MF4 plant dedicated to electric machines / motors will begin dispatches from Q3FY27."
+  },
+  {
+   "category": "Capex & capacity",
+   "date": "2026-05-22",
+   "lab": {
+    "at": "2026-11-01T03:18:14+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106636261",
+   "text": "Acquired land in Shoolagiri for future shipments to OEMs located in southern India."
+  },
+  {
+   "category": "Margins & costs",
+   "date": "2026-05-22",
+   "lab": {
+    "at": "2026-11-01T03:18:14+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106636261",
+   "text": "Tightening semiconductor supply chain and commodity inflation expected to put mild pressure on EBITDA margin.",
+   "versus_prior": "reiterated"
   },
   {
    "category": "Demand & orders",
    "date": "2026-05-22",
    "lab": {
-    "at": "2026-05-22",
+    "at": "2026-11-01T03:18:14+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "news_id": "nse-106636261",
-   "text": "Three out of top four two-wheeler OEMs in India use SEDEMAC's sensorless ISG."
-  },
-  {
-   "category": "Demand & orders",
-   "date": "2026-05-22",
-   "lab": {
-    "at": "2026-05-22",
-    "by": "ai",
-    "doc": "call"
-   },
-   "news_id": "nse-106636261",
-   "text": "Power tools: first business win with a small power tool maker; SOP expected over next four to five quarters."
+   "text": "Commercial vehicle after-treatment controller SOP is on track for H2FY27."
   },
   {
    "category": "Balance sheet & funding",
    "date": "2026-05-22",
    "lab": {
-    "at": "2026-05-22",
+    "at": "2026-11-01T03:18:14+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
    "news_id": "nse-106636261",
-   "text": "Working capital investment of ₹135 Cr for ₹1,058 Cr revenue, about 13%."
+   "text": "Every ₹100 Cr incremental revenue requires roughly ₹20 Cr fixed asset capex and ₹12-15 Cr working capital."
+  },
+  {
+   "category": "Other",
+   "date": "2026-05-22",
+   "lab": {
+    "at": "2026-11-01T03:18:14+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106636261",
+   "text": "Company plans to conduct investor earnings calls every six months rather than every quarter."
+  },
+  {
+   "category": "Demand & orders",
+   "date": "2026-05-18",
+   "lab": {
+    "at": "2026-11-01T03:06:29+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106627693",
+   "text": "Sensorless ISG adoption growing, supplying 3 of top 4 2W OEMs in India."
   },
   {
    "category": "Risks",
-   "date": "2026-05-22",
+   "date": "2026-05-18",
    "lab": {
-    "at": "2026-05-22",
+    "at": "2026-11-01T03:06:29+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "call",
+    "ok": true
    },
-   "news_id": "nse-106636261",
-   "text": "Customer concentration metric (biggest customer minus next four) has declined over three financial years."
-  },
-  {
-   "category": "Risks",
-   "date": "2026-05-22",
-   "lab": {
-    "at": "2026-05-22",
-    "by": "ai",
-    "doc": "call"
-   },
-   "news_id": "nse-106636261",
-   "text": "EV products were 7.4% of two/three-wheeler revenue in FY26; management sees this as balanced exposure."
-  },
-  {
-   "category": "Risks",
-   "date": "2026-05-22",
-   "lab": {
-    "at": "2026-05-22",
-    "by": "ai",
-    "doc": "call"
-   },
-   "news_id": "nse-106636261",
-   "text": "Management declined to give FY27/FY28 capex budget, product-level margins, order book or volume targets."
+   "news_id": "nse-106627693",
+   "text": "Semiconductor supply tightening and raw material cost inflation may cause mild EBITDA margin pressure in FY27."
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -55.35,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -17.47,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.56,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -90.24,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 63.48,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.27,
+    "AdjustmentsForFinanceCosts": 8.53,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 1.2,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 5.04,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 89.52,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.79,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -0.4,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -3.84,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -4.13,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 4.82,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 4.73,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 3.46,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 0.23,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 17.65,
+    "CashFlowsFromUsedInInvestingActivities": -148.28,
+    "CashFlowsFromUsedInOperatingActivities": 128.02,
+    "CashFlowsFromUsedInOperations": 154.92,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.31,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 26.9,
+    "IncreaseDecreaseInCashAndCashEquivalents": -2.3,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -2.61,
+    "InterestPaidClassifiedAsFinancingActivities": 6.77,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.47,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.07,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 351.95,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 373.05,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -0.18,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 10.37,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 20.55,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 19.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 5.8,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 22.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.02,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 36.93,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 138.56,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 26.76,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "nse-106627744",
+   "span": "FY"
+  }
+ ],
  "company_name": "SEDEMAC Mechatronics Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 3.58,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Income tax matters in dispute"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 1,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 3.58
+  }
+ ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "nse-106627744",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "revenue",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
    "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1058.38,
+     "yoy_pct": null
+    },
     {
      "as_of": "2026-05-18T18:00:00+05:30",
      "basis": "STANDALONE",
@@ -255,37 +1445,42 @@
      "unit": "INR_CR",
      "value": 1058.38,
      "yoy_pct": null
-    },
-    {
-     "as_of": "2026-05-22T16:44:32+05:30",
-     "basis": "CONSOLIDATED",
-     "lab": {
-      "at": "2026-05-22T16:44:32+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "ai",
-      "doc": "call",
-      "unit": "INR_CR"
-     },
-     "news_id": "nse-106636261",
-     "qoq_pct": null,
-     "unit": "INR_CR",
-     "value": 1058.0,
-     "yoy_pct": 61.0
     }
    ],
    "unit": "INR_CR",
-   "updated_as_of": "2026-05-22T16:44:32+05:30",
-   "value": 1058.0,
-   "value_news_id": "nse-106636261",
-   "yoy_pct": 61.0
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
+   "value": 1058.38,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
+   "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "ebitda_margin",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
    "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "ebitda:FY26",
+       "revenue:FY26"
+      ],
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 20.5,
+     "yoy_pct": null
+    },
     {
      "as_of": "2026-05-18T18:00:00+05:30",
      "basis": "STANDALONE",
@@ -306,37 +1501,38 @@
      "unit": "PCT",
      "value": 20.5,
      "yoy_pct": null
-    },
-    {
-     "as_of": "2026-05-22T16:44:32+05:30",
-     "basis": "CONSOLIDATED",
-     "lab": {
-      "at": "2026-05-22T16:44:32+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "ai",
-      "doc": "call",
-      "unit": "PCT"
-     },
-     "news_id": "nse-106636261",
-     "qoq_pct": null,
-     "unit": "PCT",
-     "value": 21.0,
-     "yoy_pct": null
     }
    ],
    "unit": "PCT",
-   "updated_as_of": "2026-05-22T16:44:32+05:30",
-   "value": 21.0,
-   "value_news_id": "nse-106636261",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
+   "value": 20.5,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pat",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
    "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 103.58,
+     "yoy_pct": null
+    },
     {
      "as_of": "2026-05-18T18:00:00+05:30",
      "basis": "STANDALONE",
@@ -353,1162 +1549,2789 @@
      "unit": "INR_CR",
      "value": 103.58,
      "yoy_pct": null
-    },
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
+   "value": 103.58,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "metric": "revenue",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106627744",
+   "sources": [
     {
-     "as_of": "2026-05-22T16:44:32+05:30",
-     "basis": "CONSOLIDATED",
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
      "lab": {
-      "at": "2026-05-22T16:44:32+05:30",
-      "basis": "CONSOLIDATED",
-      "by": "ai",
-      "doc": "call",
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
       "unit": "INR_CR"
      },
-     "news_id": "nse-106636261",
+     "news_id": "nse-106627744",
      "qoq_pct": null,
      "unit": "INR_CR",
-     "value": 100.0,
+     "value": 287.71,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 287.71,
      "yoy_pct": null
     }
    ],
    "unit": "INR_CR",
-   "updated_as_of": "2026-05-22T16:44:32+05:30",
-   "value": 100.0,
-   "value_news_id": "nse-106636261",
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "revenue",
-   "period": "Q4FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
-   "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 287.71,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "calc",
-    "doc": "results",
-    "from": [
-     "pbt_before_exceptional:Q4FY26",
-     "finance_cost:Q4FY26",
-     "depreciation:Q4FY26",
-     "other_income:Q4FY26"
-    ],
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "ebitda",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt_before_exceptional:Q4FY26",
+       "finance_cost:Q4FY26",
+       "depreciation:Q4FY26",
+       "other_income:Q4FY26"
+      ],
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 60.49,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt_before_exceptional:Q4FY26",
+       "finance_cost:Q4FY26",
+       "depreciation:Q4FY26",
+       "other_income:Q4FY26"
+      ],
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 60.49,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 60.49,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "calc",
-    "doc": "results",
-    "from": [
-     "ebitda:Q4FY26",
-     "revenue:Q4FY26"
-    ],
-    "ok": true,
-    "unit": "PCT"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "ebitda_margin",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "ebitda:Q4FY26",
+       "revenue:Q4FY26"
+      ],
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 21.02,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "ebitda:Q4FY26",
+       "revenue:Q4FY26"
+      ],
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 21.02,
+     "yoy_pct": null
+    }
+   ],
    "unit": "PCT",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 21.02,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pat",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 32.08,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 32.08,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 32.08,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "current_tax",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 7.23,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 7.23,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 7.23,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "deferred_tax",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 2.61,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 2.61,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 2.61,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "depreciation",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 17.89,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 17.89,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 17.89,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "employee_cost",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 20.42,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 20.42,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 20.42,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "eps",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 7.32,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 7.32,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 7.32,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "exceptional_items",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "finance_cost",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1.31,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1.31,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 1.31,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "inventory_change",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1.94,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1.94,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 1.94,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "other_expenses",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 35.2,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 35.2,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 35.2,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "other_income",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.63,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.63,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.63,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "paid_up_capital",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 44.16,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 44.16,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 44.16,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pat_continuing",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 32.08,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 32.08,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 32.08,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pbt",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 41.92,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 41.92,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 41.92,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "purchases_stock_in_trade",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "raw_material_cost",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 169.66,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 169.66,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 169.66,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "share_associates",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "tax_expense",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 9.84,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 9.84,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 9.84,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "total_expenses",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 246.42,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 246.42,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 246.42,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "total_income",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 288.34,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 288.34,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 288.34,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pat_discontinued",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "eps_continuing",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 7.32,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 7.32,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 7.32,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "eps_total",
    "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 7.32,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 7.32,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 7.32,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "capex",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 138.56,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 138.56,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 138.56,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "capex_intangible",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 36.93,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 36.93,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 36.93,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "capex_intangible_wip",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "current_tax",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 24.66,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 24.66,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 24.66,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "deferred_tax",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 21.95,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 21.95,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 21.95,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "depreciation",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 63.48,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 63.48,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 63.48,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "calc",
-    "doc": "results",
-    "from": [
-     "pbt_before_exceptional:FY26",
-     "finance_cost:FY26",
-     "depreciation:FY26",
-     "other_income:FY26"
-    ],
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "ebitda",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt_before_exceptional:FY26",
+       "finance_cost:FY26",
+       "depreciation:FY26",
+       "other_income:FY26"
+      ],
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 216.93,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt_before_exceptional:FY26",
+       "finance_cost:FY26",
+       "depreciation:FY26",
+       "other_income:FY26"
+      ],
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 216.93,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 216.93,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "employee_cost",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 86.61,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 86.61,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 86.61,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "eps",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 23.91,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 23.91,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 23.91,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "exceptional_items",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "finance_cost",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 8.53,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 8.53,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 8.53,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "financing_cash_flow",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 17.65,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 17.65,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 17.65,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "inventory_change",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": -16.3,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": -16.3,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": -16.3,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "investing_cash_flow",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": -148.28,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": -148.28,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": -148.28,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "net_cash_flow",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": -2.3,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": -2.3,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": -2.3,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "operating_cash_flow",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 128.02,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 128.02,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 128.02,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "other_expenses",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 109.03,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 109.03,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 109.03,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "other_income",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 5.27,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 5.27,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 5.27,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "paid_up_capital",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 44.16,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 44.16,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 44.16,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pat_continuing",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 103.58,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 103.58,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 103.58,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pat_discontinued",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "pbt",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 150.19,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 150.19,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 150.19,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "purchases_stock_in_trade",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "raw_material_cost",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 662.11,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 662.11,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 662.11,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "share_associates",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "tax_expense",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 46.61,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 46.61,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 46.61,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
+   "as_of": "2026-05-18T16:56:50+05:30",
    "metric": "total_expenses",
    "period": "FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 913.46,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 913.46,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
    "value": 913.46,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "metric": "total_income",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1063.65,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1063.65,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR_CR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
+   "value": 1063.65,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "metric": "eps_continuing",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 23.91,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 23.91,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
+   "value": 23.91,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "metric": "eps_total",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "nse-106627744",
+   "sources": [
+    {
+     "as_of": "2026-05-18T16:56:50+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-11-01T03:06:33+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "nse-106627744",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 23.91,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-05-18T18:00:00+05:30",
+     "basis": "STANDALONE",
+     "lab": {
+      "at": "2026-10-27T09:58:51+05:30",
+      "basis": "STANDALONE",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "xbrl:res:544723:Q4FY26",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 23.91,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "INR",
+   "updated_as_of": "2026-05-18T18:00:00+05:30",
+   "value": 23.91,
+   "value_news_id": "xbrl:res:544723:Q4FY26",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
+    "at": "2026-11-01T03:06:33+05:30",
     "basis": "STANDALONE",
-    "by": "file",
+    "by": "ai",
     "doc": "results",
     "ok": true,
     "unit": "INR_CR"
    },
-   "metric": "total_income",
-   "period": "FY26",
+   "metric": "trade_receivables",
+   "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
+   "source_news_id": "nse-106627744",
    "unit": "INR_CR",
-   "value": 1063.65,
+   "value": 133.72,
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
+   "as_of": "2026-05-18T16:56:50+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
+    "at": "2026-11-01T03:06:33+05:30",
     "basis": "STANDALONE",
-    "by": "file",
+    "by": "ai",
     "doc": "results",
     "ok": true,
-    "unit": "INR"
+    "unit": "INR_CR"
    },
-   "metric": "eps_continuing",
-   "period": "FY26",
+   "metric": "inventories",
+   "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
-   "unit": "INR",
-   "value": 23.91,
+   "source_news_id": "nse-106627744",
+   "unit": "INR_CR",
+   "value": 188.31,
    "yoy_pct": null
   },
   {
-   "as_of": "2026-05-18T18:00:00+05:30",
+   "as_of": "2026-05-18T16:56:50+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-27T09:58:51+05:30",
+    "at": "2026-11-01T03:06:33+05:30",
     "basis": "STANDALONE",
-    "by": "file",
+    "by": "ai",
     "doc": "results",
     "ok": true,
-    "unit": "INR"
+    "unit": "INR_CR"
    },
-   "metric": "eps_total",
-   "period": "FY26",
+   "metric": "net_worth",
+   "period": "Q4FY26",
    "qoq_pct": null,
-   "source_news_id": "xbrl:res:544723:Q4FY26",
-   "unit": "INR",
-   "value": 23.91,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-22T16:44:32+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "call",
-    "unit": "PCT"
-   },
-   "metric": "roce",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "nse-106636261",
-   "unit": "PCT",
-   "value": 40.0,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-22T16:44:32+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "call",
-    "unit": "MILLION"
-   },
-   "metric": "ecu_volume",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "nse-106636261",
-   "unit": "MILLION",
-   "value": 3.9,
-   "yoy_pct": 60.0
-  },
-  {
-   "as_of": "2026-05-22T16:44:32+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "call",
-    "unit": "PCT"
-   },
-   "metric": "ev_share",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "nse-106636261",
-   "unit": "PCT",
-   "value": 7.4,
+   "source_news_id": "nse-106627744",
+   "unit": "INR_CR",
+   "value": 449.2,
    "yoy_pct": null
   },
   {
@@ -2310,8 +5133,39 @@
  ],
  "fy_end_month": 3,
  "governance": {
-  "auditor": null,
-  "auditor_history": [],
+  "auditor": {
+   "as_of": "2026-06-08T19:35:36+05:30",
+   "lab": {
+    "at": "2026-11-01T03:22:47+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106605853"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-05-18T16:56:50+05:30",
+    "lab": {
+     "at": "2026-11-01T03:06:33+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "B S R & Co. LLP",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106627744"
+   },
+   {
+    "as_of": "2026-06-08T19:35:36+05:30",
+    "lab": {
+     "at": "2026-11-01T03:22:47+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106605853"
+   }
+  ],
   "quarters": [
    {
     "as_of": "2026-04-30T16:58:38+05:30",
@@ -2802,96 +5656,6 @@
   {
    "due": "FY27",
    "due_date": "2027-03-31",
-   "given_on": "2026-05-22T16:44:32+05:30",
-   "id": "g_27307030",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "ISG model launches",
-   "source_news_id": "nse-106636261",
-   "source_type": "CONCALL",
-   "statement": "ISG to be introduced on three top-10 motorcycle models from three OEMs; two launches expected in Q1 FY27, one in Q4 FY27.",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "3 models"
-  },
-  {
-   "due": "Q2FY27",
-   "due_date": "2026-09-30",
-   "given_on": "2026-05-22T16:44:32+05:30",
-   "id": "g_1fe7c6af",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "MF3 shipments",
-   "source_news_id": "nse-106636261",
-   "source_type": "CONCALL",
-   "statement": "MF3 ECU shipments expected from Q2 FY27.",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "start Q2 FY27"
-  },
-  {
-   "due": "Q3FY27",
-   "due_date": "2026-12-31",
-   "given_on": "2026-05-22T16:44:32+05:30",
-   "id": "g_1ae8710c",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "MF4 shipments",
-   "source_news_id": "nse-106636261",
-   "source_type": "CONCALL",
-   "statement": "MF4 electric-machine shipments expected from Q3 FY27.",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "start Q3 FY27"
-  },
-  {
-   "due": "H2FY27",
-   "due_date": "2027-03-31",
-   "given_on": "2026-05-22T16:44:32+05:30",
-   "id": "g_5d466abd",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "CV after-treatment controller SOP",
-   "source_news_id": "nse-106636261",
-   "source_type": "CONCALL",
-   "statement": "After-treatment controller for CV market likely to enter production in H2 FY27.",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "H2 FY27"
-  },
-  {
-   "due": "FY27-FY28",
-   "due_date": "2028-03-31",
-   "given_on": "2026-05-22T16:44:32+05:30",
-   "id": "g_2cd69a0d",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "Power tool SOP",
-   "source_news_id": "nse-106636261",
-   "source_type": "CONCALL",
-   "statement": "Power tool motor controller SOP likely over next four to five quarters.",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "4-5 quarters"
-  },
-  {
-   "due": "FY27",
-   "due_date": "2027-03-31",
    "given_on": "2026-07-28T22:53:49+05:30",
    "id": "g_917208d9",
    "lab": {
@@ -2909,88 +5673,686 @@
   }
  ],
  "identity": {
-  "entities": [
-   {
-    "as_of": "2026-05-22T16:44:32+05:30",
-    "lab": {
-     "at": "2026-05-22T16:44:32+05:30",
-     "by": "ai",
-     "doc": "call"
-    },
-    "name": "MF1",
-    "source_news_id": "nse-106636261",
-    "type": "current manufacturing plant"
-   },
-   {
-    "as_of": "2026-05-22T16:44:32+05:30",
-    "lab": {
-     "at": "2026-05-22T16:44:32+05:30",
-     "by": "ai",
-     "doc": "call"
-    },
-    "name": "MF3",
-    "source_news_id": "nse-106636261",
-    "type": "new ECU manufacturing plant"
-   },
-   {
-    "as_of": "2026-05-22T16:44:32+05:30",
-    "lab": {
-     "at": "2026-05-22T16:44:32+05:30",
-     "by": "ai",
-     "doc": "call"
-    },
-    "name": "MF4",
-    "source_news_id": "nse-106636261",
-    "type": "electric machines manufacturing plant"
-   },
-   {
-    "as_of": "2026-05-22T16:44:32+05:30",
-    "lab": {
-     "at": "2026-05-22T16:44:32+05:30",
-     "by": "ai",
-     "doc": "call"
-    },
-    "name": "Shoolagiri",
-    "source_news_id": "nse-106636261",
-    "type": "land acquired for future manufacturing"
-   }
-  ],
+  "entities": [],
   "former_names": [
    "SEDEMAC Mechatronics Private Limited"
   ]
  },
  "industry": "Consumer Discretionary > Automobile and Auto Components > Auto Components > Auto Components & Equipments",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 6,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "Shashikanth Suryanarayanan",
+     "pay_cr": 8.24
+    },
+    {
+     "designation": "Managing Director",
+     "name": "Amit Arun Dixit",
+     "pay_cr": 6.18
+    },
+    {
+     "designation": "Whole Time Director",
+     "name": "Manish Sharma",
+     "pay_cr": 3.25
+    },
+    {
+     "designation": "Director",
+     "name": "Udo Edgar Wolz",
+     "pay_cr": 0.81
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Parthasarathy Namakal Srinivasan",
+     "pay_cr": 0.6
+    },
+    {
+     "designation": "Independent Director",
+     "name": "Poyni Bhatt",
+     "pay_cr": 0.57
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "totals": {
+    "ManagerialRemuneration": 1.49,
+    "RemunerationToDirectors": 1.49
+   }
+  }
+ ],
  "last_filed_at": "2026-10-15T05:53:08+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "A91 EMERGING FUND II LLP",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 1610872.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 484.87
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "ADITYA BIRLA SUN LIFE MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 299003.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 90.0
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "AMANSA HOLDINGS PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 463116.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 139.4
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "AXIS MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 151997.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 45.75
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "FRANKLIN TEMPLETON INVESTMENT FUNDS - FRANKLIN INDIA FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 104382.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 31.42
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "FRANKLIN TEMPLETON MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 83062.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "GOVERNMENT OF SINGAPORE",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 1023299.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 308.01
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "HDFC LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 41349.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 12.45
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "HDFC LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 363500.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 109.41
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "HDFC LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 401993.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 121.0
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 149923.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 45.13
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "INVESCO MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 665531.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 200.32
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "M&G FUNDS (1) FRANKLIN TEMPLETON INDIA EQUITY FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 11075.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 3.33
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "MACE PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 482590.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 145.26
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "MACE PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 245795.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 73.98
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "MONETARY AUTHORITY OF SINGAPORE",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 236922.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 71.31
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NRJN FAMILY TRUST",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 450000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 135.45
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "SBI MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 664452.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 200.0
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "SOCIETE GENERALE",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 161967.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 48.75
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "T ROWE PRICE FUNDS SICAV ASIAN EX JAPAN EQUITY FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 11191.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 3.37
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "T ROWE PRICE GLOBAL ALLOCATION FUND INC",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 890.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 0.27
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "T ROWE PRICE INTERNATIONAL DISCOVERY FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 231768.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 69.76
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "T ROWE PRICE INTERNATIONAL SMALLCAP EQUITY TRUST",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 51952.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 15.64
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "T ROWE PRICE NEW ASIA FUND",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 167026.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 50.27
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "T Rowe Price Emerging Markets Discovery Equities",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 289.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 0.09
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "XPONENTIA CAPITAL PARTNERS LLP",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 288877.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 86.95
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "XPONENTIA OPPORTUNITIES FUND - II",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 992434.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 298.72
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "XPONENTIA OPPORTUNITIES LIMITED",
+    "date": "2026-09-24",
+    "kind": "BLOCK",
+    "price": 3010.0,
+    "qty": 404421.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 121.73
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "A91 EMERGING FUND II LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 1610872.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 484.87
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "AMANSA HOLDINGS PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 463116.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 139.4
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "GOVERNMENT OF SINGAPORE",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 1023299.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 308.01
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "HDFC LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 363500.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 109.41
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "HDFC LIFE INSURANCE COMPANY LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 401993.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 121.0
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "INVESCO MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 354006.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 106.56
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "MACE PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 245795.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 73.98
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "MACE PRIVATE LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 482590.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 145.26
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "MONETARY AUTHORITY OF SINGAPORE",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 236922.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 71.31
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "NRJN FAMILY TRUST",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 450000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 135.45
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "SBI MUTUAL FUND",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 524917.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 158.0
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "T ROWE PRICE INTERNATIONAL DISCOVERY FUND",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 231768.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SEDEMAC",
+    "value_cr": 69.76
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "XPONENTIA CAPITAL PARTNERS LLP",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 288877.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 86.95
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "XPONENTIA OPPORTUNITIES FUND - II",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 992434.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 298.72
+   },
+   {
+    "as_of": "2026-09-24T15:30:00+05:30",
+    "client": "XPONENTIA OPPORTUNITIES LIMITED",
+    "date": "2026-09-24",
+    "kind": "BULK",
+    "price": 3010.0,
+    "qty": 404421.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SEDEMAC",
+    "value_cr": 121.73
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.76,
+     "description": "Remeasurements of defined benefit obligations",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "nse-106627744",
+   "values": {
+    "not_reclassified_cr": 0.76,
+    "oci_net_cr": 0.46,
+    "profit_cr": 32.08,
+    "tax_not_reclassified_cr": 0.3,
+    "total_comprehensive_cr": 32.54
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.58,
+     "description": "Remeasurements of defined benefit obligations",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -1.58,
+    "oci_net_cr": -1.18,
+    "profit_cr": 33.31,
+    "tax_not_reclassified_cr": -0.4,
+    "total_comprehensive_cr": 32.13
+   }
+  }
+ ],
  "operating_notes": [
   {
-   "as_of": "2026-05-22T16:44:32+05:30",
+   "as_of": "2026-05-18T16:38:05+05:30",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:05:46+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "slides"
    },
-   "source_news_id": "nse-106636261",
-   "text": "FY26: 8.4 million two/three-wheelers produced with ISG in India vs 5.1 million three years ago; SEDEMAC accounted for over 80% of FY26 ISG volume growth."
+   "source_news_id": "nse-106627693",
+   "text": "Cumulatively sold >12 million control-intensive ECUs to vehicle and industrial OEMs."
+  },
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "source_news_id": "nse-106627744",
+   "text": "New Labour Codes implementation resulted in a one-time employee benefit provision of ₹0.81 Cr in Q4FY26."
   },
   {
    "as_of": "2026-05-22T16:44:32+05:30",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:11:01+05:30",
     "by": "ai",
     "doc": "call"
    },
    "source_news_id": "nse-106636261",
-   "text": "FY26: EV products were 7.4% of two/three-wheeler revenue."
+   "text": "Power tool market represents >300 million units globally; motor controller pricing scales primarily with kilowatt rating."
   },
   {
    "as_of": "2026-05-22T16:44:32+05:30",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:11:01+05:30",
     "by": "ai",
     "doc": "call"
    },
    "source_news_id": "nse-106636261",
-   "text": "FY26: exports were about $10 million, all in the genset space."
+   "text": "FY26 total 2/3W produced in India with ISG reached 8.4 million units, up from 5.1 million units three years earlier."
   },
   {
    "as_of": "2026-07-28T22:53:49+05:30",
@@ -3143,22 +6505,6 @@
  "predictions": [
   {
    "comparison": ">=",
-   "created_on": "2026-05-22T16:44:32+05:30",
-   "id": "p_4ba1a98d",
-   "kpi": "EV share of 2/3W revenue",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "metric": "ev_share",
-   "period": "FY27",
-   "source_news_id": "nse-106636261",
-   "status": "OPEN",
-   "value": 7.4
-  },
-  {
-   "comparison": ">=",
    "created_on": "2026-07-28T22:53:49+05:30",
    "id": "p_5d37587e",
    "kpi": "EBITDA margin holding or improving versus Q1FY27",
@@ -3174,6 +6520,190 @@
    "value": 19.4
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 9,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 3.45,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 10.0,
+      "OtherRelatedPartyTransactionsExpense": 6.27
+     },
+     "party": "Amit Arun Dixit"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 3.86,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 4.0,
+      "OtherRelatedPartyTransactionsExpense": 8.24
+     },
+     "party": "Prof. Shashikanth Suryanarayanan"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.32,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 2.0,
+      "OtherRelatedPartyTransactionsExpense": 3.38,
+      "OtherRelatedPartyTransactionsIncome": 0.35
+     },
+     "party": "Manish Sharma"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.39,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 2.32
+     },
+     "party": "Rajesh Madhukar Sheth"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.82
+     },
+     "party": "Udo Edgar Wolz"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.34,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.6
+     },
+     "party": "Namakal Srinivasan Parthasarathy"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.34,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.57
+     },
+     "party": "Poyni Bhatt"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.03,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.53
+     },
+     "party": "Ashwini Amit Dixit"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.24
+     },
+     "party": "Prasad Rajendra Chavan"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "basis": "STANDALONE",
+   "entered": false,
+   "items": [],
+   "kind": "results",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 0,
+   "period": "Q4FY26",
+   "source_news_id": "nse-106627744"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544723",
  "section_lab": {
@@ -3186,29 +6716,421 @@
    "at": "2026-10-23T18:04:29+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:36:35+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "auto_components",
+ "segment_balance": [
+  {
+   "as_of": "2026-05-18T16:56:50+05:30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 654.05,
+     "liabilities_cr": 259.6,
+     "segment": "Mobility"
+    },
+    {
+     "assets_cr": 74.25,
+     "liabilities_cr": 36.16,
+     "segment": "Industrial"
+    }
+   ],
+   "source_news_id": "nse-106627744",
+   "totals": {
+    "assets_cr": 728.3,
+    "liabilities_cr": 295.76,
+    "net_assets_cr": 813.7,
+    "net_liabilities_cr": 364.5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 835.56,
+     "liabilities_cr": 303.63,
+     "segment": "Mobility"
+    },
+    {
+     "assets_cr": 78.95,
+     "liabilities_cr": 23.64,
+     "segment": "Industrial"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "totals": {
+    "assets_cr": 914.51,
+    "liabilities_cr": 327.27,
+    "net_assets_cr": 943.06,
+    "net_liabilities_cr": 449.76
+   }
+  }
+ ],
  "segment_mix": [],
  "standalone_only": [
   "Q4FY26",
   "Q1FY27"
  ],
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 64.35000000000001,
+    "CWIP": 53.24,
+    "Equity Capital": 0.028307,
+    "Fixed Assets": 196.61,
+    "Investments": 19.39,
+    "Other Assets": 221.92000000000002,
+    "Other Liabilities": 123.43169300000001,
+    "Reserves": 303.35,
+    "Total Assets": 491.16,
+    "Total Liabilities": 491.16
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 45.33,
+    "Expenses": 537.34,
+    "Interest": 12.03,
+    "Net Profit": 47.05,
+    "Net Profit (owners)": 47.05,
+    "OPM %": 18.382040221155595,
+    "Operating Profit": 121.01999999999998,
+    "Other Income": 4.0400000000000205,
+    "Profit before tax": 67.7,
+    "Sales": 658.36,
+    "Tax": 20.65,
+    "Tax %": 30.50221565731167
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": 12.86,
+    "Cash from Investing Activity": -104.75,
+    "Cash from Operating Activity": 90.91,
+    "Net Cash Flow": -0.98
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 17.89,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 227.21999999999997,
+    "Interest": 1.31,
+    "Net Profit": 32.08,
+    "Net Profit (owners)": 32.08,
+    "OPM %": 21.024642869556153,
+    "Operating Profit": 60.49000000000001,
+    "Other Income": 0.6299999999999955,
+    "Profit before tax": 41.92,
+    "Profit for PE": 32.08,
+    "Sales": 287.71,
+    "Tax": 9.84,
+    "Tax %": 23.47328244274809
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 72.44,
+    "CWIP": 90.77,
+    "Equity Capital": 44.1615,
+    "Fixed Assets": 253.26999999999998,
+    "Investments": 0.0,
+    "Other Assets": 469.6600000000001,
+    "Other Liabilities": 292.0585,
+    "Reserves": 405.04,
+    "Total Assets": 813.7,
+    "Total Liabilities": 813.7
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 63.48,
+    "Expenses": 841.44,
+    "Interest": 8.53,
+    "Net Profit": 103.58,
+    "Net Profit (owners)": 103.58,
+    "OPM %": 20.49736389576523,
+    "Operating Profit": 216.94000000000005,
+    "Other Income": 5.259999999999934,
+    "Profit before tax": 150.19,
+    "Sales": 1058.38,
+    "Tax": 46.61,
+    "Tax %": 31.034023570144484
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 17.65,
+    "Cash from Investing Activity": -147.97,
+    "Cash from Operating Activity": 128.02,
+    "Net Cash Flow": -2.3
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 16.37,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 250.60000000000002,
+    "Interest": 2.32,
+    "Net Profit": 33.31,
+    "Net Profit (owners)": 33.31,
+    "OPM %": 19.10126868321657,
+    "Operating Profit": 59.16999999999996,
+    "Other Income": 0.8600000000000492,
+    "Profit before tax": 41.34,
+    "Profit for PE": 33.31,
+    "Sales": 309.77,
+    "Tax": 8.03,
+    "Tax %": 19.424286405418478
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "SEDEMAC",
  "timeline": [
+  {
+   "date": "2026-05-11T08:40:17+05:30",
+   "event_type": "MONTHLY_BUSINESS_UPDATE",
+   "id": "t_c5d57be5",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-11-01T03:05:41+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "news_id": "nse-106616233",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SEDEMAC2007_11052026083944_20260511-SEDEMAC_IntimationofPressRelease.pdf",
+   "summary": "SEDEMAC Mechatronics Limited conducted a **Risk Assessment Survey 2026** (May 1–8, 2026) with 20 investors/analysts, scoring 13 key risks via anonymous feedback.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-05-18T16:38:05+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_c81272a7",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T03:05:46+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "news_id": "nse-106627693",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SEDEMAC2007_18052026163735_20260518_Investor_Presentation.pdf",
+   "summary": "SEDEMAC released its FY26 investor presentation highlighting 61% revenue growth to ₹1,058 Cr and 119% PAT growth to ₹104 Cr."
+  },
+  {
+   "basis": "STANDALONE",
+   "date": "2026-05-18T16:56:50+05:30",
+   "event_type": "RESULTS",
+   "id": "t_b4498208",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T03:06:33+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "news_id": "nse-106627744",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SEDEMAC2007_18052026165639_20260518_Outcome_of_Board_Meeting.pdf",
+   "quarter": "Q4FY26",
+   "summary": "Q4FY26 results (standalone): revenue ₹287.71 Cr, net profit ₹32.08 Cr."
+  },
+  {
+   "date": "2026-05-20T13:21:30+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_42248221",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-11-01T03:10:56+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106631230",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SEDEMAC2007_20052026132112_20260520_Outcome_of_Analyst_Call.pdf",
+   "summary": "SEDEMAC Mechatronics Limited shared the earnings conference call recording for Q4FY26 on May 18, 2026, via its website.",
+   "tier": "TIMELINE"
+  },
   {
    "date": "2026-05-22T16:44:32+05:30",
    "event_type": "CONCALL_PRESENTATION",
    "id": "t_c3273e1b",
    "impact_level": "MODERATE",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:11:01+05:30",
     "by": "ai",
     "doc": "call"
    },
    "news_id": "nse-106636261",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/SEDEMAC2007_22052026164419_20260522_IntimationofTransciptofCall.pdf",
-   "summary": "On 18 May 2026 SEDEMAC held its first post-listing earnings call, reporting FY26 revenue of ₹1,058 Cr (up 61%), 21% EBITDA margin and 40% RoCE, and flagging ISG adoption on three top-10 motorcycles in FY27."
+   "summary": "SEDEMAC reported transcript of maiden post-IPO earnings call outlining FY27 ISG motorcycle launches and capacity ramp-ups at MF3 and MF4."
+  },
+  {
+   "date": "2026-05-22T20:13:52+05:30",
+   "event_type": "LITIGATION_REGULATORY",
+   "id": "t_47b14010",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-11-01T03:18:40+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106637029",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SEDEMAC2007_22052026201335_20260522-IntimationforGSTNotice.pdf",
+   "summary": "Received Tamil Nadu GST show cause notice demanding ₹2.35 Cr (tax ₹2.14 Cr, penalty ₹0.21 Cr) for FY23 and FY24; contesting by June 9, 2026."
+  },
+  {
+   "date": "2026-06-08T19:35:36+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_825cdf44",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-11-01T03:22:47+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106605853",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/team_bbodade_30042026164348_SEDEMAC.pdf",
+   "summary": "SEDEMAC Mechatronics promoter Anaykumar Avinash Joshi submitted a declaration under Regulation 31(4) confirming zero share encumbrance for FY26."
   },
   {
    "date": "2026-07-28T22:53:49+05:30",
@@ -3225,114 +7147,102 @@
    "summary": "SEDEMAC's July 2026 investor presentation reported Q1FY27 revenue of ₹310 Cr (+43% YoY), EBITDA of ₹60 Cr (+31%) and PAT of ₹33 Cr (+95%), with management flagging input-cost pressure and guiding to flat-to-better EBITDA margin for the rest of FY27."
   }
  ],
- "upcoming_events": [],
- "updated_at": "2026-10-27T09:58:51+05:30",
+ "upcoming_events": [
+  {
+   "as_of": "2026-05-22T20:13:52+05:30",
+   "date": "2026-06-09",
+   "description": "Deadline to file objections and avail personal hearing for Tamil Nadu GST notice",
+   "event_type": "OTHER",
+   "lab": {
+    "at": "2026-11-01T03:18:40+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106637029"
+  }
+ ],
+ "updated_at": "2026-11-01T03:22:47+05:30",
  "watchlist": [
   {
    "check_by": "2027-03-31",
    "check_in": "FY27 results",
-   "created_on": "2026-05-22T16:44:32+05:30",
-   "id": "w_1c1f02a6",
+   "created_on": "2026-05-18T16:38:05+05:30",
+   "id": "w_6d658ff7",
    "kind": "KPI",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:05:46+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "slides"
    },
-   "source_news_id": "nse-106636261",
-   "status": "OPEN",
-   "status_history": [],
-   "target": "mild pressure vs FY26 21%",
-   "text": "EBITDA margin"
+   "metric": "export_share",
+   "period": "FY27",
+   "source_news_id": "nse-106627693",
+   "status": "PARTIAL",
+   "status_history": [
+    {
+     "as_of": "2026-05-22T16:44:32+05:30",
+     "evidence": "In FY26, 7.4% of 2/3W revenue came from EV products (MCUs).",
+     "source_news_id": "nse-106636261",
+     "status": "PARTIAL"
+    }
+   ],
+   "target": "> 7.4%",
+   "text": "EV product revenue share in 2/3W segment"
   },
   {
-   "check_by": "2027-03-31",
-   "check_in": "FY27 results",
+   "check_by": "2026-09-30",
+   "check_in": "H1FY27 results",
    "created_on": "2026-05-22T16:44:32+05:30",
-   "id": "w_f9d5adea",
+   "id": "w_d6f3ceb2",
    "kind": "KPI",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:11:01+05:30",
     "by": "ai",
     "doc": "call"
    },
+   "metric": "ebitda_margin",
+   "period": "H1FY27",
    "source_news_id": "nse-106636261",
    "status": "OPEN",
    "status_history": [],
-   "target": "above 7.4%",
-   "text": "EV share of 2/3W revenue"
+   "target": null,
+   "text": "EBITDA margin amid RM inflation and supply tightening"
   },
   {
    "check_by": null,
    "check_in": null,
    "created_on": "2026-05-22T16:44:32+05:30",
-   "id": "w_9bd4fd90",
+   "id": "w_e63fe497",
    "kind": "CONCERN",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:11:01+05:30",
     "by": "ai",
     "doc": "call"
    },
-   "response": "Declined to disclose, citing dependence on business demand; pointed to historical capex ratios.",
+   "response": "Management declined to disclose future capex figures, stating investment depends dynamically on business demand.",
    "source_news_id": "nse-106636261",
    "status": "OPEN",
    "status_history": [],
    "target": null,
-   "text": "Analyst asked for FY27/FY28 capex budget."
+   "text": "Analyst asked for future capex budgeted for FY27 and FY28."
   },
   {
    "check_by": null,
    "check_in": null,
    "created_on": "2026-05-22T16:44:32+05:30",
-   "id": "w_a9a8fef8",
+   "id": "w_aba918a9",
    "kind": "CONCERN",
    "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
+    "at": "2026-11-01T03:11:01+05:30",
     "by": "ai",
     "doc": "call"
    },
-   "response": "Declined to comment on individual product lines; said to wait for milestone announcements.",
+   "response": "Management stated automotive supply is not an order book/project business and declined to guide specific utilisation or volume targets.",
    "source_news_id": "nse-106636261",
    "status": "OPEN",
    "status_history": [],
    "target": null,
-   "text": "Analyst asked for product-level margins and revenue contribution of ISG+EFI."
-  },
-  {
-   "check_by": null,
-   "check_in": null,
-   "created_on": "2026-05-22T16:44:32+05:30",
-   "id": "w_9296ca18",
-   "kind": "CONCERN",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "response": "Said order book concept is not relevant for automotive; OEMs give firm orders for a month.",
-   "source_news_id": "nse-106636261",
-   "status": "OPEN",
-   "status_history": [],
-   "target": null,
-   "text": "Analyst asked for order book."
-  },
-  {
-   "check_by": null,
-   "check_in": null,
-   "created_on": "2026-05-22T16:44:32+05:30",
-   "id": "w_b805402a",
-   "kind": "CONCERN",
-   "lab": {
-    "at": "2026-05-22T16:44:32+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "response": "Declined to provide quantitative numbers.",
-   "source_news_id": "nse-106636261",
-   "status": "OPEN",
-   "status_history": [],
-   "target": null,
-   "text": "Analyst asked for volume/revenue targets for new plants and power tools."
+   "text": "Analyst asked for specific order book standing and target capacity utilisation numbers for MF3 and MF4."
   },
   {
    "check_by": "2026-09-30",

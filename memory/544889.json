@@ -1,4 +1,56 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-02-28",
+     "name": "S R B C & CO LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2029-02-28",
+     "name": "S R B C & CO LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-09-28T18:36:27+05:30",
@@ -93,6 +145,84 @@
  "capital_actions": [],
  "company_name": "Symbiotec Pharmalab Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0036,
+    "DebtServiceCoverageRatio": 0.0058,
+    "InterestServiceCoverageRatio": 0.0681
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0022,
+    "DebtServiceCoverageRatio": 0.0125,
+    "InterestServiceCoverageRatio": 0.1402
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-21T18:00:00+05:30",
@@ -996,7 +1126,691 @@
   ]
  },
  "industry": "Healthcare > Pharmaceuticals & Biotechnology > Pharmaceuticals",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 0.02,
+    "after_qty": 9320.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.02,
+    "before_qty": 10220.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-24",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "VIJAY SHARMA",
+    "qty": 900.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-24",
+    "value_cr": 0.0945
+   },
+   {
+    "after_pct": 0.04,
+    "after_qty": 27000.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.05,
+    "before_qty": 29000.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "DEEPAK PATEL",
+    "qty": 2000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.237
+   },
+   {
+    "after_pct": 0.03,
+    "after_qty": 16120.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.03,
+    "before_qty": 17120.0,
+    "category": "Designated Person",
+    "exchange": "NSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "DEVENDRA SINGH KUSHWAH",
+    "qty": 1000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.1174
+   },
+   {
+    "after_pct": 0.02,
+    "after_qty": 13000.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.04,
+    "before_qty": 25470.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "DHARM SHANKER PANDEY",
+    "qty": 12470.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 1.4635
+   },
+   {
+    "after_pct": 0.02,
+    "after_qty": 15110.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.03,
+    "before_qty": 20610.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "DR.PRATIMA KHATRI",
+    "qty": 5500.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.6464
+   },
+   {
+    "after_pct": 0.02,
+    "after_qty": 15080.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.04,
+    "before_qty": 24280.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "JITENDRA SHARMA",
+    "qty": 9200.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 1.0715
+   },
+   {
+    "after_pct": 0.04,
+    "after_qty": 27090.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.06,
+    "before_qty": 38590.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "MITESH PATEL",
+    "qty": 11500.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 1.3439
+   },
+   {
+    "after_pct": 0.03,
+    "after_qty": 18795.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.03,
+    "before_qty": 19795.0,
+    "category": "Designated Person",
+    "exchange": "NSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "NISHIKANT Digambar GHADGE",
+    "qty": 1000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.118
+   },
+   {
+    "after_pct": 0.01,
+    "after_qty": 5375.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.02,
+    "before_qty": 12375.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "RAJESH BHIMRAO MESHRAM",
+    "qty": 7000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.8078
+   },
+   {
+    "after_pct": 0.06,
+    "after_qty": 40865.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.09,
+    "before_qty": 57865.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "RAMAN PRASAD VERMA",
+    "qty": 17000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 1.9867
+   },
+   {
+    "after_pct": 0.02,
+    "after_qty": 11745.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.02,
+    "before_qty": 14245.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "SACHIN MADHUKAR CHAUDHARI",
+    "qty": 2500.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.2932
+   },
+   {
+    "after_pct": 0.05,
+    "after_qty": 30290.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.07,
+    "before_qty": 45290.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "SUMAN PODDER",
+    "qty": 15000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 1.7661
+   },
+   {
+    "after_pct": 0.01,
+    "after_qty": 5155.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.02,
+    "before_qty": 13655.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "SUNIL KUMAR PANDEY",
+    "qty": 8500.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 1.0061
+   },
+   {
+    "after_pct": 0.01,
+    "after_qty": 7320.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.02,
+    "before_qty": 9320.0,
+    "category": "Designated Person",
+    "exchange": "NSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-30",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "VIJAY SHARMA",
+    "qty": 2000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.238
+   },
+   {
+    "after_pct": 0.02,
+    "after_qty": 14470.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.03,
+    "before_qty": 19970.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-28",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "VIVEK ASTHANA",
+    "qty": 5500.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.5801
+   },
+   {
+    "after_pct": 0.02,
+    "after_qty": 13470.0,
+    "as_of": "2026-10-05T23:59:00+05:30",
+    "before_pct": 0.02,
+    "before_qty": 14470.0,
+    "category": "Designated Person",
+    "exchange": "BSE",
+    "filed": "2026-10-05",
+    "filing_id": "3914",
+    "from": "2026-09-29",
+    "instrument": "Equity",
+    "mode": "Market Sale",
+    "person": "VIVEK ASTHANA",
+    "qty": 1000.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "to": "2026-09-30",
+    "value_cr": 0.1094
+   }
+  ],
+  "filings": [
+   "3914"
+  ]
+ },
  "last_filed_at": "2026-10-15T12:37:12+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1074.04,
+    "qty": 547601.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 58.81
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1074.1,
+    "qty": 552698.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 59.37
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1071.88,
+    "qty": 573416.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 61.46
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1073.42,
+    "qty": 573716.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 61.58
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1069.13,
+    "qty": 403571.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 43.15
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1069.4,
+    "qty": 403571.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 43.16
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1079.32,
+    "qty": 752199.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 81.19
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1057.96,
+    "qty": 928711.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 98.25
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1066.89,
+    "qty": 1847308.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 197.09
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1068.22,
+    "qty": 1876359.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 200.44
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1104.29,
+    "qty": 667966.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 73.76
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1105.17,
+    "qty": 667966.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 73.82
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1063.42,
+    "qty": 842160.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 89.56
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1063.88,
+    "qty": 842160.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 89.6
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1049.44,
+    "qty": 627323.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 65.83
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1049.01,
+    "qty": 628198.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 65.9
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "TIMF HOLDINGS",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 989.2,
+    "qty": 377247.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 37.32
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1057.63,
+    "qty": 446917.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 47.27
+   },
+   {
+    "as_of": "2026-09-01T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-09-01",
+    "kind": "BULK",
+    "price": 1051.46,
+    "qty": 471917.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 49.62
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 1123.68,
+    "qty": 357516.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 40.17
+   },
+   {
+    "as_of": "2026-09-02T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-02",
+    "kind": "BULK",
+    "price": 1123.4,
+    "qty": 357516.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SYMBIOTEC",
+    "value_cr": 40.16
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.111,
+     "description": "Re-measurements gains/ (losses) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.153,
+     "description": "Exchange difference on translation of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.111,
+    "oci_net_cr": 0.066,
+    "profit_cr": 14.061,
+    "reclassified_cr": 0.153,
+    "tax_not_reclassified_cr": -0.024,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 14.127,
+    "total_comprehensive_nci_cr": 0.006,
+    "total_comprehensive_owners_cr": 14.121
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.066,
+     "description": "Re-measurements gains/ (losses) on defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.066,
+    "oci_net_cr": -0.049,
+    "profit_cr": 47.008,
+    "tax_not_reclassified_cr": -0.017,
+    "total_comprehensive_cr": 46.959
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-28T18:36:27+05:30",
@@ -1176,6 +1990,16 @@
    "by": "file",
    "doc": "other"
   },
+  "insider_trades": {
+   "at": "2026-11-01T14:16:36+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:29:21+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "pledges": {
    "at": "2026-09-22T14:30:00+05:30",
    "by": "file",
@@ -1185,17 +2009,20 @@
  "sector": "pharma",
  "segment_mix": [
   {
-   "as_of": "2026-09-28T18:36:27+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-09-28T18:36:27+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q1FY27",
-   "revenue_cr": 215.0,
-   "segment": "API",
-   "share_pct": null,
-   "source_news_id": "nse-106798583"
+   "segment": "Manfucaturing of Pharmaceutical",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -1655,6 +2482,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 21.824,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 172.95299999999997,
+    "Interest": 6.179,
+    "Minority share": 0.005,
+    "Net Profit": 14.061,
+    "Net Profit (owners)": 14.056,
+    "OPM %": 20.71831308732525,
+    "Operating Profit": 45.19700000000003,
+    "Other Income": 0.33799999999997254,
+    "Profit before tax": 17.532,
+    "Profit for PE": 14.056,
+    "Sales": 218.15,
+    "Tax": 3.471,
+    "Tax %": 19.798083504449007
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 10.147,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 151.603,
+    "Interest": 5.62,
+    "Net Profit": 47.008,
+    "Net Profit (owners)": 47.008,
+    "OPM %": 28.09673548564571,
+    "Operating Profit": 59.23999999999998,
+    "Other Income": 19.547000000000025,
+    "Profit before tax": 63.02,
+    "Profit for PE": 47.008,
+    "Sales": 210.843,
+    "Tax": 16.012,
+    "Tax %": 25.407807045382416
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "SYMBIOTEC",
  "timeline": [
   {

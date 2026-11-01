@@ -1,16 +1,32 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-10-14T14:10:35+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-09-30",
+     "name": "S S Kothari Mehta & Company",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
    "lab": {
-    "at": "2026-10-14T14:10:35+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106817142"
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
   }
  ],
+ "balance_sheet": [],
  "business_summary": {
   "as_of": "2026-10-14T14:10:35+05:30",
   "lab": {
@@ -74,6 +90,26 @@
  "capital_actions": [],
  "company_name": "Kanohar Electricals Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-06T18:00:00+05:30",
@@ -713,7 +749,144 @@
  "fy_end_month": 3,
  "governance": {
   "auditor": null,
-  "auditor_history": []
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-30T12:11:25+05:30",
+    "board": [
+     {
+      "appointed": "1976-06-14",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Dinesh Singhal",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "1981-04-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Adesh Singhal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2014-01-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Vivek Singhal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2014-01-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Abhishek Singhal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-07-03",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sangeeta Khorana",
+      "role": null,
+      "tenure_months": 14.28
+     },
+     {
+      "appointed": "2025-07-03",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Anil Bhardwaj",
+      "role": null,
+      "tenure_months": 14.28
+     },
+     {
+      "appointed": "2025-07-03",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashok Kumar Goel",
+      "role": null,
+      "tenure_months": 14.28
+     },
+     {
+      "appointed": "2025-07-03",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ram Kumar Chugh",
+      "role": null,
+      "tenure_months": 14.28
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Ashok Kumar Goel",
+      "Anil Bhardwaj",
+      "Abhishek Singhal"
+     ],
+     "corporate social responsibility committee": [
+      "Dinesh Singhal",
+      "Anil Bhardwaj",
+      "Sangeeta Khorana"
+     ],
+     "nomination and remuneration committee": [
+      "Ashok Kumar Goel",
+      "Anil Bhardwaj",
+      "Ram Kumar Chugh"
+     ],
+     "risk management committee": [
+      "Adesh Singhal",
+      "Anil Bhardwaj",
+      "Abhishek Singhal"
+     ],
+     "stakeholders relationship committee": [
+      "Ram Kumar Chugh",
+      "Vivek Singhal",
+      "Abhishek Singhal"
+     ]
+    },
+    "complaints": {
+     "disposed": 124.0,
+     "pending": 2.0,
+     "received": 126.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 49.0,
+     "board": 49.0,
+     "nomination and remuneration committee": 32.0,
+     "risk management committee": 71.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749600_30102026121124_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
  },
  "guidance": [
   {
@@ -767,6 +940,1146 @@
  "market_deals": {
   "events": [
    {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "GROWW MUTUAL FUND",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 740.38,
+    "qty": 475636.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 35.22
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 743.18,
+    "qty": 521024.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 38.72
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 743.51,
+    "qty": 521024.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 38.74
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 741.97,
+    "qty": 567570.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 42.11
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 742.9,
+    "qty": 692461.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 51.44
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 743.99,
+    "qty": 1030878.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 76.7
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 744.34,
+    "qty": 1104532.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 82.21
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 751.45,
+    "qty": 557168.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 41.87
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 749.33,
+    "qty": 557168.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 41.75
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 735.6,
+    "qty": 564735.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 41.54
+   },
+   {
+    "as_of": "2026-09-16T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-16",
+    "kind": "BULK",
+    "price": 735.93,
+    "qty": 564735.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 41.56
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 832.72,
+    "qty": 655831.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 54.61
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 832.46,
+    "qty": 655831.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 54.6
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 832.77,
+    "qty": 721207.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 60.06
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 830.24,
+    "qty": 726284.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 60.3
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 831.46,
+    "qty": 352406.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 29.3
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 839.96,
+    "qty": 481543.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 40.45
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 825.74,
+    "qty": 763409.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 63.04
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 825.42,
+    "qty": 763441.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 63.02
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 838.98,
+    "qty": 1197167.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 100.44
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 838.4,
+    "qty": 1197167.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 100.37
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 830.41,
+    "qty": 495518.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 41.15
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 831.03,
+    "qty": 495518.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 41.18
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 852.52,
+    "qty": 400245.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 34.12
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 812.62,
+    "qty": 400245.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 32.52
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 833.22,
+    "qty": 603039.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 50.25
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 833.62,
+    "qty": 603039.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 50.27
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 901.24,
+    "qty": 418889.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 37.75
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 900.57,
+    "qty": 418889.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 37.72
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 913.59,
+    "qty": 410248.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 37.48
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 900.04,
+    "qty": 410248.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 36.92
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 902.6,
+    "qty": 620312.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 55.99
+   },
+   {
+    "as_of": "2026-09-23T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-23",
+    "kind": "BULK",
+    "price": 902.35,
+    "qty": 620312.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 55.97
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 979.34,
+    "qty": 649796.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 63.64
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 978.57,
+    "qty": 649796.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 63.59
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 984.29,
+    "qty": 474096.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 46.66
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 984.05,
+    "qty": 480589.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 47.29
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 989.82,
+    "qty": 487999.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 48.3
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 988.86,
+    "qty": 487999.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 48.26
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 986.82,
+    "qty": 743206.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 73.34
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 986.35,
+    "qty": 743206.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 73.31
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 977.31,
+    "qty": 787837.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 77.0
+   },
+   {
+    "as_of": "2026-10-05T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-05",
+    "kind": "BULK",
+    "price": 977.44,
+    "qty": 802433.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 78.43
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 990.46,
+    "qty": 398739.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 39.49
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 987.33,
+    "qty": 398739.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 39.37
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 995.57,
+    "qty": 441111.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 43.92
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 971.42,
+    "qty": 446476.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 43.37
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 991.31,
+    "qty": 513765.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 50.93
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 991.55,
+    "qty": 513765.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 50.94
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 992.7,
+    "qty": 721805.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 71.65
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 983.95,
+    "qty": 749066.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 73.7
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1072.84,
+    "qty": 459659.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 49.31
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1072.97,
+    "qty": 459659.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 49.32
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1080.17,
+    "qty": 550696.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 59.48
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1080.86,
+    "qty": 637676.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 68.92
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1075.24,
+    "qty": 317923.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 34.18
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1068.08,
+    "qty": 791336.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 84.52
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1090.26,
+    "qty": 435541.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 47.49
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1081.2,
+    "qty": 435541.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 47.09
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1078.99,
+    "qty": 424012.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 45.75
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1076.94,
+    "qty": 429485.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 46.25
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1082.64,
+    "qty": 411348.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 44.53
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1082.88,
+    "qty": 411348.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 44.54
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1074.24,
+    "qty": 605489.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 65.04
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1073.48,
+    "qty": 605489.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 65.0
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1085.47,
+    "qty": 831752.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 90.28
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 1074.47,
+    "qty": 877507.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 94.29
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1133.74,
+    "qty": 752695.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 85.34
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1133.33,
+    "qty": 752695.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 85.31
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1152.86,
+    "qty": 429856.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 49.56
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1152.86,
+    "qty": 434843.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 50.13
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1134.71,
+    "qty": 610328.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 69.25
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1148.5,
+    "qty": 726017.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 83.38
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1113.02,
+    "qty": 509595.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 56.72
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1131.09,
+    "qty": 509595.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 57.64
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1138.67,
+    "qty": 458599.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 52.22
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1137.48,
+    "qty": 467707.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 53.2
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1152.28,
+    "qty": 431708.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 49.74
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1151.25,
+    "qty": 431708.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 49.7
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1138.36,
+    "qty": 865813.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 98.56
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1138.8,
+    "qty": 865813.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 98.6
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1133.0,
+    "qty": 1101408.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 124.79
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 1132.08,
+    "qty": 1116687.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 126.42
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1129.23,
+    "qty": 417859.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 47.19
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1128.23,
+    "qty": 471512.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 53.2
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1134.05,
+    "qty": 455775.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 51.69
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1131.23,
+    "qty": 455775.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 51.56
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1132.35,
+    "qty": 401773.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 45.49
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1131.68,
+    "qty": 401773.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 45.47
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1129.81,
+    "qty": 485336.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 54.83
+   },
+   {
+    "as_of": "2026-10-09T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-09",
+    "kind": "BULK",
+    "price": 1128.21,
+    "qty": 489294.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 55.2
+   },
+   {
+    "as_of": "2026-10-12T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-12",
+    "kind": "BULK",
+    "price": 1155.49,
+    "qty": 400231.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 46.25
+   },
+   {
+    "as_of": "2026-10-12T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-12",
+    "kind": "BULK",
+    "price": 1148.6,
+    "qty": 469434.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 53.92
+   },
+   {
+    "as_of": "2026-10-12T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-12",
+    "kind": "BULK",
+    "price": 1156.42,
+    "qty": 508270.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "KANOHAR",
+    "value_cr": 58.78
+   },
+   {
+    "as_of": "2026-10-12T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-12",
+    "kind": "BULK",
+    "price": 1153.87,
+    "qty": 508709.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "KANOHAR",
+    "value_cr": 58.7
+   },
+   {
     "as_of": "2026-10-23T15:30:00+05:30",
     "client": "SSPL SECURITIES PRIVATE LIMITED",
     "date": "2026-10-23",
@@ -792,6 +2105,38 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0077,
+     "description": "Remeasurements of net defined benefit liability/(asset)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0077,
+    "oci_net_cr": -0.0058,
+    "profit_cr": 27.3401,
+    "tax_not_reclassified_cr": -0.0019,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 27.3343
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-14T14:10:35+05:30",
@@ -861,8 +2206,13 @@
  "schema_version": 3,
  "scrip_code": "544911",
  "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-30T12:11:25+05:30",
+   "by": "file",
+   "doc": "other"
+  },
   "market_deals": {
-   "at": "2026-10-23T15:30:00+05:30",
+   "at": "2026-11-01T14:39:29+05:30",
    "by": "file",
    "doc": "other"
   }
@@ -871,6 +2221,42 @@
  "segment_mix": [],
  "standalone_only": [
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.6482,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 98.3259,
+    "Interest": 3.1856,
+    "Net Profit": 27.3401,
+    "Net Profit (owners)": 27.3401,
+    "OPM %": 28.269795020915193,
+    "Operating Profit": 38.75150000000001,
+    "Other Income": 1.9185999999999979,
+    "Profit before tax": 36.8363,
+    "Profit for PE": 27.3401,
+    "Sales": 137.0774,
+    "Tax": 9.4962,
+    "Tax %": 25.77946210667195
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "KANOHAR",
  "timeline": [

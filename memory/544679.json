@@ -1,4 +1,190 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "101049W/E300004",
+     "name": "S.R. Batliboi & Associates LLP",
+     "signed_on": "2026-05-20",
+     "signing_partner": "PANKAJ AGARWAL"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "S.R. Batliboi & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "101049W/E300004",
+     "name": "S.R. Batliboi & Associates LLP",
+     "signed_on": "2026-05-20",
+     "signing_partner": "PANKAJ AGARWAL"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "ClauseNotApplicable",
+     "text": "The Company did not have any outstanding loans or borrowings or interest thereon due to any lender during the year. Accordingly, the requirement to report on clause 3(ix)(a) of the Order is not applicable to the Company."
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "No fraud by the Company or no fraud on the Company has been noticed or reported during the year."
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<p>As per below</p>"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "S.R. Batliboi & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-05-20T09:51:01+05:30",
@@ -191,8 +377,326 @@
   }
  ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.0,
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.06,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -14.571,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -136.194,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 21.596,
+    "AdjustmentsForFairValueGainsLosses": 4.673,
+    "AdjustmentsForFinanceCosts": 4.933,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 14.071,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 36.059,
+    "AdjustmentsForInterestIncome": 37.565,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -1.439,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -71.932,
+    "AdjustmentsForProvisionsCurrent": 12.763,
+    "AdjustmentsForReconcileProfitLoss": -80.398,
+    "AdjustmentsForSharebasedPayments": 84.074,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -6.188,
+    "CashAndCashEquivalentsCashFlowStatement": 283.013,
+    "CashFlowsFromUsedInFinancingActivities": 736.384,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 736.384,
+    "CashFlowsFromUsedInFinancingActivitiesDiscontinuedOperations": 0.0,
+    "CashFlowsFromUsedInInvestingActivities": -559.895,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -559.895,
+    "CashFlowsFromUsedInInvestingActivitiesDiscontinuedOperations": 0.0,
+    "CashFlowsFromUsedInOperatingActivities": -9.239,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -9.239,
+    "CashFlowsFromUsedInOperatingActivitiesDiscontinuedOperations": 0.0,
+    "CashFlowsFromUsedInOperations": 6.858,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 2.092,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 16.097,
+    "IncreaseDecreaseInCashAndCashEquivalents": 169.342,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 167.25,
+    "InterestReceivedClassifiedAsInvestingActivities": 52.179,
+    "OtherAdjustmentsForNoncashItems": -0.366,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 9.628,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 522.402,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 571.274,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -35.602,
+    "PaymentForAuditServices": 1.35,
+    "PaymentForOtherServices": 0.08,
+    "PaymentForReimbursementOfExpenses": 0.08,
+    "PaymentForTaxationMatters": 0.07,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 10.025,
+    "PaymentsToAuditor": 1.58,
+    "ProceedsFromExerciseOfStockOptions": -33.989,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 816.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 491.605,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.724,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1130.06,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 23.215
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -12.147,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -66.446,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 14.54,
+    "AdjustmentsForFairValueGainsLosses": 4.673,
+    "AdjustmentsForFinanceCosts": 2.885,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -7.346,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 50.854,
+    "AdjustmentsForInterestIncome": 37.509,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 45.004,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -91.476,
+    "AdjustmentsForProvisionsCurrent": 10.049,
+    "AdjustmentsForReconcileProfitLoss": -49.288,
+    "AdjustmentsForSharebasedPayments": 48.772,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -3.294,
+    "CashAndCashEquivalentsCashFlowStatement": 163.762,
+    "CashFlowsFromUsedInFinancingActivities": 741.728,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 741.728,
+    "CashFlowsFromUsedInFinancingActivitiesDiscontinuedOperations": 0.0,
+    "CashFlowsFromUsedInInvestingActivities": -564.422,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -564.422,
+    "CashFlowsFromUsedInInvestingActivitiesDiscontinuedOperations": 0.0,
+    "CashFlowsFromUsedInOperatingActivities": -27.211,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": -27.211,
+    "CashFlowsFromUsedInOperatingActivitiesDiscontinuedOperations": 0.0,
+    "CashFlowsFromUsedInOperations": -22.841,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.07,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 4.37,
+    "IncreaseDecreaseInCashAndCashEquivalents": 150.095,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 150.095,
+    "InterestReceivedClassifiedAsInvestingActivities": 52.123,
+    "OtherAdjustmentsForNoncashItems": -0.785,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -7.062,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 522.402,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 571.274,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -35.602,
+    "PaymentForAuditServices": 1.35,
+    "PaymentForOtherServices": 0.08,
+    "PaymentForReimbursementOfExpenses": 0.08,
+    "PaymentForTaxationMatters": 0.07,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 4.681,
+    "PaymentsToAuditor": 1.58,
+    "ProceedsFromExerciseOfStockOptions": -33.989,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 816.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 486.982,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.474,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 1130.06,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 22.743
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Amagi Media Labs Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 33.151,
+     "class": "OtherContingentLiabilities",
+     "description": "Total"
+    },
+    {
+     "amount_cr": 22.126,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Income tax dispute"
+    },
+    {
+     "amount_cr": 11.025,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Goods and Services Tax (GST) dispute"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 3,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "total_cr": 33.151
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 33.151,
+     "class": "OtherContingentLiabilities",
+     "description": "Total"
+    },
+    {
+     "amount_cr": 22.126,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Income tax dispute"
+    },
+    {
+     "amount_cr": 11.025,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Goods and Services Tax (GST) dispute"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 3,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 33.151
+  }
+ ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 5
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2026-02-11T18:00:00+05:30",
@@ -6288,7 +6792,557 @@
   ]
  },
  "industry": "Information Technology > IT - Services > IT Enabled Services",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 7,
+   "people": [
+    {
+     "designation": "CFO",
+     "name": "VIJAY NAMONARASIMHANPREMA",
+     "pay_cr": 14.728
+    },
+    {
+     "designation": "Whole Time Director",
+     "name": "SRIVIDHYA SRINIVASAN",
+     "pay_cr": 3.6
+    },
+    {
+     "designation": "Managing Director",
+     "name": "BASKAR SUBRAMANIAN",
+     "pay_cr": 3.597
+    },
+    {
+     "designation": "CEO",
+     "name": "BASKAR SUBRAMANIAN",
+     "pay_cr": 3.597
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "SRIDHAR MUTHUKRISHNAN",
+     "pay_cr": 1.113
+    },
+    {
+     "designation": "Independent Director",
+     "name": "GIRIDHAR SANJEEVI",
+     "pay_cr": 0.356
+    },
+    {
+     "designation": "Independent Director",
+     "name": "IRA GUPTA",
+     "pay_cr": 0.292
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "last_filed_at": "2026-10-20T16:13:14+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "ACCEL GROWTH VI HOLDINGS (MAURITIUS) LTD.",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 2727000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 152.71
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "ACCEL INDIA VI (MAURITIUS) LTD.",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 2727000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 152.71
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "AVP I FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 1864948.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 104.44
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "BARODA BNP PARIBAS MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 446429.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "BOFA SECURITIES EUROPE SA",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 223231.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 12.5
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "BOFA SECURITIES EUROPE SA",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 223200.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 12.5
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "DT FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 205357.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 11.5
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "EDELWEISS MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 446429.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "GP EMERGING MARKETS STRATEGIES LP",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 98215.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 5.5
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "HDFC STANDARD LIFE INSURANCE COMPANY LTD",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 1785713.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 100.0
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "ICICI PRUDENTIAL MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 934444.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 52.33
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "SBI MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 3248305.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 181.91
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "SBI MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 1840979.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 103.09
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "SUSQUEHANNA PACIFIC PTY LTD",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 446429.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "TATA MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 446433.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 25.0
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "TRUDY HOLDINGS",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 3169073.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 177.47
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "UNIVERSITY OF NOTRE DAME DU LAC",
+    "date": "2026-08-21",
+    "kind": "BLOCK",
+    "price": 560.0,
+    "qty": 142857.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 8.0
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "ACCEL GROWTH VI HOLDINGS (MAURITIUS) LTD.",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 560.0,
+    "qty": 2727000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 152.71
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "ACCEL INDIA VI (MAURITIUS) LTD.",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 560.0,
+    "qty": 2727000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 152.71
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "AVP I FUND",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 560.0,
+    "qty": 1864948.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 104.44
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "HDFC STANDARD LIFE INSURANCE COMPANY LTD",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 560.0,
+    "qty": 1785713.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 100.0
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "SBI MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 560.0,
+    "qty": 1840979.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 103.09
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "SBI MUTUAL FUND",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 560.0,
+    "qty": 3248305.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AMAGI",
+    "value_cr": 181.91
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "TRUDY HOLDINGS",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 560.0,
+    "qty": 3169073.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AMAGI",
+    "value_cr": 177.47
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.267,
+     "description": "Re-measurement (losses)/gains on defined benefit  plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 1.299,
+     "description": "Exchange differences on translating the financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.267,
+    "oci_net_cr": 1.032,
+    "profit_cr": 30.94,
+    "reclassified_cr": 1.299,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 31.972,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 31.972
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.267,
+     "description": "Re-measurement (losses)/gains on defined benefit  plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.267,
+    "oci_net_cr": -0.267,
+    "profit_cr": 18.878,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 18.611
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.802,
+     "description": "Re-measurement (losses)/gains on defined benefit  plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 7.467,
+     "description": "Exchange differences on translating the financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.802,
+    "oci_net_cr": 9.269,
+    "profit_cr": 34.263,
+    "reclassified_cr": 7.467,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 43.532,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 43.532
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.802,
+     "description": "Re-measurement (losses)/gains on defined benefit  plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 1.802,
+    "oci_net_cr": 1.802,
+    "profit_cr": 19.697,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 21.499
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -2.986,
+     "description": "Re-measurement (losses)/gains on defined benefit plan",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 9.124,
+     "description": "Exchange differences on translating the financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -2.986,
+    "oci_net_cr": 6.138,
+    "profit_cr": 33.905,
+    "reclassified_cr": 9.124,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 40.043
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -2.986,
+     "description": "Re-measurement (losses)/gains on defined benefit  plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -2.986,
+    "oci_net_cr": -2.986,
+    "profit_cr": 22.971,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 19.985
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-19T16:50:33+05:30",
@@ -6497,6 +7551,927 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 8,
+   "parties": [
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 14.728,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.077
+     },
+     "party": "Vijay Namonarasimhanprema - Chief Financial Officer"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 6.962,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.165
+     },
+     "party": "Arunachalam Srinivasan Karapattu - Director"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.597,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.111
+     },
+     "party": "Baskar Subramanian - Managing Director and Chief executive officer"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.6,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.042
+     },
+     "party": "Srividhya Srinivasan - Whole time Director (upto May 22, 2025)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 1.113,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.001
+     },
+     "party": "Sridhar Muthukrishnan - Company Secretary and Compliance Officer (w.e.f. February 26, 2025)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.356,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.002
+     },
+     "party": "Giridhar Sanjeevi - Independent Director (w.e.f February 26, 2025)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.292
+     },
+     "party": "Ms. Ira Gupta"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.057,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "Kusum Gore - Company Secretary (w.e.f September 27, 2023 till February 26, 2025)"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 16,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 11.115,
+      "AmountsReceivableRelatedPartyTransactions": 185.881
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 685.882,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 33.464,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 109.367
+     },
+     "party": "Amagi Corporation"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.074,
+      "AmountsReceivableRelatedPartyTransactions": 51.778
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 176.821,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 5.722,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 4.612
+     },
+     "party": "Amagi Media Pvt Limited UK"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 2.511,
+      "AmountsReceivableRelatedPartyTransactions": 0.099
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 6.565,
+      "ServicesReceivedRelatedPartyTransactions": 24.576,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 0.43,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.312
+     },
+     "party": "Amagi Media UK Private Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 4.406,
+      "AmountsReceivableRelatedPartyTransactions": 0.998
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 28.49,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 1.316,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.042
+     },
+     "party": "Amagi Eastern Europe d.o.o. za usluge"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 3.349
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 25.984,
+      "SettlementOfLiabilitiesByEntityOnBehalfOfRelatedPartyRelatedPartyTransactions": 2.59,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 1.007
+     },
+     "party": "Amagi Media Labs Pte Limited"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 14.728,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.077
+     },
+     "party": "Vijay Namonarasimhanprema - Chief Financial Officer"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.597,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.111
+     },
+     "party": "Baskar Subramanian - Managing Director and Chief executive officer"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.6,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.042
+     },
+     "party": "Srividhya Srinivasan - Whole time Director (upto May 22, 2025)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 1.113,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.001
+     },
+     "party": "Sridhar Muthukrishnan - Company Secretary and Compliance Officer (w.e.f. February 26, 2025)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.356,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.002
+     },
+     "party": "Giridhar Sanjeevi - Independent Director (w.e.f February 26, 2025)"
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.292
+     },
+     "party": "Ms. Ira Gupta"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": -0.105,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.011
+     },
+     "party": "Argoid Analytics Inc."
+    },
+    {
+     "balances": {},
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.057,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.0
+     },
+     "party": "Kusum Gore - Company Secretary (w.e.f. September 27, 2023 upto February 26, 2025)"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "LeasesAsLesseeRelatedPartyTransactions": 0.004,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0,
+      "SettlementOfLiabilitiesOnBehalfOfEntityByRelatedPartyRelatedPartyTransactions": 0.037
+     },
+     "party": "ARGOID ANALYTICS PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsReceivableRelatedPartyTransactions": 0.071
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "LeasesAsLesseeRelatedPartyTransactions": 0.007
+     },
+     "party": "AMAGI AI PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.01,
+      "AmountsReceivableRelatedPartyTransactions": 0.311
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0
+     },
+     "party": "Amagi Canada Corporation Inc"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 363.361,
+     "approved_cr": 363.361,
+     "closing_cr": 110.845,
+     "counterparty": "Amagi Corporation, USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 156.108,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 102.198,
+     "approved_cr": 102.198,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media Private Ltd, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 40.823,
+     "approved_cr": 40.823,
+     "closing_cr": 2.86,
+     "counterparty": "Amagi Media Labs Limited",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 17.814,
+     "other_details": "Reimbursement",
+     "relationship": "Holding Company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 17.194,
+     "approved_cr": 17.194,
+     "closing_cr": 4.418,
+     "counterparty": "Amagi Eastern Europe d.o.o. za usluge, Croatia",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 6.344,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 13.078,
+     "approved_cr": 13.078,
+     "closing_cr": 0.523,
+     "counterparty": "Amagi Media Labs Pte. Limited, Singapore",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 4.87,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 12.344,
+     "approved_cr": 12.344,
+     "closing_cr": 5.544,
+     "counterparty": "Amagi Corporation, USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 1.214,
+     "other_details": "ESOP & SAR",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 11.996,
+     "approved_cr": 11.996,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 1.31,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 6.257,
+     "approved_cr": 6.257,
+     "closing_cr": 1.238,
+     "counterparty": "Amagi Corporation, USA",
+     "entity": "Amagi Media Private Ltd, United Kingdom",
+     "opening_cr": 0.559,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.103,
+     "approved_cr": 5.103,
+     "closing_cr": 2.001,
+     "counterparty": "Amagi Corporation, USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 4.604,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.633,
+     "approved_cr": 3.633,
+     "closing_cr": 0.0,
+     "counterparty": "Arunachalam Srinivasan Karapattu",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 0.0,
+     "relationship": "Promoter and Director",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 2.953,
+     "approved_cr": 2.953,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.564,
+     "approved_cr": 2.564,
+     "closing_cr": 0.58,
+     "counterparty": "Amagi Media Private Ltd, United Kingdom",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 0.501,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.902,
+     "approved_cr": 1.902,
+     "closing_cr": 0.0,
+     "counterparty": "Srividhya S",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter and Chief Technology Officer",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.9,
+     "approved_cr": 1.9,
+     "closing_cr": 0.0,
+     "counterparty": "Baskar Subramanian",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter, Managing Director and CEO",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.462,
+     "approved_cr": 1.462,
+     "closing_cr": 0.525,
+     "counterparty": "Amagi Media Labs Pte. Limited, Singapore",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 0.369,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.94,
+     "approved_cr": 0.94,
+     "closing_cr": 0.074,
+     "counterparty": "Amagi Media Labs Limited",
+     "entity": "Amagi Media Private Ltd, United Kingdom",
+     "opening_cr": 4.448,
+     "other_details": "Reimbursement",
+     "relationship": "Holding Company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.902,
+     "approved_cr": 0.902,
+     "closing_cr": 0.313,
+     "counterparty": "Amagi Media Labs Pte. Limited, Singapore",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.782,
+     "approved_cr": 0.782,
+     "closing_cr": 0.656,
+     "counterparty": "Amagi Media Private Ltd, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP & SAR",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.756,
+     "approved_cr": 0.756,
+     "closing_cr": 0.605,
+     "counterparty": "Amagi Corporation, USA",
+     "entity": "Amagi Media Labs Pte. Limited, Singapore",
+     "opening_cr": 0.014,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.693,
+     "approved_cr": 0.693,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media Labs Limited",
+     "entity": "Amagi Media Labs Pte. Limited, Singapore",
+     "opening_cr": 0.475,
+     "other_details": "Reimbursement",
+     "relationship": "Holding Company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.659,
+     "approved_cr": 0.659,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Eastern Europe d.o.o. za usluge, Croatia",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.743,
+     "other_details": "ESOP & SAR",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.582,
+     "approved_cr": 0.582,
+     "closing_cr": 0.1,
+     "counterparty": "Amagi Media Labs Pte. Limited, Singapore",
+     "entity": "Amagi Media Private Ltd, United Kingdom",
+     "opening_cr": 0.077,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.579,
+     "approved_cr": 0.579,
+     "closing_cr": 0.068,
+     "counterparty": "Amagi Media Labs Pte. Limited, Singapore",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "ESOP & SAR",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.537,
+     "approved_cr": 0.537,
+     "closing_cr": 0.019,
+     "counterparty": "Amagi Media Private Ltd, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.26,
+     "approved_cr": 0.26,
+     "closing_cr": 8.254,
+     "counterparty": "Amagi Corporation, USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 7.994,
+     "other_details": "Unearned Revenue",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.245,
+     "approved_cr": 0.245,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Media Labs Pte. Limited, Singapore",
+     "opening_cr": 0.128,
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.224,
+     "approved_cr": 0.224,
+     "closing_cr": 0.014,
+     "counterparty": "Amagi Media Labs Limited",
+     "entity": "Amagi Media UK Private Limited, United Kingdom",
+     "opening_cr": 0.019,
+     "other_details": "Reimbursement",
+     "relationship": "Holding Company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.206,
+     "approved_cr": 0.206,
+     "closing_cr": 0.021,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 0.038,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.176,
+     "approved_cr": 0.176,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.046,
+     "other_details": "ESOP & SAR",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.175,
+     "approved_cr": -0.175,
+     "closing_cr": 0.186,
+     "counterparty": "Argoid Analytics Inc., USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.105,
+     "approved_cr": 0.105,
+     "closing_cr": 0.101,
+     "counterparty": "Arunachalam Srinivasan Karapattu",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Promoter and Director",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.052,
+     "approved_cr": 0.052,
+     "closing_cr": 0.0,
+     "counterparty": "Baskar Subramanian",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Promoter, Managing Director and CEO",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.042,
+     "approved_cr": 0.042,
+     "closing_cr": 0.045,
+     "counterparty": "Amagi Media Labs Limited",
+     "entity": "Amagi Eastern Europe d.o.o. za usluge, Croatia",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Holding Company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.02,
+     "approved_cr": 0.02,
+     "closing_cr": 0.0,
+     "counterparty": "Srividhya S",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Promoter and Chief Technology Officer",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.016,
+     "approved_cr": -0.016,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.005,
+     "approved_cr": 0.005,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media Labs Limited",
+     "entity": "Argroid Analytics Private Limited, India",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Holding Company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.004,
+     "approved_cr": 0.004,
+     "closing_cr": 0.001,
+     "counterparty": "Amagi AI Private Limited, India",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.001,
+     "other_details": "Rental Charges",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.003,
+     "approved_cr": -0.003,
+     "closing_cr": 0.0,
+     "counterparty": "Argoid Analytics Inc., USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.001,
+     "approved_cr": 0.001,
+     "closing_cr": 0.001,
+     "counterparty": "Argroid Analytics Private Limited, India",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rental Charges",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 10.315,
+     "counterparty": "Amagi Corporation, USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 10.315,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.206,
+     "counterparty": "Amagi Media Labs Pte. Limited, Singapore",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.206,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 35.1,
+     "counterparty": "Amagi Media Private Ltd, United Kingdom",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 35.1,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.311,
+     "counterparty": "Amagi Canada Corporation Inc., USA",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.311,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.07,
+     "counterparty": "Amagi AI Private Limited, India",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 0.07,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.002,
+     "counterparty": "Argoid Analytics Inc., USA",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 0.003,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 7.504,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Media Labs Pte. Limited, Singapore",
+     "opening_cr": 7.504,
+     "relationship": "Subsidiary of Holding company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.998,
+     "counterparty": "Amagi Eastern Europe d.o.o. za usluge, Croatia",
+     "entity": "Amagi Media Labs Limited",
+     "opening_cr": 2.404,
+     "other_details": "Reimbursement",
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Amagi Media Labs Limited",
+     "entity": "Argoid Analytics Inc., USA",
+     "opening_cr": 0.011,
+     "other_details": "Reimbursement",
+     "relationship": "Holding Company",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 38.471,
+     "counterparty": "Argoid Analytics Inc., USA",
+     "entity": "Amagi Corporation, USA",
+     "opening_cr": 38.471,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 15.773,
+     "counterparty": "Amagi Media UK Private Limited, United Kingdom",
+     "entity": "Amagi Media Private Ltd, United Kingdom",
+     "opening_cr": 15.773,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 10.8,
+     "counterparty": "Amagi Eastern Europe d.o.o. za usluge, Croatia",
+     "entity": "Amagi Media Private Ltd, United Kingdom",
+     "opening_cr": 10.8,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee, where required",
+     "type": "Investment"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 51,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544679",
  "section_lab": {
@@ -6507,6 +8482,11 @@
   },
   "governance_quarters": {
    "at": "2026-10-24T09:32:54+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:26:04+05:30",
    "by": "file",
    "doc": "other"
   }
@@ -6553,30 +8533,52 @@
    "source_news_id": "nse-106631264"
   },
   {
-   "as_of": "2026-08-20T15:22:26+05:30",
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-08-20T15:22:26+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
-   "period": "Q1FY27",
-   "revenue_cr": 249.0,
-   "segment": "Streaming Unification",
-   "share_pct": null,
-   "source_news_id": "nse-106750959"
+   "period": "Q3FY26",
+   "segment": "Single segment",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
   },
   {
-   "as_of": "2026-08-20T15:22:26+05:30",
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-08-20T15:22:26+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Single segment",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q1FY27",
-   "revenue_cr": 110.0,
-   "segment": "Monetization and Marketplace",
-   "share_pct": null,
-   "source_news_id": "nse-106750959"
+   "segment": "Single segment",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -8993,6 +10995,534 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 36.194,
+    "CWIP": 0,
+    "Equity Capital": 17.08011,
+    "Fixed Assets": 91.532,
+    "Investments": 265.556,
+    "Other Assets": 1067.911,
+    "Other Liabilities": 879.3528899999999,
+    "Reserves": 492.372,
+    "Total Assets": 1424.999,
+    "Total Liabilities": 1424.999
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 16.919,
+    "Expenses": 1253.1609999999998,
+    "Interest": 4.769,
+    "Net Profit": -68.714,
+    "Net Profit (owners)": -68.714,
+    "OPM %": -7.786093165794646,
+    "Operating Profit": -90.52399999999989,
+    "Other Income": 60.67299999999988,
+    "Profit before tax": -51.539,
+    "Sales": 1162.637,
+    "Tax": 17.175,
+    "Tax %": 33.3242787015658
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -8.697,
+    "Cash from Investing Activity": -23.099,
+    "Cash from Operating Activity": 33.574,
+    "Net Cash Flow": 1.778
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 25.75,
+    "CWIP": 0,
+    "Equity Capital": 17.08011,
+    "Fixed Assets": 45.083000000000006,
+    "Investments": 311.488,
+    "Other Assets": 768.1519999999998,
+    "Other Liabilities": 654.6418899999999,
+    "Reserves": 427.251,
+    "Total Assets": 1124.723,
+    "Total Liabilities": 1124.723
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 11.459,
+    "Expenses": 836.063,
+    "Interest": 2.49,
+    "Net Profit": -122.069,
+    "Net Profit (owners)": -122.069,
+    "OPM %": -25.349783503052535,
+    "Operating Profit": -169.07899999999995,
+    "Other Income": 60.958999999999946,
+    "Profit before tax": -122.069,
+    "Sales": 666.984,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -4.571,
+    "Cash from Investing Activity": 1.519,
+    "Cash from Operating Activity": -46.009,
+    "Net Cash Flow": -49.061
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 5.745,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 372.76300000000003,
+    "Interest": 1.424,
+    "Minority share": 0.0,
+    "Net Profit": 30.94,
+    "Net Profit (owners)": 30.94,
+    "OPM %": 7.688974077045748,
+    "Operating Profit": 31.048999999999978,
+    "Other Income": 11.184000000000019,
+    "Profit before tax": 35.064,
+    "Profit for PE": 30.94,
+    "Sales": 403.812,
+    "Tax": 4.124,
+    "Tax %": 11.761350673054984
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.771,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 250.06900000000002,
+    "Interest": 0.69,
+    "Net Profit": 18.878,
+    "Net Profit (owners)": 18.878,
+    "OPM %": 4.546894622129077,
+    "Operating Profit": 11.911999999999978,
+    "Other Income": 11.427000000000024,
+    "Profit before tax": 18.878,
+    "Profit for PE": 18.878,
+    "Sales": 261.981,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 6.114,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 373.095,
+    "Interest": 1.464,
+    "Minority share": 0.0,
+    "Net Profit": 34.263,
+    "Net Profit (owners)": 34.263,
+    "OPM %": 6.014545143096089,
+    "Operating Profit": 23.875999999999976,
+    "Other Income": 24.24400000000002,
+    "Profit before tax": 40.542,
+    "Profit for PE": 34.263,
+    "Sales": 396.971,
+    "Tax": 6.279,
+    "Tax %": 15.487642444871984
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 30.975,
+    "CWIP": 0,
+    "Equity Capital": 108.169472,
+    "Fixed Assets": 94.23400000000001,
+    "Investments": 229.377,
+    "Other Assets": 2029.6440000000002,
+    "Other Liabilities": 565.470528,
+    "Reserves": 1648.64,
+    "Total Assets": 2353.255,
+    "Total Liabilities": 2353.255
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 21.596,
+    "Expenses": 1454.9759999999999,
+    "Interest": 6.045,
+    "Net Profit": 71.673,
+    "Net Profit (owners)": 71.673,
+    "OPM %": 3.3627655575230246,
+    "Operating Profit": 50.63000000000011,
+    "Other Income": 64.2669999999999,
+    "Profit before tax": 87.256,
+    "Sales": 1505.606,
+    "Tax": 15.583,
+    "Tax %": 17.8589437975612
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 736.384,
+    "Cash from Investing Activity": -557.803,
+    "Cash from Operating Activity": -9.239,
+    "Net Cash Flow": 169.342
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.726,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 248.977,
+    "Interest": 0.656,
+    "Net Profit": 19.697,
+    "Net Profit (owners)": 19.697,
+    "OPM %": -0.03254371303677732,
+    "Operating Profit": -0.08100000000001728,
+    "Other Income": 24.160000000000014,
+    "Profit before tax": 19.697,
+    "Profit for PE": 19.697,
+    "Sales": 248.896,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 19.137999999999998,
+    "CWIP": 0,
+    "Equity Capital": 108.169472,
+    "Fixed Assets": 42.367000000000004,
+    "Investments": 275.379,
+    "Other Assets": 1624.0949999999998,
+    "Other Liabilities": 292.21652799999987,
+    "Reserves": 1522.317,
+    "Total Assets": 1941.841,
+    "Total Liabilities": 1941.841
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 14.54,
+    "Expenses": 969.3830000000002,
+    "Interest": 3.069,
+    "Net Profit": 26.447,
+    "Net Profit (owners)": 26.447,
+    "OPM %": -2.122874070827804,
+    "Operating Profit": -20.15100000000018,
+    "Other Income": 64.20700000000018,
+    "Profit before tax": 26.447,
+    "Sales": 949.232,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 741.728,
+    "Cash from Investing Activity": -564.422,
+    "Cash from Operating Activity": -27.211,
+    "Net Cash Flow": 150.095
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 5.886,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 407.034,
+    "Interest": 1.137,
+    "Net Profit": 33.905,
+    "Net Profit (owners)": 33.905,
+    "OPM %": 6.831197725680853,
+    "Operating Profit": 29.843999999999994,
+    "Other Income": 17.586000000000006,
+    "Profit before tax": 40.407,
+    "Profit for PE": 33.905,
+    "Sales": 436.878,
+    "Tax": 6.502,
+    "Tax %": 16.091271314376222
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.7,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 272.831,
+    "Interest": 0.602,
+    "Net Profit": 22.971,
+    "Net Profit (owners)": 22.971,
+    "OPM %": 1.0176464612750173,
+    "Operating Profit": 2.805000000000007,
+    "Other Income": 24.467999999999993,
+    "Profit before tax": 22.971,
+    "Profit for PE": 22.971,
+    "Sales": 275.636,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "AMAGI",
  "timeline": [
   {

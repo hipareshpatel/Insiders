@@ -1,4 +1,226 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "117366W/W-100018",
+     "name": "DELOITTE HASKINS & SELLS LLP",
+     "signed_on": "2026-05-29",
+     "signing_partner": "DAMA MANOJ HIRJIBHAI"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "117366W/W-100018",
+     "name": "DELOITTE HASKINS & SELLS LLP",
+     "signed_on": "2026-05-29",
+     "signing_partner": "DAMA MANOJ HIRJIBHAI"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "(ix)(a)The Company has not defaulted in the repayment of loans or in the payment of interest thereon to any lender during the year."
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "(xi)(a)To the best of our knowledge, no fraud by the Company and no material fraud on the Company has been noticed or reported during the year."
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<p>\n\tIn respect of statutory dues:</p>\n<p>\n\t&nbsp;</p>\n<p>\n\tUndisputed statutory dues, including Goods and Services tax, Provident Fund, Employees’ State Insurance, Income-tax, duty of Customs, cess and other material statutory dues applicable to the Company have generally been regularly deposited by it with the appropriate authorities though there have been delays in respect of payment of Income-tax dues.</p>\n<p>\n\t&nbsp;</p>\n<p>\n\t&nbsp;</p>\n<p>\n\tThere were no undisputed amounts payable in respect of Goods and Services tax, Income-Tax, Provident Fund, Employees’ State Insurance, duty of Customs, cess and other material statutory dues in arrears as at 31 March 2026 for a period of more than six months from the date they became payable.</p>\n<p>\n\t&nbsp;</p>"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-11-13T18:00:00+05:30",
@@ -75,18 +297,6 @@
    "source_news_id": "nse-106647416",
    "total_assets_cr": 2326.71,
    "total_liabilities_cr": 1037.89
-  },
-  {
-   "as_of": "2026-05-29T17:25:18+05:30",
-   "lab": {
-    "at": "2026-10-27T08:48:34+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "ai",
-    "doc": "slides",
-    "ok": true
-   },
-   "period": "31-Mar-2026",
-   "source_news_id": "nse-106647430"
   },
   {
    "as_of": "2026-05-29T18:00:00+05:30",
@@ -349,7 +559,414 @@
    "source_news_id": "nse-106647528"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -108.566,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -3.315,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 4.687,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -11.332,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 21.443,
+    "AdjustmentsForDividendIncome": 0.008,
+    "AdjustmentsForFairValueGainsLosses": 11.115,
+    "AdjustmentsForFinanceCosts": 22.034,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.131,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 6.295,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.906,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -5.788,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -1.539,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.393,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 46.035,
+    "AdjustmentsForProvisionsNoncurrent": 2.57,
+    "AdjustmentsForReconcileProfitLoss": -14.426,
+    "AdjustmentsForSharebasedPayments": 4.605,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -3.036,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 137.241,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 91.132,
+    "CashFlowsFromUsedInInvestingActivities": -163.962,
+    "CashFlowsFromUsedInOperatingActivities": 104.484,
+    "CashFlowsFromUsedInOperations": 116.835,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.308,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.008,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.61,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 12.351,
+    "IncreaseDecreaseInCashAndCashEquivalents": 32.264,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 31.654,
+    "InterestPaidClassifiedAsFinancingActivities": 20.443,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.906,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.01,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.746,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.087,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 3.611,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 132.156,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 3.469,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.017,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.1,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 165.08,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 20.131,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -52.339,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 16.636,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -1.026,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -36.081,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 18.071,
+    "AdjustmentsForDividendIncome": 0.008,
+    "AdjustmentsForFairValueGainsLosses": 11.115,
+    "AdjustmentsForFinanceCosts": 18.055,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.204,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -4.26,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 2.367,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -13.77,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -1.456,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.415,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.429,
+    "AdjustmentsForProvisionsNoncurrent": 2.57,
+    "AdjustmentsForReconcileProfitLoss": -42.649,
+    "AdjustmentsForSharebasedPayments": 1.868,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -1.413,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 66.6,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 96.881,
+    "CashFlowsFromUsedInInvestingActivities": -113.039,
+    "CashFlowsFromUsedInOperatingActivities": 56.297,
+    "CashFlowsFromUsedInOperations": 66.417,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 24.727,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.308,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.008,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.61,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 10.12,
+    "IncreaseDecreaseInCashAndCashEquivalents": 40.749,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 40.139,
+    "InterestPaidClassifiedAsFinancingActivities": 16.126,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 2.367,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -0.038,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.746,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.088,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 2.179,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 132.156,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 3.469,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.017,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.1,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 140.346,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 20.131,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": -0.027,
+    "AdjustmentsForDecreaseIncreaseInInventories": -207.38,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.081,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -179.747,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 45.262,
+    "AdjustmentsForDividendIncome": 0.008,
+    "AdjustmentsForFairValueGainsLosses": 16.711,
+    "AdjustmentsForFinanceCosts": 42.168,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 12.03,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 135.968,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 5.931,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 13.497,
+    "AdjustmentsForProvisionsCurrent": 105.185,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -1.068,
+    "AdjustmentsForSharebasedPayments": 9.436,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.04,
+    "CashAndCashEquivalentsCashFlowStatement": 185.654,
+    "CashFlowsFromUsedInFinancingActivities": 283.068,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 283.068,
+    "CashFlowsFromUsedInInvestingActivities": -409.723,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -409.723,
+    "CashFlowsFromUsedInOperatingActivities": 205.046,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 205.046,
+    "CashFlowsFromUsedInOperations": 319.466,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.308,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.008,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 2.286,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 108.509,
+    "IncreaseDecreaseInCashAndCashEquivalents": 80.677,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 78.391,
+    "InterestPaidClassifiedAsOperatingActivities": 7.11,
+    "InterestReceivedClassifiedAsInvestingActivities": 5.4,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -36.547,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -186.236,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 1.199,
+    "PaymentForAuditServices": 0.793,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 10.608,
+    "PaymentsToAuditor": 0.793,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 124.747,
+    "ProceedsFromExerciseOfStockOptions": 7.175,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 476.048,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": -194.851,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.236,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 34.28,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 277.439
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForCurrentTaxOfPriorPeriod": 0.254,
+    "AdjustmentsForDecreaseIncreaseInInventories": -89.902,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 6.258,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -198.857,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 37.748,
+    "AdjustmentsForDividendIncome": 0.008,
+    "AdjustmentsForFairValueGainsLosses": 16.711,
+    "AdjustmentsForFinanceCosts": 30.96,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 75.244,
+    "AdjustmentsForInterestIncome": 9.294,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -9.597,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 19.971,
+    "AdjustmentsForProvisionsCurrent": 1.389,
+    "AdjustmentsForReconcileProfitLoss": -119.863,
+    "AdjustmentsForSharebasedPayments": 3.832,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -5.44,
+    "CashAndCashEquivalentsCashFlowStatement": 91.779,
+    "CashFlowsFromUsedInFinancingActivities": 296.717,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 296.717,
+    "CashFlowsFromUsedInInvestingActivities": -271.79,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -271.79,
+    "CashFlowsFromUsedInOperatingActivities": 38.714,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 38.714,
+    "CashFlowsFromUsedInOperations": 132.916,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 64.381,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.308,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.008,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 2.287,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 94.202,
+    "IncreaseDecreaseInCashAndCashEquivalents": 65.928,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 63.641,
+    "InterestPaidClassifiedAsFinancingActivities": 27.321,
+    "InterestReceivedClassifiedAsInvestingActivities": 7.265,
+    "OtherAdjustmentsForNoncashItems": 0.127,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.995,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -313.13,
+    "PaymentForAuditServices": 0.536,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 6.185,
+    "PaymentsToAuditor": 0.536,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -103.077,
+    "ProceedsFromExerciseOfStockOptions": 7.175,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 476.048,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.04,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.236,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 2.112,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 28.478,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 49.615
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Rubicon Research Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 18.398,
+     "class": "TaxContingentLiability",
+     "description": "The demands received from income tax authorities for various assessment years, on account of disallowances of expenses are in appeals and pending decisions."
+    },
+    {
+     "amount_cr": 0.69,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "The Sales tax demands in respect of Maharashtra Value Added Tax and Central Sales Tax are in appeals and pending decisions."
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 2,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 186.848,
+     "class": "OtherContingentLiabilitiesOthers",
+     "description": "Performance undertaking given by the company for factoring arrangement of its step down subsidiary AdvaGen Pharma Ltd, to the extent of limits utilised"
+    },
+    {
+     "amount_cr": 14.9,
+     "class": "TaxContingentLiability",
+     "description": "The Sales tax demands in respect of Maharashtra Value Added Tax and Central Sales Tax are in appeals and pending decisions. The demands received from income tax authorities for various assessment years, on account of disallowances of expenses are in appeals and pending decisions."
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 2,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "corporate_actions": [
   {
    "ex_date": "2026-08-07",
@@ -416,6 +1033,152 @@
    "tranches": [],
    "updated_as_of": "2026-05-29T18:06:22+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
   }
  ],
  "financial_metrics": [
@@ -8542,6 +9305,199 @@
       "status": "This case pertains to Arinna Lifesciences Limited, subsidiary of the Company effective 30-04-2026; (a)Addition of Share Premium amount received from Venture Capital Fund (MOPE) U/s 56(2)(viib) Appeal against Order U/s 143(3) Dt.23/12/2018, first Notice received 04/09/2017 Notice u/s 143(2); and (b) Penalty U/S 271(1)(c ) against Addition of Share Premium amount received from Venture Capital Fund (MOPE)U/s 56(2)(viib) First notice received 04/09/2017 Notice u/s 143(2) (Total Exposure: Rs. 10,13,63,004) Status: As on 30 June 2026 - Pending from Authority and Awaiting for CIT (Appeal) case result."
      }
     ]
+   },
+   {
+    "as_of": "2026-10-28T15:03:03+05:30",
+    "board": [
+     {
+      "appointed": "2000-06-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Pratibha Sudhir Pilgaonkar",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2017-01-27",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Parag Suganchand Sancheti",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-09-05",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Varun Talukdar",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-04-03",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shantanu Rastogi",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-06-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "CHANGAVALLI VENKAT",
+      "role": "Chairperson",
+      "tenure_months": 27.2
+     },
+     {
+      "appointed": "2024-06-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Kumarapuram Gopalakrishnan Ananthakrishnan",
+      "role": null,
+      "tenure_months": 27.2
+     },
+     {
+      "appointed": "2024-07-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Milind Anil Patil",
+      "role": null,
+      "tenure_months": 26.21
+     },
+     {
+      "appointed": "2026-02-03",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Pradnya Nandkumar Saravade",
+      "role": null,
+      "tenure_months": 7.28
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Milind Anil Patil",
+      "CHANGAVALLI VENKAT",
+      "Varun Talukdar"
+     ],
+     "corporate social responsibility committee": [
+      "Pratibha Sudhir Pilgaonkar",
+      "Parag Suganchand Sancheti",
+      "CHANGAVALLI VENKAT",
+      "Pradnya Nandkumar Saravade"
+     ],
+     "nomination and remuneration committee": [
+      "Kumarapuram Gopalakrishnan Ananthakrishnan",
+      "Shantanu Rastogi",
+      "CHANGAVALLI VENKAT"
+     ],
+     "risk management committee": [
+      "Parag Suganchand Sancheti",
+      "Milind Anil Patil",
+      "Varun Talukdar"
+     ],
+     "stakeholders relationship committee": [
+      "Kumarapuram Gopalakrishnan Ananthakrishnan",
+      "Shantanu Rastogi",
+      "Parag Suganchand Sancheti",
+      "Pradnya Nandkumar Saravade"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 52.0,
+     "board": 51.0,
+     "corporate social responsibility committee": 51.0,
+     "nomination and remuneration committee": 51.0,
+     "risk management committee": 24.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 14.4105,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1747592_28102026030303_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Status as on June 30, 2026: Ongoing. The matter is currently pending. Brief Facts: Incorrect disallowance u/s 43B, ESOP, 14A. (AY 2020-21)",
+      "initiated": "2022-09-26",
+      "opposing_party": "Commissioner of Income Tax (Appeals)",
+      "status": "Ongoing. The matter is currently pending and personal hearing is awaited."
+     },
+     {
+      "as_last_disclosed": "Status as on June 30, 2026: Only a minor issue remains, pertaining to interest on late payment of TDS amounting to Rs1,710/-.(AY 2022-23)",
+      "initiated": "2023-07-26",
+      "opposing_party": "Office of the assessment unit of Income Tax Department",
+      "status": "Closed. In the favour of the Company."
+     },
+     {
+      "as_last_disclosed": "Status as on June 30, 2026: Ongoing. The matter is currently pending. Appeal filed before the Commissioner of Income Tax (Appeals) on 7 May 2026. Brief Facts: Refer to the previous disclosure made.(AY 2023-24)",
+      "initiated": "2023-12-29",
+      "opposing_party": "Commissioner of Income Tax (Appeals)",
+      "status": "Ongoing. The matter is currently pending."
+     },
+     {
+      "as_last_disclosed": "Status as on June 30, 2026: Ongoing. The matter is currently pending. Brief Facts: Refer to the previous disclosure made. (AY 2021-22)",
+      "initiated": "2026-01-05",
+      "opposing_party": "Deputy Commissioner of Income Tax, before Income tax Appellate Tribunal (ITAT)",
+      "status": "Ongoing. Order awaited from ITAT"
+     },
+     {
+      "as_last_disclosed": "Status as on June 30, 2026: Ongoing. Appeal has been filed and the matter is currently pending. Brief Facts: Refer to the previous disclosure made. (AY- 2023-24)",
+      "initiated": "2026-04-21",
+      "opposing_party": "Income Tax Department (Assessment Unit), Mumbai",
+      "status": "Ongoing. The matter is currently pending."
+     },
+     {
+      "as_last_disclosed": "This case pertains to Arinna Lifesciences Limited, subsidiary of the Company effective 30-04-2026. Status as on June 30, 2026: Awaiting for CIT (Appeal) case result. Brief Facts: Refer to the previous disclosure made. (AY 2015-16)",
+      "initiated": "2017-11-17",
+      "opposing_party": "CIT (APPEAL) 2. Circle (1)(1)(1) / Ahmedabad",
+      "status": "Ongoing. The matter is currently pending."
+     },
+     {
+      "as_last_disclosed": "This case pertains to Arinna Lifesciences Limited, subsidiary of the Company effective 30-04-2026. Status as on June 30, 2026: Pending from Authority and Awaiting for CIT (Appeal) case result. Brief Facts: Refer to the previous disclosure made. (AY 2015-16)",
+      "initiated": "2017-09-04",
+      "opposing_party": "Circle (1)(1)(1) / Ahmedabad",
+      "status": "Ongoing. The matter is currently pending."
+     },
+     {
+      "as_last_disclosed": "Status: Ongoing. The matter is currently pending. Brief Details of the case were disclosed in the previous disclosures.",
+      "initiated": "2024-05-23",
+      "opposing_party": "Pfizer INC. and Pfizer Ireland Pharmaceuticals",
+      "status": "Ongoing. The matter is currently pending."
+     },
+     {
+      "as_last_disclosed": "Status: Ongoing. The matter is currently pending. Brief Details of the case were disclosed in the previous disclosures.",
+      "initiated": "2023-08-08",
+      "opposing_party": "Metacel Pharmaceuticals LLC (Counterclaim filed by Rubicon Research Limited",
+      "status": "Ongoing. The matter is currently pending."
+     }
+    ]
    }
   ]
  },
@@ -9363,7 +10319,393 @@
    "3312"
   ]
  },
- "last_filed_at": "2026-10-19T06:29:51+05:30",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 8,
+   "people": [
+    {
+     "designation": "CEO",
+     "name": "Parag Suganchand Sancheti",
+     "pay_cr": 5.095
+    },
+    {
+     "designation": "CFO",
+     "name": "Nitin Jajodia",
+     "pay_cr": 3.014
+    },
+    {
+     "designation": "Managing Director",
+     "name": "Pratibha Sudhir Pilgaonkar",
+     "pay_cr": 1.721
+    },
+    {
+     "designation": "Independent Director",
+     "name": "MILIND ANIL PATIL",
+     "pay_cr": 0.3
+    },
+    {
+     "designation": "Independent Director",
+     "name": "KUMARAPURAM GOPALAKRISHNAN ANANTHAKRISHNAN",
+     "pay_cr": 0.25
+    },
+    {
+     "designation": "Independent Director",
+     "name": "CHANGAVALLI VENKAT",
+     "pay_cr": 0.25
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "DEEPASHREE OMKAR TANKSALE",
+     "pay_cr": 0.159
+    },
+    {
+     "designation": "Independent Director",
+     "name": "PRADNYA NANDKUMAR SARAVADE",
+     "pay_cr": 0.04
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
+ "last_filed_at": "2026-10-30T00:24:32+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "ARANDA INVESTMENTS PTE. LTD.",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 1660.0,
+    "qty": 843372.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RUBICON",
+    "value_cr": 140.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GENERAL ATLANTIC SINGAPORE RR PTE LTD",
+    "date": "2026-08-26",
+    "kind": "BLOCK",
+    "price": 1660.0,
+    "qty": 843372.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RUBICON",
+    "value_cr": 140.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "ARANDA INVESTMENTS PTE. LTD.",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 1660.0,
+    "qty": 843372.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RUBICON",
+    "value_cr": 140.0
+   },
+   {
+    "as_of": "2026-08-26T15:30:00+05:30",
+    "client": "GENERAL ATLANTIC SINGAPORE RR PTE LTD",
+    "date": "2026-08-26",
+    "kind": "BULK",
+    "price": 1660.0,
+    "qty": 843372.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RUBICON",
+    "value_cr": 140.0
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.485,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -6.412,
+     "description": "Items that will be reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.485,
+    "oci_net_cr": -6.775,
+    "profit_cr": 53.852,
+    "reclassified_cr": -6.412,
+    "tax_not_reclassified_cr": -0.122,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 47.077,
+    "total_comprehensive_nci_cr": 47.077,
+    "total_comprehensive_owners_cr": -6.775
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.485,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.485,
+    "oci_net_cr": -0.363,
+    "profit_cr": 45.812,
+    "tax_not_reclassified_cr": -0.122,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 45.449
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.055,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -3.273,
+     "description": "Exchange differences in translating the financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.055,
+    "oci_net_cr": -3.314,
+    "profit_cr": 72.797,
+    "reclassified_cr": -3.273,
+    "tax_not_reclassified_cr": -0.014,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 69.483,
+    "total_comprehensive_nci_cr": 69.483,
+    "total_comprehensive_owners_cr": -3.314
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.055,
+     "description": "Remeasurements of the defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.055,
+    "oci_net_cr": -0.041,
+    "profit_cr": 37.181,
+    "tax_not_reclassified_cr": -0.014,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 37.14
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.049,
+     "description": "Items that will not be reclassified to profit and loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 5.991,
+     "description": "Exchange differences in translating the financial statements of foreign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.049,
+    "oci_net_cr": 5.954,
+    "profit_cr": 76.785,
+    "reclassified_cr": 5.991,
+    "tax_not_reclassified_cr": -0.012,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 82.739,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 82.739
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.049,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.049,
+    "oci_net_cr": -0.037,
+    "profit_cr": 70.02,
+    "tax_not_reclassified_cr": -0.012,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 69.983
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.062,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -4.776,
+     "description": "Exchange differences in translating the financial statements of\nforeign operations",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.062,
+    "oci_net_cr": -4.732,
+    "profit_cr": 84.781,
+    "reclassified_cr": -4.776,
+    "tax_not_reclassified_cr": 0.018,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 80.049,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 80.049
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.07,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.07,
+    "oci_net_cr": 0.052,
+    "profit_cr": 82.449,
+    "tax_not_reclassified_cr": 0.018,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 82.501
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-29T17:21:51+05:30",
@@ -9434,6 +10776,16 @@
    },
    "source_news_id": "nse-106749414",
    "text": "Pithampur site is nearly 30 acres with only 5-6 acres in use, giving room to expand beyond the footprint of all current sites combined."
+  },
+  {
+   "as_of": "2026-10-30T00:24:32+05:30",
+   "lab": {
+    "at": "2026-10-30T00:28:32+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106835644",
+   "text": "Ambernath manufacturing facility received 5 procedural USFDA observations during October 2026 inspection with no data integrity issues."
   }
  ],
  "ownership": [
@@ -9569,6 +10921,2102 @@
    "value": 130.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 470.773,
+     "approved_cr": 1200.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 46.665,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Advagen Pharma Europe OU",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 28.13,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Interest rate Secured Overnight Financing Rate SOFR + 200 bps pa",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayable on or before 1st May 2028",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Loan repaid",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 24.727,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Secured Overnight Financing Rate SOFR + 200 bps pa",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Loan repaid by Subsidiary",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 17.666,
+     "approved_cr": 50.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Research Canada Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Product development expenses",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.361,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.129,
+     "approved_cr": 5.5,
+     "closing_cr": 0.0,
+     "counterparty": "Medone Pharma Labs",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Leave and License Fees",
+     "relationship": "Entity in which KMP or relatives of KMP have control or significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.872,
+     "approved_cr": 5.6,
+     "closing_cr": 0.0,
+     "counterparty": "Parag Sancheti",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Executive Director and Chief Executive Officer",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 2.696,
+     "approved_cr": 10.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement Charges Received",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.899,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.479,
+     "approved_cr": 2.64,
+     "closing_cr": 0.0,
+     "counterparty": "Surabhi Sancheti",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "SMP and Promoter",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.404,
+     "approved_cr": 5.525,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.987,
+     "approved_cr": 1.76,
+     "closing_cr": 0.0,
+     "counterparty": "Sumant Pilgaonkar",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "SMP and Promoter",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.834,
+     "approved_cr": 1.76,
+     "closing_cr": 0.0,
+     "counterparty": "Pratibha Pilgaonkar",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.787,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Advagen Holding Inc",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.546,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.483,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Product development expenses",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.325,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other Non-Operating Income",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.318,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.218,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses paid",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.218,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Validus Pharmaceuticals LLC",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of expenses paid",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.195,
+     "approved_cr": 0.4,
+     "closing_cr": 0.0,
+     "counterparty": "Sudhir Pilgaonkar",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "SMP and Promoter",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.157,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.113,
+     "approved_cr": 0.3,
+     "closing_cr": 0.0,
+     "counterparty": "Otrio Ventures Pvt Ltd.",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Entity in which KMP or relatives of KMP have control or significant influence",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.075,
+     "approved_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.02,
+     "approved_cr": 0.03,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Research Australia Pty Ltd",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.019,
+     "approved_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Research Private Limited (Singapore)",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.019,
+     "approved_cr": 0.038,
+     "closing_cr": 0.0,
+     "counterparty": "Kia Health Tech Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 39.919,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 63.291,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Secured Overnight Financing Rate SOFR+ 200 bps pa",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 25.605,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Advagen Holding Inc",
+     "opening_cr": 19.983,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Secured Overnight Financing Rate+ 2% pa",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 39.919,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Interest rate: Secured Overnight Financing Rate SOFR+ 200 bps pa",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayable on or before 1st May 2028",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.5,
+     "counterparty": "Kia Health Tech Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.5,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.756,
+     "counterparty": "Rubicon Research Private Limited (Singapore)",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.701,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "1 month Singapore Overnight Rate Average + 4%",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.583,
+     "counterparty": "Rubicon Research Australia Pty Ltd",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.538,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Bank bill swap rate +3.50%",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 2.0,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 2.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.075,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.439,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.943,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade and Others payables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.047,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 6.596,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 1.037,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 19.762,
+     "counterparty": "Rubicon Research Canada Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 18.301,
+     "other_details": "Trade and Others payables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 7.045,
+     "counterparty": "Rubicon Research Canada Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 6.603,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.063,
+     "counterparty": "Advatech Bio Pharma Ltd",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.061,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 90.56,
+     "counterparty": "Advagen Pharma Europe OÜ",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 93.298,
+     "other_details": "Advance given",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.578,
+     "counterparty": "Rubicon Research Australia Pty Ltd",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.514,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.296,
+     "counterparty": "Rubicon Research Private Limited (Singapore)",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.247,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.558,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.001,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 5.381,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.15,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Advagen Pharma Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 12.147,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Advagen Holding Inc",
+     "opening_cr": 6.155,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.942,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Advagen Holding Inc",
+     "opening_cr": 0.624,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.285,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "Advagen Holding Inc",
+     "opening_cr": 0.0,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.262,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 1.262,
+     "other_details": "Trade and Others payables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 3.58,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 2.52,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 450.137,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 395.771,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.638,
+     "counterparty": "Advagen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.616,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.988,
+     "counterparty": "Advagen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.407,
+     "other_details": "Trade and Others payables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 8.446,
+     "counterparty": "Kia Health Tech Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.12,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 57,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 15,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.394,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 5.487,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Medone Pharma Labs"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 5.095,
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mr. Parag Sancheti"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.014,
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mr. Nitin Jajodia"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 2.569,
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mrs. Surabhi Sancheti"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 1.734,
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mrs. P. S. Pilgaonkar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 1.723,
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mr. Sumant Pilgaonkar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.413,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mr . S . D. Pilgaonkar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.3,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mr.   Milind Patil"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 0.28
+     },
+     "party": "Otrio Ventures"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.25,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mr.   Venkat Changavali"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.25,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mr.   KG Ananthkrishnan"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "Parent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.167,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "General Atlantic Singapore RR PTE Ltd"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.159,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Mrs. Deepashree Tanksale"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.04,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Dr. Pradnya Saravade"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 0.0,
+      "OutstandingCommitmentsMadeOnBehalfOfEntityRelatedPartyTransactions": 0.0,
+      "ProvisionsForDoubtfulDebtsRelatedToOutstandingBalancesOfRelatedPartyTransaction": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.001,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Terentia Venture Partners"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 25,
+   "parties": [
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.248,
+      "AmountsReceivableRelatedPartyTransactions": 615.668,
+      "OutstandingCommitmentsMadeByEntityRelatedPartyTransactions": 377.252
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 5.786,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 11.498,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 1010.029,
+      "ServicesReceivedRelatedPartyTransactions": 0.175
+     },
+     "party": "AdvaGen Pharma Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 12.921
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 82.329,
+      "OtherRelatedPartyTransactionsIncome": 1.975,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 0.754
+     },
+     "party": "Advagen Holdings Inc"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 24.152,
+      "AmountsReceivableRelatedPartyTransactions": 16.939
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 41.542,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Rubicon Research Canada Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 2.065,
+      "AmountsReceivableRelatedPartyTransactions": 8.657
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 1.908,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 8.683
+     },
+     "party": "Validus Pharmaceutical LLC"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 1.394
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.394,
+      "OtherRelatedPartyTransactionsExpense": 5.093,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Medone Pharma Labs"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 5.095,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Parag Sancheti"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 3.014,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Nitin Jajodia"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 2.569,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Surabhi Sancheti"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 1.734,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "P.S Pilgoankar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 1.723,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Sumant Pilgaonkar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 1.262,
+      "AmountsReceivableRelatedPartyTransactions": 10.517
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.15,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.06,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.887
+     },
+     "party": "Rubicon Consumer Healthcare Private Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.413,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "S. D. Pilgaonkar"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.3,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Milind Patil"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 0.28
+     },
+     "party": "OTRIO VENTURES PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.25,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Venkat Changavali"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.25,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "KUMARAPURAM GOPALAKRISHNAN ANANTHAKRISHNAN"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.167,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "General Atlantic Singapore RR PTE Ltd"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.159,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "DEEPASHREE OMKAR TANKSALE"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 24.503
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsIncome": 0.037,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.067
+     },
+     "party": "KIA HEALTH TECH PRIVATE LIMITED"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.047
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.092,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Aim Rx3Pl L.L.C"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 1.318
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.043,
+      "OtherRelatedPartyTransactionsIncome": 0.042,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Rubicon Research Private Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 1.394
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.002,
+      "OtherRelatedPartyTransactionsIncome": 0.042,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Rubicon Research Australia Pty Ltd"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.04,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Pradnya Saravade"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.001,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Terentia Venture Partners"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0,
+      "AmountsReceivableRelatedPartyTransactions": 0.0
+     },
+     "category": "Subsidiaries",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0,
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 0.0
+     },
+     "party": "Advagen Pharma Europe OU"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 547.771,
+     "approved_cr": 1200.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 106.196,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Pharma Limited",
+     "entity": "AdvaGen Pharma Europe OU",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 76.342,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Interest rate: Secured Overnight Financing Rate SOFR+ 200 bps pa",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayable on or before 1st May 2028",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 48.628,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Loan repaid by Subsidiary",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 23.639,
+     "approved_cr": 50.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Research Canada Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Product development expenses",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.741,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 0.0,
+     "other_details": "Loan repaid by Subsidiary",
+     "relationship": "Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.974,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 8.877,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "RelatedPartyTransactionExplanatory": "Secured Overnight Financing Rate+ 2% pa",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3 Years",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 8.877,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 0.0,
+     "other_details": "Loan repaid by Holding",
+     "relationship": "Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.322,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 3.003,
+     "approved_cr": 12.0,
+     "closing_cr": 0.0,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.735,
+     "approved_cr": 5.5,
+     "closing_cr": 0.0,
+     "counterparty": "MedOne Pharma Labs",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Leave and License fees",
+     "relationship": "Entity in which KMP or relatives of KMP have control or significant influence",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.658,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other Non-Operating Income",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.223,
+     "approved_cr": 5.6,
+     "closing_cr": 0.0,
+     "counterparty": "Parag Sancheti",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Executive Director and Chief Executive Officer",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.334,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 1.066,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.0,
+     "other_details": "Loan repaid",
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.064,
+     "approved_cr": 2.64,
+     "closing_cr": 0.0,
+     "counterparty": "Surabhi Sancheti",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "SMP and Promoter",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.943,
+     "approved_cr": 4.0,
+     "closing_cr": 0.0,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "Validus Pharmaceuticals LLC",
+     "opening_cr": 0.0,
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.887,
+     "approved_cr": 1.76,
+     "closing_cr": 0.0,
+     "counterparty": "Pratibha Pilgaonkar",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.754,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.71,
+     "approved_cr": 1.76,
+     "closing_cr": 0.0,
+     "counterparty": "Sumant Pilgaonkar",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "SMP and Promoter",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.571,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.569,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.205,
+     "approved_cr": 0.4,
+     "closing_cr": 0.0,
+     "counterparty": "Sudhir Pilgaonkar",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "SMP and Promoter",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.167,
+     "approved_cr": 0.3,
+     "closing_cr": 0.0,
+     "counterparty": "Otrio Ventures Pvt Ltd.",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Entity in which KMP or relatives of KMP have control or significant influence",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.167,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.124,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "Validus Pharmaceuticals LLC",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.086,
+     "approved_cr": 3.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Pharma Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Product development expenses",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.075,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.067,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kia Health Tech Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of Asset",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.06,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "other_details": "Other non-operating Income",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.023,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Research Private Limited (Singapore)",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.022,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Rubicon Research Australia Pty Ltd",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.018,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Kia Health Tech Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.004,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiaries",
+     "remarks": "Not Applicable",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 39.919,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 25.605,
+     "relationship": "Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 81.109,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 39.919,
+     "relationship": "Holding",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.5,
+     "counterparty": "Kia Health Tech Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.5,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.804,
+     "counterparty": "Rubicon Research Private Limited (Singapore)",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.756,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.647,
+     "counterparty": "Rubicon Research Australia Pty Ltd",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.583,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 2.0,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 2.0,
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 1.439,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 2.065,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 1.943,
+     "other_details": "Trade and other payable",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.047,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.047,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 8.657,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 6.596,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 24.152,
+     "counterparty": "Rubicon Research Canada Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 19.762,
+     "other_details": "Trade and Other Payables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 7.495,
+     "counterparty": "Rubicon Research Canada Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 7.045,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.072,
+     "counterparty": "Advatech Bio Pharma Ltd",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.063,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 73.289,
+     "counterparty": "AdvaGen Pharma Europe Oãœ",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 90.56,
+     "other_details": "Advance given",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.665,
+     "counterparty": "Rubicon Research Australia Pty Ltd",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.578,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.373,
+     "counterparty": "Rubicon Research Private Limited (Singapore)",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 0.296,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.997,
+     "counterparty": "AdvaGen Holding Inc",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.558,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 10.444,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 5.381,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 2.305,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "AdvaGen Pharma Limited",
+     "opening_cr": 0.15,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 11.604,
+     "counterparty": "AdvaGen Pharma Limited",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 12.147,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.625,
+     "counterparty": "Validus Pharmaceuticals LLC",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 1.942,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.367,
+     "counterparty": "AIM RX3PL L.L.C",
+     "entity": "AdvaGen Holding Inc",
+     "opening_cr": 1.285,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.262,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 1.262,
+     "other_details": "Trade and Other Payables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 4.258,
+     "counterparty": "Rubicon Consumer Healthcare Private Limited",
+     "entity": "Rubicon Research Limited",
+     "opening_cr": 3.58,
+     "other_details": "Trade and Other receivables",
+     "relationship": "Holding-Subsidiary",
+     "remarks": "Not Applicable",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 68,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544578",
  "section_lab": {
@@ -9583,7 +13031,7 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-07-30T12:31:51+05:30",
+   "at": "2026-10-28T15:03:03+05:30",
    "by": "file",
    "doc": "other"
   },
@@ -9591,10 +13039,80 @@
    "at": "2026-09-15T23:59:00+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:27:13+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "pharma",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Pharmaceutical",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Pharmaceutical",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Pharmaceutical",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Pharmaceutical",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -13063,6 +16581,660 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 417.61100000000005,
+    "CWIP": 6.904999999999999,
+    "Equity Capital": 15.413,
+    "Fixed Assets": 326.91200000000003,
+    "Investments": 0.05,
+    "Other Assets": 1117.565,
+    "Other Liabilities": 492.83699999999993,
+    "Reserves": 525.571,
+    "Total Assets": 1451.432,
+    "Total Liabilities": 1451.432
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 36.588,
+    "Expenses": 1020.0130000000001,
+    "Interest": 36.782,
+    "Net Profit": 134.361,
+    "Net Profit (owners)": 133.461,
+    "OPM %": 20.57656010564739,
+    "Operating Profit": 264.2589999999998,
+    "Other Income": 3.634000000000185,
+    "Profit before tax": 194.523,
+    "Sales": 1284.272,
+    "Tax": 60.162,
+    "Tax %": 30.927962246109715
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -39.81,
+    "Cash from Investing Activity": -64.994,
+    "Cash from Operating Activity": 159.177,
+    "Net Cash Flow": 54.373
+   },
+   "source_news_id": "xbrl-facts:FY25:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 408.02500000000003,
+    "CWIP": 6.394,
+    "Equity Capital": 15.413,
+    "Fixed Assets": 259.325,
+    "Investments": 35.708,
+    "Other Assets": 1039.5089999999998,
+    "Other Liabilities": 265.12499999999983,
+    "Reserves": 652.373,
+    "Total Assets": 1340.936,
+    "Total Liabilities": 1340.936
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 32.011,
+    "Expenses": 802.7970000000001,
+    "Interest": 34.285,
+    "Net Profit": 167.537,
+    "Net Profit (owners)": 167.537,
+    "OPM %": 25.240747483570683,
+    "Operating Profit": 271.04599999999994,
+    "Other Income": 18.530000000000086,
+    "Profit before tax": 223.28,
+    "Sales": 1073.843,
+    "Tax": 55.743,
+    "Tax %": 24.965514152633464
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -34.048,
+    "Cash from Investing Activity": -10.219,
+    "Cash from Operating Activity": 29.65,
+    "Net Cash Flow": -14.617
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.871,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 317.721,
+    "Interest": 11.418,
+    "Minority share": 0.0,
+    "Net Profit": 53.852,
+    "Net Profit (owners)": 53.852,
+    "OPM %": 22.8866214582858,
+    "Operating Profit": 94.29699999999997,
+    "Other Income": 0.6970000000000312,
+    "Profit before tax": 71.705,
+    "Profit for PE": 53.852,
+    "Sales": 412.018,
+    "Tax": 17.853,
+    "Tax %": 24.897845338539852
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 516.644,
+    "CWIP": 33.719,
+    "Equity Capital": 15.444,
+    "Fixed Assets": 500.51400000000007,
+    "Investments": 0.05,
+    "Other Assets": 1248.052,
+    "Other Liabilities": 618.2729999999999,
+    "Reserves": 631.974,
+    "Total Assets": 1782.335,
+    "Total Liabilities": 1782.335
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 9.776,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 257.366,
+    "Interest": 9.207,
+    "Net Profit": 45.812,
+    "Net Profit (owners)": 45.812,
+    "OPM %": 23.509289172489428,
+    "Operating Profit": 79.101,
+    "Other Income": 1.5120000000000005,
+    "Profit before tax": 61.63,
+    "Profit for PE": 45.812,
+    "Sales": 336.467,
+    "Tax": 15.818,
+    "Tax %": 25.666071718319
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 516.644,
+    "CWIP": 26.044,
+    "Equity Capital": 15.444,
+    "Fixed Assets": 392.36199999999997,
+    "Investments": 35.708,
+    "Other Assets": 1139.7259999999999,
+    "Other Liabilities": 320.2289999999999,
+    "Reserves": 741.523,
+    "Total Assets": 1593.84,
+    "Total Liabilities": 1593.84
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.553,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 367.403,
+    "Interest": 9.774,
+    "Minority share": 0.0,
+    "Net Profit": 72.797,
+    "Net Profit (owners)": 72.797,
+    "OPM %": 22.738045418891378,
+    "Operating Profit": 108.12599999999998,
+    "Other Income": 3.7870000000000203,
+    "Profit before tax": 90.586,
+    "Profit for PE": 72.797,
+    "Sales": 475.529,
+    "Tax": 17.789,
+    "Tax %": 19.637692358642617
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 9.511,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 239.46399999999997,
+    "Interest": 7.509,
+    "Net Profit": 37.181,
+    "Net Profit (owners)": 37.181,
+    "OPM %": 20.6313326328838,
+    "Operating Profit": 62.24700000000004,
+    "Other Income": 4.300999999999959,
+    "Profit before tax": 49.528,
+    "Profit for PE": 37.181,
+    "Sales": 301.711,
+    "Tax": 12.347,
+    "Tax %": 24.92933290260055
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 12.266,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 395.212,
+    "Interest": 10.36,
+    "Minority share": 0.0,
+    "Net Profit": 76.785,
+    "Net Profit (owners)": 76.785,
+    "OPM %": 23.09778854479826,
+    "Operating Profit": 118.70299999999997,
+    "Other Income": 2.610000000000028,
+    "Profit before tax": 98.687,
+    "Profit for PE": 76.785,
+    "Sales": 513.915,
+    "Tax": 21.902,
+    "Tax %": 22.193399333245516
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 311.00800000000004,
+    "CWIP": 40.596000000000004,
+    "Equity Capital": 16.509,
+    "Fixed Assets": 531.961,
+    "Investments": 26.594,
+    "Other Assets": 1727.5629999999999,
+    "Other Liabilities": 726.8839999999998,
+    "Reserves": 1272.313,
+    "Total Assets": 2326.714,
+    "Total Liabilities": 2326.714
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 45.262,
+    "Expenses": 1352.684,
+    "Interest": 42.168,
+    "Net Profit": 246.735,
+    "Net Profit (owners)": 246.735,
+    "OPM %": 22.878110967435898,
+    "Operating Profit": 401.27199999999993,
+    "Other Income": 6.692000000000064,
+    "Profit before tax": 320.534,
+    "Sales": 1753.956,
+    "Tax": 73.799,
+    "Tax %": 23.02376658950377
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 283.068,
+    "Cash from Investing Activity": -407.437,
+    "Cash from Operating Activity": 205.046,
+    "Net Cash Flow": 80.677
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 10.166,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 283.712,
+    "Interest": 5.396,
+    "Net Profit": 70.02,
+    "Net Profit (owners)": 70.02,
+    "OPM %": 27.23056956278631,
+    "Operating Profit": 106.166,
+    "Other Income": 3.581000000000003,
+    "Profit before tax": 94.185,
+    "Profit for PE": 70.02,
+    "Sales": 389.878,
+    "Tax": 24.165,
+    "Tax %": 25.656951743908266
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 276.033,
+    "CWIP": 25.650000000000002,
+    "Equity Capital": 16.509,
+    "Fixed Assets": 416.286,
+    "Investments": 43.389,
+    "Other Assets": 1490.1779999999999,
+    "Other Liabilities": 346.197,
+    "Reserves": 1336.764,
+    "Total Assets": 1975.503,
+    "Total Liabilities": 1975.503
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 37.748,
+    "Expenses": 994.3919999999999,
+    "Interest": 30.96,
+    "Net Profit": 188.165,
+    "Net Profit (owners)": 188.165,
+    "OPM %": 23.864504678879285,
+    "Operating Profit": 311.69000000000017,
+    "Other Income": 9.796999999999798,
+    "Profit before tax": 252.779,
+    "Sales": 1306.082,
+    "Tax": 64.614,
+    "Tax %": 25.56145882371558
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 296.717,
+    "Cash from Investing Activity": -269.50300000000004,
+    "Cash from Operating Activity": 38.714,
+    "Net Cash Flow": 65.928
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 15.139,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 405.222,
+    "Interest": 9.288,
+    "Minority share": 0.0,
+    "Net Profit": 84.781,
+    "Net Profit (owners)": 84.781,
+    "OPM %": 24.16373157065378,
+    "Operating Profit": 129.11599999999999,
+    "Other Income": 5.683000000000021,
+    "Profit before tax": 110.372,
+    "Profit for PE": 84.781,
+    "Sales": 534.338,
+    "Tax": 25.591,
+    "Tax %": 23.186134164462
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 10.568,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 302.903,
+    "Interest": 6.013,
+    "Net Profit": 82.449,
+    "Net Profit (owners)": 82.449,
+    "OPM %": 29.183597129029994,
+    "Operating Profit": 124.827,
+    "Other Income": 2.4110000000000014,
+    "Profit before tax": 110.657,
+    "Profit for PE": 82.449,
+    "Sales": 427.73,
+    "Tax": 28.208,
+    "Tax %": 25.49138328347958
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "RUBICON",
  "timeline": [
   {
@@ -13219,6 +17391,35 @@
    "news_id": "nse-106749414",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/9823522970_19082026115613_RRLSEIntimationAudioTranscript14Aug2026.pdf",
    "summary": "On 14 August 2026 Rubicon Research's Q1FY27 call reported revenue up 52% YoY to ₹534 Cr and raised FY27 EBITDA margin guidance to 23%."
+  },
+  {
+   "date": "2026-10-28T16:28:28+05:30",
+   "event_type": "OTHER",
+   "id": "t_649b31ff",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-28T17:51:15+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106832316",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/9823522970_28102026162726_RRLSEIntimationEarningsCall05Nov2026.pdf",
+   "summary": "Rubicon Research Limited scheduled an earnings conference call for Thursday, November 5, 2026, to discuss Q2FY27 financial performance.",
+   "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-10-30T00:24:32+05:30",
+   "event_type": "LITIGATION_REGULATORY",
+   "id": "t_a306b1cd",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-30T00:28:32+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106835644",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/9823522970_30102026002126_RRLSEIntimationAmbernathUSFDAInspection30Oct2026.pdf",
+   "summary": "Rubicon Research reported that the USFDA issued a Form 483 with 5 procedural observations following an inspection of its Ambernath manufacturing facility."
   }
  ],
  "upcoming_events": [
@@ -13235,7 +17436,7 @@
    "source_news_id": "nse-106647592"
   }
  ],
- "updated_at": "2026-10-27T09:54:11+05:30",
+ "updated_at": "2026-10-30T00:28:32+05:30",
  "watchlist": [
   {
    "check_by": "2026-06-30",

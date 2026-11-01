@@ -1,9 +1,216 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2025-12-31",
+     "name": "M/s. Kirtane & Pandit LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2025-12-31",
+     "name": "M/s. Kirtane & Pandit LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-12-31",
+     "name": "M/s Kirtane & Pandit LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q3FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Enkei Wheels (India) Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 5
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2024-11-08T18:00:00+05:30",
@@ -4674,13 +4881,771 @@
  },
  "industry": "Consumer Discretionary > Automobile and Auto Components > Auto Components > Auto Components & Equipments",
  "last_filed_at": "2026-08-06T18:00:00+05:30",
+ "oci": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.505,
+     "description": "Remeasurement gain/(loss) on defined benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.505,
+    "oci_net_cr": -0.505,
+    "profit_cr": -1.712,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -2.217
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.495,
+     "description": "Remeasurement gain/(loss) on defined benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.495,
+    "oci_net_cr": -0.37,
+    "profit_cr": 7.936,
+    "tax_not_reclassified_cr": -0.125,
+    "total_comprehensive_cr": 7.566
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.486,
+     "description": "Define benefit obligation gain (loss)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.479,
+     "description": "Change in FVTOCI in Equity instrument",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.007,
+    "oci_net_cr": 0.174,
+    "profit_cr": 4.207,
+    "tax_not_reclassified_cr": -0.181,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 4.381
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 1.88,
+     "description": "Remeasurement gain/(loss) on defined benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 1.88,
+    "oci_net_cr": 1.407,
+    "profit_cr": -0.607,
+    "tax_not_reclassified_cr": 0.473,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 0.8
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.23,
+     "description": "Remeasurement gain/(loss) on defined benefit obligation",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -1.23,
+    "oci_net_cr": -0.92,
+    "profit_cr": 10.247,
+    "tax_not_reclassified_cr": -0.31,
+    "total_comprehensive_cr": 9.327
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 8.607,
+     "closing_cr": 1.044,
+     "counterparty": "Enkei Thai Mouldings Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.344,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 7.069,
+     "closing_cr": 1.038,
+     "counterparty": "Nikkei CMR Aluminium India Private Limited",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 1.392,
+     "relationship": "Joint Venture Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 6.817,
+     "closing_cr": 9.46,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 2.575,
+     "other_details": "Royalty",
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.671,
+     "closing_cr": 2.037,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 1.185,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.107,
+     "closing_cr": 0.239,
+     "counterparty": "Alicon Castalloy Limited",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.109,
+     "relationship": "Mr. Shailedrjit Rai common director and hold more than 2% of its paid up share capital",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.068,
+     "closing_cr": 0.967,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 1.82,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 1.379,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Thai Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 1.227,
+     "closing_cr": 0.847,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.41,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.161,
+     "closing_cr": -0.018,
+     "counterparty": "Enkei Asia Pacific Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.015,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.054,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Thai Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.046,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.04,
+     "closing_cr": 0.006,
+     "counterparty": "Enkei Audit & Computer Services Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.005,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 35.0,
+     "counterparty": "Enkei Thai Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 35.0,
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Approved by Audit Committee",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 85.914,
+     "counterparty": "Enkei Corporation",
+     "entity": "ENKEI WHEELS INDIA LIMITED",
+     "opening_cr": 84.532,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Loan"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 14,
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 9.78,
+     "closing_cr": 1.068,
+     "counterparty": "Enkei Thai Mouldings Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 1.044,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 7.49,
+     "closing_cr": 3.254,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 9.46,
+     "other_details": "Royalty",
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.284,
+     "closing_cr": 2.277,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 2.037,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.589,
+     "closing_cr": 0.0,
+     "counterparty": "Nikkei CMR Aluminium India Private Limited",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 1.038,
+     "relationship": "Joint Venture Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.55,
+     "closing_cr": 0.0,
+     "counterparty": "Alicon Castalloy Limited",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.239,
+     "relationship": "Mr. Shailedrjit Rai common director and hold more than 2% of its paid up share capital",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1.8,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.967,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 1.379,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Thai Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.923,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.847,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.241,
+     "closing_cr": 0.163,
+     "counterparty": "Enkei Asia Pacific Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": -0.018,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.165,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Asia Pacific Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": -0.018,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.155,
+     "closing_cr": 0.155,
+     "counterparty": "Enkei  Moulding (Kunshan) Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.146,
+     "closing_cr": 0.071,
+     "counterparty": "Enkei Audit & Computer Services Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.006,
+     "other_details": "Royalty",
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.062,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.027,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Thai Mouldings Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 35.0,
+     "counterparty": "Enkei Thai Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 35.0,
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Approved by Audit Committee",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 7.152,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 85.914,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Loan"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 16,
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 50.0,
+     "closing_cr": 85.0,
+     "counterparty": "Enkei Thai Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 35.0,
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Approved by Audit Committee",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 9.111,
+     "closing_cr": 4.234,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 3.254,
+     "other_details": "Royalty",
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.12,
+     "closing_cr": 2.156,
+     "counterparty": "Enkei Thai Mouldings Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 1.068,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 7.114,
+     "closing_cr": 0.0,
+     "counterparty": "Nikkei CMR Aluminium India Private Limited",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.738,
+     "closing_cr": 1.07,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 2.277,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 3.272,
+     "closing_cr": 0.0,
+     "counterparty": "Alicon Castalloy Limited",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Mr. Shailedrjit Rai common director and hold more than 2% of its paid up share capital",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.619,
+     "closing_cr": 0.13,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 1.379,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Thai Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.651,
+     "closing_cr": 0.031,
+     "counterparty": "Enkei Asia Pacific Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.163,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.596,
+     "closing_cr": 0.177,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.181,
+     "closing_cr": 0.34,
+     "counterparty": "Enkei Asia Pacific Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.175,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei  Moulding (Kunshan) Co. Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.155,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.054,
+     "closing_cr": 0.0,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.035,
+     "closing_cr": 0.005,
+     "counterparty": "Enkei Audit & Computer Services Ltd.",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.071,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.02,
+     "closing_cr": 0.0,
+     "counterparty": "PT Enkei Indonesia",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group Company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 61.877,
+     "counterparty": "Enkei Corporation",
+     "entity": "Enkei Wheels India Limited",
+     "opening_cr": 71.52,
+     "relationship": "Holding company",
+     "remarks": "Approved by Audit Committee",
+     "type": "Loan"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 16,
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "533477",
  "sector": "auto_components",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "MANUFACTURING OF WHEELS 2W AND 4W",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "MANUFACTURING OF WHEELS 2W AND 4W",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "MANUFACTURING OF WHEELS 2W AND 4W",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "MANUFACTURING OF WHEELS 2W AND 4W",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:22:49+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "MANUFACTURING OF WHEELS 2W AND 4W",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q2FY24",
   "Q3FY24",
@@ -4694,6 +5659,318 @@
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-11-01T04:46:10+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T04:46:10+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "YE:2025-12",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 57.741,
+    "Exceptional items": -4.584,
+    "Exceptional items AT": -3.5000380725758475,
+    "Expenses": 883.994,
+    "Interest": 21.121,
+    "Net Profit": 5.134,
+    "Net Profit (owners)": 5.134,
+    "OPM %": 9.019389087810264,
+    "Operating Profit": 87.63499999999999,
+    "Other Income": -2.0489999999999924,
+    "Profit before tax": 6.724,
+    "Profit for PE": 8.634038072575848,
+    "Sales": 971.629,
+    "Tax": 1.59,
+    "Tax %": 23.646638905413443
+   },
+   "source_news_id": "xbrl-facts:YE:2025-12:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T04:46:10+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T04:46:10+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "YE:2025-12",
+   "rows": {
+    "Cash from Financing Activity": -15.37,
+    "Cash from Investing Activity": -68.01,
+    "Cash from Operating Activity": 78.187,
+    "Net Cash Flow": -5.193
+   },
+   "source_news_id": "xbrl-facts:YE:2025-12:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:02:02+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:02:02+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.505,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 216.311,
+    "Interest": 6.137,
+    "Net Profit": -1.712,
+    "Net Profit (owners)": -1.712,
+    "OPM %": 7.226766054357288,
+    "Operating Profit": 16.849999999999994,
+    "Other Income": 2.0800000000000054,
+    "Profit before tax": -1.712,
+    "Profit for PE": -1.712,
+    "Sales": 233.161,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-11-01T01:16:15+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T01:16:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Borrowings": 249.87099999999998,
+    "CWIP": 2.582,
+    "Equity Capital": 8.987,
+    "Fixed Assets": 340.513,
+    "Investments": 3.43,
+    "Other Assets": 287.88200000000006,
+    "Other Liabilities": 156.81900000000007,
+    "Reserves": 218.73,
+    "Total Assets": 634.407,
+    "Total Liabilities": 634.407
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:02:02+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:02:02+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.923,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 235.121,
+    "Interest": 5.03,
+    "Net Profit": 7.936,
+    "Net Profit (owners)": 7.936,
+    "OPM %": 11.311573730050648,
+    "Operating Profit": 29.98799999999997,
+    "Other Income": 0.3520000000000323,
+    "Profit before tax": 10.387,
+    "Profit for PE": 7.936,
+    "Sales": 265.109,
+    "Tax": 2.451,
+    "Tax %": 23.596803696928852
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:02:02+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:02:02+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.874,
+    "Exceptional items": -4.584,
+    "Exceptional items AT": -3.667723088626854,
+    "Expenses": 220.818,
+    "Interest": 4.872,
+    "Net Profit": 4.207,
+    "Net Profit (owners)": 4.207,
+    "OPM %": 10.009047265851043,
+    "Operating Profit": 24.559999999999974,
+    "Other Income": 0.4440000000000275,
+    "Profit before tax": 5.258,
+    "Profit for PE": 7.874723088626854,
+    "Sales": 245.378,
+    "Tax": 1.051,
+    "Tax %": 19.9885888170407
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-11-01T01:16:15+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T01:16:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Borrowings": 210.03500000000003,
+    "CWIP": 1.223,
+    "Equity Capital": 8.987,
+    "Fixed Assets": 323.312,
+    "Investments": 3.909,
+    "Other Assets": 276.58199999999994,
+    "Other Liabilities": 155.32799999999997,
+    "Reserves": 230.676,
+    "Total Assets": 605.026,
+    "Total Liabilities": 605.026
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:02:02+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:02:02+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.569,
+    "Exceptional items": -0.126,
+    "Exceptional items AT": -0.11821020092735704,
+    "Expenses": 280.28399999999993,
+    "Interest": 4.927,
+    "Net Profit": -0.607,
+    "Net Profit (owners)": -0.607,
+    "OPM %": 6.27833879489068,
+    "Operating Profit": 18.776000000000067,
+    "Other Income": 0.0729999999999329,
+    "Profit before tax": -0.647,
+    "Profit for PE": -0.48878979907264297,
+    "Sales": 299.06,
+    "Tax": -0.04,
+    "Tax %": -6.182380216383307
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:02:02+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:02:02+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.813,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 284.807,
+    "Interest": 5.759,
+    "Net Profit": 10.247,
+    "Net Profit (owners)": 10.247,
+    "OPM %": 10.727763986057814,
+    "Operating Profit": 34.224999999999966,
+    "Other Income": 0.2020000000000337,
+    "Profit before tax": 13.855,
+    "Profit for PE": 10.247,
+    "Sales": 319.032,
+    "Tax": 3.608,
+    "Tax %": 26.04114038253338
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-11-01T01:16:15+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T01:16:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Borrowings": 307.185,
+    "CWIP": 0,
+    "Equity Capital": 8.987,
+    "Fixed Assets": 305.765,
+    "Investments": 3.909,
+    "Other Assets": 357.98699999999997,
+    "Other Liabilities": 110.68599999999998,
+    "Reserves": 240.803,
+    "Total Assets": 667.661,
+    "Total Liabilities": 667.661
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "ENKEIWHEL",
  "timeline": [],

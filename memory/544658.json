@@ -1,4 +1,85 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-05-31",
+     "name": "Walker Chandiok & Co LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "advances_cr": 0.28,
@@ -64,16 +145,6 @@
    "source_news_id": "nse-106646941"
   },
   {
-   "as_of": "2026-07-16T19:12:25+05:30",
-   "lab": {
-    "at": "2026-07-16T19:12:25+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106700554"
-  },
-  {
    "advances_cr": 0.21,
    "as_of": "2026-10-12T18:00:00+05:30",
    "cash_cr": 14.67,
@@ -97,17 +168,6 @@
    "source_news_id": "xbrl:res:544658:Q2FY27",
    "total_assets_cr": 6269.43,
    "total_liabilities_cr": 929.1
-  },
-  {
-   "as_of": "2026-10-16T18:38:35+05:30",
-   "gross_debt_cr": 0.0,
-   "lab": {
-    "at": "2026-10-16T18:38:35+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106820514"
   }
  ],
  "business_summary": {
@@ -238,6 +298,222 @@
    "source_news_id": "nse-106646941"
   }
  ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 50.732,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 105.515,
+    "AdjustmentsForDividendIncome": 1.057,
+    "AdjustmentsForFairValueGainsLosses": -96.264,
+    "AdjustmentsForFinanceCosts": 17.767,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 23.852,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 53.336,
+    "AdjustmentsForOtherBankBalances": -0.016,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -3.025,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -8.535,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 4.881,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -24.613,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 133.973,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -2693.966,
+    "CashFlowsFromUsedInInvestingActivities": -469.061,
+    "CashFlowsFromUsedInOperatingActivities": 3281.56,
+    "CashFlowsFromUsedInOperations": 4382.228,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 2640.4,
+    "DividendsReceivedClassifiedAsInvestingActivities": 1.057,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1100.668,
+    "IncreaseDecreaseInCashAndCashEquivalents": 118.533,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 118.533,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 51.742,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -65.127,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 2224.238,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 1817.365,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 53.566,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.241,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 115.228,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -20.024,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 57.491,
+    "AdjustmentsForDividendIncome": 0.345,
+    "AdjustmentsForFairValueGainsLosses": -125.281,
+    "AdjustmentsForFinanceCosts": 9.489,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 27.729,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 27.602,
+    "AdjustmentsForOtherBankBalances": -0.012,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 14.377,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -182.288,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -7.571,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -249.1,
+    "AdjustmentsForSharebasedPayments": 27.997,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 14.672,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -642.327,
+    "CashFlowsFromUsedInInvestingActivities": -1165.204,
+    "CashFlowsFromUsedInOperatingActivities": 1688.23,
+    "CashFlowsFromUsedInOperations": 2229.246,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 612.881,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.345,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 541.016,
+    "IncreaseDecreaseInCashAndCashEquivalents": -119.301,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -119.301,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 16.537,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -23.06,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 1894.629,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 749.492,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 29.446,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.072,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 2.255,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 13.551,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 21.215,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "ICICI Prudential Asset Management Company Limited",
  "corporate_actions": [
   {
@@ -263,6 +539,80 @@
   }
  ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-01-14T18:00:00+05:30",
@@ -7462,7 +7812,7 @@
     "tax_litigation": []
    },
    {
-    "as_of": "2026-10-26T16:50:59+05:30",
+    "as_of": "2026-10-30T11:23:34+05:30",
     "board": [
      {
       "appointed": "2018-10-15",
@@ -7586,9 +7936,9 @@
      ]
     },
     "complaints": {
-     "disposed": 0.0,
+     "disposed": 2.0,
      "pending": 0.0,
-     "received": 0.0
+     "received": 1.0
     },
     "compliance": {
      "audit committee": true,
@@ -7613,7 +7963,7 @@
     "penalties": [],
     "quarter_end": "2026-09-30",
     "related_finance": [],
-    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1745922_26102026045122_WEB.xml",
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749563_30102026112437_WEB.xml",
     "tax_litigation": []
    }
   ]
@@ -7718,6 +8068,124 @@
  },
  "industry": "Financial Services > Capital Markets > Asset Management Company",
  "last_filed_at": "2026-10-21T07:37:55+05:30",
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.723,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.723,
+    "oci_net_cr": 0.541,
+    "profit_cr": 917.092,
+    "tax_not_reclassified_cr": 0.182,
+    "total_comprehensive_cr": 917.633
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.3,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.3,
+    "oci_net_cr": -0.234,
+    "profit_cr": 763.419,
+    "tax_not_reclassified_cr": -0.066,
+    "total_comprehensive_cr": 763.185
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -7.419,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -7.419,
+    "oci_net_cr": -5.552,
+    "profit_cr": 964.634,
+    "tax_not_reclassified_cr": -1.867,
+    "total_comprehensive_cr": 959.082
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -4.606,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -4.606,
+    "oci_net_cr": -3.447,
+    "profit_cr": 888.958,
+    "tax_not_reclassified_cr": -1.159,
+    "total_comprehensive_cr": 885.511
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-04-20T19:27:56+05:30",
@@ -7879,6 +8347,526 @@
    "value": 68.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 41.197,
+     "approved_cr": 125.0,
+     "closing_cr": 20.26,
+     "counterparty": "Eastspring Investments (Singapore) Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 21.944,
+     "other_details": "Advisory Fees",
+     "relationship": "Subsidiary of PCHL",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 31.299,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Foundation for inclusive\nfor Inclusive Growth",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Corporate Social Responsibility",
+     "relationship": "Fellow entity",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 27.074,
+     "approved_cr": 125.0,
+     "closing_cr": 12.799,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 11.691,
+     "other_details": "Common Cost, Brokerage",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 13.253,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.0,
+     "other_details": "License fees to use Trademark",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 9.969,
+     "approved_cr": 125.0,
+     "closing_cr": 17.876,
+     "counterparty": "ICICI Lombard General Insurance Company Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 9.21,
+     "other_details": "Insurance premium",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 9.269,
+     "approved_cr": 125.0,
+     "closing_cr": 3.545,
+     "counterparty": "Eastspring Securities Investment Trust Co., Ltd",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 3.756,
+     "other_details": "Advisory Fees",
+     "relationship": "Subsidiary of PCHL",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.731,
+     "approved_cr": 125.0,
+     "closing_cr": 3.192,
+     "counterparty": "ICICI Securities Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 3.919,
+     "other_details": "Common Cost, Brokerage",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.917,
+     "approved_cr": 125.0,
+     "closing_cr": 0.979,
+     "counterparty": "ICICI Prudential Life Insurance Company Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 2.146,
+     "other_details": "Insurance premium",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.18,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "Prudential Corporation Holdings Limited (PCHL)",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 1.386,
+     "other_details": "Other expenses incurred and reimbursed by Company (including custody fees)",
+     "relationship": "Significant Influence",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.46,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Interest Income on Fixed Deposit",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.409,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI International Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.058,
+     "other_details": "Other expenses incurred and reimbursed by Company (including custody fees)",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.114,
+     "approved_cr": 125.0,
+     "closing_cr": 0.055,
+     "counterparty": "ICICI Investment Management Company Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.023,
+     "other_details": "Common Cost, Brokerage",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.015,
+     "approved_cr": 125.0,
+     "closing_cr": 0.007,
+     "counterparty": "ICICI International Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.008,
+     "other_details": "Advisory Fees",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.007,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Lombard General Insurance Company Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Insurance claim received",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.007,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Venture Funds Management Company Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Employee Cost",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.001,
+     "approved_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Employee Cost",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 125.0,
+     "closing_cr": 124.906,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 7.052,
+     "other_details": "Cash and bank balance",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 125.0,
+     "closing_cr": 13.425,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management company Ltd",
+     "opening_cr": 12.965,
+     "other_details": "Fixed Deposit",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 18,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 107.936,
+     "approved_cr": 118.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Venture Funds Management Company Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Business Transfer Agreement",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by Board",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 34.751,
+     "approved_cr": 250.0,
+     "closing_cr": 17.4,
+     "counterparty": "Eastspring Investments (Singapore) Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 20.26,
+     "other_details": "Advisory Fees",
+     "relationship": "Subsidiary of PCHL",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 30.354,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Foundation for inclusive\nfor Inclusive Growth",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Corporate Social Responsibility",
+     "relationship": "Fellow entity",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 21.359,
+     "approved_cr": 250.0,
+     "closing_cr": 10.662,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 12.799,
+     "other_details": "Common Cost, Commission & Marketing expenses",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 16.491,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "License fees to use Trademark",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.148,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Prudential AMC Group Gratuity Scheme",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Post Employment Benefit Plan",
+     "relationship": "Post Employment Benefit Plan of the Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 9.004,
+     "approved_cr": 250.0,
+     "closing_cr": 9.08,
+     "counterparty": "ICICI Lombard General Insurance Company Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 17.876,
+     "other_details": "Insurance premium",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.764,
+     "approved_cr": 250.0,
+     "closing_cr": 3.282,
+     "counterparty": "Eastspring Securities Investment Trust Co., Ltd",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 3.545,
+     "other_details": "Advisory Fees",
+     "relationship": "Subsidiary of PCHL",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 7.5,
+     "approved_cr": 250.0,
+     "closing_cr": 3.768,
+     "counterparty": "ICICI Securities Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 3.192,
+     "other_details": "Common Cost, Commission & Marketing expenses",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.523,
+     "approved_cr": 250.0,
+     "closing_cr": 2.469,
+     "counterparty": "ICICI Venture Funds Management Company Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Common Cost, Commission & Marketing expenses",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.031,
+     "approved_cr": 250.0,
+     "closing_cr": 1.962,
+     "counterparty": "ICICI Life Insurance Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.979,
+     "other_details": "Insurance premium",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.488,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Venture Funds Management Company Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Employee Cost",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.802,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Venture Funds Management Company Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Other expenses incurred and reimbursed by Company (including custody fees)",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.583,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI International Ltd Mauritius",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Other expenses incurred and reimbursed by Company (including custody fees)",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.463,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Interest Recievable on Fixed Deposit",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.101,
+     "approved_cr": 250.0,
+     "closing_cr": 0.154,
+     "counterparty": "ICICI Investment Management Company Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.055,
+     "other_details": "Common Cost, Commission & Marketing expenses",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 1.0,
+     "closing_cr": 0.003,
+     "counterparty": "Rohit Bhasin",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.001,
+     "other_details": "Advisory Fees",
+     "relationship": "Relative of Key Managerial Personnel (KMP) of Promoter and promoter group",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.006,
+     "approved_cr": 1.0,
+     "closing_cr": 0.001,
+     "counterparty": "Krishnakumar  Subramanian",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.001,
+     "other_details": "Advisory Fees",
+     "relationship": "Relative of Key Managerial Personnel (KMP) of Promoter and promoter group",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 250.0,
+     "closing_cr": 10.762,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 124.906,
+     "other_details": "Cash and bank balance",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 250.0,
+     "closing_cr": 13.892,
+     "counterparty": "ICICI Bank Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 13.425,
+     "other_details": "Fixed Deposit",
+     "relationship": "Holding Company",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI Lombard General Insurance Company Limited",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Insurance claim received",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 250.0,
+     "closing_cr": 0.0,
+     "counterparty": "ICICI International Ltd Mauritius",
+     "entity": "ICICI Prudential Asset Management co. Ltd",
+     "opening_cr": 0.007,
+     "other_details": "Advisory Fees",
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved by audit comitte",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:57:32+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 22,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544658",
  "section_lab": {
@@ -7888,7 +8876,7 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-10-26T16:50:59+05:30",
+   "at": "2026-10-30T11:23:34+05:30",
    "by": "file",
    "doc": "other"
   }
@@ -7953,6 +8941,246 @@
   "Q4FY26",
   "Q1FY27",
   "Q2FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Depreciation": 25.985,
+    "Expenses": 374.33599999999996,
+    "Financing Margin %": 74.99130172994893,
+    "Financing Profit": 1135.8700000000001,
+    "Interest": 4.463,
+    "Net Profit": 917.092,
+    "OPM %": 75.28595356477223,
+    "Operating Profit": 1140.333,
+    "Other Income": 108.91299999999978,
+    "Profit before tax": 1218.798,
+    "Revenue": 1514.669,
+    "Sales": 1514.669,
+    "Tax": 301.706,
+    "Tax %": 24.754389160467937
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Depreciation": 27.63,
+    "Expenses": 356.944,
+    "Financing Margin %": 76.16825510248476,
+    "Financing Profit": 1155.477,
+    "Interest": 4.585,
+    "Net Profit": 763.419,
+    "OPM %": 76.47049517272839,
+    "Operating Profit": 1160.0620000000001,
+    "Other Income": -89.28099999999995,
+    "Profit before tax": 1038.566,
+    "Revenue": 1517.006,
+    "Sales": 1517.006,
+    "Tax": 275.147,
+    "Tax %": 26.49297204029402
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 105.514,
+    "Expenses": 1470.797,
+    "Financing Margin %": 74.17762704243414,
+    "Financing Profit": 4276.0650000000005,
+    "Interest": 17.767,
+    "Net Profit": 3298.261,
+    "OPM %": 74.4858342141359,
+    "Operating Profit": 4293.832,
+    "Other Income": 236.28999999999996,
+    "Profit before tax": 4406.841,
+    "Revenue": 5764.629,
+    "Sales": 5764.629,
+    "Tax": 1108.58,
+    "Tax %": 25.155888310923856
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -2693.966,
+    "Cash from Investing Activity": -469.061,
+    "Cash from Operating Activity": 3281.56,
+    "Net Cash Flow": 118.533
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowing": 0.0,
+    "CWIP": 7.159,
+    "Equity Capital": 49.426,
+    "Fixed Assets": 634.169,
+    "Investments": 3856.539,
+    "Other Assets": 505.3890000000006,
+    "Other Liabilities": 832.0860000000002,
+    "Reserves": 4121.744,
+    "Total Assets": 5003.256,
+    "Total Liabilities": 5003.256
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 28.057,
+    "Expenses": 431.573,
+    "Financing Margin %": 72.10701045440511,
+    "Financing Profit": 1127.9130000000002,
+    "Interest": 4.735,
+    "Net Profit": 964.634,
+    "OPM %": 72.40971704126208,
+    "Operating Profit": 1132.6480000000001,
+    "Other Income": 180.79599999999982,
+    "Profit before tax": 1280.652,
+    "Revenue": 1564.221,
+    "Sales": 1564.221,
+    "Tax": 316.018,
+    "Tax %": 24.676336740972562
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:28:13+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:28:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 29.433,
+    "Expenses": 458.814,
+    "Financing Margin %": 72.30428501612512,
+    "Financing Profit": 1210.219,
+    "Interest": 4.753,
+    "Net Profit": 888.958,
+    "OPM %": 72.58825202266,
+    "Operating Profit": 1214.972,
+    "Other Income": 16.909999999999854,
+    "Profit before tax": 1197.696,
+    "Revenue": 1673.786,
+    "Sales": 1673.786,
+    "Tax": 308.738,
+    "Tax %": 25.777659773431658
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 0.0,
+    "CWIP": 3.973,
+    "Equity Capital": 49.426,
+    "Fixed Assets": 648.067,
+    "Investments": 5186.6,
+    "Other Assets": 388.9969999999994,
+    "Other Liabilities": 887.311999999999,
+    "Reserves": 5290.899,
+    "Total Assets": 6227.637,
+    "Total Liabilities": 6227.637
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
  ],
  "symbol": "ICICIAMC",
  "timeline": [
@@ -8065,7 +9293,7 @@
    "source_news_id": "nse-106820514"
   }
  ],
- "updated_at": "2026-10-28T05:30:39+05:30",
+ "updated_at": "2026-11-01T07:24:47+05:30",
  "watchlist": [
   {
    "check_by": "2026-06-30",

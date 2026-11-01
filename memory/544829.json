@@ -1,15 +1,76 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-08-07T19:44:08+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-08-07T19:44:08+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106732279"
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
+ "balance_sheet": [
   {
    "advances_cr": 0.12,
    "as_of": "2026-10-23T17:37:57+05:30",
@@ -72,9 +133,339 @@
   "source_news_id": "nse-106732279",
   "text": "SBI Funds Management is an asset management company running mutual fund schemes (active and passive) plus PMS, advisory, offshore and AIF strategies, distributed largely through State Bank of India's branch network."
  },
+ "call_points": [
+  {
+   "category": "Margins & costs",
+   "date": "2026-10-29",
+   "lab": {
+    "at": "2026-10-29T16:27:02+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106834199",
+   "text": "Equity yields averaged 62-63 bps, debt yields 34-35 bps, and liquid yields 11-12 bps in Q2 FY27.",
+   "versus_prior": "detailed yield stack provided vs partial yields in prior disclosure"
+  },
+  {
+   "category": "Other",
+   "date": "2026-10-29",
+   "lab": {
+    "at": "2026-10-29T16:27:02+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106834199",
+   "text": "Launched new assisted onboarding platform Aarambh for Aadhaar-based biometric KYC and first-time digital onboarding."
+  },
+  {
+   "category": "Capex & capacity",
+   "date": "2026-10-29",
+   "lab": {
+    "at": "2026-10-29T16:27:02+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106834199",
+   "text": "AIF platform QAAUM reached ₹7,437 Cr, up 27% YoY; added dedicated practice head to build Category II and III funds."
+  }
+ ],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": -18.729,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 27.695,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -235.376,
+    "AdjustmentsForFinanceCosts": 8.182,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 15.764,
+    "AdjustmentsForInterestIncome": 43.159,
+    "AdjustmentsForOtherBankBalances": 21.196,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -96.794,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 1.684,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 18.349,
+    "AdjustmentsForReconcileProfitLoss": -266.458,
+    "AdjustmentsForSharebasedPayments": 15.968,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -0.996,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 29.445,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -23.155,
+    "CashFlowsFromUsedInInvestingActivities": -1341.41,
+    "CashFlowsFromUsedInOperatingActivities": 1374.271,
+    "CashFlowsFromUsedInOperations": 1815.161,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.078,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.017,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 440.89,
+    "IncreaseDecreaseInCashAndCashEquivalents": 9.706,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 9.706,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 44.481,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 19.758,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 2558.622,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 1183.187,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 23.138,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.183,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 10.717,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": -17.44,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 27.599,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -233.728,
+    "AdjustmentsForFinanceCosts": 8.161,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 16.064,
+    "AdjustmentsForInterestIncome": 43.157,
+    "AdjustmentsForOtherBankBalances": 11.022,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -96.69,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 1.686,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 17.727,
+    "AdjustmentsForReconcileProfitLoss": -273.081,
+    "AdjustmentsForSharebasedPayments": 15.968,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 10.622,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -23.091,
+    "CashFlowsFromUsedInInvestingActivities": -1343.068,
+    "CashFlowsFromUsedInOperatingActivities": 1362.638,
+    "CashFlowsFromUsedInOperations": 1802.926,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.078,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.017,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 440.288,
+    "IncreaseDecreaseInCashAndCashEquivalents": -3.521,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -3.521,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 44.481,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 19.707,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 2547.48,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 1170.358,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 23.074,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.183,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 10.688,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "SBI Funds Management Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2036.83
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2036.83
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2026-08-03T18:00:00+05:30",
@@ -3769,15 +4160,14 @@
  "fy_end_month": 3,
  "governance": {
   "auditor": {
-   "as_of": "2026-10-23T17:37:57+05:30",
+   "as_of": "2026-10-29T15:00:09+05:30",
    "lab": {
-    "at": "2026-10-23T17:37:57+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-29T16:25:26+05:30",
+    "by": "ai",
+    "doc": "call"
    },
-   "name": "Gokhale & Sathe LLP",
    "opinion": "UNMODIFIED",
-   "source_news_id": "nse-106826722"
+   "source_news_id": "nse-106834199"
   },
   "auditor_history": [
    {
@@ -3800,6 +4190,206 @@
     "name": "Gokhale & Sathe LLP",
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106826722"
+   },
+   {
+    "as_of": "2026-10-29T15:00:09+05:30",
+    "lab": {
+     "at": "2026-10-29T16:25:26+05:30",
+     "by": "ai",
+     "doc": "call"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106834199"
+   }
+  ],
+  "quarters": [
+   {
+    "as_of": "2026-10-29T18:14:34+05:30",
+    "board": [
+     {
+      "appointed": "2024-11-11",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Challa Sreenivasulu Setty",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-01-10",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashwini Kumar Tewari",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-01-20",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Olivier Philippe Mariee",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2020-09-29",
+      "category": "Non-Executive - Independent Director",
+      "ceased": "2026-09-28",
+      "cessation_reason": "Tenure Completion",
+      "name": "Moiz Mohsin Miyajiwala",
+      "role": null,
+      "tenure_months": 72.0
+     },
+     {
+      "appointed": "2021-06-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sudha Krishnan",
+      "role": null,
+      "tenure_months": 63.06
+     },
+     {
+      "appointed": "2022-03-21",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shekhar Bhatnagar",
+      "role": null,
+      "tenure_months": 54.1
+     },
+     {
+      "appointed": "2025-08-29",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Hemant Ratnakar Adarkar",
+      "role": null,
+      "tenure_months": 13.02
+     },
+     {
+      "appointed": "2025-10-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjay Prakash",
+      "role": null,
+      "tenure_months": 11.08
+     },
+     {
+      "appointed": "2026-09-29",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Giridhar Sanjeevi",
+      "role": null,
+      "tenure_months": 0.02
+     },
+     {
+      "appointed": "2026-07-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Debasish Mishra",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-02-23",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Denys Charles Jean Marie Fougeroux De",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 10,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Sanjay Prakash",
+      "Sudha Krishnan",
+      "Giridhar Sanjeevi"
+     ],
+     "corporate social responsibility committee": [
+      "Sudha Krishnan",
+      "Hemant Adarkar",
+      "Debasish Mishra",
+      "Denys Charles Jean Marie Fougeroux De",
+      "Shekhar Bhatnagar"
+     ],
+     "nomination and remuneration committee": [
+      "Shekhar Bhatnagar",
+      "Ashwini Kumar Tewari",
+      "Hemant Adarkar",
+      "Sanjay Prakash",
+      "Olivier Philippe Mariee",
+      "Giridhar Sanjeevi"
+     ],
+     "risk management committee": [
+      "Hemant Adarkar",
+      "Denys Charles Jean Marie Fougeroux De",
+      "Sanjay Prakash",
+      "Debasish Mishra",
+      "Giridhar Sanjeevi"
+     ],
+     "stakeholders relationship committee": [
+      "Debasish Mishra",
+      "Denys Charles Jean Marie Fougeroux De",
+      "Sanjay Prakash",
+      "Giridhar Sanjeevi"
+     ]
+    },
+    "complaints": {
+     "disposed": 28.0,
+     "pending": 2.0,
+     "received": 30.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [
+     "fine or penalty: District Consumer Disputes Redressal Commission, Solapur (The Commission has ordered the Company to refund the commission amount and pay compensation of Rs.10,000 and litigation )"
+    ],
+    "gaps": {
+     "audit committee": 38.0,
+     "board": 39.0,
+     "corporate social responsibility committee": 107.0,
+     "nomination and remuneration committee": 52.0,
+     "risk management committee": 92.0
+    },
+    "independent_directors": 8,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [
+     {
+      "amount_rupees": null,
+      "authority": "District Consumer Disputes Redressal Commission, Solapur",
+      "details": "The Commission has ordered the Company to refund the commission amount and pay compensation of Rs.10,000 and litigation cost of Rs.5,000.",
+      "impact": "The financial impact of the Order is to the extent of the amount directed. There is no impact on operations or other activities of the Company due to the Order. The Company shall file an appeal against the said order before appropriate authority.",
+      "received": "2026-09-23"
+     }
+    ],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749112_29102026061444_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Pending at GST Appellate Tribunal",
+      "initiated": "2024-07-31",
+      "opposing_party": "Directorate General of GST Intelligence, Mumbai Zonal Unit (DGGI)",
+      "status": "Pending at GST Appellate Tribunal"
+     }
+    ]
    }
   ]
  },
@@ -3865,7 +4455,145 @@
   "former_names": []
  },
  "industry": "Financial Services > Capital Markets > Asset Management Company",
- "last_filed_at": "2026-10-27T21:22:33+05:30",
+ "last_filed_at": "2026-10-29T15:00:09+05:30",
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -1.613,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.185,
+     "description": "Items that will be reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -1.613,
+    "oci_net_cr": -1.392,
+    "profit_cr": 880.255,
+    "reclassified_cr": -0.185,
+    "tax_not_reclassified_cr": -0.406,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 878.863,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": -1.392
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -1.613,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -1.613,
+    "oci_net_cr": -1.207,
+    "profit_cr": 872.806,
+    "tax_not_reclassified_cr": -0.406,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 871.599
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.026,
+     "description": "Remeasurements of the defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.842,
+     "description": "Exchange Differences on translating the financial statements of a subsidiary",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.026,
+    "oci_net_cr": -0.823,
+    "profit_cr": 701.244,
+    "reclassified_cr": -0.842,
+    "tax_not_reclassified_cr": 0.007,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 700.421,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 700.421
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.026,
+     "description": "Remeasurements of the defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.026,
+    "oci_net_cr": 0.019,
+    "profit_cr": 693.541,
+    "tax_not_reclassified_cr": 0.007,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 693.56
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-08-07T19:44:08+05:30",
@@ -3896,6 +4624,26 @@
    },
    "source_news_id": "nse-106732279",
    "text": "Distribution runs through over 23,000 SBI branches, 124,000 independent financial advisors, nearly 10,000 national distributors and 90 banking partners, reaching 98% of pin codes; unique investors 1.82 crore, up 12%."
+  },
+  {
+   "as_of": "2026-10-29T15:00:09+05:30",
+   "lab": {
+    "at": "2026-10-29T16:25:26+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106834199",
+   "text": "Q2FY27 equity yields averaged 62-63 bps, debt yields 34-35 bps, and liquid yields 11-12 bps."
+  },
+  {
+   "as_of": "2026-10-29T15:00:09+05:30",
+   "lab": {
+    "at": "2026-10-29T16:25:26+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "source_news_id": "nse-106834199",
+   "text": "SBI channel contributes approximately 20% of net inflows, in line with its share of overall AUM."
   }
  ],
  "ownership": [
@@ -3958,22 +4706,769 @@
    "value": 1260000.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 61.029,
+     "approved_cr": 70.0,
+     "closing_cr": 0.0,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Royalty",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.749,
+     "approved_cr": 33.72,
+     "closing_cr": 13.769,
+     "counterparty": "SBI-SG Global Securities Services Private Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 2.295,
+     "other_details": "Fund Accounting Charges for SBI MF Schemes",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.837,
+     "approved_cr": 35.0,
+     "closing_cr": 3.987,
+     "counterparty": "Amundi Japan Ltd",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 3.801,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 6.875,
+     "approved_cr": 10.0,
+     "closing_cr": 0.492,
+     "counterparty": "SBI General Insurance Co. Ltd.",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.171,
+     "other_details": "Insurance Premium - Mediclaim & general business assets (fixed assets)",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.994,
+     "approved_cr": 35.0,
+     "closing_cr": 0.0,
+     "counterparty": "Amundi Hong Kong Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 6.022,
+     "other_details": "Portfolio Advisory Fees",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.091,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. D. P. Singh",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management  Personnel (Upto 30th August 2026)",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 4.935,
+     "approved_cr": 15.0,
+     "closing_cr": 2.419,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 2.266,
+     "other_details": "Brokerage Commission for PMS & AIF Investors",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.082,
+     "approved_cr": 7.2,
+     "closing_cr": 3.373,
+     "counterparty": "Amundi Singapore Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.315,
+     "other_details": "Reimbursement of Salary",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.337,
+     "approved_cr": 9.5,
+     "closing_cr": 0.178,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.223,
+     "other_details": "Reimbursement of Expenses such as rent, business promotion and salary of deputed staff, training at SBI training centres",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.27,
+     "approved_cr": 12.0,
+     "closing_cr": 2.223,
+     "counterparty": "Amundi Asset Management",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 2.327,
+     "other_details": "Portfolio Advisory Fees",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.205,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Inderjeet Ghuliani",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management  Personnel (Upto 30th September 2026)",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.728,
+     "closing_cr": 1.728,
+     "counterparty": "SBI (Mauritius) Limited",
+     "entity": "SBI Funds Management (International) Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Placement of Fixed Deposits",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.489,
+     "closing_cr": 0.0,
+     "counterparty": "Ms. Vinaya Datar",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management  Personnel",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.351,
+     "approved_cr": 6.0,
+     "closing_cr": 1.018,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.606,
+     "other_details": "Interest on Fixed Deposits placed with SBI",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.243,
+     "approved_cr": 1.75,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Nand Kishore",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director & CEO (Upto 30th June 2026)",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.09,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Denys De Campigneulles",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "relationship": "Executive Director and Deputy CEO",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.088,
+     "approved_cr": 2.0,
+     "closing_cr": 0.05,
+     "counterparty": "SBI Life Insurance Co. Ltd.",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.042,
+     "other_details": "Insurance Premium - Term Policy & EDLI Policy",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.843,
+     "approved_cr": 1.75,
+     "closing_cr": 0.107,
+     "counterparty": "SBI Pension Funds Private Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of Salaries of staff deputed to SBIPFPL",
+     "relationship": "ASSOCIATE",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.833,
+     "approved_cr": 4.0,
+     "closing_cr": 1.904,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 1.413,
+     "other_details": "Portfolio Management Fees for discretionary PMS w.r.t. various pension / superannuation / retired employees medical benefit funds",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.756,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Vinit Joshi",
+     "entity": "SBI Funds International (IFSC) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel of Subsidiary",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.636,
+     "approved_cr": 2.0,
+     "closing_cr": 0.225,
+     "counterparty": "SBI Funds International (IFSC) Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of Expenses such as salary of deputed staff & other miscellaneous expenses",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.627,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Amundi UK Ltd",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.625,
+     "other_details": "Portfolio Advisory Fees",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.625,
+     "approved_cr": 2.5,
+     "closing_cr": 0.073,
+     "counterparty": "SBI-SG Global Securities Services Private Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.099,
+     "other_details": "Custodial Charges & other expenses for PMS activities",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.486,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "Amundi Asset Management",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of expenses",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.468,
+     "closing_cr": 0.315,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management (International) Private Limited",
+     "opening_cr": 0.316,
+     "other_details": "Brokerage Expense",
+     "relationship": "Ultimate Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.455,
+     "approved_cr": 1.25,
+     "closing_cr": 0.356,
+     "counterparty": "Rajasthan Gramin Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.387,
+     "approved_cr": 1.25,
+     "closing_cr": 0.229,
+     "counterparty": "Chhattisgarh Gramin Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.215,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.38,
+     "approved_cr": 0.38,
+     "closing_cr": 0.0,
+     "counterparty": "SBI Capital Markets Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "IPO Expenses",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.303,
+     "closing_cr": 0.0,
+     "counterparty": "SBI (Mauritius) Limited",
+     "entity": "SBI Funds Management (International) Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Top-up Tax for FY 2024-25 under GLoBE Rules\n(Specific approval granted by Audit Committee of SBIFML)",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.298,
+     "approved_cr": 0.75,
+     "closing_cr": 0.181,
+     "counterparty": "Uttarakhand Gramin Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.166,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.292,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Yashpal Sharma",
+     "entity": "SBI Funds International (IFSC) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel of Subsidiary",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.277,
+     "approved_cr": 1.0,
+     "closing_cr": 0.162,
+     "counterparty": "Jharkhand Rajya Gramin Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.164,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.269,
+     "approved_cr": 2.0,
+     "closing_cr": 0.0,
+     "counterparty": "Amundi Singapore Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.298,
+     "other_details": "Portfolio Advisory Fees",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.255,
+     "approved_cr": 1.274,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Debasish Mishra",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "relationship": "Managing Director & CEO( From 1st July 2026)",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.218,
+     "approved_cr": 0.25,
+     "closing_cr": 0.009,
+     "counterparty": "Mr. Sanjay Prakash",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.198,
+     "approved_cr": 0.25,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Moiz Miyajiwala",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.193,
+     "approved_cr": 0.25,
+     "closing_cr": 0.018,
+     "counterparty": "Ms. Sudha Krishnan",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.189,
+     "approved_cr": 1.0,
+     "closing_cr": 0.0,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.033,
+     "other_details": "Bank charges",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.185,
+     "approved_cr": 0.25,
+     "closing_cr": 0.014,
+     "counterparty": "Mr. Hemant Ratnakar Adarkar",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.17,
+     "approved_cr": 0.25,
+     "closing_cr": 0.018,
+     "counterparty": "Mr. Shekhar Jitendra Bhatnagar",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.17,
+     "closing_cr": 0.0,
+     "counterparty": "Mr. Santosh Sidiri",
+     "entity": "SBI Funds International (IFSC) Limited",
+     "opening_cr": 0.0,
+     "relationship": "Key Management Personnel of Subsidiary",
+     "remarks": "NA",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.15,
+     "approved_cr": 0.5,
+     "closing_cr": 0.081,
+     "counterparty": "SBI Mutual Fund Trustee Company Private Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Recovery of Administrative Expenses",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.136,
+     "approved_cr": 0.75,
+     "closing_cr": 0.081,
+     "counterparty": "Telangana Grameena Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.071,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.12,
+     "approved_cr": 0.85,
+     "closing_cr": 0.0,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds International (IFSC) Limited",
+     "opening_cr": 0.363,
+     "other_details": "Interest on Fixed Deposits placed with SBI",
+     "relationship": "Ultimate Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.084,
+     "approved_cr": 0.25,
+     "closing_cr": 0.052,
+     "counterparty": "Mizoram Rural Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.046,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.066,
+     "approved_cr": 0.32,
+     "closing_cr": 0.0,
+     "counterparty": "Telangana Grameena Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Salary",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.064,
+     "approved_cr": 0.25,
+     "closing_cr": 0.0,
+     "counterparty": "Mizoram Rural Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.071,
+     "other_details": "Reimbursement of Salary",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.059,
+     "closing_cr": 0.0,
+     "counterparty": "SBI (Mauritius) Limited",
+     "entity": "SBI Funds Management (International) Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bank Charges",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.058,
+     "approved_cr": 0.25,
+     "closing_cr": 0.035,
+     "counterparty": "Meghalaya Rural Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.033,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.051,
+     "approved_cr": 0.18,
+     "closing_cr": 0.029,
+     "counterparty": "Arunachal Pradesh Rural Bank",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.027,
+     "other_details": "Portfolio Management Fees",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.05,
+     "approved_cr": 40.0,
+     "closing_cr": 43.767,
+     "counterparty": "State Bank of India",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 43.767,
+     "other_details": "Placement of Fixed Deposits with SBI (including roll-over on maturity of existing Fixed Deposits)",
+     "relationship": "Holding Company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.041,
+     "approved_cr": 0.1,
+     "closing_cr": 0.039,
+     "counterparty": "SBI Cap Securities Ltd.",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Brokerage Commission for PMS Investors",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.036,
+     "approved_cr": 0.12,
+     "closing_cr": 0.016,
+     "counterparty": "SBI Funds International (IFSC) Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.017,
+     "other_details": "Investment Advisory Fees",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.035,
+     "approved_cr": 0.105,
+     "closing_cr": 0.0,
+     "counterparty": "Navdeep Suri",
+     "entity": "SBI Funds International (IFSC) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.035,
+     "approved_cr": 0.105,
+     "closing_cr": 0.0,
+     "counterparty": "Krishnamurthy Vijayan",
+     "entity": "SBI Funds International (IFSC) Limited",
+     "opening_cr": 0.0,
+     "other_details": "Director Sitting Fees",
+     "relationship": "Director",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.03,
+     "approved_cr": 0.06,
+     "closing_cr": 0.014,
+     "counterparty": "SBI Funds International (IFSC) Limited",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.014,
+     "other_details": "Admin Support Charges",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.029,
+     "closing_cr": 0.029,
+     "counterparty": "SBI (Mauritius) Limited",
+     "entity": "SBI Funds Management (International) Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Interest on Fixed Deposits",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.025,
+     "approved_cr": 0.05,
+     "closing_cr": 0.0,
+     "counterparty": "Financial Benchmarks India Pvt. Ltd.",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Membership & Subscription",
+     "relationship": "Other Related Parties",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.02,
+     "approved_cr": 0.15,
+     "closing_cr": 0.0,
+     "counterparty": "NH-Amundi Asset Management Co. Ltd",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.011,
+     "other_details": "Portfolio Advisory Fees",
+     "relationship": "Enterprise under Common Control",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.017,
+     "approved_cr": 0.04,
+     "closing_cr": 0.0,
+     "counterparty": "SBI Funds Management Limited Employees Superannuation Scheme",
+     "entity": "SBI Funds Management Limited",
+     "opening_cr": 0.0,
+     "other_details": "Contribution to superannuation fund",
+     "relationship": "Post-employment benefit plan (As per INDAS)",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 80,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544829",
+ "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-29T18:14:34+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "nbfc",
  "segment_mix": [
   {
-   "as_of": "2026-08-07T19:44:08+05:30",
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-08-07T19:44:08+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
    },
    "period": "Q1FY27",
-   "revenue_cr": null,
-   "segment": "PMS, advisory and international",
-   "share_pct": 8.0,
-   "source_news_id": "nse-106732279"
+   "segment": "Asset Management Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY27",
+   "segment": "Asset Management Services",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
   }
  ],
  "standalone": {
@@ -5444,6 +6939,196 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 12.233,
+    "Expenses": 229.79399999999998,
+    "Financing Margin %": 79.8527667821318,
+    "Financing Profit": 920.4860000000001,
+    "Interest": 2.449,
+    "Net Profit": 880.255,
+    "Net Profit (owners)": 880.255,
+    "OPM %": 80.06521914517636,
+    "Operating Profit": 922.9350000000001,
+    "Other Income": 242.3449999999999,
+    "PBT as filed": 1145.416,
+    "Profit before tax": 1150.598,
+    "Revenue": 1152.729,
+    "Sales": 1152.729,
+    "Tax": 270.343,
+    "Tax %": 23.495869104587356
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 12.184,
+    "Expenses": 227.246,
+    "Financing Margin %": 80.00443989814352,
+    "Financing Profit": 918.991,
+    "Interest": 2.438,
+    "Net Profit": 872.806,
+    "OPM %": 80.21668444076872,
+    "Operating Profit": 921.429,
+    "Other Income": 236.26800000000014,
+    "Profit before tax": 1143.075,
+    "Revenue": 1148.675,
+    "Sales": 1148.675,
+    "Tax": 270.269,
+    "Tax %": 23.64403035671325
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 15.462,
+    "Expenses": 279.981,
+    "Financing Margin %": 76.04420997558424,
+    "Financing Profit": 906.9580000000001,
+    "Interest": 5.733,
+    "Net Profit": 701.244,
+    "Net Profit (owners)": 701.244,
+    "OPM %": 76.52489536100454,
+    "Operating Profit": 912.691,
+    "Other Income": 49.513999999999896,
+    "PBT as filed": 936.202,
+    "Profit before tax": 941.01,
+    "Revenue": 1192.672,
+    "Sales": 1192.672,
+    "Tax": 239.766,
+    "Tax %": 25.47964421207001
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Depreciation": 15.415,
+    "Expenses": 275.99299999999994,
+    "Financing Margin %": 76.27448949256231,
+    "Financing Profit": 905.681,
+    "Interest": 5.723,
+    "Net Profit": 693.541,
+    "OPM %": 76.7564681399734,
+    "Operating Profit": 911.404,
+    "Other Income": 42.66599999999994,
+    "Profit before tax": 932.932,
+    "Revenue": 1187.397,
+    "Sales": 1187.397,
+    "Tax": 239.391,
+    "Tax %": 25.660069544189714
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 0.0,
+    "CWIP": 0.066,
+    "Equity Capital": 203.683,
+    "Fixed Assets": 570.192,
+    "Investments": 7323.541,
+    "Other Assets": 410.8059999999996,
+    "Other Liabilities": 746.29,
+    "Reserves": 7354.632,
+    "Total Assets": 8304.605,
+    "Total Liabilities": 8304.605
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowing": 0.0,
+    "CWIP": 0.066,
+    "Equity Capital": 203.683,
+    "Fixed Assets": 569.2909999999999,
+    "Investments": 7269.806,
+    "Other Assets": 387.4370000000008,
+    "Other Liabilities": 743.8070000000007,
+    "Reserves": 7279.11,
+    "Total Assets": 8226.6,
+    "Total Liabilities": 8226.6
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  }
+ ],
  "symbol": "SBIFUNDS",
  "timeline": [
   {
@@ -5502,10 +7187,24 @@
    "news_id": "nse-106831117",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/SBIMF2026_27102026212206_SE_Application.pdf",
    "summary": "SBI Funds Management submitted applications to BSE and NSE for the re-classification of Indian Digital Payment Intelligence Corporation from promoter to public category."
+  },
+  {
+   "date": "2026-10-29T15:00:09+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_ee314abb",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-29T16:25:26+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106834199",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SBIMF2026_29102026145953_Earnings_Call_Transacript_Signed.pdf",
+   "summary": "SBI Funds Management held its Q2FY27 earnings call, highlighting 10% YoY QAAUM growth to ₹13.14 lakh Cr and stable yield mix."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T22:53:34+05:30",
+ "updated_at": "2026-10-29T16:25:26+05:30",
  "watchlist": [
   {
    "check_by": "2026-09-30",
@@ -5536,8 +7235,15 @@
     "doc": "other"
    },
    "source_news_id": "nse-106732279",
-   "status": "OPEN",
-   "status_history": [],
+   "status": "MET",
+   "status_history": [
+    {
+     "as_of": "2026-10-29T15:00:09+05:30",
+     "evidence": "Q2FY27 QAAUM reported at ₹13.14 lakh Cr, reflecting 10% YoY growth.",
+     "source_news_id": "nse-106834199",
+     "status": "MET"
+    }
+   ],
    "target": "above 11% YoY",
    "text": "Mutual fund QAAUM growth"
   },
@@ -5571,8 +7277,15 @@
    },
    "response": "Declined to guide, citing the silent period; said opex will focus on technology and human resources",
    "source_news_id": "nse-106732279",
-   "status": "OPEN",
-   "status_history": [],
+   "status": "MET",
+   "status_history": [
+    {
+     "as_of": "2026-10-29T15:00:09+05:30",
+     "evidence": "Management clarified recurring employee cost and yields in detail during Q2FY27 concall.",
+     "source_news_id": "nse-106834199",
+     "status": "MET"
+    }
+   ],
    "target": null,
    "text": "Analyst asked for annual employee cost and opex growth outlook"
   },

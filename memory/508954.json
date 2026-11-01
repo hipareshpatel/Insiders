@@ -1,4 +1,85 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-01-31",
+     "name": "Ladha Singhal & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-05-27T16:19:37+05:30",
@@ -93,6 +174,222 @@
  },
  "call_points": [],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -241.7055,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1.4956,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.1805,
+    "AdjustmentsForFinanceCosts": 14.9164,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.9169,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -0.562,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": -0.5203,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -4.256,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1.6781,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0665,
+    "AdjustmentsForReconcileProfitLoss": -217.4278,
+    "AdjustmentsForSharebasedPayments": 0.5812,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 38.6202,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 232.3223,
+    "CashFlowsFromUsedInInvestingActivities": -2.8035,
+    "CashFlowsFromUsedInOperatingActivities": -206.3511,
+    "CashFlowsFromUsedInOperations": -203.2027,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 3.1484,
+    "IncreaseDecreaseInCashAndCashEquivalents": 23.1677,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 23.1677,
+    "InterestPaidClassifiedAsFinancingActivities": 14.9164,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 9.1318,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.0306,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 1.0704,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 20.6314,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 110.5852,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 16.7862,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 16.7095,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 2.8802,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": -117.0925,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -666.4875,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.4322,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 3.4212,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -1.8486,
+    "AdjustmentsForFinanceCosts": 48.921,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 2.3712,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 1.0744,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 3.8043,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0757,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -11.0334,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 5.5875,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0463,
+    "AdjustmentsForProvisionsCurrent": 0.2223,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -593.2245,
+    "AdjustmentsForSharebasedPayments": 1.4305,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 102.1219,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 659.3135,
+    "CashFlowsFromUsedInInvestingActivities": -6.5091,
+    "CashFlowsFromUsedInOperatingActivities": -566.135,
+    "CashFlowsFromUsedInOperations": -558.6293,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 7.5057,
+    "IncreaseDecreaseInCashAndCashEquivalents": 86.6694,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 86.6694,
+    "InterestPaidClassifiedAsFinancingActivities": 47.709,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 19.7742,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 16.803,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 16.5348,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 2.4097,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 237.3655,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 9.9998,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 100.6699,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": -6.2409,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": -361.397,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Finkurve Financial Services Limited",
  "deals": [
   {
@@ -131,6 +428,139 @@
    "tranches": [],
    "updated_as_of": "2026-05-27T16:19:37+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0114,
+    "DebtServiceCoverageRatio": 0.0081,
+    "InterestServiceCoverageRatio": 0.018
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0167,
+    "DebtServiceCoverageRatio": 0.0068,
+    "InterestServiceCoverageRatio": 0.0171
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0288,
+    "DebtServiceCoverageRatio": 0.0041,
+    "InterestServiceCoverageRatio": 0.0138
+   }
   }
  ],
  "financial_metrics": [
@@ -5589,6 +6019,29 @@
  },
  "industry": "Financial Services > Finance > Non Banking Financial Company (NBFC)",
  "last_filed_at": "2026-10-14T03:24:13+05:30",
+ "oci": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "oci_net_cr": 0.3749,
+    "profit_cr": 8.0409,
+    "tax_not_reclassified_cr": -0.3749,
+    "total_comprehensive_cr": 8.4158
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-27T16:19:37+05:30",
@@ -5757,6 +6210,317 @@
    "value": 15.0
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 68.5,
+     "approved_cr": 50.0,
+     "closing_cr": 4.5887,
+     "counterparty": "Augmont Enterprises Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 1.8721,
+     "other_details": "Loan Taken(Principal Loan alongwith Interest Amount outstanding at any given point in time)",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 65.7834,
+     "closing_cr": 0.0,
+     "counterparty": "Augmont Enterprises Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Loan Repaid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 31.51,
+     "approved_cr": 100.0,
+     "closing_cr": 30.6143,
+     "counterparty": "Aranath Real Estate Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 26.68,
+     "other_details": "Loan Taken (Principal Loan alongwith Interest Amount outstanding at any given point in time)",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 27.5757,
+     "closing_cr": 0.0,
+     "counterparty": "Aranath Real Estate Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Loan Repaid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.0134,
+     "closing_cr": 0.5834,
+     "counterparty": "Augmont Goldtech Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.6748,
+     "other_details": "Commission Paid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.772,
+     "closing_cr": 0.5189,
+     "counterparty": "Augmont Enterprises Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 2.4407,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.5333,
+     "closing_cr": 0.4799,
+     "counterparty": "Aranath Real Estate Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.2243,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.4585,
+     "closing_cr": 1.6261,
+     "counterparty": "HR Commercials Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 1.2134,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.0907,
+     "closing_cr": 0.0,
+     "counterparty": "RSBL Builders LLP",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Rent Paid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0216,
+     "closing_cr": 0.0,
+     "counterparty": "Augmont Goldtech Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0191,
+     "closing_cr": 0.0,
+     "counterparty": "Augmont Goldtech Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 25.0,
+     "closing_cr": 9.1459,
+     "counterparty": "HR Commercials Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 9.1459,
+     "other_details": "Loan Taken (Principal Loan alongwith Interest Amount outstanding at any given point in time)",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by Audit Committee",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 12,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 102.62,
+     "approved_cr": 100.0,
+     "closing_cr": 54.5152,
+     "counterparty": "Aranath Real Estate Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 30.6143,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Please note that the approval for the limit of Rs. 5000 lacs as loan is considered and approved by the shareholders as loan amount outstanding at any given point in time."
+     },
+     "other_details": "Loan Taken (Principal Loan alongwith Interest Amount outstanding at any given point in time)",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 78.7191,
+     "closing_cr": 0.0,
+     "counterparty": "Aranath Real Estate Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Loan Repaid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 35.6905,
+     "closing_cr": 0.0,
+     "counterparty": "Augmont Enterprises Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Loan Repaid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 35.0,
+     "approved_cr": 50.0,
+     "closing_cr": 3.8982,
+     "counterparty": "Augmont Enterprises Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 4.5887,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Please note that the approval for the limit of Rs. 5000 lacs as loan is considered and approved by the shareholders as loan amount outstanding at any given point in time."
+     },
+     "other_details": "Loan Taken (Principal Loan alongwith Interest Amount outstanding at any given point in time)",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 3.8782,
+     "closing_cr": 1.5483,
+     "counterparty": "Augmont Goldtech Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.5834,
+     "other_details": "commission paid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.8969,
+     "closing_cr": 1.0862,
+     "counterparty": "Aranath Real Estate Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.4799,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.9608,
+     "closing_cr": 0.0741,
+     "counterparty": "Augmont Enterprises Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.5189,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.456,
+     "closing_cr": 2.0365,
+     "counterparty": "HR Commercials Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 1.6261,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.1961,
+     "closing_cr": 0.0,
+     "counterparty": "Augmont Goldtech Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0665,
+     "closing_cr": 0.0,
+     "counterparty": "Augmont Goldtech Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "Reimbursement of Expenses",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0533,
+     "closing_cr": 0.0,
+     "counterparty": "RSBL Builders LLP",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 0.0,
+     "other_details": "rent paid",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 25.0,
+     "closing_cr": 9.1459,
+     "counterparty": "HR Commercials Private Limited",
+     "entity": "FINKURVE FINANCIAL SERVICES LIMITED",
+     "opening_cr": 9.1459,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "Please note that the approval for the limit of Rs. 1000 lacs as loan is considered and approved by the shareholders as loan amount outstanding at any given point in time."
+     },
+     "other_details": "Loan Taken (Principal Loan alongwith Interest Amount outstanding at any given point in time)",
+     "relationship": "Entity Owned or Controlled by KMP",
+     "remarks": "Approved by audit committee",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 12,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "508954",
  "section_lab": {
@@ -5772,12 +6536,317 @@
   }
  },
  "sector": "nbfc",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Non Banking Financial Company",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Non Banking Financial Company",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Non Banking Financial Company",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:56:42+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "NBFC",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q2FY26",
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Depreciation": 0.7452,
+    "Expenses": 31.6461,
+    "Financing Margin %": 16.742562676645537,
+    "Financing Profit": 8.044500000000001,
+    "Interest": 8.3576,
+    "Net Profit": 5.9188,
+    "OPM %": 34.136762667488064,
+    "Operating Profit": 16.4021,
+    "Other Income": 0.09280000000000044,
+    "Profit before tax": 7.3921,
+    "Revenue": 48.0482,
+    "Sales": 48.0482,
+    "Tax": 1.4733,
+    "Tax %": 19.93073686773718
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowing": 381.706,
+    "CWIP": 8.682,
+    "Equity Capital": 14.0019,
+    "Fixed Assets": 4.6241,
+    "Investments": 5.4011,
+    "Other Assets": 722.5509999999999,
+    "Other Liabilities": 30.98430000000002,
+    "Reserves": 314.566,
+    "Total Assets": 741.2582,
+    "Total Liabilities": 741.2582
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Depreciation": 0.5858,
+    "Expenses": 28.340900000000005,
+    "Financing Margin %": 19.294447299089136,
+    "Financing Profit": 10.025799999999995,
+    "Interest": 13.5954,
+    "Net Profit": 6.9833,
+    "OPM %": 45.45851688057256,
+    "Operating Profit": 23.621199999999995,
+    "Other Income": 0.5086000000000084,
+    "Profit before tax": 9.9486,
+    "Revenue": 51.9621,
+    "Sales": 51.9621,
+    "Tax": 2.9653,
+    "Tax %": 29.80620388798424
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Depreciation": 1.3398,
+    "Expenses": 37.5645,
+    "Financing Margin %": 14.66831032459768,
+    "Financing Profit": 9.876099999999994,
+    "Interest": 19.8889,
+    "Net Profit": 8.0409,
+    "OPM %": 44.20796233448934,
+    "Operating Profit": 29.764999999999993,
+    "Other Income": 1.8851000000000084,
+    "Profit before tax": 10.4214,
+    "Revenue": 67.3295,
+    "Sales": 67.3295,
+    "Tax": 2.3805,
+    "Tax %": 22.842420404168347
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 3.4212,
+    "Expenses": 122.92620000000002,
+    "Financing Margin %": 17.069486623526966,
+    "Financing Profit": 35.37109999999998,
+    "Interest": 48.921,
+    "Net Profit": 26.0341,
+    "OPM %": 40.67792275103115,
+    "Operating Profit": 84.29209999999998,
+    "Other Income": 2.64530000000002,
+    "Profit before tax": 34.5952,
+    "Revenue": 207.2183,
+    "Sales": 207.2183,
+    "Tax": 8.5611,
+    "Tax %": 24.746496623809087
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 659.3135,
+    "Cash from Investing Activity": -6.5091,
+    "Cash from Operating Activity": -566.135,
+    "Net Cash Flow": 86.6694
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowing": 847.1452999999999,
+    "CWIP": 0,
+    "Equity Capital": 14.005,
+    "Fixed Assets": 26.5158,
+    "Investments": 7.4141,
+    "Other Assets": 1199.1115000000002,
+    "Other Liabilities": 40.99540000000002,
+    "Reserves": 330.8957,
+    "Total Assets": 1233.0414,
+    "Total Liabilities": 1233.0414
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "nbfc",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Depreciation": 1.1318,
+    "Expenses": 36.761700000000005,
+    "Financing Margin %": 15.469800847102176,
+    "Financing Profit": 11.618299999999994,
+    "Interest": 26.7231,
+    "Net Profit": 8.4381,
+    "OPM %": 51.051687613427404,
+    "Operating Profit": 38.34139999999999,
+    "Other Income": 0.7187000000000054,
+    "Profit before tax": 11.2052,
+    "Revenue": 75.1031,
+    "Sales": 75.1031,
+    "Tax": 2.7671,
+    "Tax %": 24.694784564309433
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "FINKURVE",
  "timeline": [

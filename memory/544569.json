@@ -1,4 +1,270 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "101248W/W-100022",
+     "name": "B S R & Co. LLP",
+     "signed_on": "2026-05-13",
+     "signing_partner": "MATHUR VIJAY"
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "BSR & Co LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "101248W/W-100022",
+     "name": "B S R & Co. LLP",
+     "signed_on": "2026-05-13",
+     "signing_partner": "MATHUR VIJAY"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<span>(a) According to the information and explanations given to us and on the basis of our examination of the records of the Company, the Company has not defaulted in repayment of loans and borrowing or in the payment of interest thereon to any lender.</span><br/><br/><span>(b) According to the information and explanations given to us and on the basis of our examination of the records of the Company, the Company has not been declared a wilful defaulter by any bank or financial institution or government or government authority.</span><br/><br/><span>(c) In our opinion and according to the information and explanations given to us by the management, term loans were applied for the purpose for which the loans were obtained.</span><br/><br/><span>(d) According to the information and explanations given to us and on an overall examination of the balance sheet of the Company, as at 31 March 2026 we report that the funds raised on short term basis of Rs 4,568 crores have been used for long ter"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<span>(a) During the course of our examination of the books and records of the Company and according to the information and explanations given to us, considering the principles of materiality outlined in Standards on Auditing, we report that no fraud by the Company or on the Company has been noticed or reported during the year.</span><br/><br/><span>(b) According to the information and explanations given to us, no report under sub-section (12) of Section 143 of the Act has been filed by the auditors in Form ADT-4 as prescribed under Rule 13 of the Companies (Audit and Auditors) Rules, 2014 with the Central Government.</span><br/><br/><span>(c) We have taken into consideration the whistle blower complaints received by the Company during the year while determining the nature, timing and extent of our audit procedures.</span>"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<p>(a) The Company does not have liability in respect of Service tax, Duty of excise, Sales tax and Value added tax during the year since effective 1 July 2017, these statutory dues has been subsumed into GST. According to the information and explanations given to us and on the basis of our examination of the records of the Company, in our opinion, in respect of undisputed statutory dues including Goods and Services Tax (‘GST’), Provident fund, Employees’ State Insurance, Income-Tax, Duty of Customs, Cess and other statutory dues have generally been regularly deposited with the appropriate authorities, except for Provident fund dues referred to in Note 39 to the standalone financial statements.</p><p>According to the information and explanations given to us and on the basis of our examination of the records of the Company, no undisputed amounts payable in respect of Goods and Service Tax, Provident Fund, Employees State Insurance, Income-Tax, Duty of Customs or Cess or other statutory"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "B S R & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Audited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2028-08-31",
+     "name": "B S R & Co. LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2025-11-13T18:00:00+05:30",
@@ -32,26 +298,6 @@
    "total_liabilities_cr": 35010.0
   },
   {
-   "as_of": "2026-05-01T11:55:54+05:30",
-   "lab": {
-    "at": "2026-05-01T11:55:54+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q2FY26",
-   "source_news_id": "nse-106606772"
-  },
-  {
-   "as_of": "2026-05-12T22:51:08+05:30",
-   "lab": {
-    "at": "2026-05-12T22:51:08+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Q2FY26",
-   "source_news_id": "nse-106619595"
-  },
-  {
    "as_of": "2026-05-13T16:18:13+05:30",
    "cash_cr": 6899.0,
    "current_assets_cr": 23208.0,
@@ -80,16 +326,6 @@
    "source_news_id": "nse-106620565",
    "total_assets_cr": 52309.0,
    "total_liabilities_cr": 39575.0
-  },
-  {
-   "as_of": "2026-05-13T16:40:47+05:30",
-   "lab": {
-    "at": "2026-05-13T16:40:47+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Q4FY26",
-   "source_news_id": "nse-106620622"
   },
   {
    "as_of": "2026-05-13T18:00:00+05:30",
@@ -135,16 +371,6 @@
    "source_news_id": "nse-106629340"
   },
   {
-   "as_of": "2026-08-18T11:37:45+05:30",
-   "lab": {
-    "at": "2026-08-18T11:37:45+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106748001"
-  },
-  {
    "as_of": "2026-10-23T15:44:06+05:30",
    "cash_cr": 5828.0,
    "current_assets_cr": 27431.0,
@@ -176,16 +402,6 @@
    "total_liabilities_cr": 42090.0
   },
   {
-   "as_of": "2026-10-23T17:17:47+05:30",
-   "lab": {
-    "at": "2026-10-23T17:17:47+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106826666"
-  },
-  {
    "as_of": "2026-10-23T18:00:00+05:30",
    "cash_cr": 5828.0,
    "current_assets_cr": 27431.0,
@@ -215,18 +431,6 @@
    "source_news_id": "xbrl:res:544569:Q2FY27",
    "total_assets_cr": 57453.0,
    "total_liabilities_cr": 42090.0
-  },
-  {
-   "as_of": "2026-10-27T19:39:09+05:30",
-   "lab": {
-    "at": "2026-10-27T21:50:43+05:30",
-    "basis": "STANDALONE",
-    "by": "ai",
-    "doc": "call",
-    "ok": true
-   },
-   "period": "Sep-2026",
-   "source_news_id": "nse-106830983"
   }
  ],
  "business_summary": null,
@@ -304,8 +508,680 @@
    "text": "Management monitoring commodity inflation in steel, aluminum, copper and MENA export markets."
   }
  ],
- "capital_actions": [],
+ "capital_actions": [
+  {
+   "amount_cr": null,
+   "as_of": "2026-10-30T08:29:16+05:30",
+   "existing_shares": 3682789352.0,
+   "instrument": "ESOP allotment",
+   "issue_price": 2.0,
+   "lab": {
+    "at": "2026-10-30T08:29:46+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "new_shares": 41981.0,
+   "ratio": null,
+   "source_news_id": "nse-106835664"
+  }
+ ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -1161.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -233.38,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -120.68,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -412.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 952.0,
+    "AdjustmentsForDividendIncome": 9.0,
+    "AdjustmentsForFairValueGainsLosses": 2027.0,
+    "AdjustmentsForFinanceCosts": 510.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -1145.2,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 2.08,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 139.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 223.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -61.09,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -54.64,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 155.02,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -7.36,
+    "AdjustmentsForProvisionsCurrent": -40.0,
+    "AdjustmentsForProvisionsNoncurrent": 189.25,
+    "AdjustmentsForReconcileProfitLoss": 803.0,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 257.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 1849.0,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -2391.0,
+    "CashFlowsFromUsedInInvestingActivities": 1646.0,
+    "CashFlowsFromUsedInOperatingActivities": 1534.0,
+    "CashFlowsFromUsedInOperations": 1888.0,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 5.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 103.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 27.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 354.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": 816.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 789.0,
+    "InterestPaidClassifiedAsFinancingActivities": 449.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 216.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 39.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 219.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 1813.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 20.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -875.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 893.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 117.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 1461.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 29.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 534.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 680.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 2411.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -1023.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -203.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -127.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -552.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 835.0,
+    "AdjustmentsForDividendIncome": 170.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 360.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 2355.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -989.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -8.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 163.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 70.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -16.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 162.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -6.0,
+    "AdjustmentsForProvisionsCurrent": -54.0,
+    "AdjustmentsForProvisionsNoncurrent": 180.0,
+    "AdjustmentsForReconcileProfitLoss": 937.0,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 534.0,
+    "CashAndCashEquivalentsCashFlowStatement": 359.0,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1442.0,
+    "CashFlowsFromUsedInInvestingActivities": -3062.0,
+    "CashFlowsFromUsedInOperatingActivities": 1596.0,
+    "CashFlowsFromUsedInOperations": 1953.0,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 4452.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 18.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 170.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -3.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 357.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": -27.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -24.0,
+    "InterestPaidClassifiedAsFinancingActivities": 299.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 150.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 375.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -89.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 5.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 20.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 1673.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 2645.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 85.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 1523.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 28.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 525.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 577.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 1370.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -782.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -46.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 325.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1945.0,
+    "AdjustmentsForDividendIncome": 9.0,
+    "AdjustmentsForFairValueGainsLosses": 2407.0,
+    "AdjustmentsForFinanceCosts": 874.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 4088.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 1237.0,
+    "AdjustmentsForInterestIncome": 578.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 678.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 274.0,
+    "AdjustmentsForProvisionsCurrent": 883.0,
+    "AdjustmentsForReconcileProfitLoss": 11429.0,
+    "AdjustmentsForSharebasedPayments": 11.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": -5.0,
+    "CashAndCashEquivalentsCashFlowStatement": 6899.0,
+    "CashFlowsFromUsedInFinancingActivities": -5223.0,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -5223.0,
+    "CashFlowsFromUsedInInvestingActivities": -3451.0,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -3451.0,
+    "CashFlowsFromUsedInOperatingActivities": 14981.0,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 14981.0,
+    "CashFlowsFromUsedInOperations": 15923.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 104.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -441.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 942.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": 5866.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 6307.0,
+    "InterestPaidClassifiedAsFinancingActivities": 884.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 506.0,
+    "OtherAdjustmentsForNoncashItems": 293.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 1298.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -1464.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 85.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 20.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1893.0,
+    "PaymentForAuditServices": 11.0,
+    "PaymentForOtherServices": 4.0,
+    "PaymentForTaxationMatters": 1.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 226.0,
+    "PaymentsToAuditor": 16.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 341.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 145.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 927.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1321.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 4454.0
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -691.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -6.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 371.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1702.0,
+    "AdjustmentsForDividendIncome": 172.0,
+    "AdjustmentsForFinanceCosts": 629.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 894.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 1166.0,
+    "AdjustmentsForInterestIncome": 438.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 147.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 244.0,
+    "AdjustmentsForProvisionsCurrent": 935.0,
+    "AdjustmentsForReconcileProfitLoss": 7286.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 26.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 11.0,
+    "CashAndCashEquivalentsCashFlowStatement": 2057.0,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 700.0,
+    "CashFlowsFromUsedInFinancingActivities": -2985.0,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": -2985.0,
+    "CashFlowsFromUsedInInvestingActivities": -8341.0,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -8341.0,
+    "CashFlowsFromUsedInOperatingActivities": 11312.0,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 11312.0,
+    "CashFlowsFromUsedInOperations": 12268.0,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 5938.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 41.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 172.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 1685.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 956.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1671.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -14.0,
+    "InterestPaidClassifiedAsFinancingActivities": 582.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 398.0,
+    "OtherAdjustmentsForNoncashItems": 4229.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -130.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -1620.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 133.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 5.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 20.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -1575.0,
+    "PaymentForAuditServices": 6.0,
+    "PaymentForOtherServices": 3.0,
+    "PaymentForReimbursementOfExpenses": 1.0,
+    "PaymentForTaxationMatters": 1.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 148.0,
+    "PaymentsToAuditor": 11.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 299.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 59.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 917.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 1152.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 2554.0
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -2601.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -603.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 12.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -664.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 1047.0,
+    "AdjustmentsForDividendIncome": 11.0,
+    "AdjustmentsForFairValueGainsLosses": -513.0,
+    "AdjustmentsForFinanceCosts": 235.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -498.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": -237.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 4231.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 484.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 65.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 116.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 328.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 12.0,
+    "AdjustmentsForProvisionsCurrent": 356.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 913.0,
+    "AdjustmentsForSharebasedPayments": 6.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 1.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 5828.0,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -3829.0,
+    "CashFlowsFromUsedInInvestingActivities": -1573.0,
+    "CashFlowsFromUsedInOperatingActivities": 4464.0,
+    "CashFlowsFromUsedInOperations": 5814.0,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 94.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 1469.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 131.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -133.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1350.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": -1071.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -938.0,
+    "InterestPaidClassifiedAsFinancingActivities": 237.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 417.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -4.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 119.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -140.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -820.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 27.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 133.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 1.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 19.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 488.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 2.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 737.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 1823.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -1717.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -359.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -622.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 954.0,
+    "AdjustmentsForDividendIncome": 221.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 120.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 34.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 336.0,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 4187.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 361.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 16.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 304.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 302.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 2965.0,
+    "AdjustmentsForSharebasedPayments": 4.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 807.0,
+    "CashAndCashEquivalentsCashFlowStatement": 3496.0,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -2518.0,
+    "CashFlowsFromUsedInInvestingActivities": -2554.0,
+    "CashFlowsFromUsedInOperatingActivities": 6538.0,
+    "CashFlowsFromUsedInOperations": 7800.0,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 488.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 43.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 1469.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 222.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": -27.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 1262.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1439.0,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1466.0,
+    "InterestPaidClassifiedAsFinancingActivities": 114.0,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 283.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 78.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -90.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -771.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 96.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 19.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 417.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 638.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 839.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "span": "H1"
+  }
+ ],
  "company_name": "Tata Motors Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "classes": [
+    {
+     "amount_cr": 1196.0,
+     "class": "OtherContingentLiabilities",
+     "description": "Other contingent liabilities"
+    },
+    {
+     "amount_cr": 627.0,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Other Taxes and Dues"
+    },
+    {
+     "amount_cr": 249.0,
+     "class": "ContingentLiabilityOnDisputedSalesTax",
+     "description": "Sales Tax"
+    },
+    {
+     "amount_cr": 177.0,
+     "class": "ContingentLiabilityOnDisputedExciseDemands",
+     "description": "Customs, Excise Duty and Service Tax"
+    },
+    {
+     "amount_cr": 143.0,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Income Tax"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 5,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "total_cr": 1631.0
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [
+    {
+     "amount_cr": 1132.0,
+     "class": "OtherContingentLiabilities",
+     "description": "Performance guarantee, Sales Tax, Income Tax, Customs, Excise Duty, Other Taxes and Dues and Service Tax"
+    },
+    {
+     "amount_cr": 621.0,
+     "class": "ContingentLiabilityOnOtherDisputedTaxLiabilities",
+     "description": "Other Taxes and Dues"
+    },
+    {
+     "amount_cr": 237.0,
+     "class": "ContingentLiabilityOnDisputedSalesTax",
+     "description": "Sales Tax"
+    },
+    {
+     "amount_cr": 138.0,
+     "class": "ContingentLiabilityOnDisputedExciseDemands",
+     "description": "Customs, Excise Duty and Service Tax"
+    },
+    {
+     "amount_cr": 136.0,
+     "class": "ContingentLiabilityOnDisputedIncomeTax",
+     "description": "Income Tax"
+    }
+   ],
+   "has_contingent": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 5,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "total_cr": 1132.0
+  }
+ ],
  "corporate_actions": [
   {
    "ex_date": "2026-06-12",
@@ -389,6 +1265,379 @@
    "tranches": [],
    "updated_as_of": "2026-08-18T11:37:45+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "face_value": 2
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "face_value": 2
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.008,
+    "DebtServiceCoverageRatio": -0.0014,
+    "InterestServiceCoverageRatio": -0.0181
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0054,
+    "DebtServiceCoverageRatio": -0.0475,
+    "InterestServiceCoverageRatio": 0.134
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0048,
+    "DebtServiceCoverageRatio": 0.0041,
+    "InterestServiceCoverageRatio": 0.2106
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0029,
+    "DebtServiceCoverageRatio": 0.0041,
+    "InterestServiceCoverageRatio": 0.2495
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0038,
+    "DebtServiceCoverageRatio": 0.0381,
+    "InterestServiceCoverageRatio": 0.395
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0022,
+    "DebtServiceCoverageRatio": 0.0876,
+    "InterestServiceCoverageRatio": 0.3456
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0029,
+    "DebtServiceCoverageRatio": 0.0325,
+    "InterestServiceCoverageRatio": 0.3032
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtServiceCoverageRatio": 0.0225,
+    "InterestServiceCoverageRatio": 0.4507
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0019,
+    "DebtServiceCoverageRatio": 0.0141,
+    "InterestServiceCoverageRatio": 0.2056
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0013,
+    "DebtServiceCoverageRatio": 0.1727,
+    "InterestServiceCoverageRatio": 0.4943
+   }
   }
  ],
  "financial_metrics": [
@@ -12844,32 +14093,41 @@
    "value": -7.0,
    "value_news_id": "xbrl:res:544569:Q2FY27",
    "yoy_pct": null
+  },
+  {
+   "as_of": "2026-11-01T12:50:05+05:30",
+   "lab": {
+    "at": "2026-11-01T12:51:32+05:30",
+    "by": "ai",
+    "doc": "release",
+    "ok": true,
+    "unit": "UNITS"
+   },
+   "metric": "volumes",
+   "period": "OCT-2026",
+   "qoq_pct": null,
+   "source_news_id": "nse-106838770",
+   "unit": "UNITS",
+   "value": 47652.0,
+   "yoy_pct": 27.0
   }
  ],
  "fy_end_month": 3,
  "governance": {
   "auditor": {
-   "as_of": "2026-10-27T19:39:09+05:30",
+   "as_of": "2026-10-31T14:28:55+05:30",
+   "change": "appointed",
    "lab": {
-    "at": "2026-10-27T21:50:43+05:30",
+    "at": "2026-10-31T14:30:57+05:30",
     "by": "ai",
-    "doc": "call"
+    "doc": "board"
    },
+   "name": "Deloitte Haskins & Sells LLP",
+   "note": "Appointed to fill casual vacancy to align with group auditors post-Iveco acquisition",
    "opinion": "UNMODIFIED",
-   "source_news_id": "nse-106830983"
+   "source_news_id": "nse-106838025"
   },
   "auditor_history": [
-   {
-    "as_of": "2026-06-06T21:44:38+05:30",
-    "lab": {
-     "at": "2026-06-06T21:44:38+05:30",
-     "by": "unknown",
-     "doc": "annual"
-    },
-    "name": "KPMG Assurance and Consulting Services LLP",
-    "opinion": "UNMODIFIED",
-    "source_news_id": "nse-106656988"
-   },
    {
     "as_of": "2026-06-06T22:57:27+05:30",
     "lab": {
@@ -12919,6 +14177,19 @@
     },
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106830983"
+   },
+   {
+    "as_of": "2026-10-31T14:28:55+05:30",
+    "change": "appointed",
+    "lab": {
+     "at": "2026-10-31T14:30:57+05:30",
+     "by": "ai",
+     "doc": "board"
+    },
+    "name": "Deloitte Haskins & Sells LLP",
+    "note": "Appointed to fill casual vacancy to align with group auditors post-Iveco acquisition",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106838025"
    }
   ],
   "quarters": [
@@ -13499,7 +14770,511 @@
   ]
  },
  "industry": "Industrials > Capital Goods > Agricultural, Commercial & Construction Vehicles > Commercial Vehicles",
- "last_filed_at": "2026-10-27T19:39:09+05:30",
+ "kmp_pay": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_people": 9,
+   "people": [
+    {
+     "designation": "Managing Director",
+     "name": "GIRISH ARUN WAGH",
+     "pay_cr": 6.36
+    },
+    {
+     "designation": "CFO",
+     "name": "RAMANAN GV",
+     "pay_cr": 2.98
+    },
+    {
+     "designation": "Independent Director",
+     "name": "VEERAYYA CHOWDARY KOSARAJU",
+     "pay_cr": 0.65
+    },
+    {
+     "designation": "Independent Director",
+     "name": "AL NOOR RAMJI",
+     "pay_cr": 0.65
+    },
+    {
+     "designation": "Independent Director",
+     "name": "BHARAT TILAKRAJ PURI",
+     "pay_cr": 0.65
+    },
+    {
+     "designation": "Independent Director",
+     "name": "VARSHA VASANT PURANDARE",
+     "pay_cr": 0.65
+    },
+    {
+     "designation": "Independent Director",
+     "name": "GUENTER KARL BUTSCHEK",
+     "pay_cr": 0.65
+    },
+    {
+     "designation": "Company Secretary",
+     "name": "SUDIPTO KUMAR DAS",
+     "pay_cr": 0.52
+    },
+    {
+     "designation": "Other Non Executive Director",
+     "name": "CHANDRASEKARAN NATARAJAN",
+     "pay_cr": 0.03
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
+ "last_filed_at": "2026-11-01T12:50:05+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "BANK OF AMERICA NATIONAL ASSOCIATION",
+    "date": "2026-09-18",
+    "kind": "BLOCK",
+    "price": 438.0,
+    "qty": 706512.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TMCV",
+    "value_cr": 30.95
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "BOFA SECURITIES EUROPE SA",
+    "date": "2026-09-18",
+    "kind": "BLOCK",
+    "price": 438.0,
+    "qty": 706512.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TMCV",
+    "value_cr": 30.95
+   },
+   {
+    "as_of": "2026-10-30T15:30:00+05:30",
+    "client": "BANK OF AMERICA NATIONAL ASSOCIATION",
+    "date": "2026-10-30",
+    "kind": "BLOCK",
+    "price": 397.0,
+    "qty": 1300000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TMCV",
+    "value_cr": 51.61
+   },
+   {
+    "as_of": "2026-10-30T15:30:00+05:30",
+    "client": "BOFA SECURITIES EUROPE SA",
+    "date": "2026-10-30",
+    "kind": "BLOCK",
+    "price": 397.0,
+    "qty": 1300000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TMCV",
+    "value_cr": 51.61
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -96.0,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -12.0,
+     "description": "Items that will be reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -96.0,
+    "oci_net_cr": -89.0,
+    "profit_cr": -867.0,
+    "reclassified_cr": -12.0,
+    "tax_not_reclassified_cr": -16.0,
+    "tax_reclassified_cr": -3.0,
+    "total_comprehensive_cr": -956.0,
+    "total_comprehensive_nci_cr": -956.0,
+    "total_comprehensive_owners_cr": 89.0
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -22.0,
+     "description": "Remeasurement losses on defined benefit obligations (net)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -72.0,
+     "description": "Equity instruments at fair value through other comprehensive income (net)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -11.0,
+     "description": "cash flow hedges",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -94.0,
+    "oci_net_cr": -86.0,
+    "profit_cr": -1021.0,
+    "reclassified_cr": -11.0,
+    "tax_not_reclassified_cr": -16.0,
+    "tax_reclassified_cr": -3.0,
+    "total_comprehensive_cr": -1107.0
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -16.0,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -39.0,
+     "description": "Items that will be reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": -16.0,
+    "oci_net_cr": -50.0,
+    "profit_cr": 705.0,
+    "reclassified_cr": -39.0,
+    "tax_not_reclassified_cr": -5.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 655.0,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 655.0
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -23.0,
+     "description": "Remeasurement losses on defined benefit obligations (net)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 7.0,
+     "description": "Equity instruments at fair value through other comprehensive income (net)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -2.0,
+     "description": "Items that will be reclassified to profit or loss - gains/(loss) in cash flow hedges",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -16.0,
+    "oci_net_cr": -13.0,
+    "profit_cr": 561.0,
+    "reclassified_cr": -2.0,
+    "tax_not_reclassified_cr": -5.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 548.0
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 52.0,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -44.0,
+     "description": "Items that will be reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 52.0,
+    "oci_net_cr": 1.0,
+    "profit_cr": 1793.0,
+    "reclassified_cr": -44.0,
+    "tax_not_reclassified_cr": 16.0,
+    "tax_reclassified_cr": -9.0,
+    "total_comprehensive_cr": 1794.0,
+    "total_comprehensive_nci_cr": 0.0,
+    "total_comprehensive_owners_cr": 1793.0
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 16.0,
+     "description": "Items that will not be reclassified to profit or loss - gain/(loss)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -38.0,
+     "description": "Items that will be reclassified to profit or loss - gain/(loss) in cash flow\nhedges",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 16.0,
+    "oci_net_cr": -23.0,
+    "profit_cr": 2406.0,
+    "reclassified_cr": -38.0,
+    "tax_not_reclassified_cr": 10.0,
+    "tax_reclassified_cr": -9.0,
+    "total_comprehensive_cr": 2383.0
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 24.0,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -26.0,
+     "description": "Income tax credit/ (expense) relating to items that will not be reclassified to profit or loss",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 24.0,
+    "oci_net_cr": -11.0,
+    "profit_cr": 2556.0,
+    "reclassified_cr": -26.0,
+    "tax_not_reclassified_cr": 3.0,
+    "tax_reclassified_cr": 6.0,
+    "total_comprehensive_cr": 2545.0,
+    "total_comprehensive_nci_cr": -4.0,
+    "total_comprehensive_owners_cr": 2549.0
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 25.0,
+     "description": "Items that will not be reclassified to profit or loss - gain/(loss)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 26.0,
+     "description": "Items that will be reclassified to profit or loss - gain/(loss) in cash flow\nhedges",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 25.0,
+    "oci_net_cr": 41.0,
+    "profit_cr": 1528.0,
+    "reclassified_cr": 26.0,
+    "tax_not_reclassified_cr": 3.0,
+    "tax_reclassified_cr": 7.0,
+    "total_comprehensive_cr": 1569.0
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -106.0,
+     "description": "Items that will not be reclassified to profit or loss (net)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 343.0,
+     "description": "Items that will be reclassified to profit or loss (net)",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -106.0,
+    "oci_net_cr": 252.0,
+    "profit_cr": 1254.0,
+    "reclassified_cr": 343.0,
+    "tax_not_reclassified_cr": -18.0,
+    "tax_reclassified_cr": 3.0,
+    "total_comprehensive_cr": 1506.0,
+    "total_comprehensive_nci_cr": -3.0,
+    "total_comprehensive_owners_cr": 1509.0
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -25.0,
+     "description": "Remeasurement losses on defined benefit obligations (net)",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -77.0,
+     "description": "Equity instruments at fair value through other comprehensive income (net) - loss",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 10.0,
+     "description": "Gains in cash flow hedges",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -102.0,
+    "oci_net_cr": -76.0,
+    "profit_cr": 2138.0,
+    "reclassified_cr": 10.0,
+    "tax_not_reclassified_cr": -18.0,
+    "tax_reclassified_cr": 2.0,
+    "total_comprehensive_cr": 2062.0
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-13T16:40:47+05:30",
@@ -13640,6 +15415,26 @@
    },
    "source_news_id": "nse-106830983",
    "text": "Q2 wholesales reached 1,35,100 units, up 42% YoY."
+  },
+  {
+   "as_of": "2026-10-30T20:14:03+05:30",
+   "lab": {
+    "at": "2026-10-30T22:54:40+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "source_news_id": "nse-106837455",
+   "text": "Completed initial settlement of tender offer for Iveco Group, acquiring 89.42% stake on October 30, 2026."
+  },
+  {
+   "as_of": "2026-11-01T12:50:05+05:30",
+   "lab": {
+    "at": "2026-11-01T12:51:32+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "source_news_id": "nse-106838770",
+   "text": "October 2026 sales stood at 47,652 units (up 27% YoY), with domestic CV sales at 39,784 units (up 13% YoY) and international sales at 7,868 units (up 225% YoY)."
   }
  ],
  "ownership": [
@@ -13723,6 +15518,2473 @@
    "value": 11.7
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 4758.51,
+     "closing_cr": 0.0,
+     "counterparty": "TML Holdings Pte. Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 3509.25,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Holdings Pte. Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2313.0,
+     "closing_cr": 0.0,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Impariment of assets",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1213.48,
+     "approved_cr": 7050.0,
+     "closing_cr": 26.06,
+     "counterparty": "Tata Cummins Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 31.61,
+     "relationship": "Joint Operations",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 828.94,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 39.55,
+     "other_details": "Bill Discounting",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 718.0,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 536.0,
+     "closing_cr": 0.0,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 446.79,
+     "approved_cr": 1302.0,
+     "closing_cr": 373.06,
+     "counterparty": "Tata Advanced Systems Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 238.39,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 429.44,
+     "approved_cr": 2422.61,
+     "closing_cr": 174.09,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 174.12,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 408.68,
+     "approved_cr": 1129.0,
+     "closing_cr": 24.36,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 47.25,
+     "relationship": "Associate",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 397.03,
+     "approved_cr": 921.0,
+     "closing_cr": 41.02,
+     "counterparty": "TIL Motor Hub Trading FZE",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 58.39,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 331.89,
+     "approved_cr": 983.12,
+     "closing_cr": 88.54,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 47.58,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 290.45,
+     "approved_cr": 669.0,
+     "closing_cr": 37.35,
+     "counterparty": "Nita Company Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 99.99,
+     "relationship": "Associate",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 288.04,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 253.39,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Technologies Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 224.0,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 223.0,
+     "closing_cr": 0.0,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken (including loans and equity)",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 212.0,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 183.09,
+     "approved_cr": 542.0,
+     "closing_cr": 2.55,
+     "counterparty": "Tata Autocomp Hendrickson Suspensions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.71,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 181.35,
+     "approved_cr": 7139.18,
+     "closing_cr": 9.1,
+     "counterparty": "TATA STEEL LIMITED",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 25.6,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 178.7,
+     "approved_cr": 108.96,
+     "closing_cr": 22.72,
+     "counterparty": "Tata Passenger Electric Mobility Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.25,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 159.77,
+     "approved_cr": 486.0,
+     "closing_cr": 8.0,
+     "counterparty": "Tata Motors Body Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.98,
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 155.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 152.36,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 142.04,
+     "approved_cr": 443.0,
+     "closing_cr": 6.56,
+     "counterparty": "Tata Toyo Radiator Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 6.01,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 134.79,
+     "approved_cr": 469.0,
+     "closing_cr": 1.43,
+     "counterparty": "Tata Autocomp Systems Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 9.83,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 133.86,
+     "closing_cr": 0.0,
+     "counterparty": "Freight Commerce Solutions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 126.24,
+     "approved_cr": 415.0,
+     "closing_cr": 0.92,
+     "counterparty": "TM Automotive Seating Systems Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.69,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 125.0,
+     "closing_cr": 0.0,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken, paid back (including loans and equity)",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 118.32,
+     "approved_cr": 342.53,
+     "closing_cr": 57.48,
+     "counterparty": "Tata Consultancy Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 81.58,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 110.17,
+     "approved_cr": 193.0,
+     "closing_cr": 2.19,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.01,
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 109.85,
+     "closing_cr": 25.78,
+     "counterparty": "Tata Daewoo Mobility Sales Company Limited",
+     "entity": "Tata Daewoo Mobility Company Limited",
+     "opening_cr": 30.92,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 108.35,
+     "approved_cr": 560.0,
+     "closing_cr": 2686.58,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2172.43,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0825,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working capital and Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3-12 Months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 91.0,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 88.42,
+     "approved_cr": 42.86,
+     "closing_cr": 82.17,
+     "counterparty": "Jaguar Land Rover Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 77.0,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 88.13,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Hitachi Construction Machinery Company Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 86.65,
+     "approved_cr": 207.36,
+     "closing_cr": 80.01,
+     "counterparty": "Tata sons Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 106.18,
+     "relationship": "Promoter",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 80.85,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "TMF Holdings Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 75.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Insurance Broking and Advisory Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 75.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken, paid back (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 74.04,
+     "closing_cr": 887.24,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 813.2,
+     "other_details": "Bank gurantees Isued",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 68.35,
+     "approved_cr": 180.0,
+     "closing_cr": 1.8,
+     "counterparty": "Tata AIG General Insurance Company Limited",
+     "entity": "Tata Motors Insurance Broking and Advisory Services Limited",
+     "opening_cr": 0.56,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 67.65,
+     "approved_cr": 141.0,
+     "closing_cr": 10.56,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 11.39,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 66.52,
+     "approved_cr": 200.0,
+     "closing_cr": 7.53,
+     "counterparty": "Automotive Stampings and Assemblies Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2.87,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 63.09,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Repayment towards lease liability",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 61.87,
+     "approved_cr": 162.0,
+     "closing_cr": 52.31,
+     "counterparty": "Tata Motors (SA) (Proprietary) Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 36.83,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 61.66,
+     "approved_cr": 222.0,
+     "closing_cr": 0.8,
+     "counterparty": "Tata Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2.15,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 55.57,
+     "approved_cr": 27.29,
+     "closing_cr": 36.3,
+     "counterparty": "Tata Passenger Electric Mobility Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 20.73,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 51.47,
+     "approved_cr": 463.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Cummins Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.01,
+     "relationship": "Joint Operations",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 42.2,
+     "approved_cr": 173.0,
+     "closing_cr": 0.01,
+     "counterparty": "Tata Motors Body Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 12.56,
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 42.0,
+     "closing_cr": 0.0,
+     "counterparty": "Freight Commerce Solutions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Impariment of assets",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 39.74,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Borrowing towards Lease Liability",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 38.97,
+     "approved_cr": 602.0,
+     "closing_cr": 7.36,
+     "counterparty": "TACO Air International Thermal Systems Private Limited (Formerly known as - Air International TTR Thermal Systems Private Limited)",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2.71,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 36.96,
+     "approved_cr": 300.0,
+     "closing_cr": 15.44,
+     "counterparty": "Tata AutoComp Gotion Green Energy Solutions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 4.14,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 35.08,
+     "approved_cr": 341.0,
+     "closing_cr": 19.59,
+     "counterparty": "Tata Motors Digital.AI Labs Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 29.15,
+     "approved_cr": 101.0,
+     "closing_cr": 100.94,
+     "counterparty": "Tata Capital Limited",
+     "entity": "TMF Holdings Limited",
+     "opening_cr": 31.57,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 26.89,
+     "closing_cr": 5.39,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Global Services Limited",
+     "opening_cr": 4.34,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 25.92,
+     "closing_cr": 29.42,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 3.5,
+     "other_details": "Bank gurantees Isued",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 21.44,
+     "approved_cr": 111.0,
+     "closing_cr": 47.96,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 497.28,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0825,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working capital and Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3-12 Months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 20.96,
+     "approved_cr": 75.0,
+     "closing_cr": 25.81,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 8.67,
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 356,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 19,
+   "parties": [
+    {
+     "balances": {},
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "PurchasesOfGoodsRelatedPartyTransactions": 2999.0
+     },
+     "party": "TATA CUMMINS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionReceived": 49.0,
+      "OtherRelatedPartyTransactionsExpense": 23.0,
+      "OtherRelatedPartyTransactionsIncome": 58.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 78.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 1248.0
+     },
+     "party": "Tata Capital Limited"
+    },
+    {
+     "balances": {},
+     "category": "Associates",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 7.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 834.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 275.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 275.0
+     },
+     "party": "AUTOMOBILE CORPORATION OF GOA LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 878.0
+     },
+     "party": "TIL Motor Hub Trading FZE"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 679.0,
+      "ServicesReceivedRelatedPartyTransactions": 70.0
+     },
+     "party": "TATA ADVANCED SYSTEMS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 6.0,
+      "ServicesReceivedRelatedPartyTransactions": 143.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 215.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 195.0
+     },
+     "party": "TATA MOTORS GLOBAL SERVICES LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "Associates",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 534.0
+     },
+     "party": "Nita Company Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 244.0
+     },
+     "party": "TATA CONSULTANCY SERVICES LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 234.0
+     },
+     "party": "TATA MOTORS DIGITAL.AI LABS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 212.0
+     },
+     "party": "TATA SONS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 163.0,
+      "ServicesReceivedRelatedPartyTransactions": 0.0
+     },
+     "party": "TATA AIG GENERAL INSURANCE COMPANY LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "Associates",
+     "flows": {
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 134.0
+     },
+     "party": "FREIGHT COMMERCE SOLUTIONS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "Associates",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 88.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 0.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 0.0
+     },
+     "party": "TATA HITACHI CONSTRUCTION MACHINERY COMPANY PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 0.0,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 14.0
+     },
+     "party": "TATA AUTOCOMP SYSTEMS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 7.0
+     },
+     "party": "Tata Consulting Engineers Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 6.0
+     },
+     "party": "Tata AutoComp Gotion Green Energy Solutions Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 6.0
+     },
+     "party": "TM AUTOMOTIVE SEATING SYSTEMS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsContributionMade": 5.0
+     },
+     "party": "Tata Precision Industries (India) Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0
+     },
+     "party": "TACO Prestolite Electric Private Limited"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 22,
+   "parties": [
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "ProvisionOfGuaranteesOrCollateralByEntityRelatedPartyTransactions": 41691.0
+     },
+     "party": "TML CV Holdings B.V."
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 222.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 2845.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 3416.0
+     },
+     "party": "TMF Holdings Limited"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 3509.0
+     },
+     "party": "TML CV Holdings Pte. Limited"
+    },
+    {
+     "balances": {},
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "PurchasesOfGoodsRelatedPartyTransactions": 3000.0
+     },
+     "party": "TATA CUMMINS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 38.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 0.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 1148.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 895.0
+     },
+     "party": "TML CV MOBILITY SOLUTIONS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "Associates",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 7.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 835.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 275.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 275.0
+     },
+     "party": "Automobile Corporation of Goa Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 21.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 1089.0
+     },
+     "party": "Tata Capital Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 877.0
+     },
+     "party": "TIL Motor Trading FZE"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 70.0,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 679.0
+     },
+     "party": "Tata Advanced Systems Limited"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 702.0
+     },
+     "party": "TML SMART CITY MOBILITY SOLUTIONS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "OtherRelatedPartyTransactionsExpense": 6.0,
+      "ServicesReceivedRelatedPartyTransactions": 143.0,
+      "TransfersUnderFinanceAgreementsFromEntityRelatedPartyTransactions": 195.0,
+      "TransfersUnderFinanceAgreementsToEntityRelatedPartyTransactions": 195.0
+     },
+     "party": "Tata Motors Global Services Limited"
+    },
+    {
+     "balances": {},
+     "category": "Associates",
+     "flows": {
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 534.0
+     },
+     "party": "Nita Company Limited"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "RevenueFromRenderingOfServicesRelatedPartyTransactions": 24.0,
+      "ServicesReceivedRelatedPartyTransactions": 324.0
+     },
+     "party": "TATA MOTORS BODY SOLUTIONS LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "JointVenturesWhereEntityIsVenturer",
+     "flows": {
+      "SalesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0,
+      "ServicesReceivedRelatedPartyTransactions": 234.0
+     },
+     "party": "Tata Motors Digital.AI Labs Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 196.0
+     },
+     "party": "TATA SONS PRIVATE LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ServicesReceivedRelatedPartyTransactions": 154.0
+     },
+     "party": "Tata Consultancy Services Limited"
+    },
+    {
+     "balances": {},
+     "category": "Associates",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 88.0
+     },
+     "party": "Tata Hitachi Construction Machinery Company Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "Subsidiaries",
+     "flows": {
+      "OtherRelatedPartyTransactionsIncome": 75.0
+     },
+     "party": "TATA MOTORS INSURANCE BROKING AND ADVISORY SERVICES LIMITED"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 14.0
+     },
+     "party": "Tata AutoComp Systems Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 7.0
+     },
+     "party": "Tata Consulting Engineers Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 6.0
+     },
+     "party": "Tata AutoComp Gotion Green Energy Solutions Private Limited"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 6.0
+     },
+     "party": "TM Automotive Seating Systems Private Limited"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 2880.0,
+     "closing_cr": 0.0,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2845.0,
+     "closing_cr": 0.0,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1786.02,
+     "approved_cr": 5783.81,
+     "closing_cr": 72.74,
+     "counterparty": "Tata Cummins Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 26.06,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "0.5"
+     },
+     "relationship": "Joint Operations",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 742.79,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 529.0,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 479.51,
+     "approved_cr": 747.95,
+     "closing_cr": 60.24,
+     "counterparty": "TIL Motor Hub Trading FZE",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 41.02,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 414.5,
+     "approved_cr": 897.03,
+     "closing_cr": 29.59,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 24.36,
+     "relationship": "Associate",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 414.02,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 370.49,
+     "approved_cr": 2210.0,
+     "closing_cr": 185.46,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 174.09,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 301.97,
+     "approved_cr": 1148.17,
+     "closing_cr": 122.93,
+     "counterparty": "Tata Advanced Systems Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 373.06,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 268.06,
+     "approved_cr": 450.47,
+     "closing_cr": 0.35,
+     "counterparty": "Tata Autocomp Hendrickson Suspensions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2.55,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 243.99,
+     "approved_cr": 540.0,
+     "closing_cr": 24.53,
+     "counterparty": "Nita Company Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 37.35,
+     "relationship": "Associate",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 208.12,
+     "closing_cr": 43.14,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Bill Discounting",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 206.0,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-01-28",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 4.86
+     },
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 198.44,
+     "approved_cr": 341.0,
+     "closing_cr": 103.4,
+     "counterparty": "Tata Motors Digital.AI Labs Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 19.59,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 188.37,
+     "approved_cr": 401.19,
+     "closing_cr": 41.58,
+     "counterparty": "Tata AutoComp Systems Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 1.43,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 182.69,
+     "approved_cr": 7043.01,
+     "closing_cr": 23.87,
+     "counterparty": "TATA STEEL LIMITED",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 9.1,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 179.23,
+     "approved_cr": 373.88,
+     "closing_cr": 39.2,
+     "counterparty": "Tata Toyo Radiator Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 6.56,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 171.27,
+     "approved_cr": 930.13,
+     "closing_cr": 67.06,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 88.54,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 163.96,
+     "approved_cr": 400.89,
+     "closing_cr": 5.22,
+     "counterparty": "Tata Motors Body Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 8.0,
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 161.91,
+     "approved_cr": 356.22,
+     "closing_cr": 16.12,
+     "counterparty": "TM Automotive Seating Systems Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.92,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 150.0,
+     "closing_cr": 0.0,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken, paid back (including loans and equity)",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 145.5,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions (J&K) Private Limited",
+     "entity": "TML Smart City Mobility Solutions Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 120.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-05-12",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 2.5
+     },
+     "other_details": "Finance taken, paid back (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 113.39,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions (J&K) Private Limited",
+     "entity": "TML Smart City Mobility Solutions Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 113.25,
+     "approved_cr": 505.23,
+     "closing_cr": 2671.86,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2686.57,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0825,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working capital and Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3-12 Months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 109.69,
+     "approved_cr": 162.98,
+     "closing_cr": 189.71,
+     "counterparty": "TATA SONS PRIVATE LIMITED",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 80.01,
+     "relationship": "Promoter",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 103.31,
+     "closing_cr": 37.85,
+     "counterparty": "Tata Daewoo Mobility Sales Company Limited",
+     "entity": "Tata Daewoo Mobility Company Limited",
+     "opening_cr": 25.78,
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 94.29,
+     "approved_cr": 180.0,
+     "closing_cr": 8.33,
+     "counterparty": "Tata AIG General Insurance Company Limited",
+     "entity": "Tata Motors Insurance Broking and Advisory Services Limited",
+     "opening_cr": 1.8,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 88.86,
+     "approved_cr": 168.24,
+     "closing_cr": 17.47,
+     "counterparty": "Automotive Stampings and Assemblies Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 7.53,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 80.32,
+     "approved_cr": 289.17,
+     "closing_cr": 24.37,
+     "counterparty": "Tata AutoComp Gotion Green Energy Solutions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 15.44,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 77.0,
+     "approved_cr": 410.25,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Cummins Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "0.5"
+     },
+     "relationship": "Joint Operations",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 75.05,
+     "approved_cr": 110.0,
+     "closing_cr": 16.3,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 10.56,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 66.36,
+     "closing_cr": 33.28,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Digital.AI Labs Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 62.32,
+     "approved_cr": 636.29,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Repayment towards lease liability",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 57.83,
+     "approved_cr": 582.92,
+     "closing_cr": 11.58,
+     "counterparty": "TACO Air International Thermal Systems Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 7.36,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 55.72,
+     "approved_cr": 132.58,
+     "closing_cr": 51.81,
+     "counterparty": "Tata Motors (SA) (Proprietary) Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 52.31,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 53.04,
+     "approved_cr": 188.71,
+     "closing_cr": 1.1,
+     "counterparty": "Tata Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.8,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 52.0,
+     "closing_cr": 0.0,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken (including loans and equity)",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 50.0,
+     "closing_cr": 50.0,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Global Services Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": 48.81,
+     "approved_cr": 55.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "TMF Business Services Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of fixed assets"
+    },
+    {
+     "amount_cr": 46.47,
+     "closing_cr": 25.58,
+     "counterparty": "Tata Consultancy Services Limited",
+     "entity": "Tata Motors Digital.AI Labs Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 41.11,
+     "closing_cr": 10.86,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Global Services Limited",
+     "opening_cr": 5.39,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 40.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 39.19,
+     "approved_cr": 104.8,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2.19,
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 36.18,
+     "approved_cr": 164.23,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Body Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.01,
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 35.51,
+     "approved_cr": 273.35,
+     "closing_cr": 20.86,
+     "counterparty": "Tata Consultancy Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 57.48,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 34.6,
+     "approved_cr": 38.59,
+     "closing_cr": 0.4,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.89,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 34.04,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Borrowing towards Lease Liability",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 30.87,
+     "approved_cr": 104.0,
+     "closing_cr": 12.25,
+     "counterparty": "Tata International Senegal",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 6.63,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 30.78,
+     "closing_cr": 918.02,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 887.24,
+     "other_details": "Bank gurantees Isued",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 29.0,
+     "approved_cr": 101.0,
+     "closing_cr": 111.83,
+     "counterparty": "Tata Capital Limited",
+     "entity": "TMF Holdings Limited",
+     "opening_cr": 100.94,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 27.66,
+     "approved_cr": 162.41,
+     "closing_cr": 6.15,
+     "counterparty": "Tata International Vehicle Applications Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 6.78,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 24.39,
+     "closing_cr": 53.81,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 29.42,
+     "other_details": "Bank gurantees Isued",
+     "relationship": "Subsidiries",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 23.98,
+     "approved_cr": 188.96,
+     "closing_cr": 3.65,
+     "counterparty": "Tata AutoComp GY Batteries Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 1.28,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 22.75,
+     "approved_cr": 48.07,
+     "closing_cr": 7.43,
+     "counterparty": "Tata Ficosa Automotive Systems Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 1.5,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 21.9,
+     "approved_cr": 151.41,
+     "closing_cr": 6.89,
+     "counterparty": "TACO Prestolite Electric Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 14.18,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 20.26,
+     "approved_cr": 23.53,
+     "closing_cr": 10.12,
+     "counterparty": "Tata Industries Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2.24,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 20.06,
+     "closing_cr": 7.49,
+     "counterparty": "Tata Consultancy Services Limited",
+     "entity": "Tata Motors Global Services Limited",
+     "opening_cr": 7.69,
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 16.81,
+     "approved_cr": 100.52,
+     "closing_cr": 32.14,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 568.96,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0825,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working capital and Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3-12 Months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiries",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 323,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1680.42,
+     "approved_cr": 10002.0,
+     "closing_cr": 574.7,
+     "counterparty": "PT Tata Motors Distribusi Indonesia",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 1.75,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1642.25,
+     "approved_cr": 8525.0,
+     "closing_cr": 111.19,
+     "counterparty": "Tata Cummins Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 72.74,
+     "relationship": "Joint Operations",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 1451.0,
+     "closing_cr": 0.0,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including loans and equity)",
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 591.31,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Sons Pvt. Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 536.0,
+     "closing_cr": 0.0,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 477.74,
+     "approved_cr": 1949.0,
+     "closing_cr": 83.78,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 29.59,
+     "relationship": "Associate",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 445.18,
+     "approved_cr": 1219.0,
+     "closing_cr": 85.42,
+     "counterparty": "TIL Motor Hub Trading FZE",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 60.24,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 287.59,
+     "approved_cr": 1212.0,
+     "closing_cr": 56.5,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 185.46,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 271.43,
+     "approved_cr": 924.0,
+     "closing_cr": 173.08,
+     "counterparty": "Tata Advanced Systems Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 122.93,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-08-11",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.73
+     },
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 271.06,
+     "approved_cr": 687.0,
+     "closing_cr": 50.57,
+     "counterparty": "Nita Company Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 24.53,
+     "relationship": "Associate",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 231.62,
+     "approved_cr": 653.0,
+     "closing_cr": 11.15,
+     "counterparty": "Tata Autocomp Hendrickson Suspensions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.35,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 218.96,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Holdings B.V.",
+     "entity": "TML CV Holdings Pte. Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given (including  ICDS ,loans and equity)",
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 201.58,
+     "approved_cr": 550.0,
+     "closing_cr": 13.29,
+     "counterparty": "Tata Motors Body Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 5.22,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 197.62,
+     "approved_cr": 483.0,
+     "closing_cr": 76.57,
+     "counterparty": "Tata Toyo Radiator Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 39.2,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 192.9,
+     "approved_cr": 523.0,
+     "closing_cr": 64.06,
+     "counterparty": "Tata AutoComp Systems Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 41.58,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 176.25,
+     "approved_cr": 443.0,
+     "closing_cr": 15.07,
+     "counterparty": "TM Automotive Seating Systems Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 16.12,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 168.88,
+     "approved_cr": 855.0,
+     "closing_cr": 62.16,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 67.06,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 167.13,
+     "approved_cr": 1055.0,
+     "closing_cr": 29.14,
+     "counterparty": "TATA STEEL LIMITED",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 23.87,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 151.16,
+     "approved_cr": 823.0,
+     "closing_cr": 52.65,
+     "counterparty": "Tata AutoComp Gotion Green Energy Solutions Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 24.37,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 142.43,
+     "approved_cr": 301.0,
+     "closing_cr": 93.44,
+     "counterparty": "Tata Motors Digital.AI Labs Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 103.4,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 124.92,
+     "approved_cr": 452.0,
+     "closing_cr": 3614.21,
+     "counterparty": "TMF Holdings Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 2671.86,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0782,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working capital and Business Purpose",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "3-12 Months",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 117.48,
+     "closing_cr": 32.95,
+     "counterparty": "Tata Daewoo Mobility Sales Company Limited",
+     "entity": "Tata Daewoo Mobility Company Limited",
+     "opening_cr": 37.85,
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 112.0,
+     "closing_cr": 0.0,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken (including loans and equity)",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 112.0,
+     "closing_cr": 0.0,
+     "counterparty": "Automobile Corporation of Goa Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken, paid back (including loans and equity)",
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 111.75,
+     "approved_cr": 310.0,
+     "closing_cr": 12.36,
+     "counterparty": "Tata Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 1.1,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 110.14,
+     "approved_cr": 296.0,
+     "closing_cr": 36.47,
+     "counterparty": "Automotive Stampings and Assemblies Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 17.47,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 108.0,
+     "closing_cr": 0.0,
+     "counterparty": "TML Smart City Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 107.8,
+     "approved_cr": 230.0,
+     "closing_cr": 106.99,
+     "counterparty": "Tata Sons Pvt. Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 189.71,
+     "relationship": "Promoter",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 101.1,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Insurance Broking and Advisory Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 100.85,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Hitachi Construction Machinery Company Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 94.5,
+     "closing_cr": 17.92,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 43.14,
+     "other_details": "Bill Discounting",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 85.01,
+     "closing_cr": 76.79,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Digital.AI Labs Limited",
+     "opening_cr": 33.73,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 85.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 85.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken, paid back (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 81.36,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Borrowing towards Lease Liability",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 81.21,
+     "approved_cr": 200.0,
+     "closing_cr": 0.87,
+     "counterparty": "Tata AIG General Insurance Company Limited",
+     "entity": "Tata Motors Insurance Broking and Advisory Services Limited",
+     "opening_cr": 8.33,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 80.74,
+     "approved_cr": 183.0,
+     "closing_cr": 19.05,
+     "counterparty": "Tata Motors Global Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 16.3,
+     "relationship": "Joint Ventures",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 73.26,
+     "approved_cr": 415.0,
+     "closing_cr": 0.01,
+     "counterparty": "Tata Cummins Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Operations",
+     "remarks": "Approved by Shareholder in AGM",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 72.96,
+     "approved_cr": 571.0,
+     "closing_cr": 24.57,
+     "counterparty": "TACO Air International Thermal Systems Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 11.58,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 60.99,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Repayment towards lease liability",
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 57.86,
+     "approved_cr": 251.0,
+     "closing_cr": 21.28,
+     "counterparty": "Tata Consultancy Services Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 20.86,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 55.13,
+     "approved_cr": 164.0,
+     "closing_cr": 18.68,
+     "counterparty": "TACO Prestolite Electric Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 6.89,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 48.72,
+     "closing_cr": 4.14,
+     "counterparty": "Tata Consultancy Services Limited",
+     "entity": "Tata Motors Digital.AI Labs Limited",
+     "opening_cr": 25.58,
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 40.37,
+     "closing_cr": 11.61,
+     "counterparty": "Tata Motors Passenger Vehicles Limited",
+     "entity": "Tata Motors Global Services Limited",
+     "opening_cr": 9.46,
+     "relationship": "Promoter Group SEBI",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 40.23,
+     "approved_cr": 166.0,
+     "closing_cr": 44.08,
+     "counterparty": "Tata Motors (SA) (Proprietary) Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 51.81,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 37.71,
+     "approved_cr": 86.0,
+     "closing_cr": 17.38,
+     "counterparty": "Tata International Vehicle Applications Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 6.15,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 32.01,
+     "approved_cr": 129.0,
+     "closing_cr": 0.01,
+     "counterparty": "Tata International Senegal S. A.",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 12.25,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 31.64,
+     "approved_cr": 155.0,
+     "closing_cr": 0.4,
+     "counterparty": "Tata Capital Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.4,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 29.15,
+     "approved_cr": 60.0,
+     "closing_cr": 20.08,
+     "counterparty": "Tata Capital Limited",
+     "entity": "TMF Holdings Limited",
+     "opening_cr": 111.83,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 28.88,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Industries Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend paid"
+    },
+    {
+     "amount_cr": 28.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Daewoo Mobility Sales Company Limited",
+     "entity": "Tata Daewoo Mobility Company Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Dividend received"
+    },
+    {
+     "amount_cr": 24.81,
+     "closing_cr": 0.0,
+     "counterparty": "TML CV Mobility Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 24.37,
+     "approved_cr": 68.0,
+     "closing_cr": 8.69,
+     "counterparty": "Tata Ficosa Automotive Systems Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 7.43,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 20.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Digital.AI Labs Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 20.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Digital.AI Labs Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance taken, paid back (including loans and equity)",
+     "relationship": "Joint Ventures",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 19.89,
+     "closing_cr": 7.27,
+     "counterparty": "Tata Consultancy Services Limited",
+     "entity": "Tata Motors Global Services Limited",
+     "opening_cr": 7.49,
+     "relationship": "Promoter Group",
+     "remarks": "Not applicable as per regulation 23(2)(c) of SEBI LODR",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 18.47,
+     "approved_cr": 106.0,
+     "closing_cr": 0.83,
+     "counterparty": "TATA ELXSI LIMITED",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 4.54,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 17.48,
+     "approved_cr": 189.0,
+     "closing_cr": 5.06,
+     "counterparty": "Tata AutoComp GY Batteries Private Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 3.65,
+     "relationship": "Promoter Group",
+     "remarks": "Approved by Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 16.73,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Body Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "other_details": "Finance given, taken back (including loans and equity)",
+     "relationship": "Subsidiary",
+     "remarks": "Not applicable as per regulation 2(zc) of SEBI LODR",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 16.37,
+     "approved_cr": 175.0,
+     "closing_cr": 0.0,
+     "counterparty": "Tata Motors Body Solutions Limited",
+     "entity": "Tata Motors Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved by Audit Committee",
+     "type": "Sale of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 336,
+   "period": "Q2FY27",
+   "source_news_id": "xbrl-facts:Q2FY27:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544569",
  "section_lab": {
@@ -13740,10 +18002,483 @@
    "at": "2026-07-30T18:31:33+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:34:42+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "auto",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q2FY26",
+   "segments": [
+    {
+     "assets_cr": 34537.0,
+     "liabilities_cr": 25293.0,
+     "segment": "Commercial vehicle"
+    },
+    {
+     "assets_cr": 163.0,
+     "liabilities_cr": 23.0,
+     "segment": "Corporate/Unallocable"
+    },
+    {
+     "assets_cr": 162.0,
+     "liabilities_cr": 155.0,
+     "segment": "Others"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "totals": {
+    "assets_cr": 34862.0,
+    "liabilities_cr": 25471.0,
+    "net_assets_cr": 45279.0,
+    "net_liabilities_cr": 35010.0
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q3FY26",
+   "segments": [
+    {
+     "assets_cr": 33938.0,
+     "liabilities_cr": 28879.0,
+     "segment": "Commercial vehicle"
+    },
+    {
+     "assets_cr": 849.0,
+     "liabilities_cr": 25.0,
+     "segment": "Corporate/Unallocable"
+    },
+    {
+     "assets_cr": 169.0,
+     "liabilities_cr": 178.0,
+     "segment": "Others"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "totals": {
+    "assets_cr": 34956.0,
+    "liabilities_cr": 29082.0,
+    "net_assets_cr": 46715.0,
+    "net_liabilities_cr": 35783.0
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q4FY26",
+   "segments": [
+    {
+     "assets_cr": 36635.0,
+     "liabilities_cr": 32876.0,
+     "segment": "Commercial Vehicle"
+    },
+    {
+     "assets_cr": 895.0,
+     "liabilities_cr": 31.0,
+     "segment": "Corporate/Unallocable"
+    },
+    {
+     "assets_cr": 228.0,
+     "liabilities_cr": 254.0,
+     "segment": "Others"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "totals": {
+    "assets_cr": 37758.0,
+    "liabilities_cr": 33161.0,
+    "net_assets_cr": 52309.0,
+    "net_liabilities_cr": 39575.0
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 37340.0,
+     "liabilities_cr": 32726.0,
+     "segment": "(a) Commercial Vehicle"
+    },
+    {
+     "assets_cr": 799.0,
+     "liabilities_cr": 20.0,
+     "segment": "(b) Corporate/Unallocable"
+    },
+    {
+     "assets_cr": 268.0,
+     "liabilities_cr": 501.0,
+     "segment": "Others"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 38407.0,
+    "liabilities_cr": 33247.0,
+    "net_assets_cr": 52773.0,
+    "net_liabilities_cr": 38917.0
+   }
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 3,
+   "period": "Q2FY27",
+   "segments": [
+    {
+     "assets_cr": 40480.0,
+     "liabilities_cr": 36843.0,
+     "segment": "Commercial Vehicle"
+    },
+    {
+     "assets_cr": 1184.0,
+     "liabilities_cr": 18.0,
+     "segment": "Corporate/Unallocable"
+    },
+    {
+     "assets_cr": 1060.0,
+     "liabilities_cr": 675.0,
+     "segment": "Others"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "totals": {
+    "assets_cr": 42724.0,
+    "liabilities_cr": 37536.0,
+    "net_assets_cr": 57453.0,
+    "net_liabilities_cr": 42090.0
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 1764.0,
+   "period": "Q2FY26",
+   "revenue_cr": 18370.0,
+   "segment": "Commercial vehicle",
+   "share_pct": 98.8,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 86.0,
+   "period": "Q2FY26",
+   "revenue_cr": 211.0,
+   "segment": "Others",
+   "share_pct": 1.1,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -193.0,
+   "period": "Q2FY26",
+   "revenue_cr": 5.0,
+   "segment": "Corporate/Unallocable",
+   "share_pct": 0.0,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 2376.0,
+   "period": "Q3FY26",
+   "revenue_cr": 21534.0,
+   "segment": "Commercial vehicle",
+   "share_pct": 98.6,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -22.0,
+   "period": "Q3FY26",
+   "revenue_cr": 257.0,
+   "segment": "Others",
+   "share_pct": 1.2,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -84.0,
+   "period": "Q3FY26",
+   "revenue_cr": 56.0,
+   "segment": "Corporate/Unallocable",
+   "share_pct": 0.3,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 2919.0,
+   "period": "Q4FY26",
+   "revenue_cr": 25699.0,
+   "segment": "Commercial Vehicle",
+   "share_pct": 98.5,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 25.0,
+   "period": "Q4FY26",
+   "revenue_cr": 313.0,
+   "segment": "Others",
+   "share_pct": 1.2,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -49.0,
+   "period": "Q4FY26",
+   "revenue_cr": 87.0,
+   "segment": "Corporate/Unallocable",
+   "share_pct": 0.3,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 1735.0,
+   "period": "Q1FY27",
+   "revenue_cr": 20384.0,
+   "segment": "(a) Commercial Vehicle",
+   "share_pct": 98.6,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 40.0,
+   "period": "Q1FY27",
+   "revenue_cr": 270.0,
+   "segment": "Others",
+   "share_pct": 1.3,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -41.0,
+   "period": "Q1FY27",
+   "revenue_cr": 14.0,
+   "segment": "(b) Corporate/Unallocable",
+   "share_pct": 0.1,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 2323.0,
+   "period": "Q2FY27",
+   "revenue_cr": 25004.0,
+   "segment": "Commercial Vehicle",
+   "share_pct": 98.7,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 21.0,
+   "period": "Q2FY27",
+   "revenue_cr": 325.0,
+   "segment": "Others",
+   "share_pct": 1.3,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  },
+  {
+   "as_of": "2026-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:55:45+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": -82.0,
+   "period": "Q2FY27",
+   "revenue_cr": 10.0,
+   "segment": "Corporate/Unallocable",
+   "share_pct": 0.0,
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -18265,6 +23000,694 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 9925.0,
+    "CWIP": 1875.0,
+    "Equity Capital": 0.1,
+    "Fixed Assets": 13664.0,
+    "Investments": 5282.0,
+    "Other Assets": 26030.0,
+    "Other Liabilities": 26392.9,
+    "Reserves": 10533.0,
+    "Total Assets": 46851.0,
+    "Total Liabilities": 46851.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 5855.0,
+    "CWIP": 1791.0,
+    "Equity Capital": 0.1,
+    "Fixed Assets": 11778.0,
+    "Investments": 10010.0,
+    "Other Assets": 13634.0,
+    "Other Liabilities": 22876.9,
+    "Reserves": 8481.0,
+    "Total Assets": 37213.0,
+    "Total Liabilities": 37213.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 8248.0,
+    "CWIP": 666.0,
+    "Equity Capital": 0.0,
+    "Fixed Assets": 15050.0,
+    "Investments": 8841.0,
+    "Other Assets": 20722.0,
+    "Other Liabilities": 26762.0,
+    "Reserves": 10269.0,
+    "Total Assets": 45279.0,
+    "Total Liabilities": 45279.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 412.0,
+    "Exceptional items": -2366.0,
+    "Exceptional items AT": -3966.6436781609195,
+    "Expenses": 14784.0,
+    "Interest": 186.0,
+    "Net Profit": -1021.0,
+    "Net Profit (owners)": -1021.0,
+    "OPM %": 12.318367831089496,
+    "Operating Profit": 2077.0,
+    "Other Income": -2088.0,
+    "Profit before tax": -609.0,
+    "Profit for PE": 2945.6436781609195,
+    "Sales": 16861.0,
+    "Tax": 412.0,
+    "Tax %": 67.65188834154351
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 5622.0,
+    "CWIP": 626.0,
+    "Equity Capital": 0.1,
+    "Fixed Assets": 13021.0,
+    "Investments": 9590.0,
+    "Other Assets": 15636.0,
+    "Other Liabilities": 22806.9,
+    "Reserves": 10444.0,
+    "Total Assets": 38873.0,
+    "Total Liabilities": 38873.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": -12.0,
+    "Depreciation": 472.0,
+    "Exceptional items": -10.0,
+    "Exceptional items AT": -15.454545454545453,
+    "Expenses": 16553.0,
+    "Interest": 256.0,
+    "Minority share": 0.0,
+    "Net Profit": -867.0,
+    "Net Profit (owners)": -867.0,
+    "OPM %": 10.933548560667205,
+    "Operating Profit": 2032.0,
+    "Other Income": -1865.0,
+    "PBT as filed": -549.0,
+    "Profit before tax": -561.0,
+    "Profit for PE": -851.5454545454545,
+    "Sales": 18585.0,
+    "Tax": 306.0,
+    "Tax %": 54.54545454545455
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 417.0,
+    "Exceptional items": -1545.0,
+    "Exceptional items AT": -1121.27425614489,
+    "Expenses": 17798.0,
+    "Interest": 143.0,
+    "Net Profit": 561.0,
+    "Net Profit (owners)": 561.0,
+    "OPM %": 12.772005489119781,
+    "Operating Profit": 2606.0,
+    "Other Income": -1273.0,
+    "Profit before tax": 773.0,
+    "Profit for PE": 1682.27425614489,
+    "Sales": 20404.0,
+    "Tax": 212.0,
+    "Tax %": 27.42561448900388
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 34.0,
+    "Depreciation": 483.0,
+    "Exceptional items": -1643.0,
+    "Exceptional items AT": -1252.2324324324325,
+    "Expenses": 19260.0,
+    "Interest": 198.0,
+    "Minority share": 0.0,
+    "Net Profit": 705.0,
+    "Net Profit (owners)": 705.0,
+    "OPM %": 11.84144276101982,
+    "Operating Profit": 2587.0,
+    "Other Income": -981.0,
+    "PBT as filed": 891.0,
+    "Profit before tax": 925.0,
+    "Profit for PE": 1957.2324324324325,
+    "Sales": 21847.0,
+    "Tax": 220.0,
+    "Tax %": 23.783783783783782
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 5615.0,
+    "CWIP": 2026.0,
+    "Equity Capital": 736.0,
+    "Fixed Assets": 13962.0,
+    "Investments": 13283.0,
+    "Other Assets": 23038.0,
+    "Other Liabilities": 33960.0,
+    "Reserves": 11998.0,
+    "Total Assets": 52309.0,
+    "Total Liabilities": 52309.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 169.0,
+    "Depreciation": 1945.0,
+    "Exceptional items": -1428.0,
+    "Exceptional items AT": -927.9090714132533,
+    "Expenses": 76238.0,
+    "Interest": 874.0,
+    "Net Profit": 3030.0,
+    "Net Profit (owners)": 3030.0,
+    "OPM %": 9.083537058016814,
+    "Operating Profit": 7617.0,
+    "Other Income": -135.0,
+    "PBT as filed": 4494.0,
+    "Profit before tax": 4663.0,
+    "Profit for PE": 3957.9090714132535,
+    "Sales": 83855.0,
+    "Tax": 1633.0,
+    "Tax %": 35.020373150332404
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -5223.0,
+    "Cash from Investing Activity": -3892.0,
+    "Cash from Operating Activity": 14981.0,
+    "Net Cash Flow": 5866.0
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 449.0,
+    "Exceptional items": 220.0,
+    "Exceptional items AT": 165.82706766917295,
+    "Expenses": 21145.0,
+    "Interest": 126.0,
+    "Net Profit": 2406.0,
+    "Net Profit (owners)": 2406.0,
+    "OPM %": 13.524456077212498,
+    "Operating Profit": 3307.0,
+    "Other Income": 460.0,
+    "Profit before tax": 3192.0,
+    "Profit for PE": 2240.1729323308273,
+    "Sales": 24452.0,
+    "Tax": 786.0,
+    "Tax %": 24.62406015037594
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 3375.0,
+    "CWIP": 1970.0,
+    "Equity Capital": 736.0,
+    "Fixed Assets": 12078.0,
+    "Investments": 15159.0,
+    "Other Assets": 14489.0,
+    "Other Liabilities": 26922.0,
+    "Reserves": 12663.0,
+    "Total Assets": 43696.0,
+    "Total Liabilities": 43696.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 1702.0,
+    "Exceptional items": -3700.0,
+    "Exceptional items AT": -2496.8687274187073,
+    "Expenses": 67421.0,
+    "Interest": 629.0,
+    "Net Profit": 3362.0,
+    "Net Profit (owners)": 3362.0,
+    "OPM %": 12.89163942686598,
+    "Operating Profit": 9978.0,
+    "Other Income": -2665.0,
+    "Profit before tax": 4982.0,
+    "Profit for PE": 5858.868727418707,
+    "Sales": 77399.0,
+    "Tax": 1620.0,
+    "Tax %": 32.51706142111602
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": -2985.0,
+    "Cash from Investing Activity": -6656.0,
+    "Cash from Operating Activity": 11312.0,
+    "Net Cash Flow": 1671.0
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 107.0,
+    "Depreciation": 510.0,
+    "Exceptional items": 235.0,
+    "Exceptional items AT": 160.6385817765917,
+    "Expenses": 22771.0,
+    "Interest": 166.0,
+    "Minority share": 0.0,
+    "Net Profit": 1793.0,
+    "Net Profit (owners)": 1793.0,
+    "OPM %": 12.74810330293509,
+    "Operating Profit": 3327.0,
+    "Other Income": -28.0,
+    "PBT as filed": 2516.0,
+    "Profit before tax": 2623.0,
+    "Profit for PE": 1632.3614182234082,
+    "Sales": 26098.0,
+    "Tax": 830.0,
+    "Tax %": 31.64315669081205
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 447.0,
+    "Exceptional items": -100.0,
+    "Exceptional items AT": -78.07869187531936,
+    "Expenses": 17153.0,
+    "Interest": 68.0,
+    "Net Profit": 1528.0,
+    "Net Profit (owners)": 1528.0,
+    "OPM %": 11.25769569041337,
+    "Operating Profit": 2176.0,
+    "Other Income": 296.0,
+    "Profit before tax": 1957.0,
+    "Profit for PE": 1606.0786918753195,
+    "Sales": 19329.0,
+    "Tax": 429.0,
+    "Tax %": 21.921308124680635
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 24.0,
+    "Depreciation": 508.0,
+    "Exceptional items": -79.0,
+    "Exceptional items AT": -67.98787878787878,
+    "Expenses": 18530.0,
+    "Interest": 135.0,
+    "Minority share": -4.0,
+    "Net Profit": 2556.0,
+    "Net Profit (owners)": 2560.0,
+    "OPM %": 10.340155803938647,
+    "Operating Profit": 2137.0,
+    "Other Income": 1476.0,
+    "PBT as filed": 2946.0,
+    "Profit before tax": 2970.0,
+    "Profit for PE": 2627.987878787879,
+    "Sales": 20667.0,
+    "Tax": 414.0,
+    "Tax %": 13.93939393939394
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 3780.0,
+    "CWIP": 674.0,
+    "Equity Capital": 737.0,
+    "Fixed Assets": 15966.0,
+    "Investments": 12467.0,
+    "Other Assets": 28346.0,
+    "Other Liabilities": 38385.0,
+    "Reserves": 14551.0,
+    "Total Assets": 57453.0,
+    "Total Liabilities": 57453.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 472.0,
+    "Exceptional items": 218.0,
+    "Exceptional items AT": 161.94718554551773,
+    "Expenses": 21207.0,
+    "Interest": 52.0,
+    "Net Profit": 2138.0,
+    "Net Profit (owners)": 2138.0,
+    "OPM %": 11.379022147931467,
+    "Operating Profit": 2723.0,
+    "Other Income": 679.0,
+    "Profit before tax": 2878.0,
+    "Profit for PE": 1976.0528144544824,
+    "Sales": 23930.0,
+    "Tax": 740.0,
+    "Tax %": 25.71230020847811
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:26:40+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:26:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 2575.0,
+    "CWIP": 593.0,
+    "Equity Capital": 737.0,
+    "Fixed Assets": 13482.0,
+    "Investments": 14595.0,
+    "Other Assets": 21401.0,
+    "Other Liabilities": 31935.0,
+    "Reserves": 14824.0,
+    "Total Assets": 50071.0,
+    "Total Liabilities": 50071.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-31T14:59:26+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 43.0,
+    "Depreciation": 539.0,
+    "Exceptional items": 218.0,
+    "Exceptional items AT": 136.82282282282284,
+    "Expenses": 22690.0,
+    "Interest": 100.0,
+    "Minority share": -3.0,
+    "Net Profit": 1254.0,
+    "Net Profit (owners)": 1257.0,
+    "OPM %": 10.450706448812062,
+    "Operating Profit": 2648.0,
+    "Other Income": -11.0,
+    "PBT as filed": 1955.0,
+    "Profit before tax": 1998.0,
+    "Profit for PE": 1120.177177177177,
+    "Sales": 25338.0,
+    "Tax": 744.0,
+    "Tax %": 37.23723723723724
+   },
+   "source_news_id": "xbrl-facts:Q2FY27:consolidated",
+   "table": "quarters"
+  }
+ ],
  "symbol": "TMCV",
  "timeline": [
   {
@@ -18535,6 +23958,62 @@
    "news_id": "nse-106830983",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/TML2_27102026193839_NSEBSETranscript.pdf",
    "summary": "Tata Motors reported Q2 FY27 standalone revenue of ₹23,900 crore, up 42% YoY, driven by broad-based volume growth and the Indonesia export ramp-up."
+  },
+  {
+   "date": "2026-10-30T08:29:16+05:30",
+   "event_type": "CORPORATE_ACTION",
+   "id": "t_d3a2ea40",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-10-30T08:29:46+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106835664",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/TMLCOMMERCIAL_30102026082159_Reg30ESOP.pdf",
+   "summary": "Tata Motors allotted 41,981 equity shares under its Share-based Long Term Incentive Scheme on October 30, 2026."
+  },
+  {
+   "date": "2026-10-30T20:14:03+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_42df3067",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-30T22:54:40+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "news_id": "nse-106837455",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/TMLCOMMERCIAL_30102026201355_NSEBSELETTERFINALIVECOFINAL.pdf",
+   "summary": "Tata Motors completed the initial settlement of its tender offer for Iveco Group on October 30, 2026, acquiring an 89.42% equity stake."
+  },
+  {
+   "date": "2026-10-31T14:28:55+05:30",
+   "event_type": "GOVERNANCE",
+   "id": "t_6b916e43",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-10-31T14:30:57+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "news_id": "nse-106838025",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/TMLCOMMERCIAL_31102026142803_NSEBSEFINAL.pdf",
+   "summary": "Tata Motors appointed Deloitte Haskins & Sells LLP as Statutory Auditors, replacing B S R & Co. LLP to align audit processes following the Iveco Group acquisition."
+  },
+  {
+   "date": "2026-11-01T12:50:05+05:30",
+   "event_type": "MONTHLY_BUSINESS_UPDATE",
+   "id": "t_a89b9a3d",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-11-01T12:51:32+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "news_id": "nse-106838770",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/TMLCOMMERCIAL_01112026124958_NSEBSE.pdf",
+   "summary": "Tata Motors reported October 2026 total CV sales of 47,652 units, up 27% YoY driven by a 225% surge in international sales."
   }
  ],
  "upcoming_events": [
@@ -18587,7 +24066,7 @@
    "source_news_id": "nse-106830983"
   }
  ],
- "updated_at": "2026-10-27T21:50:43+05:30",
+ "updated_at": "2026-11-01T12:51:32+05:30",
  "watchlist": [
   {
    "check_by": null,
@@ -18813,6 +24292,42 @@
    "status_history": [],
    "target": null,
    "text": "Electric truck volumes in quarterly results"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-10-31T14:28:55+05:30",
+   "id": "w_d335d7c6",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-10-31T14:30:57+05:30",
+    "by": "ai",
+    "doc": "board"
+   },
+   "source_news_id": "nse-106838025",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Shareholder approval for appointment of Statutory Auditors"
+  },
+  {
+   "check_by": "2026-11-30",
+   "check_in": "November 2026 sales update",
+   "created_on": "2026-11-01T12:50:05+05:30",
+   "id": "w_f147bca0",
+   "kind": "KPI",
+   "lab": {
+    "at": "2026-11-01T12:51:32+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "metric": "volumes",
+   "period": "NOV-2026",
+   "source_news_id": "nse-106838770",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Monthly CV Volumes"
   }
  ]
 }

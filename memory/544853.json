@@ -1,4 +1,74 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "nse-106837402"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY27",
+   "source_news_id": "nse-106837402"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-09-01T22:07:11+05:30",
@@ -14,16 +84,6 @@
    "source_news_id": "nse-106765173"
   },
   {
-   "as_of": "2026-10-22T11:52:12+05:30",
-   "lab": {
-    "at": "2026-10-22T11:52:12+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106824490"
-  },
-  {
    "as_of": "2026-10-22T21:49:37+05:30",
    "credit_rating": "CARE A+; Stable",
    "lab": {
@@ -35,6 +95,54 @@
    "rating_agency": "CARE Ratings",
    "rating_outlook": "Stable",
    "source_news_id": "nse-106825509"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "cash_cr": 609.59,
+   "current_assets_cr": 2460.68,
+   "current_liabilities_cr": 3269.61,
+   "cwip_cr": 5449.87,
+   "equity_capital_cr": 569.0,
+   "fixed_assets_cr": 11403.99,
+   "goodwill_cr": 0.0,
+   "gross_debt_cr": 13711.42,
+   "inventories_cr": 0.0,
+   "investments_cr": 238.16,
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
+   "net_worth_cr": 5216.29,
+   "noncurrent_assets_cr": 19640.88,
+   "noncurrent_liabilities_cr": 13615.66,
+   "payables_cr": 79.73,
+   "period": "Q2FY27",
+   "receivables_cr": 196.46,
+   "reserves_cr": 4647.3,
+   "source_news_id": "nse-106837402",
+   "total_assets_cr": 22101.56,
+   "total_liabilities_cr": 16885.27
+  },
+  {
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "credit_rating": "AA-",
+   "gross_debt_cr": 13711.0,
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "slides",
+    "ok": true
+   },
+   "net_debt_cr": 11607.0,
+   "net_worth_cr": 5216.0,
+   "period": "Sep-2026",
+   "rating_agency": "ICRA",
+   "rating_outlook": "Stable",
+   "source_news_id": "nse-106838891"
   }
  ],
  "business_summary": {
@@ -47,7 +155,416 @@
   "source_news_id": "nse-106765173",
   "text": "Juniper Green Energy is a renewable power producer focused on firm and dispatchable renewable energy (FDRE) and wind-solar hybrid projects with integrated battery storage, selling power under long-term PPAs."
  },
+ "call_memory": [
+  {
+   "certainty": "AIM",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_b0b69a80",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 8,
+    "quote": "Target BESS Installation of ~4,500 MWh by June 2027 & ~10,000 MWh by March 2028"
+   },
+   "metric": "bess_capacity",
+   "news_id": "nse-106838891",
+   "page": 8,
+   "pages": [
+    8
+   ],
+   "period": "by March 2028",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Target BESS Installation of ~4,500 MWh by June 2027 & ~10,000 MWh by March 2028",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Management targets BESS installation of approximately 4,500 MWh by June 2027 and approximately 10,000 MWh by March 2028.",
+   "topic": "bess_installation_target",
+   "type": "commitment",
+   "unit": "MWH",
+   "value": 4500.0,
+   "value_high": 10000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_324df768",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "Operational capacity of the company reached to 2,844 MWp + 604 MWh BESS as on date"
+   },
+   "metric": "operational_capacity",
+   "news_id": "nse-106838891",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period": "as on date",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Operational capacity of the company reached to 2,844 MWp + 604 MWh BESS as on date",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Operational capacity of the company reached 2,844 MWp and 604 MWh BESS as on date.",
+   "topic": "operational_capacity_total",
+   "type": "kpi",
+   "unit": "MWP",
+   "value": 2844.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_0b19541d",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 5,
+    "quote": "taking total operational + PPA signed capacity to 6,139 MWp and total portfolio to 11,218 MWp + 8,989 MWh BESS"
+   },
+   "metric": "total_portfolio",
+   "news_id": "nse-106838891",
+   "page": 5,
+   "pages": [
+    5
+   ],
+   "period": "as on date",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "taking total operational + PPA signed capacity to 6,139 MWp and total portfolio to 11,218 MWp + 8,989 MWh BESS",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Total portfolio stands at 11,218 MWp and 8,989 MWh BESS as on date.",
+   "topic": "total_portfolio_capacity",
+   "type": "kpi",
+   "unit": "MWP",
+   "value": 11218.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_fef6b42e",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 6,
+    "quote": "Adjusted for one-time expenses of INR 22.97 Cr on account of refinancing and IPO"
+   },
+   "metric": "one_time_expenses",
+   "news_id": "nse-106838891",
+   "page": 6,
+   "pages": [
+    6
+   ],
+   "period": "Q2FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Adjusted for one-time expenses of INR 22.97 Cr on account of refinancing and IPO",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "One-time expenses of INR 22.97 Cr on account of refinancing and IPO were incurred in Q2 FY27.",
+   "topic": "refinancing_ipo_one_off_q2",
+   "type": "one_off",
+   "unit": "INR_CR",
+   "value": 22.97,
+   "value_base": 229700000.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "standalone",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_131f4425",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 14,
+    "quote": "Primary funds of INR 1,800 Cr raised through IPO in August’26"
+   },
+   "metric": "ipo_funds_raised",
+   "news_id": "nse-106838891",
+   "page": 14,
+   "pages": [
+    14
+   ],
+   "period": "August 2026",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Primary funds of INR 1,800 Cr raised through IPO in August’26",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Primary funds of INR 1,800 Cr were raised through IPO in August 2026.",
+   "topic": "ipo_primary_fundraise",
+   "type": "capital_allocation",
+   "unit": "INR_CR",
+   "value": 1800.0,
+   "value_base": 18000000000.0
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_376f3bc0",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 14,
+    "quote": "Net Debt INR 11,607 Cr (As on September 30, 2026)"
+   },
+   "metric": "net_debt",
+   "news_id": "nse-106838891",
+   "page": 14,
+   "pages": [
+    14
+   ],
+   "period": "as on September 30, 2026",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Net Debt INR 11,607 Cr (As on September 30, 2026)",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Total debt stands at INR 13,711 Cr and net debt stands at INR 11,607 Cr as on September 30, 2026.",
+   "topic": "total_and_net_debt",
+   "type": "kpi",
+   "unit": "INR_CR",
+   "value": 11607.0,
+   "value_base": 116070000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_27974dcc",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 14,
+    "quote": "Weighted average cost of debt for the operational portfolio stands at 8.46% p.a."
+   },
+   "metric": "cost_of_debt",
+   "news_id": "nse-106838891",
+   "page": 14,
+   "pages": [
+    14
+   ],
+   "period": "as on September 30, 2026",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Weighted average cost of debt for the operational portfolio stands at 8.46% p.a.",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Weighted average cost of debt for the operational portfolio stands at 8.46% per annum.",
+   "topic": "weighted_average_cost_of_debt",
+   "type": "capital_allocation",
+   "unit": "PERCENT",
+   "value": 8.46
+  },
+  {
+   "base_unit": "INR",
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": true,
+   "id": "cm_f0d636df",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 14,
+    "quote": "Post IPO, Net worth increased by 51% QoQ to INR 5,216 Cr"
+   },
+   "metric": "net_worth",
+   "news_id": "nse-106838891",
+   "page": 14,
+   "pages": [
+    14
+   ],
+   "period": "as on September 30, 2026",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Post IPO, Net worth increased by 51% QoQ to INR 5,216 Cr",
+   "quote_assembled": false,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Net Worth stands at INR 5,216 Cr as on September 30, 2026, increasing by 51% QoQ post IPO.",
+   "topic": "net_worth_post_ipo",
+   "type": "kpi",
+   "unit": "INR_CR",
+   "value": 5216.0,
+   "value_base": 52160000000.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": false,
+   "date": "2026-11-01",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_30c13c66",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 15,
+    "quote": "Central off-taker – Sub total A 8,395 MWp 75%"
+   },
+   "metric": "customer_concentration",
+   "news_id": "nse-106838891",
+   "page": 15,
+   "pages": [
+    15
+   ],
+   "period_stated": false,
+   "quarter": "Q2FY27",
+   "quote": "Central off-taker – Sub total A 8,395 MWp 75%",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Central off-takers account for 75% of the total portfolio.",
+   "topic": "central_offtaker_share",
+   "type": "dependence",
+   "unit": "PERCENT",
+   "value": 75.0
+  },
+  {
+   "basis": "consolidated",
+   "certainty": "WILL",
+   "company_defined": true,
+   "date": "2026-11-01",
+   "definition": "closing trade receivables (excluding unbilled revenue) divided by billed revenue multiplied by the number of days",
+   "direction": "NEW",
+   "figure_beside_quote": false,
+   "id": "cm_00b9e6c2",
+   "lab": {
+    "at": "2026-11-01T23:38:56+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true,
+    "page": 15,
+    "quote": "Days Receivable Outstanding (Days) 22 H1 FY27"
+   },
+   "metric": "receivable_days",
+   "news_id": "nse-106838891",
+   "page": 15,
+   "pages": [
+    15
+   ],
+   "period": "H1FY27",
+   "period_stated": true,
+   "quarter": "Q2FY27",
+   "quote": "Days Receivable Outstanding (Days) 22 H1 FY27",
+   "quote_assembled": true,
+   "section": "SLIDE",
+   "speaker": "MANAGEMENT",
+   "statement": "Days Receivable Outstanding (DRO) stands at 22 days in H1 FY27.",
+   "topic": "days_receivable_outstanding",
+   "type": "kpi",
+   "unit": "DAYS",
+   "value": 22.0
+  }
+ ],
  "call_points": [
+  {
+   "category": "Capex & capacity",
+   "date": "2026-11-01",
+   "lab": {
+    "at": "2026-11-01T23:04:16+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106838891",
+   "text": "Commissioned 1,036 MWp RE and 503 MWh BESS in FY27 till date across 11 sites."
+  },
+  {
+   "category": "Guidance",
+   "date": "2026-11-01",
+   "lab": {
+    "at": "2026-11-01T23:04:16+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106838891",
+   "text": "Maintained target of ~4,500 MWh BESS by June 2027 and ~10,000 MWh by March 2028.",
+   "versus_prior": "reiterated"
+  },
+  {
+   "category": "Demand & orders",
+   "date": "2026-11-01",
+   "lab": {
+    "at": "2026-11-01T23:04:16+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106838891",
+   "text": "Total portfolio reached 11,218 MWp plus 8,989 MWh BESS including LoAs and PPAs."
+  },
+  {
+   "category": "Margins & costs",
+   "date": "2026-11-01",
+   "lab": {
+    "at": "2026-11-01T23:04:16+05:30",
+    "by": "ai",
+    "doc": "call",
+    "ok": true
+   },
+   "news_id": "nse-106838891",
+   "text": "Wind portfolio delivered a strong CUF of 50% in Q2FY27."
+  },
   {
    "category": "Capex & capacity",
    "date": "2026-09-01",
@@ -97,6 +614,235 @@
    "new_shares": null,
    "ratio": null,
    "source_news_id": "nse-106765173"
+  },
+  {
+   "amount_cr": 1800.0,
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "existing_shares": null,
+   "instrument": "IPO",
+   "issue_price": null,
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "new_shares": null,
+   "ratio": null,
+   "source_news_id": "nse-106838891"
+  }
+ ],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -40.129,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -37.129,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 19.129,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 13.404,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 21.252,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 19.254,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 113.694,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 14.911,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 5.867,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 0.493,
+    "AdjustmentsForReconcileProfitLoss": 23.054,
+    "AdjustmentsForSharebasedPayments": 15.583,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.026,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 1217.628,
+    "CashAndCashEquivalentsCashFlowStatement": 473.869,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 1429.189,
+    "CashFlowsFromUsedInInvestingActivities": -1213.991,
+    "CashFlowsFromUsedInOperatingActivities": 38.219,
+    "CashFlowsFromUsedInOperations": 42.866,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 327.973,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 4.647,
+    "IncreaseDecreaseInCashAndCashEquivalents": 253.417,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 253.417,
+    "InterestPaidClassifiedAsFinancingActivities": 105.55,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 95.391,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 1.897,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 102.19,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 246.88,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -33.578,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 155.027,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 33.689,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 405.0,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 1800.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 327.874,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 602.994,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "nse-106837402",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY27",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -33.092,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -84.52,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 173.508,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 355.104,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 116.248,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 8.905,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 49.862,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 4.548,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 44.232,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 4.053,
+    "AdjustmentsForReconcileProfitLoss": 558.671,
+    "AdjustmentsForSharebasedPayments": 6.065,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 4.475,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 609.59,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 2075.215,
+    "CashFlowsFromUsedInInvestingActivities": -3199.857,
+    "CashFlowsFromUsedInOperatingActivities": 632.245,
+    "CashFlowsFromUsedInOperations": 642.238,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 9.993,
+    "IncreaseDecreaseInCashAndCashEquivalents": -492.397,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -492.397,
+    "InterestPaidClassifiedAsFinancingActivities": 380.227,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 50.816,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 14.002,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": -4.995,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -33.578,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 980.295,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 107.371,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 5108.488,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 1800.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.707,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 4231.675,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 4312.097,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "nse-106837402",
+   "span": "H1"
   }
  ],
  "company_name": "Juniper Green Energy Limited",
@@ -137,6 +883,122 @@
    "tranches": [],
    "updated_as_of": "2026-10-17T23:43:36+05:30",
    "usage": "MERCHANT_SALE"
+  },
+  {
+   "amount_cr": 0.15,
+   "as_of": "2026-10-30T21:32:50+05:30",
+   "counterparty": "Juniper Green Beta Fifteen Private Limited",
+   "discount_pct": null,
+   "execution_by": null,
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 0.15,
+     "as_of": "2026-10-30T21:32:50+05:30",
+     "lab": {
+      "at": "2026-10-30T23:50:24+05:30",
+      "by": "ai",
+      "doc": "other",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106837560",
+     "stage": "COMPLETED"
+    }
+   ],
+   "id": "d_90030c24",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "ACQUISITION",
+   "lab": {
+    "at": "2026-10-30T23:50:24+05:30",
+    "by": "ai",
+    "doc": "other",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "Power generation (Renewable Energy)",
+   "seller": null,
+   "source_news_id": "nse-106837560",
+   "stage": "COMPLETED",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-30T21:32:50+05:30",
+   "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "nse-106837402",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "nse-106837402",
+   "values": {
+    "face_value": 10
+   }
   }
  ],
  "financial_metrics": [
@@ -177,6 +1039,24 @@
      "unit": "INR_CR",
      "value": 324.0,
      "yoy_pct": 79.0
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 291.2,
+     "yoy_pct": null
     }
    ],
    "unit": "INR_CR",
@@ -228,6 +1108,30 @@
      "unit": "INR_CR",
      "value": 294.0,
      "yoy_pct": 86.0
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt_before_exceptional:Q1FY27",
+       "finance_cost:Q1FY27",
+       "depreciation:Q1FY27",
+       "other_income:Q1FY27"
+      ],
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 261.47,
+     "yoy_pct": null
     }
    ],
    "unit": "INR_CR",
@@ -277,6 +1181,28 @@
      "unit": "PCT",
      "value": 91.0,
      "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "ebitda:Q1FY27",
+       "revenue:Q1FY27"
+      ],
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "PCT",
+     "value": 89.79,
+     "yoy_pct": null
     }
    ],
    "unit": "PCT",
@@ -322,6 +1248,24 @@
      "unit": "INR_CR",
      "value": 33.0,
      "yoy_pct": 54.0
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 33.45,
+     "yoy_pct": null
     }
    ],
    "unit": "INR_CR",
@@ -332,382 +1276,982 @@
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "current_tax",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 1.09,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 1.09,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 1.09,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "deferred_tax",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 9.61,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 9.61,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 9.61,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "depreciation",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 74.52,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 74.52,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 74.52,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "employee_cost",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 7.34,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 7.34,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 7.34,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR"
-   },
    "metric": "eps",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR",
+     "value": 0.68,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR",
+     "value": 0.68,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 0.68,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "exceptional_items",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "finance_cost",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 175.82,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 175.82,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 175.82,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "inventory_change",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "other_expenses",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 22.39,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 22.39,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 22.39,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "other_income",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 33.02,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 33.02,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 33.02,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "paid_up_capital",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 488.99,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 488.99,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 488.99,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "pat_continuing",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 33.45,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 33.45,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 33.45,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "pat_discontinued",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "pbt",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 44.16,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 44.16,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 44.16,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "purchases_stock_in_trade",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "raw_material_cost",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "share_associates",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 0.0,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 0.0,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "tax_expense",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 10.7,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 10.7,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 10.7,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "total_expenses",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 280.06,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 280.06,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 280.06,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
    "as_of": "2026-08-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-27T09:56:35+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
    "metric": "total_income",
    "period": "Q1FY27",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544853:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-08-26T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-27T09:56:35+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "xbrl:res:544853:Q1FY27",
+     "qoq_pct": null,
+     "unit": "INR_CR",
+     "value": 324.21,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-10-30T19:41:46+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-31T01:10:08+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "ok": true,
+      "unit": "INR_CR"
+     },
+     "news_id": "nse-106837402",
+     "qoq_pct": null,
+     "restated_from": "Q2FY27",
+     "unit": "INR_CR",
+     "value": 324.21,
+     "yoy_pct": null
+    }
+   ],
    "unit": "INR_CR",
+   "updated_as_of": "2026-08-26T18:00:00+05:30",
    "value": 324.21,
+   "value_news_id": "xbrl:res:544853:Q1FY27",
    "yoy_pct": null
   },
   {
@@ -867,20 +2411,1199 @@
    "unit": "INR_CR",
    "value": 3.1,
    "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q2FY27",
+   "qoq_pct": 18.4,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 344.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q2FY27",
+     "finance_cost:Q2FY27",
+     "depreciation:Q2FY27",
+     "other_income:Q2FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 312.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q2FY27",
+     "revenue:Q2FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "PCT",
+   "value": 90.69,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q2FY27",
+   "qoq_pct": -8.6,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 30.59,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q2FY27",
+   "qoq_pct": -72.5,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.3,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q2FY27",
+   "qoq_pct": -11.3,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 8.52,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q2FY27",
+   "qoq_pct": 32.8,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 98.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q2FY27",
+   "qoq_pct": 52.6,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 11.2,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q2FY27",
+   "qoq_pct": -16.2,
+   "source_news_id": "nse-106837402",
+   "unit": "INR",
+   "value": 0.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q2FY27",
+   "qoq_pct": 14.4,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 201.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 19.67,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q2FY27",
+   "qoq_pct": -18.3,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 26.98,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q2FY27",
+   "qoq_pct": 16.4,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 569.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q2FY27",
+   "qoq_pct": -8.6,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 30.59,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q2FY27",
+   "qoq_pct": -10.8,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 39.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 1.22,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q2FY27",
+   "qoq_pct": -17.6,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 8.82,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q2FY27",
+   "qoq_pct": 18.6,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 332.22,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q2FY27",
+   "qoq_pct": 14.6,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 371.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR",
+   "value": 0.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q2FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR",
+   "value": 0.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 4231.68,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible_wip",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 1.4,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 18.13,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 173.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:H1FY27",
+     "finance_cost:H1FY27",
+     "depreciation:H1FY27",
+     "other_income:H1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 574.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY27",
+     "revenue:H1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "PCT",
+   "value": 90.28,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 18.54,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR",
+   "value": 1.25,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 376.96,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 2075.22,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": -3199.86,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": -492.4,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 632.25,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 39.89,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 59.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 569.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 64.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 64.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 83.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 3.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 635.85,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 19.53,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 612.28,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR_CR",
+   "value": 695.85,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR",
+   "value": 1.25,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "H1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106837402",
+   "unit": "INR",
+   "value": 1.25,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "slides",
+    "ok": true,
+    "unit": "MW"
+   },
+   "metric": "installed_capacity",
+   "period": "SEP-2026",
+   "qoq_pct": null,
+   "source_news_id": "nse-106838891",
+   "unit": "MW",
+   "value": 2844.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "slides",
+    "ok": true,
+    "unit": "MWh"
+   },
+   "metric": "bess_capacity",
+   "period": "SEP-2026",
+   "qoq_pct": null,
+   "source_news_id": "nse-106838891",
+   "unit": "MWh",
+   "value": 604.0,
+   "yoy_pct": null
   }
  ],
  "fy_end_month": 3,
  "governance": {
   "auditor": {
-   "as_of": "2026-10-22T21:49:37+05:30",
+   "as_of": "2026-11-01T22:48:39+05:30",
    "lab": {
-    "at": "2026-10-22T21:49:37+05:30",
-    "by": "unknown",
-    "doc": "other"
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
    },
-   "note": "FY26 financials marked audited in CARE release",
+   "name": "Walker Chandiok & Co LLP",
    "opinion": "UNMODIFIED",
-   "source_news_id": "nse-106825509"
+   "source_news_id": "nse-106838891"
   },
   "auditor_history": [
    {
@@ -903,6 +3626,173 @@
     "note": "FY26 financials marked audited in CARE release",
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106825509"
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:10:08+05:30",
+     "by": "ai",
+     "doc": "results"
+    },
+    "name": "Walker Chandiok & Co LLP",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106837402"
+   },
+   {
+    "as_of": "2026-11-01T22:48:39+05:30",
+    "lab": {
+     "at": "2026-11-01T23:02:34+05:30",
+     "by": "ai",
+     "doc": "slides"
+    },
+    "name": "Walker Chandiok & Co LLP",
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106838891"
+   }
+  ],
+  "quarters": [
+   {
+    "as_of": "2026-10-29T18:33:26+05:30",
+    "board": [
+     {
+      "appointed": "2018-12-13",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "ARVIND TIKU",
+      "role": "Chairperson",
+      "tenure_months": 93.17
+     },
+     {
+      "appointed": "2011-12-05",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "HEMANT TIKOO",
+      "role": null,
+      "tenure_months": 177.25
+     },
+     {
+      "appointed": "2024-04-30",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "ANKUSH MALIK",
+      "role": null,
+      "tenure_months": 29.0
+     },
+     {
+      "appointed": "2026-07-04",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "PARAG AGRAWAL",
+      "role": null,
+      "tenure_months": 2.26
+     },
+     {
+      "appointed": "2025-06-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "KOTTAMASU VENKATESWARA RAO",
+      "role": null,
+      "tenure_months": 15.7
+     },
+     {
+      "appointed": "2025-06-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "BALAJI VISWANATHAN SWAMINATHAN",
+      "role": null,
+      "tenure_months": 15.7
+     },
+     {
+      "appointed": "2025-06-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MAITHREYI SWAMINATHAN",
+      "role": null,
+      "tenure_months": 15.7
+     },
+     {
+      "appointed": "2025-06-23",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "PRASHANT PARASHAR",
+      "role": null,
+      "tenure_months": 15.7
+     },
+     {
+      "appointed": "2012-08-01",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": "2026-07-03",
+      "cessation_reason": "Others",
+      "name": "SANJAY KUMAR BAKLIWAL",
+      "role": null,
+      "tenure_months": 167.2
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "MAITHREYI SWAMINATHAN",
+      "BALAJI VISWANATHAN SWAMINATHAN",
+      "ANKUSH MALIK"
+     ],
+     "corporate social responsibility committee": [
+      "ARVIND TIKU",
+      "HEMANT TIKOO",
+      "PRASHANT PARASHAR"
+     ],
+     "nomination and remuneration committee": [
+      "MAITHREYI SWAMINATHAN",
+      "HEMANT TIKOO",
+      "KOTTAMASU VENKATESWARA RAO"
+     ],
+     "risk management committee": [
+      "MAITHREYI SWAMINATHAN",
+      "PRASHANT PARASHAR",
+      "PARAG AGRAWAL"
+     ],
+     "stakeholders relationship committee": [
+      "ARVIND TIKU",
+      "KOTTAMASU VENKATESWARA RAO",
+      "ANKUSH MALIK"
+     ]
+    },
+    "complaints": {
+     "disposed": 1.0,
+     "pending": 0.0,
+     "received": 1.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 33.0,
+     "board": 22.0,
+     "nomination and remuneration committee": 21.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 0.155,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749165_29102026063326_WEB.xml",
+    "tax_litigation": []
    }
   ]
  },
@@ -978,6 +3868,24 @@
    "status": "OPEN",
    "status_history": [],
    "target": "4.5 GWh by Jun-27; 10 GWh by Mar-28"
+  },
+  {
+   "due": "Jun-2027",
+   "due_date": "2027-06-30",
+   "given_on": "2026-11-01T22:48:39+05:30",
+   "id": "g_400041a3",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "metric": "bess_capacity",
+   "source_news_id": "nse-106838891",
+   "source_type": "PRESENTATION",
+   "statement": "Target BESS Installation of ~4,500 MWh by June 2027",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "4500 MWh"
   }
  ],
  "identity": {
@@ -1025,6 +3933,17 @@
     "name": "Juniper Green Spark Ten Private Limited",
     "source_news_id": "nse-106825509",
     "type": "step-down wholly owned subsidiary"
+   },
+   {
+    "as_of": "2026-10-30T21:32:50+05:30",
+    "lab": {
+     "at": "2026-10-30T23:50:24+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "name": "Juniper Green Beta Fifteen Private Limited",
+    "source_news_id": "nse-106837560",
+    "type": "100% subsidiary"
    }
   ],
   "former_names": [
@@ -1032,7 +3951,127 @@
   ]
  },
  "industry": "Utilities > Power > Power Generation",
- "last_filed_at": "2026-10-22T21:49:37+05:30",
+ "last_filed_at": "2026-11-01T22:48:39+05:30",
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.098,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.098,
+    "oci_net_cr": -0.075,
+    "profit_cr": 33.452,
+    "tax_not_reclassified_cr": -0.023,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 33.377
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.031,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T22:39:00+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.031,
+    "oci_net_cr": -0.023,
+    "profit_cr": 7.447,
+    "tax_not_reclassified_cr": -0.008,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.424
+   }
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.022,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "nse-106837402",
+   "values": {
+    "not_reclassified_cr": 0.022,
+    "oci_net_cr": 0.016,
+    "profit_cr": 7.256,
+    "tax_not_reclassified_cr": 0.006,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.272
+   }
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.045,
+     "description": "Items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY27",
+   "source_news_id": "nse-106837402",
+   "values": {
+    "not_reclassified_cr": 0.045,
+    "oci_net_cr": 0.033,
+    "profit_cr": 30.587,
+    "tax_not_reclassified_cr": 0.012,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 30.62
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-01T22:07:11+05:30",
@@ -1123,6 +4162,36 @@
    },
    "source_news_id": "nse-106825509",
    "text": "MSEDCL payment security is an LC equal to one month's average billing; solar billing collection days have averaged under 30."
+  },
+  {
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106838891",
+   "text": "Wind CUF was 50% in Q2FY27."
+  },
+  {
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106838891",
+   "text": "Days receivable outstanding stood at 17 days in H1FY27."
+  },
+  {
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106838891",
+   "text": "Weighted average cost of debt for the operational portfolio is 8.46% p.a."
   }
  ],
  "ownership": [
@@ -1173,22 +4242,6 @@
   {
    "comparison": ">=",
    "created_on": "2026-09-01T22:07:11+05:30",
-   "id": "p_496f8305",
-   "kpi": "Capacity commissioned in FY27",
-   "lab": {
-    "at": "2026-09-01T22:07:11+05:30",
-    "by": "unknown",
-    "doc": "other"
-   },
-   "metric": "installed_capacity",
-   "period": "FY27",
-   "source_news_id": "nse-106765173",
-   "status": "OPEN",
-   "value": 2000.0
-  },
-  {
-   "comparison": ">=",
-   "created_on": "2026-09-01T22:07:11+05:30",
    "id": "p_6fc0af49",
    "kpi": "BESS installed capacity",
    "lab": {
@@ -1201,6 +4254,856 @@
    "source_news_id": "nse-106765173",
    "status": "OPEN",
    "value": 4500.0
+  },
+  {
+   "comparison": ">=",
+   "created_on": "2026-11-01T22:48:39+05:30",
+   "id": "p_ab9481b9",
+   "kpi": "Operational Capacity",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "metric": "installed_capacity",
+   "period": "FY27",
+   "source_news_id": "nse-106838891",
+   "status": "OPEN",
+   "value": 4000.0
+  }
+ ],
+ "related_parties": [
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": -772.32,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Three Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 772.32,
+     "other_details": "Corporate Guarantee",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -631.54,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Field Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 631.54,
+     "other_details": "Corporate Guarantee",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -514.742,
+     "closing_cr": 622.323,
+     "counterparty": "Juniper Green Kite Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 107.581,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "1",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -199.487,
+     "closing_cr": 154.878,
+     "counterparty": "Juniper Green Cosmic Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 146.031,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "21",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -125.48,
+     "closing_cr": 128.608,
+     "counterparty": "Juniper Green Sigma Eight Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 24.988,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -115.0,
+     "closing_cr": 115.0,
+     "counterparty": "Juniper Green Three Private Limited",
+     "entity": "Juniper Green Sigma Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.077,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "19",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -113.75,
+     "closing_cr": 267.75,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 154.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.094,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "22",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 110.42,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Cosmic Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -107.614,
+     "closing_cr": 286.315,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 178.701,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.094,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "22",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -92.033,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Field Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 50.447,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "0",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -80.14,
+     "closing_cr": 46.0,
+     "counterparty": "Juniper Green Three Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 126.14,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0775,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "22",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -57.9,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Sigma Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 57.9,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.081,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "20",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 56.136,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Energy Limited",
+     "entity": "Juniper Green Stellar Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Engineering, procurement and Construction services",
+     "relationship": "Holding company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -54.512,
+     "closing_cr": 60.867,
+     "counterparty": "Juniper Nirjara Energy Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 6.355,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "21",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -50.0,
+     "closing_cr": 79.963,
+     "counterparty": "Juniper Green Light Ten Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 29.963,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 47.573,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 45.0,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 38.665,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Power Trading Private Limited",
+     "entity": "Juniper Green Cosmic Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 38.665,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Cosmic Private Limited",
+     "entity": "Juniper Green Power Trading Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": -38.449,
+     "closing_cr": 71.388,
+     "counterparty": "Juniper Green Beta Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 41.939,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.094,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -37.011,
+     "closing_cr": 72.758,
+     "counterparty": "Juniper Green Spark Four Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 69.307,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.091,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "22",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 32.6,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Ray Two Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -31.0,
+     "closing_cr": 81.0,
+     "counterparty": "Juniper Green Beam Eight Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 50.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "22",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -30.615,
+     "closing_cr": 7.932,
+     "counterparty": "Juniper Green Three Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 12.043,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.077,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "19",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -30.086,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Ray Zeta Private Limited",
+     "entity": "Juniper Renewable Holdings Pte Ltd",
+     "opening_cr": 30.086,
+     "other_details": "Corporate Guarantee",
+     "relationship": "Step down subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 27.297,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Energy Limited",
+     "entity": "Juniper Green Spark Four Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Engineering, procurement and Construction services",
+     "relationship": "Holding company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -26.412,
+     "closing_cr": 126.957,
+     "counterparty": "Juniper Green Ray Two Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 150.445,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "19",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -25.217,
+     "closing_cr": 58.847,
+     "counterparty": "Juniper Green Spark Ten Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 83.21,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0885,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "22",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -24.79,
+     "closing_cr": 24.79,
+     "counterparty": "Juniper Green Spark Ten Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.0885,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "22",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 23.133,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Spark Four Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -20.2,
+     "closing_cr": 102.61,
+     "counterparty": "Juniper Green ETA Five Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 82.41,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "23",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 18.584,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Energy Limited",
+     "entity": "Juniper Green Eta Five Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Engineering, procurement and Construction services",
+     "relationship": "Holding company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 18.431,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Power Trading Private Limited",
+     "entity": "Juniper Green Stellar Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 18.431,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Power Trading Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": -17.36,
+     "closing_cr": 24.557,
+     "counterparty": "Juniper Green Beta Six Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 7.197,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -16.65,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Ray Two Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 16.65,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.092,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Investment",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "19",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 15.76,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Sigma Eight Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 15.749,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green ETA Five Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 15.157,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Sigma Eight Private Limited",
+     "entity": "Nisagra Renewable Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 14.768,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Energy Limited",
+     "entity": "Juniper Green Sigma Eight Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Engineering, procurement and Construction services",
+     "relationship": "Holding company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -14.2,
+     "closing_cr": 15.19,
+     "counterparty": "Juniper Green Bess Delta Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.99,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -13.72,
+     "closing_cr": 16.29,
+     "counterparty": "Juniper Green Bess Two Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 2.57,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 12.573,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Spark Four Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 12.573,
+     "other_details": "Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.515,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Sigma Eight Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.295,
+     "closing_cr": -0.405,
+     "counterparty": "Juniper Green Beam Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 11.89,
+     "other_details": "Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 12.189,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Energy Limited",
+     "entity": "Juniper Green Kite Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Engineering, procurement and Construction services",
+     "relationship": "Holding company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -11.979,
+     "closing_cr": 31.603,
+     "counterparty": "Juniper Green Kite Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 19.624,
+     "other_details": "Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -11.9,
+     "closing_cr": 13.309,
+     "counterparty": "Juniper Green Bess Zeta Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 1.409,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 11.379,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 10.752,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Kite Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 10.33,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Kite Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "other_details": "Sale of Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -9.9,
+     "closing_cr": 5.0,
+     "counterparty": "Juniper Green Field Six Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.09,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "5",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -8.4,
+     "closing_cr": 26.51,
+     "counterparty": "Juniper Green Gem Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 18.11,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "1",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 8.224,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Power Trading Private Limited",
+     "entity": "Juniper Nirjara Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 8.224,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Nirjara Energy Private Limited",
+     "entity": "Juniper Green Power Trading Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "NA",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 8.166,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": -8.15,
+     "closing_cr": 12.4,
+     "counterparty": "Juniper Green India Six Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 4.25,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "1",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 7.906,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Energy Limited",
+     "entity": "Juniper Green Beam Eight Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Engineering, procurement and Construction services",
+     "relationship": "Holding company",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -7.55,
+     "closing_cr": 21.58,
+     "counterparty": "Satara Power and Energy Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 17.53,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business purposes",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "1",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 6.96,
+     "closing_cr": 0.0,
+     "counterparty": "Juniper Green Stellar Private Limited",
+     "entity": "Juniper Green Energy Limited",
+     "opening_cr": 6.96,
+     "other_details": "Engineering, procurement and Construction services",
+     "relationship": "Subsidiary",
+     "remarks": "NA",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 639,
+   "period": "Q2FY27",
+   "source_news_id": "nse-106837402"
   }
  ],
  "schema_version": 3,
@@ -1210,12 +5113,80 @@
    "at": null,
    "by": "file",
    "doc": "other"
+  },
+  "governance_quarters": {
+   "at": "2026-10-29T18:33:26+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "power",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Sale of electricity through renewable projects",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY27",
+   "segment": "Not applicable",
+   "single": true,
+   "source_news_id": "nse-106837402"
+  }
+ ],
  "standalone": {
-  "balance_sheet": [],
+  "balance_sheet": [
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "cash_cr": 473.87,
+    "current_assets_cr": 1642.35,
+    "current_liabilities_cr": 250.28,
+    "cwip_cr": 150.19,
+    "equity_capital_cr": 569.0,
+    "fixed_assets_cr": 835.35,
+    "goodwill_cr": 0.0,
+    "gross_debt_cr": 1793.0,
+    "inventories_cr": 99.22,
+    "investments_cr": 2433.37,
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true
+    },
+    "net_worth_cr": 5171.07,
+    "noncurrent_assets_cr": 5981.29,
+    "noncurrent_liabilities_cr": 2202.29,
+    "payables_cr": 146.03,
+    "period": "Q2FY27",
+    "receivables_cr": 66.14,
+    "reserves_cr": 4602.07,
+    "source_news_id": "nse-106837402",
+    "total_assets_cr": 7623.64,
+    "total_liabilities_cr": 2452.57
+   }
+  ],
   "metrics": [
    {
     "as_of": "2026-08-26T18:00:00+05:30",
@@ -1668,9 +5639,1222 @@
     "unit": "INR",
     "value": 0.15,
     "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "current_tax",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "deferred_tax",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 2.51,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "depreciation",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 7.86,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "pbt_before_exceptional:Q2FY27",
+      "finance_cost:Q2FY27",
+      "depreciation:Q2FY27",
+      "other_income:Q2FY27"
+     ],
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "ebitda",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 10.78,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "ebitda:Q2FY27",
+      "revenue:Q2FY27"
+     ],
+     "ok": true,
+     "unit": "PCT"
+    },
+    "metric": "ebitda_margin",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "PCT",
+    "value": 15.53,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "employee_cost",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 13.93,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR",
+    "value": 0.13,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "exceptional_items",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "finance_cost",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 56.68,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "inventory_change",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_expenses",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 7.99,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_income",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 63.52,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "paid_up_capital",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 569.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 7.26,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_continuing",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 7.26,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pbt",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 9.76,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "purchases_stock_in_trade",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "raw_material_cost",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 36.69,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "revenue",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 69.4,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "share_associates",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "tax_expense",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 2.51,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_expenses",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 123.16,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_income",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 132.92,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_discontinued",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR",
+    "value": 0.13,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q2FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR",
+    "value": 0.13,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "capex",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 327.87,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "capex_intangible",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "capex_intangible_wip",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "current_tax",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "deferred_tax",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 5.11,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "depreciation",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 13.4,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "pbt_before_exceptional:H1FY27",
+      "finance_cost:H1FY27",
+      "depreciation:H1FY27",
+      "other_income:H1FY27"
+     ],
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "ebitda",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 26.31,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "ebitda:H1FY27",
+      "revenue:H1FY27"
+     ],
+     "ok": true,
+     "unit": "PCT"
+    },
+    "metric": "ebitda_margin",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "PCT",
+    "value": 14.38,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "employee_cost",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 21.59,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR",
+    "value": 0.29,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "exceptional_items",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "finance_cost",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 107.9,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "financing_cash_flow",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 1429.19,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "inventory_change",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "investing_cash_flow",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": -1213.99,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "net_cash_flow",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 253.42,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "operating_cash_flow",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 38.22,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_expenses",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 11.86,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_income",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 114.8,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "paid_up_capital",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 569.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 14.7,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_continuing",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 14.7,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_discontinued",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pbt",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 19.81,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "purchases_stock_in_trade",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "raw_material_cost",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 123.27,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "revenue",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 183.03,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "share_associates",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "tax_expense",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 5.11,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_expenses",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 278.02,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_income",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR_CR",
+    "value": 297.83,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR",
+    "value": 0.29,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-30T19:41:46+05:30",
+    "lab": {
+     "at": "2026-10-31T01:16:40+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "H1FY27",
+    "source_news_id": "nse-106837402",
+    "unit": "INR",
+    "value": 0.29,
+    "yoy_pct": null
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 74.517,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 29.722999999999985,
+    "Interest": 175.818,
+    "Net Profit": 33.452,
+    "Net Profit (owners)": 33.452,
+    "OPM %": 89.79278561518704,
+    "Operating Profit": 261.47300000000007,
+    "Other Income": 33.01699999999994,
+    "Profit before tax": 44.155,
+    "Profit for PE": 33.452,
+    "Sales": 291.196,
+    "Tax": 10.703,
+    "Tax %": 24.239610463141204
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 5.55,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 98.098,
+    "Interest": 51.215,
+    "Net Profit": 7.447,
+    "Net Profit (owners)": 7.447,
+    "OPM %": 13.670444945085896,
+    "Operating Profit": 15.534000000000006,
+    "Other Income": 51.278999999999996,
+    "Profit before tax": 10.048,
+    "Profit for PE": 7.447,
+    "Sales": 113.632,
+    "Tax": 2.601,
+    "Tax %": 25.885748407643316
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 7.855,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 58.61999999999999,
+    "Interest": 56.682,
+    "Net Profit": 7.256,
+    "Net Profit (owners)": 7.256,
+    "OPM %": 15.53435829454908,
+    "Operating Profit": 10.781000000000006,
+    "Other Income": 63.519000000000005,
+    "Profit before tax": 9.763,
+    "Profit for PE": 7.256,
+    "Sales": 69.401,
+    "Tax": 2.507,
+    "Tax %": 25.678582402949914
+   },
+   "source_news_id": "nse-106837402",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 2205.9139999999998,
+    "CWIP": 150.191,
+    "Equity Capital": 568.998,
+    "Fixed Assets": 1314.725,
+    "Investments": 2433.37,
+    "Other Assets": 3725.357,
+    "Other Liabilities": 246.65800000000036,
+    "Reserves": 4602.073,
+    "Total Assets": 7623.643,
+    "Total Liabilities": 7623.643
+   },
+   "source_news_id": "nse-106837402",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 98.991,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 32.090999999999994,
+    "Interest": 201.142,
+    "Net Profit": 30.587,
+    "Net Profit (owners)": 30.587,
+    "OPM %": 90.68903086537959,
+    "Operating Profit": 312.567,
+    "Other Income": 26.977999999999952,
+    "Profit before tax": 39.412,
+    "Profit for PE": 30.587,
+    "Sales": 344.658,
+    "Tax": 8.825,
+    "Tax %": 22.39165736323962
+   },
+   "source_news_id": "nse-106837402",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T19:41:46+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY27",
+   "rows": {
+    "Borrowings": 14806.427,
+    "CWIP": 5449.873,
+    "Equity Capital": 568.998,
+    "Fixed Assets": 12777.809,
+    "Investments": 238.163,
+    "Other Assets": 3635.7179999999994,
+    "Other Liabilities": 2078.842999999997,
+    "Reserves": 4647.295,
+    "Total Assets": 22101.563,
+    "Total Liabilities": 22101.563
+   },
+   "source_news_id": "nse-106837402",
+   "table": "balance"
+  }
+ ],
  "symbol": "JNPR",
  "timeline": [
   {
@@ -1726,10 +6910,67 @@
    "news_id": "nse-106825509",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/JGEL2025_22102026214910_2026_10_22-_Reg_30-_Credit_Rating-_Spark_Ten.pdf",
    "summary": "2026-10-22: CARE Ratings assigned CARE A+; Stable to the ₹472.16 Cr long-term bank facilities of step-down subsidiary Juniper Green Spark Ten, which operates a 100 MW solar-wind hybrid project in Maharashtra."
+  },
+  {
+   "basis": "CONSOLIDATED",
+   "date": "2026-10-30T19:41:46+05:30",
+   "event_type": "RESULTS",
+   "id": "t_bfb23587",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-31T01:10:08+05:30",
+    "by": "ai",
+    "doc": "results"
+   },
+   "news_id": "nse-106837402",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/JGEL2025_30102026193956_2026_10_30_Reg_30_Outcome_of_BM_Q2_FY_2027_JGEL.pdf",
+   "quarter": "Q2FY27",
+   "summary": "Q2FY27 results (consolidated): revenue ₹344.66 Cr, net profit ₹30.59 Cr."
+  },
+  {
+   "date": "2026-10-30T21:32:50+05:30",
+   "event_type": "M_AND_A",
+   "id": "t_90030c24",
+   "impact_level": "LOW",
+   "lab": {
+    "at": "2026-10-30T23:50:24+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106837560",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/JGEL2025_30102026213215_2026_10_30_JGEL_Reg_30_Incorporation_Beta_15.pdf",
+   "summary": "Juniper Green Energy incorporated wholly owned subsidiary Juniper Green Beta Fifteen Private Limited with a ₹15 lakh capital subscription."
+  },
+  {
+   "date": "2026-11-01T22:48:39+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_b19531d1",
+   "impact_level": "HIGH",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "news_id": "nse-106838891",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/JGEL2025_01112026224757_2026_11_01_Reg_30_Investor_Presentation_Earnings_Call_Q2_FY_2027_JGEL.pdf",
+   "summary": "Juniper Green Energy reported a turnaround in Q2FY27 with a PAT of ₹31 Cr as operational capacity reached 2,844 MWp."
   }
  ],
- "upcoming_events": [],
- "updated_at": "2026-10-27T09:56:35+05:30",
+ "upcoming_events": [
+  {
+   "as_of": "2026-11-01T22:48:39+05:30",
+   "date": "2026-11-02",
+   "description": "Earnings conference call",
+   "event_type": "BOARD_MEETING",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106838891"
+  }
+ ],
+ "updated_at": "2026-11-01T23:02:34+05:30",
  "watchlist": [
   {
    "check_by": "2027-03-31",
@@ -1848,8 +7089,15 @@
     "doc": "other"
    },
    "source_news_id": "nse-106824490",
-   "status": "OPEN",
-   "status_history": [],
+   "status": "MET",
+   "status_history": [
+    {
+     "as_of": "2026-11-01T22:48:39+05:30",
+     "evidence": "Operational capacity reached 2,844 MWp as of November 2026.",
+     "source_news_id": "nse-106838891",
+     "status": "MET"
+    }
+   ],
    "target": null,
    "text": "Aggregate operational capacity"
   },
@@ -1869,6 +7117,42 @@
    "status_history": [],
    "target": "P90 PLF",
    "text": "Generation in line with P90 PLF for the wind capacity"
+  },
+  {
+   "check_by": "2027-03-31",
+   "check_in": "Q4FY27 results",
+   "created_on": "2026-11-01T22:48:39+05:30",
+   "id": "w_dd7ab1f8",
+   "kind": "KPI",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "metric": "installed_capacity",
+   "period": "FY27",
+   "source_news_id": "nse-106838891",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "4000",
+   "text": "Operational Capacity"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-11-01T22:48:39+05:30",
+   "id": "w_56a3aa7a",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-11-01T23:02:34+05:30",
+    "by": "ai",
+    "doc": "slides"
+   },
+   "source_news_id": "nse-106838891",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Tariff adoption for several under-construction projects"
   }
  ]
 }

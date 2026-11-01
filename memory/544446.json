@@ -1,4 +1,164 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-03-31",
+     "name": "Mehta Chokshi and Shah LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-03-31",
+     "name": "Mehta Chokshi and Shah LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-01-13T18:00:00+05:30",
@@ -30,19 +190,6 @@
    "source_news_id": "xbrl:res:544446:Q2FY26",
    "total_assets_cr": 3948.04,
    "total_liabilities_cr": 2965.87
-  },
-  {
-   "as_of": "2026-05-19T16:40:33+05:30",
-   "cash_cr": 0.91,
-   "gross_debt_cr": 591.87,
-   "lab": {
-    "at": "2026-05-19T16:40:33+05:30",
-    "by": "unknown",
-    "doc": "results"
-   },
-   "net_worth_cr": 991.61,
-   "period": "Mar-2026",
-   "source_news_id": "nse-106629575"
   },
   {
    "as_of": "2026-05-19T18:00:00+05:30",
@@ -78,6 +225,436 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -0.1665,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -10.0768,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 1.0862,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -6.417,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 14.1155,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.1153,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 32.3026,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 6.2657,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 6.5624,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -6.573,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 22.6486,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -26.962,
+    "AdjustmentsForProvisionsCurrent": -0.6786,
+    "AdjustmentsForProvisionsNoncurrent": 0.5179,
+    "AdjustmentsForReconcileProfitLoss": 32.7403,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 117.1996,
+    "CashAndCashEquivalentsCashFlowStatement": 20.7572,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 44.2123,
+    "CashFlowsFromUsedInInvestingActivities": -117.182,
+    "CashFlowsFromUsedInOperatingActivities": 88.684,
+    "CashFlowsFromUsedInOperations": 77.0421,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 5.0609,
+    "IncreaseDecreaseInCashAndCashEquivalents": 15.7143,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 15.7143,
+    "InterestPaidClassifiedAsFinancingActivities": 26.1121,
+    "InterestPaidClassifiedAsOperatingActivities": -26.8786,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": -10.1758,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 12.2,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -0.1085,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 70.4329,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 12.1824,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "span": "H1"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -0.2051,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.0223,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.0,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -1.5936,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 11.5641,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.2335,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -25.99,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": 0.0815,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -15.9319,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 37.7619,
+    "CashAndCashEquivalentsCashFlowStatement": 0.1053,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 89.9829,
+    "CashFlowsFromUsedInInvestingActivities": -78.9768,
+    "CashFlowsFromUsedInOperatingActivities": -10.9037,
+    "CashFlowsFromUsedInOperations": -11.6835,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 42.8194,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": 0.1024,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 0.1024,
+    "InterestPaidClassifiedAsFinancingActivities": 2.321,
+    "InterestPaidClassifiedAsOperatingActivities": -0.7798,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 12.2,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 92.4125,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": -0.1086,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 10.5955,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -0.7174,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -0.5347,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.4975,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 12.7362,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 14.1155,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 51.3552,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": -11.3613,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 7.5239,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 16.4748,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 1.2866,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 5.6102,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -3.53,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.1005,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -2.0621,
+    "AdjustmentsForProvisionsCurrent": 2.9373,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 91.1779,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.3139,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 275.2406,
+    "CashAndCashEquivalentsCashFlowStatement": 26.7372,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 184.6672,
+    "CashFlowsFromUsedInInvestingActivities": -325.0901,
+    "CashFlowsFromUsedInOperatingActivities": 162.1172,
+    "CashFlowsFromUsedInOperations": 175.4245,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 13.3073,
+    "IncreaseDecreaseInCashAndCashEquivalents": 21.6943,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 21.6943,
+    "InterestPaidClassifiedAsFinancingActivities": 50.0732,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 1.3441,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -0.09,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 234.8304,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 51.1936,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -2.8103,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 0.0,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.0,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": -0.7573,
+    "AdjustmentsForFinanceCosts": 0.0,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -1.6758,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 11.3621,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.2335,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 1665.4026,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -1682.5929,
+    "AdjustmentsForProvisionsCurrent": 0.2544,
+    "AdjustmentsForProvisionsNoncurrent": 0.4949,
+    "AdjustmentsForReconcileProfitLoss": -10.1111,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 510.9691,
+    "CashAndCashEquivalentsCashFlowStatement": 0.9111,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 547.3592,
+    "CashFlowsFromUsedInInvestingActivities": -534.2802,
+    "CashFlowsFromUsedInOperatingActivities": -12.1704,
+    "CashFlowsFromUsedInOperations": -13.3559,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.039,
+    "IncreaseDecreaseInCashAndCashEquivalents": 0.9086,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 0.9086,
+    "InterestPaidClassifiedAsFinancingActivities": 0.0,
+    "InterestPaidClassifiedAsOperatingActivities": -1.2245,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -0.0223,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 12.1899,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -0.09,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -35.501,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 547.4492,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Advent Hotels International Limited",
  "deals": [
   {
@@ -116,6 +693,288 @@
    "tranches": [],
    "updated_as_of": "2026-10-13T20:12:23+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.008,
+    "DebtServiceCoverageRatio": 0.0001,
+    "InterestServiceCoverageRatio": 0.008
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.4829,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0.065
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.9,
+    "DebtServiceCoverageRatio": 0.0012,
+    "InterestServiceCoverageRatio": 0.0282
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.65,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": -0.1505
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0291,
+    "DebtServiceCoverageRatio": 0.0102,
+    "InterestServiceCoverageRatio": 0.0342
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.006,
+    "DebtServiceCoverageRatio": 0.0253,
+    "InterestServiceCoverageRatio": 0.0253
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0255,
+    "DebtServiceCoverageRatio": 0.0086,
+    "InterestServiceCoverageRatio": 0.0241
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0224,
+    "DebtServiceCoverageRatio": 0,
+    "InterestServiceCoverageRatio": 0
+   }
   }
  ],
  "financial_metrics": [
@@ -4928,6 +5787,174 @@
       "status": "No status change"
      }
     ]
+   },
+   {
+    "as_of": "2026-10-30T12:46:45+05:30",
+    "board": [
+     {
+      "appointed": "2025-01-28",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rahul Pandit",
+      "role": null,
+      "tenure_months": 14.15
+     },
+     {
+      "appointed": "2025-07-21",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ajoy Mehta",
+      "role": "Chairperson",
+      "tenure_months": 14.18
+     },
+     {
+      "appointed": "2025-07-21",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Maryam Khan",
+      "role": null,
+      "tenure_months": 14.18
+     },
+     {
+      "appointed": "2025-07-01",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Mohammed Balwa",
+      "role": null,
+      "tenure_months": 15.08
+     },
+     {
+      "appointed": "2025-07-21",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Jayvardhan Goenka",
+      "role": null,
+      "tenure_months": 14.18
+     },
+     {
+      "appointed": "2025-07-21",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Arshad Balwa",
+      "role": null,
+      "tenure_months": 14.18
+     },
+     {
+      "appointed": "2025-07-21",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjana Goenka",
+      "role": null,
+      "tenure_months": 14.18
+     },
+     {
+      "appointed": "2025-07-21",
+      "category": "Non-Executive - Independent Director",
+      "ceased": "2026-09-26",
+      "cessation_reason": "Others",
+      "name": "Rajeev RA",
+      "role": null,
+      "tenure_months": 14.13
+     }
+    ],
+    "board_size": 7,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Ajoy Mehta",
+      "Maryam Khan",
+      "Rahul Pandit"
+     ],
+     "corporate social responsibility committee": [
+      "Maryam Khan",
+      "Sanjana Goenka"
+     ],
+     "nomination and remuneration committee": [
+      "Ajoy Mehta",
+      "Maryam Khan"
+     ],
+     "stakeholders relationship committee": [
+      "Maryam Khan",
+      "Jayvardhan Goenka"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 35.0,
+     "board": 35.0,
+     "nomination and remuneration committee": 28.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 1.9825,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1749633_30102026124847_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "ITAT appeal under process for its subsidiary, Goan Hotels Private Ltd",
+      "initiated": "2025-03-26",
+      "opposing_party": "Income Tax Department",
+      "status": "During the quarter, ITAT has passed Order in Company's favour and hence we may discontinue reporting these matters from next quarter onwards"
+     },
+     {
+      "as_last_disclosed": "ITAT appeal under process for its subsidiary, Goan Hotels Private Ltd",
+      "initiated": "2025-03-26",
+      "opposing_party": "Income Tax Department",
+      "status": "During the quarter, ITAT has passed Order in Company's favour and hence we may discontinue reporting these matters from next quarter onwards"
+     },
+     {
+      "as_last_disclosed": "ITAT appeal under process for its subsidiary, Goan Hotels Private Ltd",
+      "initiated": "2024-11-13",
+      "opposing_party": "Income Tax Department",
+      "status": "During the quarter, ITAT has passed Order in Company's favour and hence we may discontinue reporting these matters from next quarter onwards"
+     },
+     {
+      "as_last_disclosed": "ITAT appeal under process for its subsidiary, Goan Hotels Private Ltd",
+      "initiated": "2025-03-26",
+      "opposing_party": "Income Tax Department",
+      "status": "During the quarter, ITAT has passed Order in Company's favour and hence we may discontinue reporting these matters from next quarter onwards"
+     },
+     {
+      "as_last_disclosed": "ITAT appeal under process for its subsidiary, Goan Hotels Private Ltd",
+      "initiated": "2024-11-13",
+      "opposing_party": "Income Tax Department",
+      "status": "During the quarter, ITAT has passed Order in Company's favour and hence we may discontinue reporting these matters from next quarter onwards"
+     },
+     {
+      "as_last_disclosed": "Disclosure of its subsidiary, BD&P Hotels (India) Private Ltd.",
+      "initiated": "2026-04-29",
+      "opposing_party": "Income Tax Department",
+      "status": "Appeal is pending before CIT(A)"
+     },
+     {
+      "as_last_disclosed": "Appeal Before GST Commissioner for Goan Hotels and Realty Pvt Ltd",
+      "initiated": "2024-08-28",
+      "opposing_party": "GST Department",
+      "status": "No Status Change"
+     }
+    ]
    }
   ]
  },
@@ -4995,6 +6022,57 @@
   ]
  },
  "industry": "Consumer Discretionary > Consumer Services > Leisure Services > Hotels & Resorts",
+ "insider_trades": {
+  "events": [
+   {
+    "after_pct": 0.0,
+    "after_qty": 0.0,
+    "as_of": "2026-09-09T23:59:00+05:30",
+    "before_pct": 0.19,
+    "before_qty": 100121.0,
+    "category": "Promoter Group",
+    "exchange": null,
+    "filed": "2026-09-09",
+    "filing_id": "3156",
+    "from": "2026-09-04",
+    "instrument": "Equity",
+    "mode": "Inter-se-Transfer",
+    "person": "Shravan Kumar Bali",
+    "qty": 100121.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "SELL",
+    "symbol": "ADVENTHTL",
+    "to": "2026-09-04",
+    "value_cr": 0.0
+   },
+   {
+    "after_pct": 0.23,
+    "after_qty": 122621.0,
+    "as_of": "2026-09-09T23:59:00+05:30",
+    "before_pct": 0.04,
+    "before_qty": 22500.0,
+    "category": "Promoter Group",
+    "exchange": null,
+    "filed": "2026-09-09",
+    "filing_id": "3156",
+    "from": "2026-09-04",
+    "instrument": "Equity",
+    "mode": "Inter-se-Transfer",
+    "person": "Shruti Ahuja",
+    "qty": 100121.0,
+    "regulation": "Regulation 7 (2)",
+    "revised": false,
+    "side": "BUY",
+    "symbol": "ADVENTHTL",
+    "to": "2026-09-04",
+    "value_cr": 0.0
+   }
+  ],
+  "filings": [
+   "3156"
+  ]
+ },
  "last_filed_at": "2026-10-21T09:59:08+05:30",
  "market_deals": {
   "events": [
@@ -5072,6 +6150,233 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "values": {
+    "oci_net_cr": 0.0177,
+    "profit_cr": -1.2133,
+    "tax_not_reclassified_cr": -0.0177,
+    "total_comprehensive_cr": -1.1956,
+    "total_comprehensive_nci_cr": 0.0001,
+    "total_comprehensive_owners_cr": 0.0175
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.003,
+     "description": "Remeasurement of net defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.003,
+    "oci_net_cr": -0.003,
+    "profit_cr": 3.0246,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 3.0216
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 1.4259,
+     "description": "Remeasurement of net defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 1.4259,
+    "oci_net_cr": 1.067,
+    "profit_cr": 30.437,
+    "tax_not_reclassified_cr": 0.3589,
+    "total_comprehensive_cr": 31.504,
+    "total_comprehensive_nci_cr": 2.001,
+    "total_comprehensive_owners_cr": 29.5031
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0149,
+     "description": "Remeasurement of net defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0149,
+    "oci_net_cr": -0.0111,
+    "profit_cr": -3.1092,
+    "tax_not_reclassified_cr": -0.0038,
+    "total_comprehensive_cr": -3.1203
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.0832,
+     "description": "Remesurement of net defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.0832,
+    "oci_net_cr": 0.0623,
+    "profit_cr": 3.6685,
+    "tax_not_reclassified_cr": 0.0209,
+    "total_comprehensive_cr": 3.7308,
+    "total_comprehensive_nci_cr": 0.8282,
+    "total_comprehensive_owners_cr": 2.9027
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "oci_net_cr": -0.1021,
+    "profit_cr": -4.4222,
+    "tax_not_reclassified_cr": 0.1021,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -4.5243
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.532,
+     "description": "Remeasurement of net defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.532,
+    "oci_net_cr": 0.3981,
+    "profit_cr": 6.745,
+    "tax_not_reclassified_cr": 0.1339,
+    "total_comprehensive_cr": 7.1431,
+    "total_comprehensive_nci_cr": 0.5924,
+    "total_comprehensive_owners_cr": 6.5507
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.0931,
+     "description": "-Remeasurement of the defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.0931,
+    "oci_net_cr": 0.0697,
+    "profit_cr": 89.5464,
+    "tax_not_reclassified_cr": 0.0234,
+    "total_comprehensive_cr": 89.6161
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-05-19T16:40:33+05:30",
@@ -5209,6 +6514,1655 @@
   }
  },
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1788.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bomboo Hotels & Global Centre (Delhi) Pvt. Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Security Pledge",
+     "relationship": "Joint Venture",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 914.7288,
+     "closing_cr": 914.7288,
+     "counterparty": "Bomboo Hotels & Global Centre (Delhi) Pvt. Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "relationship": "Joint Venture",
+     "remarks": "Yes",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": -500.0,
+     "approved_cr": -500.0,
+     "closing_cr": -500.0,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Corportae Gurantee Taken",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 429.18,
+     "closing_cr": 0.0,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Security Pledge",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 339.0509,
+     "closing_cr": 339.0509,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": -224.9608,
+     "closing_cr": -224.9608,
+     "counterparty": "Shiva Buildcon Pvt.Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "working capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "payable on demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Associeates",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 149.373,
+     "approved_cr": 0.0,
+     "closing_cr": 149.102,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "0",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": -147.0612,
+     "closing_cr": -147.0612,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -132.54,
+     "approved_cr": -132.54,
+     "closing_cr": 0.0,
+     "counterparty": "Horizontal Ventures Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 132.54,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 131.0505,
+     "approved_cr": 131.0505,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd (Formerly known as D B Realty Ltd)",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": -100.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bamboo Hotel And Global Centre (Delhi) Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 100.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "0",
+     "type": "Inter-corporate deposit"
+    },
+    {
+     "amount_cr": -78.1281,
+     "approved_cr": -78.1281,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd (Formerly known as D B Realty Ltd)",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": -52.9224,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 49.7605,
+     "approved_cr": 49.6679,
+     "closing_cr": 43.619,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -43.619,
+     "closing_cr": -43.619,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 42.7994,
+     "closing_cr": 42.7994,
+     "counterparty": "Marin Tower Properties LLP",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Partner Contribution",
+     "relationship": "Subsidiary",
+     "remarks": "No",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -40.7994,
+     "approved_cr": -40.7994,
+     "closing_cr": 40.7994,
+     "counterparty": "Advent International Limited",
+     "entity": "Marine Tower Properites LLP",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 32.3799,
+     "approved_cr": 32.3799,
+     "closing_cr": 0.0,
+     "counterparty": "DB Contractors & Builders Private Limited",
+     "entity": "Marine Tower Properites LLP",
+     "opening_cr": 32.3799,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprise where individuals i.e. KMP/Director and their relatives have significant influence",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -30.3602,
+     "approved_cr": 36.3602,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd(Formerly known as D B Realty Ltd)",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 30.1891,
+     "approved_cr": 30.1891,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd(Formerly known as D B Realty Ltd)",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.1711,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 27.0,
+     "closing_cr": -1817.3325,
+     "counterparty": "Shiva Buildcon Pvt.Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": -1844.3325,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Assigment of Loan",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24 month from Agreement",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Associeates",
+     "remarks": "Yes",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -25.2269,
+     "approved_cr": 25.2269,
+     "closing_cr": 0.0,
+     "counterparty": "MIG (Bandra) Realtors & Builders Pvt. Ltd.",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -12.1777,
+     "closing_cr": 596.7049,
+     "counterparty": "Bamboo Hotel & Global Centre (Delhi) Pvt.Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 608.8825,
+     "relationship": "Joint Venture",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 11.4058,
+     "closing_cr": 11.4058,
+     "counterparty": "Valor Estate Ltd. (D B Realty Ltd - Payable)",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "KMP Enterprises",
+     "remarks": "No",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 8.81,
+     "approved_cr": 8.81,
+     "closing_cr": 0.0,
+     "counterparty": "Neelkamal Realtors And Erectors I Pvt Ltd",
+     "entity": "Marine Tower Properites LLP",
+     "opening_cr": 8.81,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprise where individuals i.e. KMP/Director and their relatives have significant influence",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 8.4195,
+     "approved_cr": 8.4195,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd (Formerly Known as D B Realty Ltd)",
+     "entity": "Marine Tower Properites LLP",
+     "opening_cr": 8.4195,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprise where individuals i.e. KMP/Director and their relatives have significant influence",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -6.1415,
+     "approved_cr": 6.1415,
+     "closing_cr": 0.0,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 2.6208,
+     "approved_cr": 2.6208,
+     "closing_cr": 0.0,
+     "counterparty": "Goodspot Enterprises Private Limited (formerly known as Neelkamal Realtors Tower Pvt Ltd)",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0,
+     "other_details": "On Behalf Statutory liabilities paid",
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -2.6208,
+     "approved_cr": 2.6208,
+     "closing_cr": 0.0,
+     "counterparty": "Goodspot Enterprises Private Limited (formerly known as Neelkamal Realtors Tower Pvt Ltd)",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Fund received to pay stattutory liabilities",
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -2.0408,
+     "approved_cr": -2.0408,
+     "closing_cr": -2.0408,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -2.0,
+     "approved_cr": -2.0,
+     "closing_cr": 2.0,
+     "counterparty": "Advent International Limited",
+     "entity": "Marine Tower Properites LLP",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Partners Contribution",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -1.7195,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bamboo Hotel And Global Centre (Delhi) Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 1.7195,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "0",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 1.0,
+     "closing_cr": 1.0,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd. -Adv. For Shares",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Receivable",
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.6867,
+     "closing_cr": -0.1892,
+     "counterparty": "Rahul Pandit",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "relationship": "KMP/Director",
+     "remarks": "Yes",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.6,
+     "approved_cr": 0.6,
+     "closing_cr": 0.0,
+     "counterparty": "MIG (Bandra) Realtors & Builders Pvt. Ltd.",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 24.6269,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.5841,
+     "approved_cr": 0.5841,
+     "closing_cr": 0.0,
+     "counterparty": "Shiva Buildcon Pvt.Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0.12,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Inter-corporate deposit",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "working capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "payable on demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "other_details": "Interest Payable",
+     "relationship": "Associeates",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.3594,
+     "approved_cr": 0.3594,
+     "closing_cr": 0.0,
+     "counterparty": "Conwood DB JV - Expenses",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": -0.3594,
+     "other_details": "Trade Payable",
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.271,
+     "approved_cr": -0.271,
+     "closing_cr": 0.0,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.2046,
+     "approved_cr": -0.2046,
+     "closing_cr": 0.0,
+     "counterparty": "Goodspot Enterprises Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0033,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2013,
+     "approved_cr": 0.2013,
+     "closing_cr": 0.0,
+     "counterparty": "Goodspot Enterprises Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1474,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bamboo Hotel And Global Centre (Delhi) Pvt Ltd",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.1474,
+     "other_details": "Other Receivables",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1315,
+     "approved_cr": 0.1315,
+     "closing_cr": 0.0,
+     "counterparty": "Goodspot Enterprises Private Limited (formerly known as Neelkamal Realtors Tower Pvt Ltd)",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.1315,
+     "other_details": "Other Payables",
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0452,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bamboo Hotel And Global Centre (Delhi) Pvt Ltd",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0452,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.0185,
+     "approved_cr": -0.0185,
+     "closing_cr": 0.0,
+     "counterparty": "Mira Land Developers Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0185,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0152,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd(Formerly known as D B Realty Ltd)",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0152,
+     "other_details": "Trade Receivable",
+     "relationship": "Enterprise where individuals i.e. KMP/Director and their relatives have significant influence",
+     "remarks": "No",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": -0.009,
+     "counterparty": "Ajoy Mehta",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "KMP/Director",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": -0.009,
+     "counterparty": "Arshad Shaid Balwa",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "KMP/Director",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": -0.009,
+     "counterparty": "Jayvardhan Goenka",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "KMP/Director",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": -0.009,
+     "counterparty": "Maryam Khan",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "KMP/Director",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": -0.009,
+     "counterparty": "Mohammed Balwa",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "KMP/Director",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.01,
+     "closing_cr": -0.009,
+     "counterparty": "Rajiv RA",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "KMP/Director",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "closing_cr": 0.01,
+     "counterparty": "Advent Convention & Hotels  International Ltd. (EqShars)",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd. (D B Realty Ltd - Payable)",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Investment",
+     "relationship": "Enterprise where individuals i.e. KMP/Director and their relatives have significant influence",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.01,
+     "approved_cr": 0.01,
+     "closing_cr": 0.0,
+     "counterparty": "D B CONTRACTORS & BUILDERS PRIVATE LIMITED",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "other_details": "Purchase of Investment",
+     "relationship": "Enterprise where individuals i.e. KMP/Director and their relatives have significant influence",
+     "remarks": "Yes",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.0022,
+     "approved_cr": -0.0022,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd (Formerly known as D B Realty Ltd)",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0022,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0017,
+     "closing_cr": 0.0017,
+     "counterparty": "Advent Convention & Hotels  International Ltd.",
+     "entity": "Advent Hotels International Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Yes",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0083,
+     "counterparty": "Goan Hotels and Realty Pvt Ltd",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0083,
+     "other_details": "Other Payables",
+     "relationship": "Fellow Subsidaries Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0495,
+     "counterparty": "Marine Tower Properties LLP",
+     "entity": "BD&P Hotels (India) Pvt Ltd",
+     "opening_cr": 0.0495,
+     "other_details": "Other Receivables",
+     "relationship": "Fellow Subsidaries Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.1,
+     "counterparty": "Goan Real Estate & Constructions Private Limited",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.1,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "0",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 629.2101,
+     "counterparty": "MIG (Bandra) Realtors & Builders Pvt. Ltd.",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 629.2101,
+     "other_details": "Corportae Gurantee Given",
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "0",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0797,
+     "counterparty": "Mystical Constructions Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0797,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals i.e. KMPs of the holding Company  and their relatives have significant interest",
+     "remarks": "0",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 68,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 1817.3325,
+     "approved_cr": 1817.3325,
+     "closing_cr": 0.0,
+     "counterparty": "Shiva Buildcon Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": -1817.3325,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Loan",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24 months subject to fulfilment of terms and conditions",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -1817.3325,
+     "approved_cr": -1817.3325,
+     "closing_cr": -1817.3325,
+     "counterparty": "Valor Estate Ltd. (D B Realty Ltd - Payable)",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Assignment of Loan",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "24 months subject to fulfilment of terms and conditions",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 1788.0,
+     "approved_cr": 1788.0,
+     "closing_cr": 0.0,
+     "counterparty": "Bomboo Hotels & Global Centre (Delhi) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Security Pledge",
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 488.7978,
+     "approved_cr": 488.7978,
+     "closing_cr": 0.0,
+     "counterparty": "Shiva Buildcon Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Assignment of Loan",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -333.3389,
+     "approved_cr": -333.3389,
+     "closing_cr": -333.3389,
+     "counterparty": "Valor Estate Ltd. (D B Realty Ltd - Payable)",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Assignment of Loan",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -263.837,
+     "approved_cr": -263.837,
+     "closing_cr": 0.0,
+     "counterparty": "Shiva Buildcon Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": -224.9608,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Assignment of Loan",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -184.7286,
+     "approved_cr": -184.7286,
+     "closing_cr": 444.4815,
+     "counterparty": "MIG (Bandra) Realtors & Builders Pvt. Ltd.",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 629.2101,
+     "other_details": "Security Provided",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 144.1592,
+     "approved_cr": 144.1592,
+     "closing_cr": 1058.888,
+     "counterparty": "Bomboo Hotels & Global Centre (Delhi) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 914.7288,
+     "relationship": "Joint Venture",
+     "remarks": "Approved",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": -49.7293,
+     "approved_cr": -49.7293,
+     "closing_cr": -49.7293,
+     "counterparty": "Valor Estate Limited",
+     "entity": "Marine Tower Properties LLP",
+     "opening_cr": 0.0,
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -48.7393,
+     "approved_cr": -48.7393,
+     "closing_cr": 0.0,
+     "counterparty": "Marin Tower Properties LLP",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Partner Contribution",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 45.0911,
+     "approved_cr": 45.0911,
+     "closing_cr": -384.0889,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": -429.18,
+     "other_details": "Corportae Gurantee Taken",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -45.0911,
+     "approved_cr": -45.0911,
+     "closing_cr": 384.0889,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 429.18,
+     "other_details": "Security Pledge",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 13.12,
+     "approved_cr": 13.12,
+     "closing_cr": 45.4106,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 43.619,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -13.12,
+     "approved_cr": -13.12,
+     "closing_cr": -45.4106,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": -43.619,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -11.3284,
+     "approved_cr": -11.3284,
+     "closing_cr": 0.0,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 11.3284,
+     "approved_cr": 11.3284,
+     "closing_cr": 0.0,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 11.0917,
+     "approved_cr": 11.0917,
+     "closing_cr": 159.2736,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 149.102,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": -11.0917,
+     "approved_cr": -11.0917,
+     "closing_cr": -153.1245,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": -147.0612,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 5.9399,
+     "approved_cr": 5.9399,
+     "closing_cr": 0.0,
+     "counterparty": "Marin Tower Properties LLP",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 42.7994,
+     "other_details": "Partner Contribution",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 5.0284,
+     "approved_cr": 5.0284,
+     "closing_cr": 0.0,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -4.3018,
+     "approved_cr": -4.3018,
+     "closing_cr": 0.0,
+     "counterparty": "Vinod K Goenka HUF",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 4.3018,
+     "other_details": "Sundry Debtors",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.3018,
+     "approved_cr": 4.3018,
+     "closing_cr": 0.0,
+     "counterparty": "Vinod Goenka HUF",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Trade Receivable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -4.3018,
+     "approved_cr": -4.3018,
+     "closing_cr": 0.0,
+     "counterparty": "Vinod Goenka HUF",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Trade Receivable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -4.1084,
+     "approved_cr": -4.1084,
+     "closing_cr": -6.1492,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": -2.0408,
+     "other_details": "Trade Payable",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.1084,
+     "approved_cr": 4.1084,
+     "closing_cr": 0.0,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Management fees  Expense",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -4.1084,
+     "approved_cr": -4.1084,
+     "closing_cr": 0.0,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Management fees  Income",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 4.0928,
+     "approved_cr": 4.0928,
+     "closing_cr": 0.0,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Management fees  Expense",
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -4.0928,
+     "approved_cr": -4.0928,
+     "closing_cr": 0.0,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Management fees  Income",
+     "relationship": "subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.12,
+     "approved_cr": 2.12,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Limited",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -2.12,
+     "approved_cr": -2.12,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Limited",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -2.0695,
+     "approved_cr": -2.0695,
+     "closing_cr": 0.0,
+     "counterparty": "Goodspot Enterprises Private Limited (formerly known as Neelkamal Realtors Tower Pvt Ltd)",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Statutory liability paid on behalf",
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 2.0695,
+     "approved_cr": 2.0695,
+     "closing_cr": 0.0,
+     "counterparty": "Goodspot Enterprises Private Limited (formerly known as Neelkamal Realtors Tower Pvt Ltd)",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Repaid",
+     "relationship": "Associates",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 1.4028,
+     "approved_cr": 1.4028,
+     "closing_cr": -48.4135,
+     "counterparty": "Marine Tower Properties LLP",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": -49.8163,
+     "other_details": "Corporate Gurantee",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.92,
+     "approved_cr": -0.92,
+     "closing_cr": 0.0,
+     "counterparty": "Advent Hotels International Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.7289,
+     "approved_cr": -0.7289,
+     "closing_cr": -11.9315,
+     "counterparty": "Valor Estate Ltd. (D B Realty Ltd - Payable)",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": -11.4058,
+     "other_details": "Trade Payable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.2032,
+     "approved_cr": 0.2032,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd. (D B Realty Ltd - Payable)",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Trade Payable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.1,
+     "approved_cr": -0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd (Formerly known as D B Realty Ltd)",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1,
+     "approved_cr": 0.1,
+     "closing_cr": 0.0,
+     "counterparty": "Valor Estate Ltd (Formerly known as D B Realty Ltd)",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": -0.0797,
+     "approved_cr": -0.0797,
+     "closing_cr": 0.0,
+     "counterparty": "Mystical Constructions Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0797,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0351,
+     "approved_cr": 0.0351,
+     "closing_cr": 0.0,
+     "counterparty": "Rahul Dinesh Shah",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Salary",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0351,
+     "approved_cr": 0.0351,
+     "closing_cr": 0.0,
+     "counterparty": "Rajiv Dinesh Shah",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Salary",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0183,
+     "approved_cr": 0.0183,
+     "closing_cr": 0.0,
+     "counterparty": "Hemlata Dinesh Shah",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Salary",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0183,
+     "approved_cr": 0.0183,
+     "closing_cr": 0.0,
+     "counterparty": "Karishma Rahul Shah",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Salary",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0183,
+     "approved_cr": 0.0183,
+     "closing_cr": 0.0,
+     "counterparty": "Sanjana Rajiv Shah",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0,
+     "other_details": "Salary",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.0139,
+     "approved_cr": -0.0139,
+     "closing_cr": 0.0,
+     "counterparty": "Majestic Infracon Pvt.Ltd.",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0139,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.0083,
+     "approved_cr": -0.0083,
+     "closing_cr": 0.0,
+     "counterparty": "BD & P Hotels (India) Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.0083,
+     "other_details": "Other Receivable",
+     "relationship": "subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.0083,
+     "approved_cr": -0.0083,
+     "closing_cr": 0.0,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": -0.0083,
+     "other_details": "Other Payable",
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": -0.007,
+     "approved_cr": -0.007,
+     "closing_cr": 0.0,
+     "counterparty": "Neelkamal Realtors & Builders Pvt Ltd",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.007,
+     "other_details": "Other Receivable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.1,
+     "counterparty": "Goan Real Estate & Constructions Private Limited",
+     "entity": "Goan Hotels & Realty Pvt Ltd",
+     "opening_cr": 0.1,
+     "other": {
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Advance",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Working Capital",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "Approved",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.25,
+     "counterparty": "Pune Buildtech Pvt Ltd",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.25,
+     "other_details": "Trade Receivable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "0",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0495,
+     "counterparty": "Marine Tower Properties LLP",
+     "entity": "BD & P Hotel (I) Pvt. Ltd.",
+     "opening_cr": 0.0495,
+     "other_details": "Other Receivable",
+     "relationship": "Fellow Subsidiary",
+     "remarks": "0",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0017,
+     "counterparty": "Advent Convention & Hotels  International Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.0017,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "0",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1.0,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 1.0,
+     "relationship": "Subsidiary",
+     "remarks": "0",
+     "type": "Advance"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 339.0509,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 339.0509,
+     "relationship": "Subsidiary",
+     "remarks": "0",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 1235.45,
+     "counterparty": "Goan Hotel & Realty Pvt.Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 1235.45,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "0",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.01,
+     "counterparty": "Advent Convention & Hotels  International Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 0.01,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "0",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 596.7049,
+     "counterparty": "Bomboo Hotels & Global Centre (Delhi) Pvt. Ltd.",
+     "entity": "Advent Hotels International Ltd",
+     "opening_cr": 596.7049,
+     "relationship": "Joint Venture",
+     "remarks": "0",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0018,
+     "counterparty": "Advent Hotel International Limited",
+     "entity": "Advent Convention & Hotels International Limited",
+     "opening_cr": 0.0018,
+     "relationship": "Holding Company",
+     "remarks": "0",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 0.0,
+     "closing_cr": -0.0495,
+     "counterparty": "BD & P Hotel (I) Pvt. Ltd.",
+     "entity": "Marine Tower Properties LLP",
+     "opening_cr": -0.0495,
+     "other_details": "Other Payable",
+     "relationship": "Enterprises where individuals and their relatives have significant interest",
+     "remarks": "0",
+     "type": "Any other transaction"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 59,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "544446",
  "section_lab": {
@@ -5218,7 +8172,12 @@
    "doc": "other"
   },
   "governance_quarters": {
-   "at": "2026-08-14T18:22:46+05:30",
+   "at": "2026-10-30T12:46:45+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "insider_trades": {
+   "at": "2026-11-01T14:14:32+05:30",
    "by": "file",
    "doc": "other"
   },
@@ -5234,7 +8193,72 @@
   }
  },
  "sector": "hotels",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Hotel and Hospitality",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Hotel & Hospitality",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Hotel & Hospitality",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:54:16+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Hotel & Hospitality",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -8577,6 +11601,509 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": -0.1351,
+    "Depreciation": 6.7386,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 65.95799999999998,
+    "Interest": 13.2402,
+    "Minority share": -1.5141,
+    "Net Profit": -1.2133,
+    "Net Profit (owners)": 0.3008,
+    "OPM %": 14.321566263808226,
+    "Operating Profit": 11.025200000000012,
+    "Other Income": 6.1501999999999875,
+    "PBT as filed": -2.6683,
+    "Profit before tax": -2.8034,
+    "Profit for PE": 0.3008,
+    "Sales": 76.9832,
+    "Tax": -1.5901,
+    "Tax %": -56.72041092958551
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 786.6641,
+    "CWIP": 195.0648,
+    "Equity Capital": 53.9429,
+    "Fixed Assets": 2127.9235,
+    "Investments": 1208.7589,
+    "Other Assets": 416.2927000000002,
+    "Other Liabilities": 2294.4714000000004,
+    "Reserves": 812.9615,
+    "Total Assets": 3948.0399,
+    "Total Liabilities": 3948.0399
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.0,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1.8104,
+    "Interest": 0.5505,
+    "Net Profit": 3.0246,
+    "Net Profit (owners)": 3.0246,
+    "Operating Profit": -1.8104,
+    "Other Income": 5.3865,
+    "Profit before tax": 3.0256,
+    "Profit for PE": 3.0246,
+    "Sales": 0.0,
+    "Tax": 0.001,
+    "Tax %": 0.03305129561078795
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 482.5724,
+    "CWIP": 175.2039,
+    "Equity Capital": 53.9429,
+    "Fixed Assets": 2827.394,
+    "Investments": 0.0,
+    "Other Assets": 313.39980000000014,
+    "Other Liabilities": 1834.1906,
+    "Reserves": 945.2918,
+    "Total Assets": 3315.9977,
+    "Total Liabilities": 3315.9977
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.1353,
+    "Depreciation": 7.5227,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 65.51559999999999,
+    "Interest": 13.2894,
+    "Minority share": 1.9493,
+    "Net Profit": 30.437,
+    "Net Profit (owners)": 28.4878,
+    "OPM %": 42.892059440876416,
+    "Operating Profit": 49.2068,
+    "Other Income": 0.2533999999999992,
+    "PBT as filed": 28.5128,
+    "Profit before tax": 28.6481,
+    "Profit for PE": 28.4878,
+    "Sales": 114.7224,
+    "Tax": -1.7889,
+    "Tax %": -6.24439317092582
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.0,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2.9119,
+    "Interest": 0.1935,
+    "Net Profit": -3.1092,
+    "Net Profit (owners)": -3.1092,
+    "Operating Profit": -2.9119,
+    "Other Income": 0.0,
+    "Profit before tax": -3.1054,
+    "Profit for PE": -3.1092,
+    "Sales": 0.0,
+    "Tax": 0.0038,
+    "Tax %": 0.12236748889032009
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.1146,
+    "Depreciation": 7.8876,
+    "Exceptional items": -15.6758,
+    "Exceptional items AT": -4.980355625416786,
+    "Expenses": 71.74289999999999,
+    "Interest": 11.1872,
+    "Minority share": 0.7984,
+    "Net Profit": 3.6685,
+    "Net Profit (owners)": 2.8701,
+    "OPM %": 37.83660369707358,
+    "Operating Profit": 43.66730000000001,
+    "Other Income": -13.04580000000001,
+    "PBT as filed": 11.4321,
+    "Profit before tax": 11.5467,
+    "Profit for PE": 7.850455625416786,
+    "Sales": 115.4102,
+    "Tax": 7.8782,
+    "Tax %": 68.2290178146137
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 799.0222,
+    "CWIP": 211.3492,
+    "Equity Capital": 53.9429,
+    "Fixed Assets": 2029.2727,
+    "Investments": 0.0,
+    "Other Assets": 1752.4748999999997,
+    "Other Liabilities": 2289.6793,
+    "Reserves": 850.4524,
+    "Total Assets": 3993.0968,
+    "Total Liabilities": 3993.0968
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.263,
+    "Depreciation": 29.5257,
+    "Exceptional items": 19.5847,
+    "Exceptional items AT": 15.155816160767536,
+    "Expenses": 245.6872,
+    "Interest": 51.3552,
+    "Minority share": 2.2132,
+    "Net Profit": 65.3986,
+    "Net Profit (owners)": 63.1855,
+    "OPM %": 36.612996896016426,
+    "Operating Profit": 141.91150000000002,
+    "Other Income": 23.478999999999985,
+    "PBT as filed": 84.2466,
+    "Profit before tax": 84.5096,
+    "Profit for PE": 48.02968383923246,
+    "Sales": 387.5987,
+    "Tax": 19.111,
+    "Tax %": 22.61399888296714
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 184.6672,
+    "Cash from Investing Activity": -325.0901,
+    "Cash from Operating Activity": 162.1172,
+    "Net Cash Flow": 21.6943
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.0,
+    "Exceptional items": -10.1758,
+    "Exceptional items AT": -10.255577455672547,
+    "Expenses": 2.9266,
+    "Interest": 0.0805,
+    "Net Profit": -4.4222,
+    "Net Profit (owners)": -4.4222,
+    "Operating Profit": -2.9266,
+    "Other Income": -1.3807000000000005,
+    "Profit before tax": -4.3878,
+    "Profit for PE": 5.833377455672547,
+    "Sales": 0.0,
+    "Tax": 0.0344,
+    "Tax %": 0.7839919777565066
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 598.469,
+    "CWIP": 0.0,
+    "Equity Capital": 53.9429,
+    "Fixed Assets": 0.0,
+    "Investments": 1574.5109,
+    "Other Assets": 1855.7359,
+    "Other Liabilities": 1840.1691,
+    "Reserves": 937.6658,
+    "Total Assets": 3430.2468,
+    "Total Liabilities": 3430.2468
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.0,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 11.008500000000002,
+    "Interest": 1.2245,
+    "Net Profit": -3.289,
+    "Net Profit (owners)": -3.289,
+    "Operating Profit": -11.008500000000002,
+    "Other Income": 8.9882,
+    "Profit before tax": -3.2448,
+    "Profit for PE": -3.289,
+    "Sales": 0.0,
+    "Tax": 0.0442,
+    "Tax %": 1.362179487179487
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 547.3592,
+    "Cash from Investing Activity": -534.2802,
+    "Cash from Operating Activity": -12.1704,
+    "Net Cash Flow": 0.9086
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.102,
+    "Depreciation": 7.0374,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 54.2338,
+    "Interest": 10.1513,
+    "Minority share": 0.57111,
+    "Net Profit": 6.745,
+    "Net Profit (owners)": 6.17387,
+    "OPM %": 32.64237507482966,
+    "Operating Profit": 26.282399999999996,
+    "Other Income": 2.277700000000003,
+    "PBT as filed": 11.2694,
+    "Profit before tax": 11.3714,
+    "Profit for PE": 6.17387,
+    "Sales": 80.5162,
+    "Tax": 4.6264,
+    "Tax %": 40.68452433297572
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:25:03+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:25:03+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.0,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 2.1677999999999997,
+    "Interest": 0.0489,
+    "Net Profit": 89.5464,
+    "Net Profit (owners)": 89.5464,
+    "Operating Profit": -2.1677999999999997,
+    "Other Income": 91.7397,
+    "Profit before tax": 89.523,
+    "Profit for PE": 89.5464,
+    "Sales": 0.0,
+    "Tax": -0.0234,
+    "Tax %": -0.02613853423142656
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "ADVENTHTL",
  "timeline": [
   {

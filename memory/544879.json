@@ -1,16 +1,41 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-09-14T15:28:23+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-09-14T15:28:23+05:30",
-    "by": "ai",
-    "doc": "call"
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "FY26",
-   "source_news_id": "nse-106779959"
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
   }
  ],
+ "balance_sheet": [],
  "business_summary": {
   "as_of": "2026-09-14T15:28:23+05:30",
   "lab": {
@@ -70,6 +95,44 @@
  "capital_actions": [],
  "company_name": "Lalithaa Jewellery Mart Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 5
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-09-11T18:00:00+05:30",
@@ -1199,6 +1262,96 @@
  },
  "industry": "Consumer Discretionary > Consumer Durables > Gems, Jewellery And Watches",
  "last_filed_at": "2026-10-13T06:52:02+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-24",
+    "kind": "BULK",
+    "price": 265.74,
+    "qty": 6691599.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "LALITHAA",
+    "value_cr": 177.82
+   },
+   {
+    "as_of": "2026-08-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-24",
+    "kind": "BULK",
+    "price": 265.59,
+    "qty": 6691599.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "LALITHAA",
+    "value_cr": 177.72
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 3.565,
+     "description": "Remeasurement of post employment benefit plans (net)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 3.565,
+    "oci_net_cr": 2.668,
+    "profit_cr": 208.217,
+    "tax_not_reclassified_cr": 0.897,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 210.885
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 3.565,
+     "description": "Remeasurement of post employment benefit plans (net)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 3.565,
+    "oci_net_cr": 2.668,
+    "profit_cr": 208.217,
+    "tax_not_reclassified_cr": 0.897,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 210.885
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-09-14T15:28:23+05:30",
@@ -1288,6 +1441,11 @@
    "at": "2026-10-21T15:06:31+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:26:22+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "consumer_durables",
@@ -1330,6 +1488,22 @@
    "segment": "Others (incl. silverware and diamond jewellery)",
    "share_pct": 1.0,
    "source_news_id": "nse-106779959"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "The Company is engaged in the business of manufacturing, sale and trading of gold jewellery, diamond studded jewellery, platinum, silver jewellery and articles.",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
   }
  ],
  "standalone": {
@@ -1789,6 +1963,76 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 30.457,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 5658.392,
+    "Interest": 62.335,
+    "Net Profit": 208.217,
+    "Net Profit (owners)": 208.217,
+    "OPM %": 6.1818215581824765,
+    "Operating Profit": 372.84000000000015,
+    "Other Income": 3.5349999999998545,
+    "Profit before tax": 283.583,
+    "Profit for PE": 208.217,
+    "Sales": 6031.232,
+    "Tax": 75.366,
+    "Tax %": 26.57634625488834
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 30.457,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 5658.392,
+    "Interest": 62.335,
+    "Net Profit": 208.217,
+    "Net Profit (owners)": 208.217,
+    "OPM %": 6.1818215581824765,
+    "Operating Profit": 372.84000000000015,
+    "Other Income": 3.5349999999998545,
+    "Profit before tax": 283.583,
+    "Profit for PE": 208.217,
+    "Sales": 6031.232,
+    "Tax": 75.366,
+    "Tax %": 26.57634625488834
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "LALITHAA",
  "timeline": [
   {

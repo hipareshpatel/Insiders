@@ -1,18 +1,41 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-10-26T19:13:11+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-10-27T00:17:49+05:30",
+    "at": "2026-10-30T13:00:44+05:30",
     "basis": "CONSOLIDATED",
-    "by": "ai",
+    "by": "file",
     "doc": "results",
-    "ok": true
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106829060"
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
   }
  ],
+ "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [
   {
@@ -76,6 +99,44 @@
    "tranches": [],
    "updated_as_of": "2026-10-26T19:13:11+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 5
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 5
+   }
   }
  ],
  "financial_metrics": [
@@ -1503,6 +1564,98 @@
  },
  "industry": "Information Technology > IT - Services > IT Enabled Services",
  "last_filed_at": "2026-10-26T19:13:11+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 152.94,
+    "qty": 330000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SRIT",
+    "value_cr": 5.05
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "MC JAIN INFOSERVICES PRIVATE LIMITED",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 148.0,
+    "qty": 500000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "SRIT",
+    "value_cr": 7.4
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.108,
+     "description": "Re-measurement gain/(loss) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.108,
+    "oci_net_cr": 0.081,
+    "profit_cr": 6.806,
+    "tax_not_reclassified_cr": 0.027,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 6.887,
+    "total_comprehensive_nci_cr": 0.002,
+    "total_comprehensive_owners_cr": 0.079
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.064,
+     "description": "Re-measurement gain/(loss) on Defined Benefit Plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.064,
+    "oci_net_cr": 0.048,
+    "profit_cr": 6.84,
+    "tax_not_reclassified_cr": 0.016,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 6.888
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [
   {
@@ -1536,7 +1689,7 @@
    ],
    "insurance_pct": 0.17,
    "lab": {
-    "at": "2026-10-27T07:20:00+05:30",
+    "at": "2026-10-31T07:32:10+05:30",
     "by": "file",
     "doc": "other",
     "ok": true
@@ -1551,8 +1704,32 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "544965",
+ "section_lab": {
+  "market_deals": {
+   "at": "2026-11-01T14:39:50+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "it",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "SRIT India Limited operates across GovTech, HealthTech, Telecom & Broadband, Power & Utilities, IT Infrastructure, and AI-driven Digital Solutions, delivering integrated technology services to government and enterprise customers.",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -2010,6 +2187,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.925,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 75.39800000000001,
+    "Interest": 3.377,
+    "Minority share": -0.002,
+    "Net Profit": 6.806,
+    "Net Profit (owners)": 6.809,
+    "OPM %": 14.135064343468843,
+    "Operating Profit": 12.411999999999992,
+    "Other Income": 2.997000000000007,
+    "Profit before tax": 9.107,
+    "Profit for PE": 6.809,
+    "Sales": 87.81,
+    "Tax": 2.301,
+    "Tax %": 25.2662786867245
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.851,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 74.148,
+    "Interest": 3.343,
+    "Net Profit": 6.84,
+    "Net Profit (owners)": 6.84,
+    "OPM %": 14.295621619122484,
+    "Operating Profit": 12.36800000000001,
+    "Other Income": 2.9669999999999916,
+    "Profit before tax": 9.141,
+    "Profit for PE": 6.84,
+    "Sales": 86.516,
+    "Tax": 2.301,
+    "Tax %": 25.172300623564166
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "SRIT",
  "timeline": [
   {
@@ -2028,6 +2276,6 @@
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-27T10:04:55+05:30",
+ "updated_at": "2026-10-31T07:32:10+05:30",
  "watchlist": []
 }

@@ -1,9 +1,431 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "MSKA & Associates",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "MSKA ASSOCIATES LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "MSKA & Associates LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -6.4353,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.5283,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -23.1828,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 14.1202,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 4.1852,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 2.9542,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 0.7162,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 20.1809,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 0.0,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 7.6562,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 13.9271,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -0.6732,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 34.6085,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.2068,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 0.0585,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": -6.7473,
+    "CashFlowsFromUsedInInvestingActivities": -57.5112,
+    "CashFlowsFromUsedInOperatingActivities": 63.7352,
+    "CashFlowsFromUsedInOperations": 63.5048,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": -0.2304,
+    "IncreaseDecreaseInCashAndCashEquivalents": -0.5233,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -0.5233,
+    "InterestPaidClassifiedAsFinancingActivities": 2.9542,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.4247,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.2083,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": -3.7931,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 13.249,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 44.4705,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 7.3484,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -2.0819,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 13.6048,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": 12.4086,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 8.3828,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 6.6287,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 10.4298,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -3.5146,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 7.6799,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -0.1894,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 14.1198,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 0.0,
+    "AdjustmentsForProvisionsCurrent": -0.7051,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": 71.5596,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.73,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 0.4022,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 17.2036,
+    "CashFlowsFromUsedInInvestingActivities": -141.6551,
+    "CashFlowsFromUsedInOperatingActivities": 124.2719,
+    "CashFlowsFromUsedInOperations": 124.283,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.0111,
+    "IncreaseDecreaseInCashAndCashEquivalents": -0.1796,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -0.1796,
+    "InterestPaidClassifiedAsFinancingActivities": 4.8541,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.633,
+    "OtherAdjustmentsToReconcileProfitLoss": -3.9152,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -7.7651,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 22.0577,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 133.89,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Tuticorin Alkali Chemicals & Fertilizers Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2024-11-13T18:00:00+05:30",
@@ -4222,13 +4644,485 @@
  },
  "industry": "Commodities > Chemicals > Chemicals & Petrochemicals > Commodity Chemicals",
  "last_filed_at": "2026-08-12T18:00:00+05:30",
+ "oci": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "oci_net_cr": -0.1899,
+    "profit_cr": 9.5639,
+    "tax_not_reclassified_cr": 0.1899,
+    "total_comprehensive_cr": 9.374
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.1857,
+     "description": "(Loss) / Gain on Remeasurement of Defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.1857,
+    "oci_net_cr": -0.1208,
+    "profit_cr": 9.1483,
+    "tax_not_reclassified_cr": -0.0649,
+    "total_comprehensive_cr": 9.0275
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.5011,
+     "description": "Revaluation on Property, Plant and Equipment",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.0577,
+     "description": "Loss on Remeasurement of Defined benefit plans",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": 0.4434,
+    "oci_net_cr": 3.305,
+    "profit_cr": 8.0215,
+    "tax_not_reclassified_cr": -2.8616,
+    "total_comprehensive_cr": 11.3265
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "oci_net_cr": 0.8177,
+    "profit_cr": 6.734,
+    "tax_not_reclassified_cr": -0.8177,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.5517
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 63.7942,
+     "approved_cr": 169.49,
+     "closing_cr": 2.8931,
+     "counterparty": "Greenstar Fertilizers Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 2.2516,
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 31.1339,
+     "approved_cr": 127.823,
+     "closing_cr": 14.2886,
+     "counterparty": "Greenstar Fertilizers Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 9.8319,
+     "approved_cr": 43.06,
+     "closing_cr": 3.1486,
+     "counterparty": "Southern Petrochemical Industries Corporation Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 13.8234,
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 8.3248,
+     "approved_cr": 23.0,
+     "closing_cr": 3.4164,
+     "counterparty": "Wilson International Trading India P Ltd",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 3.0865,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 4.8648,
+     "approved_cr": 12.0,
+     "closing_cr": 4.829,
+     "counterparty": "Singapore shipping International",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 4.3005,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.7575,
+     "closing_cr": 1.1783,
+     "counterparty": "AM International Holdings PTE Ltd, Singapore",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 1.2821,
+     "other": {
+      "RelatedPartyTransactionExplanatory": "The Company has obtained ECB and its approval was made during the period when the party is not a related party. Hence interest is paid on the same basis of agreement which was entered earlier. There is no cahnges in the agreement. Hence approval is not required"
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Interest paid"
+    },
+    {
+     "amount_cr": 0.8258,
+     "approved_cr": 10.7,
+     "closing_cr": 4.2752,
+     "counterparty": "Wilson International Trading PTE Ltd, Singapore",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 3.3026,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.4552,
+     "approved_cr": 1.0,
+     "closing_cr": 0.1666,
+     "counterparty": "Sicagen India Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 0.223,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.3016,
+     "approved_cr": 0.67,
+     "closing_cr": 0.0167,
+     "counterparty": "Mercantile Ventures Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 0.1988,
+     "relationship": "Shareholding more than 10%",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.2407,
+     "approved_cr": 3.162,
+     "closing_cr": 0.0,
+     "counterparty": "Southern Petrochemical Industries Corporation Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 0.002,
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 10,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 80.1469,
+     "approved_cr": 127.823,
+     "closing_cr": 37.5637,
+     "counterparty": "Greenstar Fertilizers Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 14.2886,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2025-11-12",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 1.45
+     },
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 77.4722,
+     "approved_cr": 169.49,
+     "closing_cr": 0.0,
+     "counterparty": "Greenstar Fertilizers Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 2.8931,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-12",
+      "RelatedPartyTransactionExplanatory": "The Audit Committee ratified the sale of goods to the said related party worth Rs. 1000 Lakhs  in its meeting held on 12.02.2026 and Rs. 250 Lakhs in its meeting held on 11.03.2026 respectively.",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 12.5
+     },
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.5005,
+     "approved_cr": 43.06,
+     "closing_cr": 4.6729,
+     "counterparty": "Southern Petrochemical Industries Corporation Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 3.1486,
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.7425,
+     "approved_cr": 0.0,
+     "closing_cr": 1.1527,
+     "counterparty": "AM International Holdings PTE Ltd, Singapore",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 1.1783,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "The ECB agreement was entered with AMI Holdings when it was not a related party. Hence Audit Committee approval was not required",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.3118,
+     "approved_cr": 3.162,
+     "closing_cr": 0.0,
+     "counterparty": "Southern Petrochemical Industries Corporation Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 0.0,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-12",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.015
+     },
+     "relationship": "Promoter",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.884,
+     "approved_cr": 0.67,
+     "closing_cr": 0.3028,
+     "counterparty": "Mercantile Ventures Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 0.0167,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-12",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 0.6
+     },
+     "relationship": "Shareholding more than 10% as per SEBI LODR",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.7423,
+     "approved_cr": 10.7,
+     "closing_cr": 5.3448,
+     "counterparty": "Wilson International Trading PTE Ltd, Singapore",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 4.2752,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.3246,
+     "approved_cr": 1.0,
+     "closing_cr": 0.4794,
+     "counterparty": "Sicagen India Limited",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 0.1666,
+     "other": {
+      "DateOfAuditCommitteeMeetingWhereTheRatificationWasApproved": "2026-02-12",
+      "ValueOfTheRelatedPartyTransactionRatifiedByTheAuditCommittee": 5.4275
+     },
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 23.0,
+     "closing_cr": 0.0,
+     "counterparty": "Wilson International Trading India P Ltd",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 3.4164,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 12.0,
+     "closing_cr": 2.4557,
+     "counterparty": "Singapore shipping International",
+     "entity": "TUTICORIN ALKALI CHEMICALS AND FERTILIZERS LIMITED",
+     "opening_cr": 4.829,
+     "relationship": "Entities with joint control or significant influence over entity",
+     "remarks": "Prior approval for the said transaction limit was obtained from Audit Committee",
+     "type": "Purchase of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 10,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "506808",
  "sector": "chemicals",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "Manufacturing",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Manufacturing",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Manufacturing",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Manufacturing",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T11:54:59+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Manufacturing",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q2FY24",
   "Q3FY24",
@@ -4242,6 +5136,290 @@
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.0475,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 57.4869,
+    "Interest": 1.5071,
+    "Net Profit": 9.8769,
+    "Net Profit (owners)": 9.8769,
+    "OPM %": 24.50744657520575,
+    "Operating Profit": 18.662200000000006,
+    "Other Income": 0.17759999999999465,
+    "Profit before tax": 15.2852,
+    "Profit for PE": 9.8769,
+    "Sales": 76.1491,
+    "Tax": 5.4083,
+    "Tax %": 35.382592311517016
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.1377,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 63.79689999999999,
+    "Interest": 1.4471,
+    "Net Profit": 9.5639,
+    "Net Profit (owners)": 9.5639,
+    "OPM %": 20.245899589959016,
+    "Operating Profit": 16.195100000000018,
+    "Other Income": 1.000799999999984,
+    "Profit before tax": 13.6111,
+    "Profit for PE": 9.5639,
+    "Sales": 79.992,
+    "Tax": 4.0472,
+    "Tax %": 29.734554885350928
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 94.14920000000001,
+    "CWIP": 61.5466,
+    "Equity Capital": 121.8676,
+    "Fixed Assets": 318.93510000000003,
+    "Investments": 15.6072,
+    "Other Assets": 184.24849999999995,
+    "Other Liabilities": 325.73720000000003,
+    "Reserves": 38.5834,
+    "Total Assets": 580.3374,
+    "Total Liabilities": 580.3374
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.1027,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 83.61179999999999,
+    "Interest": 1.5473,
+    "Net Profit": 9.1483,
+    "Net Profit (owners)": 9.1483,
+    "OPM %": 14.841552272370814,
+    "Operating Profit": 14.572000000000017,
+    "Other Income": 2.835899999999981,
+    "Profit before tax": 13.7579,
+    "Profit for PE": 9.1483,
+    "Sales": 98.1838,
+    "Tax": 4.6096,
+    "Tax %": 33.50511342574085
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.0949,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 70.45530000000001,
+    "Interest": 2.1272,
+    "Net Profit": 8.0215,
+    "Net Profit (owners)": 8.0215,
+    "OPM %": 15.566375775065115,
+    "Operating Profit": 12.989299999999986,
+    "Other Income": 1.3019000000000158,
+    "Profit before tax": 10.0691,
+    "Profit for PE": 8.0215,
+    "Sales": 83.4446,
+    "Tax": 2.0476,
+    "Tax %": 20.33548182061952
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 120.0,
+    "CWIP": 150.3964,
+    "Equity Capital": 121.8676,
+    "Fixed Assets": 315.8089,
+    "Investments": 15.6072,
+    "Other Assets": 138.74990000000003,
+    "Other Liabilities": 319.75700000000006,
+    "Reserves": 58.9378,
+    "Total Assets": 620.5624,
+    "Total Liabilities": 620.5624
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 8.3828,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 275.35080000000005,
+    "Interest": 6.6287,
+    "Net Profit": 36.6109,
+    "Net Profit (owners)": 36.6109,
+    "OPM %": 18.479673268308698,
+    "Operating Profit": 62.418699999999944,
+    "Other Income": 5.316200000000052,
+    "Profit before tax": 52.7234,
+    "Profit for PE": 36.6109,
+    "Sales": 337.7695,
+    "Tax": 16.1125,
+    "Tax %": 30.560434266378877
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 17.2036,
+    "Cash from Investing Activity": -141.6551,
+    "Cash from Operating Activity": 124.2719,
+    "Net Cash Flow": -0.1796
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T06:35:54+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T06:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 2.1456,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 70.0034,
+    "Interest": 4.7998,
+    "Net Profit": 6.734,
+    "Net Profit (owners)": 6.734,
+    "OPM %": 13.269064701852116,
+    "Operating Profit": 10.709900000000005,
+    "Other Income": 3.8209999999999944,
+    "Profit before tax": 7.5855,
+    "Profit for PE": 6.734,
+    "Sales": 80.7133,
+    "Tax": 0.8515,
+    "Tax %": 11.225364181662384
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "TUTIALKA",
  "timeline": [],

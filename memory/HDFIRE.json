@@ -15,8 +15,83 @@
   "former_names": []
  },
  "industry": null,
- "last_filed_at": "2026-10-21T06:20:56+05:30",
- "operating_notes": [],
+ "last_filed_at": "2026-10-28T21:16:29+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "ALLIANZ GLOBAL INVESTORS GMBH ACTING ON BEHALF OF ALLIANZ SOA FONDS",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 317.48,
+    "qty": 1755399.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HDFIRE",
+    "value_cr": 55.73
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 313.56,
+    "qty": 889363.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HDFIRE",
+    "value_cr": 27.89
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 312.3,
+    "qty": 953319.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HDFIRE",
+    "value_cr": 29.77
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 303.21,
+    "qty": 985089.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HDFIRE",
+    "value_cr": 29.87
+   },
+   {
+    "as_of": "2026-10-21T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-10-21",
+    "kind": "BULK",
+    "price": 303.08,
+    "qty": 985089.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HDFIRE",
+    "value_cr": 29.86
+   }
+  ]
+ },
+ "operating_notes": [
+  {
+   "as_of": "2026-10-28T21:16:29+05:30",
+   "lab": {
+    "at": "2026-10-29T00:17:03+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106833215",
+   "text": "MPCB refused Consent to Operate for the expansion of the existing facility at Jalgaon, Maharashtra."
+  }
+ ],
  "ownership": [
   {
    "aif_pct": 0.37,
@@ -28,7 +103,7 @@
    "holders": [],
    "insurance_pct": 0.47,
    "lab": {
-    "at": "2026-10-28T05:30:27+05:30",
+    "at": "2026-11-01T07:24:34+05:30",
     "by": "file",
     "doc": "other",
     "ok": true
@@ -43,11 +118,51 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "HDFIRE",
+ "section_lab": {
+  "market_deals": {
+   "at": "2026-11-01T14:43:31+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "default",
  "segment_mix": [],
  "symbol": "HDFIRE",
- "timeline": [],
+ "timeline": [
+  {
+   "date": "2026-10-28T21:16:29+05:30",
+   "event_type": "LITIGATION_REGULATORY",
+   "id": "t_13a51c66",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-29T00:17:03+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "news_id": "nse-106833215",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/HDFIRE_28102026211517_Reg30_Intimation_-_MPCB.pdf",
+   "summary": "HD Fire Protect received a refusal from MPCB for its Consent to Operate application regarding the Jalgaon facility expansion."
+  }
+ ],
  "upcoming_events": [],
- "updated_at": "2026-10-28T05:30:27+05:30",
- "watchlist": []
+ "updated_at": "2026-11-01T07:24:34+05:30",
+ "watchlist": [
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-10-28T21:16:29+05:30",
+   "id": "w_b61a85b5",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-10-29T00:17:03+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "source_news_id": "nse-106833215",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Consent to Operate for expansion of Jalgaon facility from MPCB"
+  }
+ ]
 }

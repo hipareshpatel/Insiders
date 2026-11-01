@@ -1,4 +1,148 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2026-05-31",
+     "name": "M/S GMCA & CO.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q2FY26",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "auditors": [
+    {
+     "firm_registration_no": "109850W",
+     "name": "M/s GMCA & Co",
+     "signed_on": "2026-05-02",
+     "signing_partner": "SHAIKH AMIN GULAMHUSSAIN"
+    }
+   ],
+   "basis": "STANDALONE",
+   "clauses": {
+    "default_in_repayment": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "The Company has not defaulted in repayment of loans or other borrowings or in payment of interest thereon to any lener"
+    },
+    "fraud": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "Based on examination of the books and records of the Company and according to the information and explanations given to us, considering\nthe principles of materiality outlined in Standards on Auditing, we report that no fraud by the Company or on the Company has been noticed\nor reported during the course of the audit"
+    },
+    "statutory_dues": {
+     "remark": "AuditorsFavourableRemark",
+     "text": "<span>\n<span>incometax, sales- tax, service tax, duty of customs, duty of excise, value added tax, cess and other statutory dues applicable to it.According to</span><br /><span>the information and explanations given to us and based on audit procedures performed by us, no undisputed amounts Payable in respect of</span><br /><span>these statutory dues were outstanding, at the year end, for a period of more than six months from the date they became payable.</span>\n</span>"
+    }
+   },
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "FY26",
+   "qualified": false,
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2026-05-31",
+     "name": "GMCA & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-01-10T18:00:00+05:30",
@@ -63,8 +207,283 @@
  ],
  "business_summary": null,
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 6,
+   "period": "Q2FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -2.7043,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": 0.0,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.1025,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -0.6282,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.2795,
+    "AdjustmentsForDividendIncome": 0.0,
+    "AdjustmentsForFairValueGainsLosses": 0.0,
+    "AdjustmentsForFinanceCosts": 0.7619,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -0.1191,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": -1.9852,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 0.0,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -17.9426,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.0,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 18.1876,
+    "AdjustmentsForProvisionsCurrent": 0.279,
+    "AdjustmentsForProvisionsNoncurrent": 0.0,
+    "AdjustmentsForReconcileProfitLoss": -3.9739,
+    "AdjustmentsForSharebasedPayments": 0.0,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 0.2966,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 2.8403,
+    "CashFlowsFromUsedInInvestingActivities": 0.7483,
+    "CashFlowsFromUsedInOperatingActivities": -3.5898,
+    "CashFlowsFromUsedInOperations": -0.1855,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 0.0,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.279,
+    "IncreaseDecreaseInCashAndCashEquivalents": -0.0012,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": -0.0012,
+    "InterestPaidClassifiedAsFinancingActivities": -3.1253,
+    "InterestPaidClassifiedAsOperatingActivities": 3.1253,
+    "InterestReceivedClassifiedAsInvestingActivities": 0.0,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 0.0,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.0,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": -0.7619,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 1.01,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.0,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.4769,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.2617,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 0.0,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "span": "H1"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -11.0952,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -16.3073,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": -0.1204,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -1.6119,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 0.5596,
+    "AdjustmentsForFinanceCosts": 1.4163,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 3.204,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 19.4577,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 1.777,
+    "AdjustmentsForInterestIncome": 8.5121,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 2.501,
+    "AdjustmentsForReconcileProfitLoss": -8.7313,
+    "CashAndCashEquivalentsCashFlowStatement": 0.3024,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInExplorationForAndEvaluationOfMineralResourcesClassifiedAsOperatingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 7.3602,
+    "CashFlowsFromUsedInFinancingActivitiesContinuingOperations": 7.3602,
+    "CashFlowsFromUsedInInvestingActivities": -8.6998,
+    "CashFlowsFromUsedInInvestingActivitiesContinuingOperations": -8.6998,
+    "CashFlowsFromUsedInOperatingActivities": 1.3442,
+    "CashFlowsFromUsedInOperatingActivitiesContinuingOperations": 1.3442,
+    "CashFlowsFromUsedInOperations": 4.4361,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 3.0919,
+    "IncreaseDecreaseInCashAndCashEquivalents": 0.0046,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 0.0046,
+    "InterestPaidClassifiedAsFinancingActivities": 1.4163,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 8.5121,
+    "PaymentForAuditServices": 0.006,
+    "PaymentsToAuditor": 0.006,
+    "PaymentsToCostAuditor": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 0.2644,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": -4.2723,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 4.4275
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Rhetan TMT Limited",
+ "contingent_liabilities": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "classes": [],
+   "has_contingent": false,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_classes": 0,
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  }
+ ],
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY26",
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
+ "fin_ratios": [],
  "financial_metrics": [
   {
    "as_of": "2026-01-10T18:00:00+05:30",
@@ -6784,6 +7203,342 @@
     "side": "BUY",
     "symbol": "RHETAN",
     "value_cr": 25.42
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 22.78,
+    "qty": 8909381.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 20.3
+   },
+   {
+    "as_of": "2026-08-21T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-08-21",
+    "kind": "BULK",
+    "price": 23.34,
+    "qty": 11087999.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 25.88
+   },
+   {
+    "as_of": "2026-08-24T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-08-24",
+    "kind": "BULK",
+    "price": 22.14,
+    "qty": 2718488.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 6.02
+   },
+   {
+    "as_of": "2026-08-24T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-08-24",
+    "kind": "BULK",
+    "price": 21.97,
+    "qty": 4399674.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 9.67
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 28.52,
+    "qty": 4021616.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 11.47
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 28.25,
+    "qty": 6393616.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 18.06
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "L7 HITECH PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 28.11,
+    "qty": 7964211.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 22.39
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "L7 HITECH PRIVATE LIMITED",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 28.18,
+    "qty": 7964211.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 22.44
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "PANCHAL HIREN JAGDISHBHAI",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 28.51,
+    "qty": 8700000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 24.8
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "RATHOD YUVRAJSINH",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 28.51,
+    "qty": 8700000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 24.8
+   },
+   {
+    "as_of": "2026-09-09T15:30:00+05:30",
+    "client": "SHIVAM VIRENDRA SHARMA",
+    "date": "2026-09-09",
+    "kind": "BULK",
+    "price": 28.51,
+    "qty": 8725000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 24.87
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 14.71,
+    "qty": 9430260.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 13.87
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 15.56,
+    "qty": 10497211.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 16.33
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "PANCHAL HIREN JAGDISHBHAI",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 14.51,
+    "qty": 8000000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 11.61
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "PRIJAL TRADEFIN LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 15.14,
+    "qty": 4100000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 6.21
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "PRIJAL TRADEFIN LLP",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 14.66,
+    "qty": 4200000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 6.16
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "RATHOD YUVRAJSINH",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 14.44,
+    "qty": 6910353.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 9.98
+   },
+   {
+    "as_of": "2026-09-28T15:30:00+05:30",
+    "client": "SHIVAM VIRENDRA SHARMA",
+    "date": "2026-09-28",
+    "kind": "BULK",
+    "price": 14.44,
+    "qty": 5100000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 7.36
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 16.6,
+    "qty": 6460259.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 10.72
+   },
+   {
+    "as_of": "2026-10-06T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-06",
+    "kind": "BULK",
+    "price": 15.9,
+    "qty": 6960259.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 11.07
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 18.27,
+    "qty": 5667754.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 10.35
+   },
+   {
+    "as_of": "2026-10-08T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-08",
+    "kind": "BULK",
+    "price": 18.26,
+    "qty": 6851125.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 12.51
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 18.31,
+    "qty": 698438.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 1.28
+   },
+   {
+    "as_of": "2026-10-14T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-14",
+    "kind": "BULK",
+    "price": 18.16,
+    "qty": 4472411.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 8.12
+   },
+   {
+    "as_of": "2026-10-27T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-27",
+    "kind": "BULK",
+    "price": 14.8,
+    "qty": 6275517.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 9.29
+   },
+   {
+    "as_of": "2026-10-27T15:30:00+05:30",
+    "client": "JAGID VANITABEN RAJENDRAPRASAD",
+    "date": "2026-10-27",
+    "kind": "BULK",
+    "price": 14.82,
+    "qty": 6481504.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 9.61
+   },
+   {
+    "as_of": "2026-10-27T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-27",
+    "kind": "BULK",
+    "price": 14.84,
+    "qty": 4262279.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RHETAN",
+    "value_cr": 6.33
+   },
+   {
+    "as_of": "2026-10-27T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-27",
+    "kind": "BULK",
+    "price": 14.78,
+    "qty": 4282609.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RHETAN",
+    "value_cr": 6.33
    }
   ]
  },
@@ -6842,6 +7597,436 @@
   }
  ],
  "predictions": [],
+ "related_parties": [
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 18.4775,
+     "approved_cr": 200.0,
+     "closing_cr": 25.5455,
+     "counterparty": "ASHOKA METCAST LIMITED",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 7.072,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfFinancialIndebtedness": "Repayble on Demand",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Holding Company",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 1.0824,
+     "approved_cr": 200.0,
+     "closing_cr": 0.5986,
+     "counterparty": "ASHOKA METCAST LIMITED",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.0,
+     "relationship": "Holding Company",
+     "remarks": "None",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.406,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0058,
+     "counterparty": "ASHNISHA INDUSTRIES LIMITED",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.1322,
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 0.25,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "GUJARAT NATURAL RESOURCES LIMITED",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.0,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfFinancialIndebtedness": "Repayble on Demand",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.025,
+     "approved_cr": 200.0,
+     "closing_cr": 1.4981,
+     "counterparty": "ASHNISHA INDUSTRIES LIMITED",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 2.705,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfFinancialIndebtedness": "Repayble on Demand",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.024,
+     "closing_cr": 0.004,
+     "counterparty": "SUBHA RANJAN DASH",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.004,
+     "relationship": "Chief Financial Officer (KMP)",
+     "remarks": "None",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0222,
+     "closing_cr": 0.0037,
+     "counterparty": "RIDDHI SHAH",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.0037,
+     "relationship": "Company Secretary (KMP)",
+     "remarks": "None",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0112,
+     "counterparty": "SUBHA RANJAN DASH",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.0117,
+     "relationship": "Chief Financial Officer (KMP)",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0039,
+     "counterparty": "ASHOK C SHAH",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.0039,
+     "relationship": "DIRECTOR",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "closing_cr": 0.0,
+     "counterparty": "GUJARAT NATURAL RESOURCES LIMITED",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 0.0514,
+     "other_details": "Trade Payables",
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 200.0,
+     "closing_cr": 0.8147,
+     "counterparty": "LESHA INDUSTRIES LIMITED",
+     "entity": "RHETAN TMT LIMITED",
+     "opening_cr": 1.8357,
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Purchase of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 11,
+   "period": "Q2FY26",
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "has_transactions": true,
+   "kind": "annual",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "annual_report",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_parties": 7,
+   "parties": [
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.24,
+      "OtherRelatedPartyTransactionsContributionReceived": 20.104,
+      "PurchasesOfGoodsRelatedPartyTransactions": 2.1612,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 1.0824
+     },
+     "party": "Ashoka Metcast Limited"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.329,
+      "OtherRelatedPartyTransactionsContributionReceived": 1.232,
+      "PurchasesOfGoodsRelatedPartyTransactions": 6.9883,
+      "RevenueFromSaleOfGoodsRelatedPartyTransactions": 2.7219
+     },
+     "party": "Ashnisha Industries Limited"
+    },
+    {
+     "balances": {},
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 5.4801,
+      "PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions": 0.0
+     },
+     "party": "Lesha Industries Limited"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.002,
+      "OtherRelatedPartyTransactionsExpense": 0.052,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "subha Dash"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0412
+     },
+     "category": "KeyManagementPersonnelOfEntityOrParent",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsExpense": 0.0412,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Riddhi Shah"
+    },
+    {
+     "balances": {},
+     "category": "OtherRelatedParties",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Ashok C Shah"
+    },
+    {
+     "balances": {
+      "AmountsPayableRelatedPartyTransactions": 0.0
+     },
+     "category": "JointControlOrSignificantInfluence",
+     "flows": {
+      "ExpenseRecognisedDuringPeriodForBadAndDoubtfulDebtsForRelatedPartyTransaction": 0.0,
+      "OtherRelatedPartyTransactionsContributionMade": 0.0,
+      "OtherRelatedPartyTransactionsContributionReceived": 0.0,
+      "PurchasesOfGoodsRelatedPartyTransactions": 0.0
+     },
+     "party": "Gujarat Natural Resources Limited"
+    }
+   ],
+   "period": "FY26",
+   "source_news_id": "xbrl-facts:FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 7.2595,
+     "approved_cr": 200.0,
+     "closing_cr": 5.916,
+     "counterparty": "Ashnisha Industries Limited",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.0,
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 5.4975,
+     "approved_cr": 200.0,
+     "closing_cr": 0.6306,
+     "counterparty": "Lesha Industries Limited",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.8147,
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.3159,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "Ashnisha Industries Limited",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.0058,
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 2.1612,
+     "approved_cr": 200.0,
+     "closing_cr": 0.6758,
+     "counterparty": "Ashoka Metcast Limited",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.0,
+     "relationship": "Holding Company",
+     "remarks": "None",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.6265,
+     "approved_cr": 200.0,
+     "closing_cr": 26.936,
+     "counterparty": "Ashoka Metcast Limited",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 25.5495,
+     "relationship": "Holding Company",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.028,
+     "closing_cr": 0.004,
+     "counterparty": "Subha Ranjan Dash",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.004,
+     "relationship": "Chief Financial Officer (KMP)",
+     "remarks": "None",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.019,
+     "closing_cr": 0.0037,
+     "counterparty": "Riddhi Mit Shah",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.0037,
+     "relationship": "Company Secretary (KMP)",
+     "remarks": "None",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0097,
+     "counterparty": "Subha Ranjan Dash",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.0112,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfFinancialIndebtedness": "Repayble on Demand",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Chief Financial Officer (KMP)",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0039,
+     "counterparty": "Ashok Chinubhai Shah",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.0039,
+     "relationship": "Non-Executive Director",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 200.0,
+     "closing_cr": 1.8021,
+     "counterparty": "Ashnisha Industries Limited",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 1.4981,
+     "other": {
+      "CostOfFinancialIndebtedness": 0,
+      "InterestRateOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": 0,
+      "NatureOfFinancialIndebtedness": "Loan",
+      "NatureOfTheLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Loan",
+      "PurposeForWhichTheFundsWillBeUtilisedByTheUltimateRecipientOfFundsForEndusage": "Business Purpose",
+      "TenureOfFinancialIndebtedness": "Repayble on Demad",
+      "TenureOfLoansOrInterCorporateDepositsOrAdvancesOrInvestments": "Repayble on Demand",
+      "TypeOfLoansOrInterCorporateDepositsOrAdvancesOrInvestmentsSecuredOrUnsecured": "Unsecured"
+     },
+     "relationship": "Entities where Key Managerial Personnel/Director exercise significant influence",
+     "remarks": "None",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0,
+     "approved_cr": 200.0,
+     "closing_cr": 0.0,
+     "counterparty": "Ashoka Metcast Limited",
+     "entity": "Rhetan TMT Limited",
+     "opening_cr": 0.5986,
+     "relationship": "Holding Company",
+     "remarks": "None",
+     "type": "Purchase of goods or services"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 11,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "543590",
  "section_lab": {
@@ -6851,18 +8036,459 @@
    "doc": "other"
   },
   "market_deals": {
-   "at": "2026-08-13T15:30:00+05:30",
+   "at": "2026-11-01T14:42:13+05:30",
    "by": "file",
    "doc": "other"
   }
  },
  "sector": "metals",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY26",
+   "segment": "Manufacturing of TMT Bars activities",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY26:standalone"
+  },
+  {
+   "as_of": "2025-09-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q2FY26",
+   "segment": "Manufacturing of TMT Bars activities",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q2FY26:standalone"
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Manufacturing of TMT Bars activities",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Manufacturing of TMT Bars",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:44:40+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Manufacturing of TMT Bars",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "standalone_only": [
   "Q2FY26",
   "Q3FY26",
   "Q4FY26",
   "Q1FY27"
+ ],
+ "statements": [
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY25",
+   "rows": {
+    "Borrowings": 22.0063,
+    "CWIP": 1.5001,
+    "Equity Capital": 79.6875,
+    "Fixed Assets": 16.3086,
+    "Investments": 2.9908,
+    "Other Assets": 102.7047,
+    "Other Liabilities": 7.5138,
+    "Reserves": 14.2966,
+    "Total Assets": 123.5042,
+    "Total Liabilities": 123.5042
+   },
+   "source_news_id": "xbrl-facts:Q4FY25:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Depreciation": 0.5884,
+    "Expenses": 33.1835,
+    "Interest": 1.5603,
+    "Net Profit": 3.095,
+    "Net Profit (owners)": 3.095,
+    "OPM %": 10.71255596693645,
+    "Operating Profit": 3.9812999999999974,
+    "Other Income": 1.5743000000000027,
+    "Profit before tax": 3.4069,
+    "Sales": 37.1648,
+    "Tax": 0.3119,
+    "Tax %": 9.154950248026065
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-11-01T02:48:29+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-11-01T02:48:29+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY25",
+   "rows": {
+    "Cash from Financing Activity": -1.5729,
+    "Cash from Investing Activity": -4.3565,
+    "Cash from Operating Activity": 4.9741,
+    "Net Cash Flow": -0.9553
+   },
+   "source_news_id": "xbrl-facts:FY25:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.1397,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 4.43,
+    "Interest": 0.3852,
+    "Net Profit": 0.758,
+    "Net Profit (owners)": 0.758,
+    "OPM %": 12.02637222972436,
+    "Operating Profit": 0.6055999999999999,
+    "Other Income": 0.6773,
+    "Profit before tax": 0.758,
+    "Profit for PE": 0.758,
+    "Sales": 5.0356,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.1398,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 3.6614999999999998,
+    "Interest": 0.3767,
+    "Net Profit": 2.8734,
+    "Net Profit (owners)": 2.8734,
+    "OPM %": 23.040544801059337,
+    "Operating Profit": 1.0962,
+    "Other Income": 2.4507000000000003,
+    "Profit before tax": 3.0304,
+    "Profit for PE": 2.8734,
+    "Sales": 4.7577,
+    "Tax": 0.157,
+    "Tax %": 5.1808342133051735
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q2FY26",
+   "rows": {
+    "Borrowings": 40.670899999999996,
+    "CWIP": 1.7618,
+    "Equity Capital": 79.6875,
+    "Fixed Assets": 16.0291,
+    "Investments": 2.9908,
+    "Other Assets": 123.07130000000001,
+    "Other Liabilities": 5.566600000000015,
+    "Reserves": 17.928,
+    "Total Assets": 143.853,
+    "Total Liabilities": 143.853
+   },
+   "source_news_id": "xbrl-facts:Q2FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.1397,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 3.7676000000000003,
+    "Interest": 0.3362,
+    "Net Profit": 4.4478,
+    "Net Profit (owners)": 4.4478,
+    "OPM %": 38.78598817183336,
+    "Operating Profit": 2.3871999999999995,
+    "Other Income": 3.172400000000001,
+    "Profit before tax": 5.0837,
+    "Profit for PE": 4.4478,
+    "Sales": 6.1548,
+    "Tax": 0.6359,
+    "Tax %": 12.508605936620965
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.1405,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 5.9548,
+    "Interest": 0.3182,
+    "Net Profit": 2.2185,
+    "Net Profit (owners)": 2.2185,
+    "OPM %": 29.882485928926357,
+    "Operating Profit": 2.5378,
+    "Other Income": 2.216100000000001,
+    "Profit before tax": 4.2952,
+    "Profit for PE": 2.2185,
+    "Sales": 8.4926,
+    "Tax": 2.0767,
+    "Tax %": 48.34932017135407
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 41.7284,
+    "CWIP": 5.7301,
+    "Equity Capital": 79.6875,
+    "Fixed Assets": 15.9465,
+    "Investments": 7.3231,
+    "Other Assets": 136.11649999999997,
+    "Other Liabilities": 14.773599999999995,
+    "Reserves": 28.9267,
+    "Total Assets": 165.1162,
+    "Total Liabilities": 165.1162
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Depreciation": 0.5596,
+    "Expenses": 17.8139,
+    "Interest": 1.4163,
+    "Net Profit": 10.2978,
+    "Net Profit (owners)": 10.2978,
+    "OPM %": 27.113789703240904,
+    "Operating Profit": 6.626799999999999,
+    "Other Income": 8.5165,
+    "Profit before tax": 13.1674,
+    "Sales": 24.4407,
+    "Tax": 2.8696,
+    "Tax %": 21.793216580342364
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 7.3602,
+    "Cash from Investing Activity": -8.6998,
+    "Cash from Operating Activity": 1.3442,
+    "Net Cash Flow": 0.0046
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.1511,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 4.723800000000001,
+    "Interest": 0.3328,
+    "Net Profit": 3.1583,
+    "Net Profit (owners)": 3.1583,
+    "OPM %": -16.275291685127772,
+    "Operating Profit": -0.6612000000000009,
+    "Other Income": 4.452400000000001,
+    "Profit before tax": 3.3073,
+    "Profit for PE": 3.1583,
+    "Sales": 4.0626,
+    "Tax": 0.149,
+    "Tax %": 4.5051854987452
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
  ],
  "symbol": "RHETAN",
  "timeline": [],

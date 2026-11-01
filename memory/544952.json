@@ -1,16 +1,41 @@
 {
- "balance_sheet": [
+ "audit": [
   {
-   "as_of": "2026-10-19T17:24:58+05:30",
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
    "lab": {
-    "at": "2026-10-19T17:24:58+05:30",
-    "by": "unknown",
-    "doc": "results"
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
    },
-   "period": "Jun-2026",
-   "source_news_id": "nse-106822129"
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
   }
  ],
+ "balance_sheet": [],
  "business_summary": null,
  "capital_actions": [
   {
@@ -67,6 +92,44 @@
    "tranches": [],
    "updated_as_of": "2026-10-19T17:24:58+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 10
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 10
+   }
   }
  ],
  "financial_metrics": [
@@ -1365,6 +1428,222 @@
  },
  "industry": "Industrials > Capital Goods > Industrial Products > Iron & Steel Products",
  "last_filed_at": "2026-10-19T18:00:00+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "CITADEL SECURITIES SINGAPORE PTE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 438.13,
+    "qty": 655394.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AONESTEELS",
+    "value_cr": 28.71
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 433.8,
+    "qty": 514779.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AONESTEELS",
+    "value_cr": 22.33
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 434.04,
+    "qty": 514779.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AONESTEELS",
+    "value_cr": 22.34
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 428.18,
+    "qty": 428310.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AONESTEELS",
+    "value_cr": 18.34
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 437.63,
+    "qty": 510598.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AONESTEELS",
+    "value_cr": 22.35
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 425.92,
+    "qty": 570096.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AONESTEELS",
+    "value_cr": 24.28
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 420.18,
+    "qty": 573384.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AONESTEELS",
+    "value_cr": 24.09
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 431.84,
+    "qty": 433827.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AONESTEELS",
+    "value_cr": 18.73
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 431.54,
+    "qty": 433827.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AONESTEELS",
+    "value_cr": 18.72
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "URMILA MAHESHWARI",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 426.73,
+    "qty": 470131.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "AONESTEELS",
+    "value_cr": 20.06
+   },
+   {
+    "as_of": "2026-10-01T15:30:00+05:30",
+    "client": "URMILA MAHESHWARI",
+    "date": "2026-10-01",
+    "kind": "BULK",
+    "price": 450.88,
+    "qty": 470649.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "AONESTEELS",
+    "value_cr": 21.22
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.128,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.0322,
+     "description": "Income Tax Relating to these items",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": -0.0098,
+     "description": "Exchange differences on translating the Financial Information of a foreign operation",
+     "group": "reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.0958,
+    "oci_net_cr": -0.1056,
+    "profit_cr": 47.8531,
+    "reclassified_cr": -0.0098,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 47.7475,
+    "total_comprehensive_nci_cr": -0.1266,
+    "total_comprehensive_owners_cr": 47.8743
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.176,
+     "description": "Remeasurement of defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.0443,
+     "description": "Income tax relating to these items",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.1317,
+    "oci_net_cr": -0.1317,
+    "profit_cr": 44.0637,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 43.932
+   }
+  }
+ ],
  "operating_notes": [],
  "ownership": [],
  "predictions": [],
@@ -1375,10 +1654,88 @@
    "at": null,
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:38:36+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "metals",
- "segment_mix": [],
+ "segment_balance": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_segments": 2,
+   "period": "Q1FY27",
+   "segments": [
+    {
+     "assets_cr": 3201.5964,
+     "liabilities_cr": 2310.8228,
+     "segment": "India Operations (Registered in India)- Manufacturing and Trading of Iron and steel products"
+    },
+    {
+     "assets_cr": 39.8309,
+     "liabilities_cr": 24.3011,
+     "segment": "Foreign Operations (Registered Outside India) - Trading of Iron and steel products"
+    }
+   ],
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "totals": {
+    "assets_cr": 3241.4273,
+    "liabilities_cr": 2335.1239,
+    "net_assets_cr": 3240.051,
+    "net_liabilities_cr": 2328.941
+   }
+  }
+ ],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 65.54,
+   "period": "Q1FY27",
+   "revenue_cr": 996.78,
+   "segment": "India Operations (Registered in India)- Manufacturing and Trading of Iron and steel products",
+   "share_pct": 94.3,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T13:00:44+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "pbit_cr": 0.79,
+   "period": "Q1FY27",
+   "revenue_cr": 60.33,
+   "segment": "Foreign Operations (Registered Outside India) - Trading of Iron and steel products",
+   "share_pct": 5.7,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1836,6 +2193,77 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 16.5343,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 938.4061,
+    "Interest": 28.8023,
+    "Minority share": -0.1267,
+    "Net Profit": 47.8531,
+    "Net Profit (owners)": 47.98,
+    "OPM %": 9.816172841985866,
+    "Operating Profit": 102.14199999999994,
+    "Other Income": 9.521000000000072,
+    "Profit before tax": 66.3264,
+    "Profit for PE": 47.98,
+    "Sales": 1040.5481,
+    "Tax": 18.4733,
+    "Tax %": 27.852107154918702
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:31:21+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:31:21+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.4211,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 788.1184999999999,
+    "Interest": 21.9284,
+    "Net Profit": 44.0637,
+    "Net Profit (owners)": 44.0637,
+    "OPM %": 9.99054129122682,
+    "Operating Profit": 87.47670000000005,
+    "Other Income": 4.299799999999948,
+    "Profit before tax": 58.427,
+    "Profit for PE": 44.0637,
+    "Sales": 875.5952,
+    "Tax": 14.3633,
+    "Tax %": 24.583326201927193
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "AONESTEELS",
  "timeline": [
   {

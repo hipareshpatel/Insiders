@@ -1,4 +1,128 @@
 {
+ "audit": [
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2025-12-31",
+   "audited": "Unaudited",
+   "audited_ytd": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-09-30",
+     "name": "Badaya & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "audited": "Audited",
+   "audited_ytd": "Audited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-09-30",
+     "name": "Badaya & Co.",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q4FY26",
+   "qualification_status": "Audited",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Not applicable",
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-05-25T18:00:00+05:30",
@@ -30,16 +154,6 @@
    "source_news_id": "xbrl:res:543620:Q4FY26",
    "total_assets_cr": 2155.13,
    "total_liabilities_cr": 1346.65
-  },
-  {
-   "as_of": "2026-06-01T15:45:26+05:30",
-   "lab": {
-    "at": "2026-06-01T15:45:26+05:30",
-    "by": "ai",
-    "doc": "call"
-   },
-   "period": "Mar-2026",
-   "source_news_id": "nse-106651076"
   }
  ],
  "business_summary": {
@@ -54,6 +168,222 @@
  },
  "call_points": [],
  "capital_actions": [],
+ "cash_flow_detail": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": -302.0763,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -186.0986,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 1.4232,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -171.4952,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 35.7979,
+    "AdjustmentsForDividendIncome": -0.0006,
+    "AdjustmentsForFairValueGainsLosses": 1.2097,
+    "AdjustmentsForFinanceCosts": 23.5409,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": 54.0803,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 220.6904,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 16.0847,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": -8.3921,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": 11.9541,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": -1.7348,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": 49.9882,
+    "AdjustmentsForProvisionsCurrent": 0.0,
+    "AdjustmentsForProvisionsNoncurrent": 3.3185,
+    "AdjustmentsForReconcileProfitLoss": -283.7353,
+    "AdjustmentsForSharebasedPayments": -0.1168,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashAndCashEquivalentsCashFlowStatement": 441.3696,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 697.7958,
+    "CashFlowsFromUsedInInvestingActivities": -185.5675,
+    "CashFlowsFromUsedInOperatingActivities": -73.1282,
+    "CashFlowsFromUsedInOperations": -38.45,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 12.6121,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 2.2034,
+    "DividendsReceivedClassifiedAsInvestingActivities": 0.0006,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 34.6782,
+    "IncreaseDecreaseInCashAndCashEquivalents": 439.1001,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 439.1001,
+    "InterestPaidClassifiedAsFinancingActivities": 22.3633,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 16.0835,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": 1.2961,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": -0.7642,
+    "OtherAdjustmentsToReconcileProfitLoss": -0.2725,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": -0.0438,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.0,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 4.7692,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": -0.5071,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 457.349,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0195,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0098,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.2545,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": -233.5633,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 448.0475,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": -269.2561,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "span": "FY"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "months": 12,
+   "period": "FY26",
+   "rows": {
+    "AdjustmentsForDecreaseIncreaseInInventories": 7.412,
+    "AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": -24.6758,
+    "AdjustmentsForDecreaseIncreaseInOtherNoncurrentAssets": 0.7639,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesCurrent": -16.7344,
+    "AdjustmentsForDecreaseIncreaseInTradeReceivablesNoncurrent": 0.0,
+    "AdjustmentsForDepreciationAndAmortisationExpense": 3.1939,
+    "AdjustmentsForDividendIncome": -0.0006,
+    "AdjustmentsForFairValueGainsLosses": 0.487,
+    "AdjustmentsForFinanceCosts": 1.6022,
+    "AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": 0.0,
+    "AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": -1.933,
+    "AdjustmentsForIncreaseDecreaseInOtherNoncurrentLiabilities": 0.0,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesCurrent": 24.1855,
+    "AdjustmentsForIncreaseDecreaseInTradePayablesNoncurrent": 0.0,
+    "AdjustmentsForInterestIncome": 7.0063,
+    "AdjustmentsForOtherBankBalances": 0.0,
+    "AdjustmentsForOtherFinancialAssetsCurrent": 3.5662,
+    "AdjustmentsForOtherFinancialAssetsNoncurrent": -0.0175,
+    "AdjustmentsForOtherFinancialLiabilitiesCurrent": 0.1347,
+    "AdjustmentsForOtherFinancialLiabilitiesNoncurrent": -0.0795,
+    "AdjustmentsForProvisionsCurrent": -0.1373,
+    "AdjustmentsForProvisionsNoncurrent": -0.0595,
+    "AdjustmentsForReconcileProfitLoss": -10.0251,
+    "AdjustmentsForSharebasedPayments": 0.1168,
+    "AdjustmentsForUndistributedProfitsOfAssociates": 0.0,
+    "AdjustmentsForUnrealisedForeignExchangeLossesGains": 0.0,
+    "CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 2.3725,
+    "CashAndCashEquivalentsCashFlowStatement": 1.9241,
+    "CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashFlowsFromUsedInFinancingActivities": 23.406,
+    "CashFlowsFromUsedInInvestingActivities": -21.7244,
+    "CashFlowsFromUsedInOperatingActivities": -0.4069,
+    "CashFlowsFromUsedInOperations": -0.6728,
+    "CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": 0.0,
+    "CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": 0.0,
+    "CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0,
+    "DividendsPaidClassifiedAsFinancingActivities": 2.2034,
+    "DividendsReceivedClassifiedAsInvestingActivities": -0.0006,
+    "DividendsReceivedClassifiedAsOperatingActivities": 0.0,
+    "EffectOfExchangeRateChangesOnCashAndCashEquivalents": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsFinancingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsInvestingActivities": 0.0,
+    "IncomeTaxesPaidRefundClassifiedAsOperatingActivities": 0.0,
+    "IncreaseDecreaseInCashAndCashEquivalents": 1.2747,
+    "IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": 1.2747,
+    "InterestPaidClassifiedAsFinancingActivities": 1.2902,
+    "InterestPaidClassifiedAsOperatingActivities": 0.0,
+    "InterestReceivedClassifiedAsInvestingActivities": 7.0053,
+    "InterestReceivedClassifiedAsOperatingActivities": 0.0,
+    "OtherAdjustmentsForNoncashItems": -1.2741,
+    "OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": 0.4295,
+    "OtherAdjustmentsToReconcileProfitLoss": 0.0,
+    "OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": 0.0,
+    "OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": 0.0,
+    "OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": 0.0192,
+    "OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": 0.2659,
+    "PaymentsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "PaymentsOfLeaseLiabilitiesClassifiedAsFinancingActivities": 0.7636,
+    "PaymentsOfOtherEquityInstruments": 0.0,
+    "PaymentsToAcquireOrRedeemEntitysShares": 0.0,
+    "ProceedsFromBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromBorrowingsClassifiedAsFinancingActivities": 34.2507,
+    "ProceedsFromChangesInOwnershipInterestsInSubsidiaries": 0.0,
+    "ProceedsFromExerciseOfStockOptions": 0.0,
+    "ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromIssuingDebenturesNotesBondsEtc": 0.0,
+    "ProceedsFromIssuingOtherEquityInstruments": 0.0,
+    "ProceedsFromIssuingSharesClassifiedAsFinancingActivities": 0.0195,
+    "ProceedsFromSalesOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfIntangibleAssetsUnderDevelopment": 0.0,
+    "ProceedsFromSalesOfInvestmentPropertyClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 0.1488,
+    "PurchaseOfBiologicalAssetsOtherThanBearerPlantsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfGoodwillClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfIntangibleAssetsUnderDevelopment": 0.0,
+    "PurchaseOfInvestmentPropertyClassifiedAsInvestingActivities": -1.9016,
+    "PurchaseOfOtherLongTermAssetsClassifiedAsInvestingActivities": 0.0,
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": 28.4262,
+    "RepaymentsOfBorrowingsClassifiedAsFinancingActivities": 6.607,
+    "ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "span": "FY"
+  }
+ ],
  "company_name": "Insolation Energy Limited",
  "deals": [
   {
@@ -92,6 +422,194 @@
    "tranches": [],
    "updated_as_of": "2026-06-01T15:45:26+05:30",
    "usage": null
+  }
+ ],
+ "dividends": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
+ "fin_ratios": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0035,
+    "DebtServiceCoverageRatio": 0.0045,
+    "InterestServiceCoverageRatio": 0.1357
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0006,
+    "DebtServiceCoverageRatio": 0.0039,
+    "InterestServiceCoverageRatio": 0.0989
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "DebtEquityRatio": 0.0103,
+    "DebtServiceCoverageRatio": 0.0797,
+    "InterestServiceCoverageRatio": 0.1199
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "DebtEquityRatio": 0.0012,
+    "DebtServiceCoverageRatio": -0.0127,
+    "InterestServiceCoverageRatio": -0.0283
+   }
   }
  ],
  "financial_metrics": [
@@ -1969,7 +2487,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -1983,7 +2500,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 8.25,
    "yoy_pct": null
@@ -1991,7 +2507,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2005,7 +2520,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 2.99,
    "yoy_pct": null
@@ -2013,7 +2527,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2027,7 +2540,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 11.8,
    "yoy_pct": null
@@ -2035,7 +2547,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2055,7 +2566,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 74.77,
    "yoy_pct": null
@@ -2063,7 +2573,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2081,7 +2590,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "PCT",
    "value": 13.0,
    "yoy_pct": null
@@ -2089,7 +2597,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2103,7 +2610,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 13.57,
    "yoy_pct": null
@@ -2111,7 +2617,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2125,7 +2630,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR",
    "value": 2.27,
    "yoy_pct": null
@@ -2133,7 +2637,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2147,7 +2650,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 0.0,
    "yoy_pct": null
@@ -2155,7 +2657,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2169,7 +2670,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 7.97,
    "yoy_pct": null
@@ -2177,7 +2677,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2191,7 +2690,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 17.85,
    "yoy_pct": null
@@ -2199,7 +2697,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2213,7 +2710,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 35.27,
    "yoy_pct": null
@@ -2221,7 +2717,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2235,7 +2730,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 6.95,
    "yoy_pct": null
@@ -2243,7 +2737,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2257,7 +2750,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 22.04,
    "yoy_pct": null
@@ -2265,7 +2757,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2279,7 +2770,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 50.72,
    "yoy_pct": null
@@ -2287,7 +2777,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2301,7 +2790,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 50.72,
    "yoy_pct": null
@@ -2309,7 +2797,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2323,7 +2810,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 61.95,
    "yoy_pct": null
@@ -2331,7 +2817,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2345,7 +2830,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 106.61,
    "yoy_pct": null
@@ -2353,7 +2837,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2367,7 +2850,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 327.27,
    "yoy_pct": null
@@ -2375,7 +2857,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2389,7 +2870,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 575.34,
    "yoy_pct": null
@@ -2397,7 +2877,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2411,7 +2890,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 0.0,
    "yoy_pct": null
@@ -2419,7 +2897,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2433,7 +2910,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 11.24,
    "yoy_pct": null
@@ -2441,7 +2917,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2455,7 +2930,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 520.33,
    "yoy_pct": null
@@ -2463,7 +2937,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2477,7 +2950,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 582.29,
    "yoy_pct": null
@@ -2485,7 +2957,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2499,7 +2970,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR_CR",
    "value": 0.0,
    "yoy_pct": null
@@ -2507,7 +2977,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2521,7 +2990,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR",
    "value": 2.27,
    "yoy_pct": null
@@ -2529,7 +2997,6 @@
   {
    "as_of": "2026-02-12T18:00:00+05:30",
    "basis": "CONSOLIDATED",
-   "exchange": "BSE",
    "lab": {
     "at": "2026-10-27T23:17:28+05:30",
     "basis": "CONSOLIDATED",
@@ -2543,7 +3010,6 @@
    "period": "Q3FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:543620:Q3FY26",
-   "source_url": "https://www.bseindia.com/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_543620_1222026195126.xml",
    "unit": "INR",
    "value": 2.27,
    "yoy_pct": null
@@ -2902,6 +3368,173 @@
       "status": "Reply awaited from Mundra Customs on Commissioner (Appeals), Ahmedabad."
      }
     ]
+   },
+   {
+    "as_of": "2026-10-29T15:34:43+05:30",
+    "board": [
+     {
+      "appointed": "2015-10-15",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manish Gupta",
+      "role": "Chairperson",
+      "tenure_months": 131.17
+     },
+     {
+      "appointed": "2015-10-15",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Vikas Jain",
+      "role": null,
+      "tenure_months": 131.17
+     },
+     {
+      "appointed": "2021-12-15",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Payal Gupta",
+      "role": null,
+      "tenure_months": 57.17
+     },
+     {
+      "appointed": "2021-12-15",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ekta Jain",
+      "role": null,
+      "tenure_months": 57.17
+     },
+     {
+      "appointed": "2022-01-18",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Akhilesh Kumar Jain",
+      "role": null,
+      "tenure_months": 56.14
+     },
+     {
+      "appointed": "2024-02-10",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Anil Kumar Gupta",
+      "role": null,
+      "tenure_months": 31.2
+     },
+     {
+      "appointed": "2025-07-14",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Subir Bikas Mitra",
+      "role": null,
+      "tenure_months": 14.18
+     },
+     {
+      "appointed": "2025-10-10",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rajiv Jain",
+      "role": null,
+      "tenure_months": 11.22
+     },
+     {
+      "appointed": "2026-02-05",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shreemat Pandey",
+      "role": null,
+      "tenure_months": 7.24
+     },
+     {
+      "appointed": "2026-09-28",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Usha Sharma",
+      "role": null,
+      "tenure_months": 0.02
+     }
+    ],
+    "board_size": 10,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Anil Kumar Gupta",
+      "Akhilesh Kumar Jain",
+      "Subir Bikas Mitra",
+      "Shreemat Pandey"
+     ],
+     "corporate social responsibility committee": [
+      "Shreemat Pandey",
+      "Ekta Jain",
+      "Anil Kumar Gupta"
+     ],
+     "nomination and remuneration committee": [
+      "Shreemat Pandey",
+      "Payal Gupta",
+      "Rajiv Jain"
+     ],
+     "risk management committee": [
+      "Vikas Jain",
+      "Manish Gupta",
+      "Ekta Jain",
+      "Subir Bikas Mitra"
+     ],
+     "stakeholders relationship committee": [
+      "Rajiv Jain",
+      "Payal Gupta",
+      "Vikas Jain"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 78.0,
+     "board": 78.0,
+     "nomination and remuneration committee": 46.0
+    },
+    "independent_directors": 8,
+    "material_floor_cr": 10.0315,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1748742_29102026033455_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Appeal filed in CESTAT New Delhi and our Case transferred to Customs, Excise And Service Tax Appellate Tribunal Principal Bench, New Delhi-110066. Next hearing date will be 02.12.2025.",
+      "initiated": "2024-01-29",
+      "opposing_party": "Principal Commissioner of Customs (Preventive) Jodhpur. HQR: NCR Building , Statue Circle , C Scheme Jaipur -302005",
+      "status": "Case is now in Tribunal court and next hearing date is 30.10.2026"
+     },
+     {
+      "as_last_disclosed": "Office of The Commisstioner Of Customs (Appeals), Ahmedabad remand the matter back to the adjucating authority with the direction to re-adjucate the case afresh, with a specific direction to follow judicial discipline.",
+      "initiated": "2023-10-11",
+      "opposing_party": "Office of the Principal Commissioner of Customs, Custom House, Mundra",
+      "status": "Reply awaited from Mundra Customs on Commissioner (Appeals), Ahmedabad."
+     }
+    ]
    }
   ]
  },
@@ -3163,6 +3796,176 @@
    }
   ]
  },
+ "oci": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "values": {
+    "oci_net_cr": -0.3416,
+    "profit_cr": 50.716,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.3416,
+    "total_comprehensive_cr": 50.3744
+   }
+  },
+  {
+   "as_of": "2025-12-31",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q3FY26",
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "values": {
+    "oci_net_cr": 0.027,
+    "profit_cr": 3.304,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": -0.027,
+    "total_comprehensive_cr": 3.331
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.1049,
+     "description": "Remeasurement Gain/(loss) of Defined Benefit Plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.1049,
+    "oci_net_cr": 0.1882,
+    "profit_cr": 69.8447,
+    "tax_not_reclassified_cr": -0.0833,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 70.0329,
+    "total_comprehensive_nci_cr": -0.2307,
+    "total_comprehensive_owners_cr": 70.2636
+   }
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.0378,
+     "description": "Remeasurement Gais/loss of defined benefit plan",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "values": {
+    "not_reclassified_cr": -0.0378,
+    "oci_net_cr": -0.043,
+    "profit_cr": -1.806,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0052,
+    "total_comprehensive_cr": -1.849
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": 0.1574,
+     "description": "Other comprehensive income (Net of Tax)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": 0.1574,
+    "oci_net_cr": 0.1574,
+    "profit_cr": 38.0246,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 38.182,
+    "total_comprehensive_nci_cr": 0.9882,
+    "total_comprehensive_owners_cr": 37.1938
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": 0.1076,
+     "description": "Other comprehensive income (Net of Tax)",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": 0.1076,
+    "oci_net_cr": 0.1076,
+    "profit_cr": -2.9105,
+    "tax_not_reclassified_cr": 0.0,
+    "tax_reclassified_cr": 0.0,
+    "total_comprehensive_cr": -2.8029
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-06-01T15:45:26+05:30",
@@ -3239,11 +4042,666 @@
    "value": 17.5
   }
  ],
+ "related_parties": [
+  {
+   "as_of": "2026-03-31",
+   "basis": "STANDALONE",
+   "entered": true,
+   "items": [
+    {
+     "amount_cr": 60.0,
+     "closing_cr": 385.0003,
+     "counterparty": "Insolation Green Energy Pvt Ltd",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": 325.0003,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 28.8131,
+     "approved_cr": 110.0,
+     "closing_cr": 45.5931,
+     "counterparty": "Insolation Green Energy Pvt Ltd",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": 43.1004,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 24.5766,
+     "closing_cr": 59.0161,
+     "counterparty": "INSOLATION GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 31.5778,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 17.7401,
+     "approved_cr": 50.0,
+     "closing_cr": 18.5982,
+     "counterparty": "Insolation Green Infra Private Limited",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 6.1754,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 11.6233,
+     "closing_cr": 11.7199,
+     "counterparty": "GCPL Solar Two Pvt. Ltd",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0814,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 10.5601,
+     "approved_cr": 15.0,
+     "closing_cr": 2.2943,
+     "counterparty": "DRIPL SOLAR RAJ PROJECT TEN PVT LTD",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 9.6125,
+     "closing_cr": 9.8092,
+     "counterparty": "GDIPL SOLAR RAJ PROJECT ONE PVT LTD",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0026,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 8.8109,
+     "approved_cr": 20.0,
+     "closing_cr": 19.4971,
+     "counterparty": "Mgvi Green Infra One Private Limited",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 12.485,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 5.7105,
+     "closing_cr": 4.9142,
+     "counterparty": "DRIPL Solar Raj Project Ten Pvt. Ltd.",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0466,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 3.1797,
+     "approved_cr": 3.1797,
+     "closing_cr": 3.1797,
+     "counterparty": "INSOLATION GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 2.8383,
+     "closing_cr": 2.9068,
+     "counterparty": "GDIPL SOLAR RAJ PROJECT TWO PVT LTD",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0035,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 2.6607,
+     "approved_cr": 80.0,
+     "closing_cr": -28.5407,
+     "counterparty": "Insolation Green Energy Pvt Ltd",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": -30.342,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 2.3,
+     "approved_cr": 2.3,
+     "closing_cr": 0.0,
+     "counterparty": "VM PORTFOLIO PVT LTD",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Significant Influence/Control of KMP",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 2.1939,
+     "approved_cr": 5.0,
+     "closing_cr": 4.1428,
+     "counterparty": "Mgvi Green Infra Two Private Limited",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 1.7668,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Sale of goods or services"
+    },
+    {
+     "amount_cr": 1.9365,
+     "closing_cr": 1.9365,
+     "counterparty": "Insolation Green Energy Pvt Ltd",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 1.6,
+     "closing_cr": 1.6,
+     "counterparty": "INSOLATION GREEN INFRA PVT LTD",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Nil",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 8.0,
+     "closing_cr": 0.15,
+     "counterparty": "Manish Gupta",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.225,
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.5,
+     "approved_cr": 8.0,
+     "closing_cr": 0.15,
+     "counterparty": "Vikas Jain",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.225,
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 1.2599,
+     "approved_cr": 5.0,
+     "closing_cr": 0.0,
+     "counterparty": "Insolation Green Infra Private Limited",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Purchase of goods or services"
+    },
+    {
+     "amount_cr": 0.8226,
+     "closing_cr": 1.1953,
+     "counterparty": "MGVI GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.3359,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.72,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "Manish Gupta",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.72,
+     "approved_cr": 1.5,
+     "closing_cr": 0.0,
+     "counterparty": "Vikas Jain",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.5396,
+     "approved_cr": 2.0,
+     "closing_cr": 0.6367,
+     "counterparty": "Mgvi Green Infra Private Limited",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Purchase of fixed assets"
+    },
+    {
+     "amount_cr": 0.441,
+     "closing_cr": 0.4459,
+     "counterparty": "DRIPL Solar Raj Project Ten Pvt. Ltd.",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0049,
+     "relationship": "associate",
+     "remarks": "approved",
+     "type": "Investment"
+    },
+    {
+     "amount_cr": 0.3111,
+     "approved_cr": 0.3111,
+     "closing_cr": 0.3111,
+     "counterparty": "GDIPL SOLAR RAJ PROJECT TWO PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.3,
+     "approved_cr": 0.6,
+     "closing_cr": 0.037,
+     "counterparty": "PAYAL GUPTA",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.037,
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.3,
+     "approved_cr": 0.6,
+     "closing_cr": 0.037,
+     "counterparty": "EKTA JAIN",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.037,
+     "relationship": "Director",
+     "remarks": "Approved",
+     "type": "Remuneration"
+    },
+    {
+     "amount_cr": 0.2657,
+     "approved_cr": 0.2657,
+     "closing_cr": 0.2657,
+     "counterparty": "GDIPL SOLAR RAJ PROJECT ONE PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.2571,
+     "closing_cr": 0.2595,
+     "counterparty": "HGJP GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.246,
+     "closing_cr": 0.2482,
+     "counterparty": "MGJN GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.2246,
+     "approved_cr": 0.2246,
+     "closing_cr": 0.2246,
+     "counterparty": "MGVI GREEN INFRA ONE PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.2229,
+     "closing_cr": 0.2254,
+     "counterparty": "JRGM GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.2156,
+     "approved_cr": 0.2156,
+     "closing_cr": 0.2156,
+     "counterparty": "GDIPL SOLAR RAJ PROJECT ONE PVT LTD",
+     "entity": "INSOLATION GREEN INFRA PVT LTD",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.2056,
+     "closing_cr": 2.4116,
+     "counterparty": "MGVI GREEN INFRA TWO PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 2.0502,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.2,
+     "approved_cr": 0.0,
+     "closing_cr": 0.0333,
+     "counterparty": "Ravi Dusad",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": 0.0333,
+     "other_details": "Remuneration",
+     "relationship": "Key Managerial Personnel",
+     "remarks": "Nil",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1909,
+     "closing_cr": 0.389,
+     "counterparty": "DRIPL Solar Raj Project Ten PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.1849,
+     "relationship": "associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1843,
+     "closing_cr": 0.1882,
+     "counterparty": "GNPR GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.179,
+     "closing_cr": 0.1805,
+     "counterparty": "PGNJ GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.173,
+     "approved_cr": 0.173,
+     "closing_cr": 0.173,
+     "counterparty": "MGVI GREEN INFRA TWO PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Fellow subsidiary",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.1654,
+     "closing_cr": 0.1672,
+     "counterparty": "GVHJ GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1631,
+     "closing_cr": 0.164,
+     "counterparty": "DJRG GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1625,
+     "closing_cr": 0.1659,
+     "counterparty": "NEPG GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.152,
+     "closing_cr": 0.1527,
+     "counterparty": "GJPN GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1441,
+     "closing_cr": 0.1457,
+     "counterparty": "PED GREEN INFRA ONE PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1298,
+     "closing_cr": 0.1311,
+     "counterparty": "PDGN GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1276,
+     "closing_cr": 5.062,
+     "counterparty": "GDIPL SOLAR RAJ PROJECT TWO PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 4.6544,
+     "relationship": "associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1251,
+     "closing_cr": 4.964,
+     "counterparty": "GDIPL SOLAR RAJ PROJECT ONE PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 4.5998,
+     "relationship": "associate",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1155,
+     "closing_cr": 0.1106,
+     "counterparty": "VNPG GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1051,
+     "approved_cr": 0.1051,
+     "closing_cr": 0.1051,
+     "counterparty": "GCPL SOLAR TWO PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Associate",
+     "remarks": "Approved",
+     "type": "Interest received"
+    },
+    {
+     "amount_cr": 0.1045,
+     "closing_cr": 0.1056,
+     "counterparty": "RJGM GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1035,
+     "closing_cr": 0.1056,
+     "counterparty": "NRJG GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.1,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Manish Gupta",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": 0.0108,
+     "other_details": "Rent",
+     "relationship": "Whole Time Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.1,
+     "approved_cr": 0.5,
+     "closing_cr": 0.0,
+     "counterparty": "Vikas Jain",
+     "entity": "Insolation Energy Ltd",
+     "opening_cr": 0.0,
+     "other_details": "Rent",
+     "relationship": "Managing Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.096,
+     "closing_cr": 0.0974,
+     "counterparty": "PRJG GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0938,
+     "closing_cr": 0.0957,
+     "counterparty": "ENS GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0919,
+     "closing_cr": 0.0937,
+     "counterparty": "NGRJ GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.0906,
+     "closing_cr": 0.0915,
+     "counterparty": "GNVP GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Wholly Owned Subsidiary",
+     "remarks": "Nil",
+     "type": "Loan"
+    },
+    {
+     "amount_cr": 0.09,
+     "approved_cr": 0.18,
+     "closing_cr": 0.0147,
+     "counterparty": "Daksh Jain",
+     "entity": "Insolation Green Energy Pvt Ltd",
+     "opening_cr": 0.0147,
+     "other_details": "Technical Consultancy",
+     "relationship": "Relative of Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.09,
+     "approved_cr": 0.18,
+     "closing_cr": 0.0147,
+     "counterparty": "Navya Gupta",
+     "entity": "Insolation Green Energy Pvt Ltd",
+     "opening_cr": 0.0147,
+     "other_details": "Technical Consultancy",
+     "relationship": "Relative of Director",
+     "remarks": "Approved",
+     "type": "Any other transaction"
+    },
+    {
+     "amount_cr": 0.087,
+     "closing_cr": 0.0873,
+     "counterparty": "MVS GREEN INFRA PRIVATE LIMITED",
+     "entity": "Insolation Green Energy Private Limited",
+     "opening_cr": 0.0,
+     "relationship": "Subsidiary",
+     "remarks": "Approved",
+     "type": "Loan"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "n_items": 268,
+   "period": "Q4FY26",
+   "source_news_id": "xbrl-facts:Q4FY26:standalone"
+  }
+ ],
  "schema_version": 3,
  "scrip_code": "543620",
  "section_lab": {
   "governance_quarters": {
-   "at": "2026-07-28T20:08:36+05:30",
+   "at": "2026-10-29T15:34:43+05:30",
    "by": "file",
    "doc": "other"
   },
@@ -3254,7 +4712,56 @@
   }
  },
  "sector": "power",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2025-12-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q3FY26",
+   "segment": "Solar PV Module",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated"
+  },
+  {
+   "as_of": "2026-03-31",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q4FY26",
+   "segment": "Solar PV Module",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:46:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Solar PV Module",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [
    {
@@ -4766,6 +6273,384 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 11.7971,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 500.56759999999997,
+    "Interest": 7.969,
+    "Minority share": 0.0,
+    "Net Profit": 50.716,
+    "Net Profit (owners)": 50.716,
+    "OPM %": 12.996286546836185,
+    "Operating Profit": 74.77290000000005,
+    "Other Income": 6.947399999999945,
+    "Profit before tax": 61.9542,
+    "Profit for PE": 50.716,
+    "Sales": 575.3405,
+    "Tax": 11.2382,
+    "Tax %": 18.139528877783913
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q3FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.9582,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 8.5861,
+    "Interest": 0.7081,
+    "Net Profit": 3.304,
+    "Net Profit (owners)": 3.304,
+    "OPM %": 34.4227111990285,
+    "Operating Profit": 4.507,
+    "Other Income": 1.5610999999999997,
+    "Profit before tax": 4.4018,
+    "Profit for PE": 3.304,
+    "Sales": 13.0931,
+    "Tax": 1.0978,
+    "Tax %": 24.93979735562725
+   },
+   "source_news_id": "xbrl-facts:Q3FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 14.9578,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 683.2792,
+    "Interest": 7.854,
+    "Minority share": -0.2291,
+    "Net Profit": 69.8447,
+    "Net Profit (owners)": 70.0739,
+    "OPM %": 13.937271170463557,
+    "Operating Profit": 110.65240000000006,
+    "Other Income": -1.5484000000000577,
+    "Profit before tax": 86.2922,
+    "Profit for PE": 70.0739,
+    "Sales": 793.9316,
+    "Tax": 16.4475,
+    "Tax %": 19.06023951179829
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 887.9168000000001,
+    "CWIP": 72.934,
+    "Equity Capital": 22.0395,
+    "Fixed Assets": 524.8848,
+    "Investments": 35.5331,
+    "Other Assets": 1521.7752,
+    "Other Liabilities": 460.0684000000002,
+    "Reserves": 785.1024,
+    "Total Assets": 2155.1271,
+    "Total Liabilities": 2155.1271
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:consolidated",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 35.7979,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 1858.8997,
+    "Interest": 23.5409,
+    "Minority share": 0.4149,
+    "Net Profit": 200.6315,
+    "Net Profit (owners)": 200.2166,
+    "OPM %": 13.379252107143577,
+    "Operating Profit": 287.12159999999994,
+    "Other Income": 17.50250000000011,
+    "Profit before tax": 245.2853,
+    "Profit for PE": 200.2166,
+    "Sales": 2146.0213,
+    "Tax": 44.6538,
+    "Tax %": 18.204841464205153
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 697.7958,
+    "Cash from Investing Activity": -185.5675,
+    "Cash from Operating Activity": -73.1282,
+    "Net Cash Flow": 439.1001
+   },
+   "source_news_id": "xbrl-facts:FY26:consolidated",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 0.9344,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 22.828899999999997,
+    "Interest": 0.6946,
+    "Net Profit": -1.806,
+    "Net Profit (owners)": -1.806,
+    "OPM %": -15.34874085452119,
+    "Operating Profit": -3.0376999999999974,
+    "Other Income": 2.0063999999999975,
+    "Profit before tax": -2.6603,
+    "Profit for PE": -1.806,
+    "Sales": 19.7912,
+    "Tax": -0.8543,
+    "Tax %": -32.112919595534336
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q4FY26",
+   "rows": {
+    "Borrowings": 57.802499999999995,
+    "CWIP": 0.7514,
+    "Equity Capital": 22.0395,
+    "Fixed Assets": 39.3036,
+    "Investments": 387.3702,
+    "Other Assets": 116.61969999999997,
+    "Other Liabilities": 44.38260000000004,
+    "Reserves": 419.8203,
+    "Total Assets": 544.0449,
+    "Total Liabilities": 544.0449
+   },
+   "source_news_id": "xbrl-facts:Q4FY26:standalone",
+   "table": "balance"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 3.1939,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 90.4743,
+    "Interest": 2.5819,
+    "Net Profit": 7.1833,
+    "Net Profit (owners)": 7.1833,
+    "OPM %": 7.70301922362821,
+    "Operating Profit": 7.550899999999999,
+    "Other Income": 7.577200000000001,
+    "Profit before tax": 9.3523,
+    "Profit for PE": 7.1833,
+    "Sales": 98.0252,
+    "Tax": 2.169,
+    "Tax %": 23.192155940249993
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "annual"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "FY26",
+   "rows": {
+    "Cash from Financing Activity": 23.406,
+    "Cash from Investing Activity": -21.7244,
+    "Cash from Operating Activity": -0.4069,
+    "Net Cash Flow": 1.2747
+   },
+   "source_news_id": "xbrl-facts:FY26:standalone",
+   "table": "cash_flow"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 16.9235,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 668.5364000000001,
+    "Interest": 12.4445,
+    "Minority share": 0.9882,
+    "Net Profit": 38.0246,
+    "Net Profit (owners)": 37.0364,
+    "OPM %": 9.742414691649751,
+    "Operating Profit": 72.16189999999995,
+    "Other Income": 4.705800000000053,
+    "Profit before tax": 47.4997,
+    "Profit for PE": 37.0364,
+    "Sales": 740.6983,
+    "Tax": 9.4751,
+    "Tax %": 19.94770493287326
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:17:41+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:17:41+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 1.1009,
+    "Exceptional items": 0.0,
+    "Exceptional items AT": 0.0,
+    "Expenses": 13.7399,
+    "Interest": 0.6462,
+    "Net Profit": -2.9105,
+    "Net Profit (owners)": -2.9105,
+    "OPM %": -12.711746224457148,
+    "Operating Profit": -1.5495999999999999,
+    "Other Income": 0.7518999999999999,
+    "Profit before tax": -2.5448,
+    "Profit for PE": -2.9105,
+    "Sales": 12.1903,
+    "Tax": 0.3657,
+    "Tax %": 14.370480980823642
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "INA",
  "timeline": [
   {

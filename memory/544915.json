@@ -1,4 +1,56 @@
 {
+ "audit": [
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  },
+  {
+   "as_of": "2026-06-30",
+   "audited": "Unaudited",
+   "auditors": [
+    {
+     "certificate_valid_until": "2027-07-31",
+     "name": "Deloitte Haskins & Sells LLP",
+     "peer_review_valid": true
+    }
+   ],
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "opinion": "Declaration of unmodified opinion",
+   "period": "Q1FY27",
+   "qualification_status": "Unaudited",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone"
+  }
+ ],
  "balance_sheet": [
   {
    "as_of": "2026-10-16T14:03:20+05:30",
@@ -59,6 +111,44 @@
  ],
  "company_name": "Rentomojo Limited",
  "deals": [],
+ "dividends": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "face_value": 1
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "face_value": 1
+   }
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-08T18:00:00+05:30",
@@ -953,6 +1043,656 @@
  },
  "industry": "Services > Commercial Services & Supplies > Diversified Commercial Services",
  "last_filed_at": "2026-10-16T14:03:20+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "ABS DIRECT EQUITY FUND LLC - INDIA SERIES 3",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 504.55,
+    "qty": 522473.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 26.36
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "CAPITAL ONE PARTNERS",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 513.24,
+    "qty": 546561.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 28.05
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "CAPITAL ONE PARTNERS",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 509.96,
+    "qty": 546561.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 27.87
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "CHIRATAE GROWTH FUND I",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 520.61,
+    "qty": 1305000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 67.94
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 518.75,
+    "qty": 550080.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 28.54
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 517.31,
+    "qty": 557080.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 28.82
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 513.62,
+    "qty": 650788.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 33.43
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 513.86,
+    "qty": 650788.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 33.44
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "HELIOS MUTUAL FUND",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 510.42,
+    "qty": 870770.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 44.45
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 517.14,
+    "qty": 907693.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 46.94
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 514.45,
+    "qty": 1318102.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 67.81
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 513.37,
+    "qty": 1475491.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 75.75
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 513.5,
+    "qty": 1537142.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 78.93
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 522.03,
+    "qty": 1034098.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 53.98
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 521.33,
+    "qty": 1037098.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 54.07
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 521.19,
+    "qty": 1016645.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 52.99
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 521.67,
+    "qty": 1016645.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 53.04
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 510.75,
+    "qty": 1202669.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 61.43
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 510.96,
+    "qty": 1202669.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 61.45
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "OM TRADING",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 516.41,
+    "qty": 513725.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 26.53
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "OM TRADING",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 516.59,
+    "qty": 538725.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 27.83
+   },
+   {
+    "as_of": "2026-09-17T15:30:00+05:30",
+    "client": "S I INVESTMENTS ## BROKING PVT.LTD",
+    "date": "2026-09-17",
+    "kind": "BULK",
+    "price": 491.61,
+    "qty": 600000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 29.5
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 532.38,
+    "qty": 1282988.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 68.3
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 532.26,
+    "qty": 1282988.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 68.29
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 531.73,
+    "qty": 634029.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 33.71
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 533.27,
+    "qty": 638029.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 34.02
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 532.25,
+    "qty": 668093.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 35.56
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 536.37,
+    "qty": 958675.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 51.42
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 531.22,
+    "qty": 702282.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 37.31
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 531.13,
+    "qty": 724830.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 38.5
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 539.53,
+    "qty": 590907.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 31.88
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 538.81,
+    "qty": 590907.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 31.84
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 535.38,
+    "qty": 661578.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 35.42
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 535.37,
+    "qty": 661578.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 35.42
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 534.09,
+    "qty": 666718.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 35.61
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 534.3,
+    "qty": 666718.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 35.62
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 527.36,
+    "qty": 660302.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 34.82
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 527.29,
+    "qty": 670010.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 35.33
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 522.57,
+    "qty": 744254.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 38.89
+   },
+   {
+    "as_of": "2026-09-18T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-09-18",
+    "kind": "BULK",
+    "price": 523.62,
+    "qty": 753415.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 39.45
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 531.63,
+    "qty": 599882.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 31.89
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 525.54,
+    "qty": 599882.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 31.53
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 527.99,
+    "qty": 625951.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 33.05
+   },
+   {
+    "as_of": "2026-09-21T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-09-21",
+    "kind": "BULK",
+    "price": 527.87,
+    "qty": 625951.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 33.04
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 609.09,
+    "qty": 745310.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 45.4
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 610.08,
+    "qty": 745310.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 45.47
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 606.24,
+    "qty": 863126.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "RENTOMOJO",
+    "value_cr": 52.33
+   },
+   {
+    "as_of": "2026-10-07T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-10-07",
+    "kind": "BULK",
+    "price": 610.39,
+    "qty": 938531.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "RENTOMOJO",
+    "value_cr": 57.29
+   }
+  ]
+ },
+ "oci": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "items": [
+    {
+     "amount_cr": -0.138,
+     "description": "Re-measurement gains/(losses) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.035,
+     "description": "Income tax relating to items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "values": {
+    "not_reclassified_cr": -0.103,
+    "oci_net_cr": -0.103,
+    "profit_cr": 7.835,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.732
+   }
+  },
+  {
+   "as_of": "2026-06-30",
+   "basis": "STANDALONE",
+   "items": [
+    {
+     "amount_cr": -0.138,
+     "description": "Re-measurement gains/(losses) on defined benefit plans",
+     "group": "not_reclassified"
+    },
+    {
+     "amount_cr": 0.035,
+     "description": "Income tax relating to items that will not be reclassified to profit or loss",
+     "group": "not_reclassified"
+    }
+   ],
+   "kind": "results",
+   "lab": {
+    "at": "2026-10-31T14:59:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "xbrl_extras"
+   },
+   "period": "Q1FY27",
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "values": {
+    "not_reclassified_cr": -0.103,
+    "oci_net_cr": -0.103,
+    "profit_cr": 7.836,
+    "tax_not_reclassified_cr": 0.0,
+    "total_comprehensive_cr": 7.733
+   }
+  }
+ ],
  "operating_notes": [
   {
    "as_of": "2026-10-16T14:03:20+05:30",
@@ -1056,10 +1796,32 @@
    "at": "2026-10-12T22:56:09+05:30",
    "by": "file",
    "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-11-01T14:40:23+05:30",
+   "by": "file",
+   "doc": "other"
   }
  },
  "sector": "default",
- "segment_mix": [],
+ "segment_mix": [
+  {
+   "as_of": "2026-06-30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-30T12:59:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "segment_note"
+   },
+   "period": "Q1FY27",
+   "segment": "Renting & leasing activities",
+   "single": true,
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated"
+  }
+ ],
  "standalone": {
   "balance_sheet": [],
   "metrics": [
@@ -1517,6 +2279,79 @@
    }
   ]
  },
+ "statements": [
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "CONSOLIDATED",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 22.997,
+    "Exceptional items": -11.366,
+    "Exceptional items AT": -11.366,
+    "Expenses": 77.557,
+    "Interest": 7.344,
+    "Minority share": 0.0,
+    "Net Profit": 7.835,
+    "Net Profit (owners)": 7.835,
+    "OPM %": 38.606157036896306,
+    "Operating Profit": 48.769999999999996,
+    "Other Income": -10.593999999999994,
+    "PBT as filed": 10.564,
+    "Profit before tax": 7.835,
+    "Profit for PE": 19.201,
+    "Sales": 126.327,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:consolidated",
+   "table": "quarters"
+  },
+  {
+   "as_of": "2026-10-30T07:30:05+05:30",
+   "basis": "STANDALONE",
+   "family": "corporate",
+   "lab": {
+    "at": "2026-10-30T07:30:05+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "from": "stored facts",
+    "rules": "screener_view"
+   },
+   "period": "Q1FY27",
+   "rows": {
+    "Associates' share": 0.0,
+    "Depreciation": 22.997,
+    "Exceptional items": -11.366,
+    "Exceptional items AT": -11.366,
+    "Expenses": 77.55600000000001,
+    "Interest": 7.344,
+    "Net Profit": 7.836,
+    "Net Profit (owners)": 7.836,
+    "OPM %": 38.60694863330878,
+    "Operating Profit": 48.77099999999999,
+    "Other Income": -10.593999999999987,
+    "PBT as filed": 10.565,
+    "Profit before tax": 7.835999999999999,
+    "Profit for PE": 19.201999999999998,
+    "Sales": 126.327,
+    "Tax": 0.0,
+    "Tax %": 0.0
+   },
+   "source_news_id": "xbrl-facts:Q1FY27:standalone",
+   "table": "quarters"
+  }
+ ],
  "symbol": "RENTOMOJO",
  "timeline": [
   {

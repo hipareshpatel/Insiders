@@ -107,9 +107,11 @@ test("groups in words", () => {
   assert.match(text(groupsLead(idx, "index", "financials")), /^Among banks, NBFCs and insurers, /);
   assert.match(text(groupsLead(idx, "index", "ex_financials")), /^Leaving out banks, NBFCs and insurers, /);
   const finBullets = groupsBullets(idx, "index", "financials").join("|");
-  assert.match(finBullets, /Total profit of banks, NBFCs and insurers grew most in the /);
+  assert.match(finBullets, /Total profit of banks, NBFCs and insurers rose fastest in the /);
   assert.doesNotMatch(finBullets, /companies other than financials|hold the .* back/);
   assert.doesNotMatch(groupsBullets(idx, "index", "ex_financials").join("|"), /hold the .* back|Financials make/);
+  // an index with 80 members but two banks is not ranked on Financials
+  assert.equal(text(groupsLead([{ ...mid, in_cut: 2, pat_median: 99 }, ...idx.filter((r) => r.id !== "MIDCAP150")], "index", "financials")).includes("Midcap 150"), false);
 });
 
 test("the spread chart: bar heights, the middle company's place, band widths", () => {

@@ -381,12 +381,13 @@ export const groupNoun = (by: GroupBy, plural = false) => GROUP_NOUN[by][plural 
 /** A group is ranked, or named as leading, only with this many companies reported (owner, 1 Nov 2026: on 31 Oct Diversified
  * +480% and Telecom Equipment +1,746% led their tabs on one or two companies). */
 export const MIN_GROUP_SIZE = GROUP_RANK_MIN;
-const rankable = (r: GroupRow) => r.pat_median != null && r.reported >= MIN_GROUP_SIZE;
+// counted in the chosen cut: on Financials an index with one or two banks is not ranked (review of #318)
+const rankable = (r: GroupRow) => r.pat_median != null && (r.in_cut ?? r.reported) >= MIN_GROUP_SIZE;
 
-/** "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%." */
 /** The companies a By group view covers, as the lead names them (owner, 1 Nov 2026: on Financials the box read as if the tab did nothing). */
 const CUT_WORDS: Record<Cut, string> = { all: "", ex_financials: "Leaving out banks, NBFCs and insurers, ", financials: "Among banks, NBFCs and insurers, " };
 
+/** "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%." */
 export function groupsLead(rows: GroupRow[], by: GroupBy, cut: Cut = "all"): Seg[] {
   const ranked = rows.filter(rankable).sort((a, b) => b.pat_median! - a.pat_median!);
   if (!ranked.length) {
@@ -408,8 +409,8 @@ export function groupsBullets(rows: GroupRow[], by: GroupBy, cut: Cut = "all"): 
   const out: string[] = [];
   if (cut === "financials") {
     // the financials' own totals, by group: the share and revenue lines below are about the other companies (owner, 1 Nov 2026)
-    const fin = rows.filter((r) => r.pat_total_financials != null && r.reported >= MIN_GROUP_SIZE).sort((a, b) => b.pat_total_financials! - a.pat_total_financials!);
-    if (fin.length) out.push(`Total profit of banks, NBFCs and insurers grew most in the ${fin[0].label}: ${fmtPct(fin[0].pat_total_financials)}${fin.length > 1 ? `; least in the ${fin[fin.length - 1].label}: ${fmtPct(fin[fin.length - 1].pat_total_financials)}` : ""}.`);
+    const fin = rows.filter((r) => r.pat_total_financials != null && (r.in_cut ?? r.reported) >= MIN_GROUP_SIZE).sort((a, b) => b.pat_total_financials! - a.pat_total_financials!);
+    if (fin.length) out.push(`Total profit of banks, NBFCs and insurers rose fastest in the ${fin[0].label}: ${fmtPct(fin[0].pat_total_financials)}${fin.length > 1 ? `; slowest in the ${fin[fin.length - 1].label}: ${fmtPct(fin[fin.length - 1].pat_total_financials)}` : ""}.`);
     const trendedFin = wellCovered(rows.filter((r) => r.trend_pat_median.some((v) => v != null)));
     if (trendedFin.length) out.push(`${bestInEight(trendedFin)} of ${trendedFin.length} ${groupNoun(by, trendedFin.length !== 1)} show their best median in 8 quarters for these companies.`);
     return out;

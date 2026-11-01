@@ -41,6 +41,7 @@ def _kinds(found: list) -> list[tuple[str, str]]:
 @pytest.fixture(autouse=True)
 def _off(monkeypatch):
     monkeypatch.delenv("CARD_GUIDANCE_DATED", raising=False)
+    monkeypatch.delenv("DECK_DISCUSSED_PERIOD", raising=False)
 
 
 def _castrol():
@@ -183,6 +184,9 @@ def _krn_deck(monkeypatch):
 def test_a_target_due_this_quarters_results_is_judged_by_the_deck_that_discusses_it(monkeypatch):
     before, after, out, deck = _krn_deck(monkeypatch)
     deck = deck.model_copy(update={"event_type": "CONCALL_PRESENTATION"})
+    found = signals._promises(before, after, out, deck)   # DECK_DISCUSSED_PERIOD off: as on main
+    assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] and "not due for the period" in found[0].text
+    monkeypatch.setenv("DECK_DISCUSSED_PERIOD", "1")
     found = signals._promises(before, after, out, deck)
     assert _kinds(found) == [("WATCH_RESOLVED", "WARNING")] and found[0].text.startswith("KPI check missed")
 

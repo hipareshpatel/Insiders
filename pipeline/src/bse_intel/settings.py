@@ -345,6 +345,15 @@ def discontinued_needs_figure() -> bool:
     return _switch("DISCONTINUED_NEEDS_FIGURE")
 
 
+def deck_discussed_period() -> bool:
+    """DECK_DISCUSSED_PERIOD (default off; 1 Nov 2026 blind audit, KRN Heat Exchanger nse-106836198): a call or investor deck prints
+    no results table, so the F172 gate (guidance_dated) found no period it reports and hid a missed "EBITDA margin above 19% due
+    Q2FY27 results" target as "not due for the period this filing reports". On, a CONCALL_PRESENTATION counts the quarter it
+    discusses (dossier._discussed) as its period, with memory's figures for it. It makes the gate accept more, so a check accepts
+    more: on only after the on/off check over stored cards (release_check.py deck_period) and a blind sample. Read at the call."""
+    return _switch("DECK_DISCUSSED_PERIOD")
+
+
 def annual_scale_fix() -> bool:
     """ANNUAL_SCALE_FIX (default off; 1 Nov 2026: TD Power and MSP Steel's annual reports state lakh with no scale, every money fact
     1e5 small, so the statements rebuild left their annual years out): an annual report whose year's Sales AND Net Profit are both

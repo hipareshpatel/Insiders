@@ -67,6 +67,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      (3) the scale block (market cap, revenue, net worth, debt) is empty. Each can only make a drop that live
                      would not make, so the drop list is an upper bound. The blind sample (up to 60 dropped items, seeded, no
                      verdict hints) is for a reviewer to judge TRUE (supported, the drop loses true content) or FALSE.
+  deck_period        DECK_DISCUSSED_PERIOD (1 Nov 2026, KRN nse-106836198): CONCALL_PRESENTATION cards only; `signals._promises`
+                     replayed as in guidance_dated with CARD_GUIDANCE_DATED on in both and the switch off and on.
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
                      correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
                      bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
@@ -121,14 +123,15 @@ from onoff_facts import tagged_from_memory  # noqa: E402
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
                 "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK",
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
-                "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD")
+                "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
           ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
           ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"),
           ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"),
-          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"), ("discontinued_figure", "DISCONTINUED_NEEDS_FIGURE"))
+          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"), ("discontinued_figure", "DISCONTINUED_NEEDS_FIGURE"),
+          ("deck_period", "DECK_DISCUSSED_PERIOD"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -462,9 +465,11 @@ def _stored_signal_line(s: dict) -> str:
     return f"SIGNAL {s.get('ref')}: {s.get('type')} {s.get('severity')} | {s.get('text')}"
 
 
-def check_guidance(card: dict, dossier: dict | None, row: dict) -> dict:
+def check_guidance(card: dict, dossier: dict | None, row: dict, deck: bool = False) -> dict:
     """guidance_dated: `signals._promises` (the real code) over memory before and after the filing, off and on; the
-    refusal in `dossier.merge` counted from the same recorded updates."""
+    refusal in `dossier.merge` counted from the same recorded updates. With `deck` (deck_period, DECK_DISCUSSED_PERIOD) the
+    comparison is CARD_GUIDANCE_DATED on in both, DECK_DISCUSSED_PERIOD off and on."""
+    base = ("CARD_GUIDANCE_DATED",) if deck else ()
     stored = [s for s in card.get("signals") or [] if isinstance(s, dict) and s.get("type") in GUIDANCE_SIGNALS]
     if not dossier:
         rec = _record(row, card, [], [])
@@ -481,14 +486,14 @@ def check_guidance(card: dict, dossier: dict | None, row: dict) -> dict:
     filing = Filing(news_id=news_id, scrip_code=str(row.get("scrip_code")), company_name=row.get("company_name") or row.get("symbol") or "x",
                     headline=row.get("headline") or "", subject="", filed_at=filed_at, filing_date=filed_at[:10],
                     event_type=card.get("event_type"))
-    with switches_on():
+    with switches_on(*base):
         off_sig = signals._promises(before, after, out, filing)
-    with switches_on("CARD_GUIDANCE_DATED"):
+    with switches_on(*(base + ("DECK_DISCUSSED_PERIOD",) if deck else ("CARD_GUIDANCE_DATED",))):
         on_sig = signals._promises(before, after, out, filing)
     off, on = [_signal_line(s) for s in off_sig], [_signal_line(s) for s in on_sig]
     # dossier.merge: an update that memory recorded and the switch would have refused (the target stays as said)
     from bse_intel.guidance_dated import why_no_verdict
-    for g in dossier.get("guidance") or []:
+    for g in [] if deck else dossier.get("guidance") or []:   # deck_period: dossier.merge is unchanged by the switch
         for h in g.get("status_history") or []:
             if h.get("source_news_id") == news_id and h.get("status") in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED") \
                     and (g.get("given_on") or "") < h.get("as_of", ""):
@@ -962,6 +967,14 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_guidance(card, memory() or None, row))
+                elif name == "deck_period":
+                    if card.get("event_type") != "CONCALL_PRESENTATION":
+                        skipped[name]["not a CONCALL_PRESENTATION card"] += 1
+                    elif not memory():
+                        skipped[name]["no memory"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_guidance(card, memory(), row, deck=True))
                 elif name == "year_check":
                     if not results or not period:
                         skipped[name]["not a results card with a period"] += 1
@@ -1068,6 +1081,10 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
         notes.append("`signals._promises` is run as it is, over memory before and after the filing; the model's updates are the "
                      "ones memory recorded for the filing (status histories). The MEMORY lines are updates `dossier.merge` would "
                      "not have recorded. Memory is as it stands now (restated figures, later screener fills).")
+    if name == "deck_period":
+        notes.append("CONCALL_PRESENTATION cards only. `signals._promises` run as it is over memory before and after the filing, "
+                     "CARD_GUIDANCE_DATED on in both, DECK_DISCUSSED_PERIOD off and on: a line that changes is a target the deck "
+                     "now settles (or an INFO 'Not judged' line that becomes a verdict). Every changed card goes to the blind sample.")
     if name == "year_check":
         notes.append("`results_snapshot` and `results_card.build` (over memory's file figures) rendered with the switch off and on; "
                      "a MEMORY line names each held figure the table reads, with its reason. Replayed: the results table and "

@@ -288,7 +288,9 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
     dated = card_guidance_dated()   # F172: a verdict only from a dated target for this filing's period and metric
     if dated:
         from .guidance_dated import discussed_period, said_on, why_no_verdict, why_no_watch_verdict
-        discussed = discussed_period(filing.event_type, after.get("financial_metrics", []), filing.filed_at)
+        from .settings import deck_discussed_period
+        discussed = (discussed_period(filing.event_type, after.get("financial_metrics", []), filing.filed_at)
+                     if deck_discussed_period() else None)   # DECK_DISCUSSED_PERIOD: KRN nse-106836198
     known = {g["id"]: g for g in (before or {}).get("guidance", []) if g.get("given_on", "") < filing.filed_at}
     for update in output.dossier_delta.promise_updates:
         g = known.get(update.guidance_id)

@@ -80,6 +80,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      softens and the list items it drops. Complete.
   event_repeat       CARD_EVENT_REPEAT (S2, 1 Nov 2026): each ORDER_WIN or M_AND_A card against its company's memory timeline
                      (`event_repeats.match`); the cards it would hold as a repeat of an earlier entry, that entry named.
+  unit_fix_scale     UNIT_FIX_SCALE_GUARD (1 Nov 2026, CDSL nse-106838164): each unit correction a stored card records that the
+                     guard would refuse (the figure as written at the company's own scale in memory, the correction not).
   press_release_fold RESULTS_PRESS_RELEASE (TODO 135): each stored results card a fold would take (its headline or file name names a
                      release, glued words too; no exchange file of its own; no results statement in its stored text), paired with
                      the earliest results card of its company and quarter filed before it. No AI: the first card's re-run with the
@@ -143,7 +145,8 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
                 "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS",
-                "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE")
+                "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE",
+                "UNIT_FIX_SCALE_GUARD")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -155,7 +158,7 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
           ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
           ("filer_checks", "XBRL_FILER_CHECKS"), ("event_repeat", "CARD_EVENT_REPEAT"),
-          ("press_release_fold", "RESULTS_PRESS_RELEASE"))
+          ("press_release_fold", "RESULTS_PRESS_RELEASE"), ("unit_fix_scale", "UNIT_FIX_SCALE_GUARD"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -381,6 +384,23 @@ def fold_pairs(results_cards: list[dict], candidates: list[dict]) -> list[dict]:
         if earlier:
             pairs.append({**c, "into": earlier[0]["news_id"], "into_headline": earlier[0]["headline"]})
     return pairs
+
+
+def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None) -> dict:
+    """unit_fix_scale: each unit correction the stored card records (`grounding.unit_fixes`, {as written: corrected}) that
+    UNIT_FIX_SCALE_GUARD would refuse: the figure as written is at the company's own scale (within 3x of one of its latest
+    quarters' figures in memory, either basis) and the correction is not (CDSL nse-106838164: 272 made 2.72)."""
+    scale = P.scale_crore(dossier)
+    off, on = [], []
+    for raw, right in ((card.get("grounding") or {}).get("unit_fixes") or {}).items():
+        try:
+            value, fixed = float(str(raw).replace(",", "")), float(str(right).replace(",", ""))
+        except ValueError:
+            continue
+        off.append(f"UNIT FIX {raw} Cr -> {right} Cr")
+        refused = bool(scale) and P._at_scale(value, scale) and not P._at_scale(fixed, scale)
+        on.append(f"UNIT FIX {raw} Cr kept (the company's scale)" if refused else f"UNIT FIX {raw} Cr -> {right} Cr")
+    return _record(row, card, off, on)
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
@@ -1192,11 +1212,20 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         seen[name] += 1
                         keep(name, check_event_repeat(card, row, memory() or None))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "unit_fix_scale":
+                    if not (card.get("grounding") or {}).get("unit_fixes"):
+                        skipped[name]["no unit correction recorded"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_unit_fix_scale(card, row, memory() or None))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "press_release_fold":
                     if not results:
                         skipped[name]["not a results card"] += 1
                     elif not period:
                         skipped[name]["no results quarter on the card"] += 1
+                        if release_candidate(card, row, text):   # the floor gap (lead's review of #330): a release by name, no quarter
+                            skipped[name]["no results quarter on the card, but a release by name"] += 1
                     else:
                         seen[name] += 1
                         entry = {"scrip": scrip, "period": period, "news_id": row["news_id"], "headline": card.get("headline") or "",

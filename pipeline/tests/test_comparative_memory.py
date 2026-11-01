@@ -31,3 +31,20 @@ def test_off_by_default(monkeypatch):
     monkeypatch.delenv("REPO_VARS", raising=False)
     monkeypatch.setenv("BSE_INTEL_SWITCHES", "/no/such/file.toml")
     assert C.contradictions(TEXTS, MEMORY) == []
+
+
+def test_a_standalone_figure_is_never_set_against_consolidated_memory(monkeypatch):
+    """Blind review of release check 41318733817: 4 holds set a standalone card figure against consolidated memory
+    (1,274.46 vs 1,240.62; 881.52 vs 910.73)."""
+    monkeypatch.setenv("CARD_COMPARATIVE_MATCHES_MEMORY", "1")
+    m = lambda b, v: {"metric": "revenue", "period": "Q1FY27", "value": v, "basis": b}  # noqa: E731
+    memory = {"financial_metrics": [m("CONSOLIDATED", 1240.62), m("STANDALONE", 1274.46)]}
+    text = ["Revenue of ₹1,300 Cr against ₹1,274.46 Cr in Q1FY27."]
+    assert C.contradictions(text, memory, "STANDALONE") == []                       # main: held against 1,240.62
+    assert C.contradictions(["Standalone revenue ₹1,300 Cr against ₹1,274.46 Cr in Q1FY27."], memory, "CONSOLIDATED") == []
+    assert C.contradictions(text, memory, "CONSOLIDATED") == [
+        "revenue Q1FY27: the card says ₹1274.46 Cr, memory (the exchange's file) ₹1240.62 Cr"]
+    # the card's basis unknown and memory on two bases: not judged
+    assert C.contradictions(text, memory) == []
+    # memory on the other basis only: not judged
+    assert C.contradictions(text, {"financial_metrics": [m("CONSOLIDATED", 1240.62)]}, "STANDALONE") == []

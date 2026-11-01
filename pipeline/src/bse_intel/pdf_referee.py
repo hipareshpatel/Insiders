@@ -847,8 +847,24 @@ def _proven(rows: list[Row]) -> tuple[int, int]:
                         for r in rows)
 
 
-def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> tuple[list[Row] | None, str]:
-    """(rows, why none) of the metric rows in a results PDF, read with the pipeline's own ``Document``."""
+def _header_sample(text: str, label: str | None) -> str:
+    """Up to three non-empty lines above the first line naming ``label`` (or a results line), joined, at most 120 characters (the
+    end kept: the line next to the row is where the dates sit): where a results page's period header should be (read only, for
+    the restated-pdf reasons; #361's follow-up)."""
+    lines = [ln.strip() for ln in (text or "").splitlines()]
+    at = next((i for i, ln in enumerate(lines) if (label and label[:20] in ln) or (not label and _RESULTS_LINE.search(ln))), None)
+    if at is None:
+        return ""
+    above = [ln for ln in lines[:at] if ln][-3:]
+    joined = " / ".join(above)
+    return joined if len(joined) <= 120 else "…" + joined[-119:]   # the line next to the row, where the dates sit, kept whole
+
+
+def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6,
+                  sample: dict | None = None) -> tuple[list[Row] | None, str]:
+    """(rows, why none) of the metric rows in a results PDF, read with the pipeline's own ``Document``. ``sample``, when given, is
+    filled with what a reason needs to tell why a file gave no dated column or no results row (read only; the rows are unchanged):
+    the page count, the page read, whether it has a text layer, and the lines above its first results row."""
     ocr_fn = figure_fn = None
     if ocr:
         from .ocr import available, page_reader, recognise
@@ -860,6 +876,8 @@ def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> t
             return None, doc.error[:100]
         if not doc.page_count:
             return None, "no pages"
+        if sample is not None:
+            sample["pages"] = doc.page_count
         texts: dict[int, str] = {}
         rowish: set[int] = set()        # pages that name a results line (PDF_ROW_FIXES: these come first, below)
         for i in range(doc.page_count):
@@ -898,6 +916,12 @@ def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> t
                         r.unproven = r.unproven or "the page's figures sit off their labels' baselines (rows may be paired wrongly)"
             if candidates:       # the reading with fewer failed rows, then more proven rows; the page's own order wins a tie
                 rows += max(candidates, key=_proven)
+        if sample is not None and texts:
+            first = next((r for r in rows), None)
+            page = first.page - 1 if first is not None else next(iter(sorted(texts, key=lambda i: (i not in rowish, i))))
+            sample["page"] = page + 1
+            sample["text_layer"] = not doc.is_scanned(page)
+            sample["header"] = _header_sample(doc.page_text(page), first.label if first is not None else None)
         if doc.ocr_error is not None and not rows:
             return None, "OCR failed"
         return rows, "" if rows else "no results row (revenue, profit or EPS with its figures) found"
@@ -1082,10 +1106,12 @@ class Sources:
         if names != [pdf_readers.DEFAULT_READERS]:
             self.ensemble = pdf_readers.Ensemble(names, ocr)
         self._payload: tuple[str, bytes | None, str] | None = None
+        self.samples: dict[str, dict] = {}   # url -> read_document's sample (read only, for the restated-pdf reasons)
 
     def release(self) -> None:
         """Drop what only the company just read needed (its PDFs' rows, the PDF bytes kept for the readers ensemble)."""
         self.docs.clear()
+        self.samples.clear()
         self._payload = None
 
     def filings(self, symbol: str, period: str) -> list | str:
@@ -1151,7 +1177,13 @@ class Sources:
                     self.docs[url] = (None, "NSE serves no file (404)")
                 else:
                     try:
-                        self.docs[url] = read_document(data, ocr=self.ocr)
+                        import inspect
+
+                        if "sample" in inspect.signature(read_document).parameters:   # a stand-in reader (tests) takes none
+                            self.samples[url] = {}
+                            self.docs[url] = read_document(data, ocr=self.ocr, sample=self.samples[url])
+                        else:
+                            self.docs[url] = read_document(data, ocr=self.ocr)
                     except Exception as exc:   # noqa: BLE001
                         self.docs[url] = (None, f"unreadable ({type(exc).__name__})")
         return self.docs[url]

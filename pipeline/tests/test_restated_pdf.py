@@ -350,3 +350,35 @@ def test_a_quarter_not_read_names_the_file_tried_and_the_columns_it_proved():
             return [], "no results row (revenue, profit or EPS with its figures) found"
     _, _, reasons = rp.read_company(_Empty(rows()), "X", dossier(), quarters=1)
     assert reasons == ['Q4FY24: no results row (revenue, profit or EPS with its figures) found [2026-10-20 "Financial Results"]']
+
+
+def test_the_sample_is_read_only_and_names_the_header_above_the_first_row():
+    """Lead, 2 Nov 2026: a file with no dated column or no results row says what its page shows above the first row; the rows
+    read are the same with and without the sample."""
+    payload = make_pdf(CONSOLIDATED_Q4)
+    plain, why = pr.read_document(payload, ocr=False)
+    sample: dict = {}
+    sampled, why2 = pr.read_document(payload, ocr=False, sample=sample)
+    assert [(r.metric, r.figures, r.columns) for r in plain] == [(r.metric, r.figures, r.columns) for r in sampled] and why == why2
+    assert sample["pages"] == 1 and sample["page"] == 1 and sample["text_layer"] is True
+    assert sample["header"].endswith("Particulars 31.03.2024 31.12.2023 31.03.2023 31.03.2024 31.03.2023")
+    # a page whose header carries no dates: no results row, and the sample shows the header the reader could not date
+    undated = ["Statement of Consolidated Financial Results", "(Rs. in crore)", "Particulars Q4 Q3 Q4 FY FY",
+               "for the quarter ended", "1 Revenue from operations 791.74 629.79 479.91 2,507.03 1,974.66"]
+    sample = {}
+    rows, why = pr.read_document(make_pdf(undated), ocr=False, sample=sample)
+    assert not rows and "Particulars Q4 Q3 Q4 FY FY" in sample["header"] and sample["text_layer"] is True
+
+
+def test_a_reason_carries_the_files_sample():
+    class _Sampled(_Src):
+        samples = {"u": {"pages": 34, "page": 7, "text_layer": False, "header": "Quarter ended / 30.06.2026"}}
+
+        def rows(self, url):
+            return [], "no results row (revenue, profit or EPS with its figures) found"
+    _, _, reasons = rp.read_company(_Sampled(rows()), "X", dossier(), quarters=1)
+    assert reasons == ['Q4FY24: no results row (revenue, profit or EPS with its figures) found [2026-10-20 "Financial Results"; '
+                       '34 pages, p7 no text layer (image), above the first row: "Quarter ended / 30.06.2026"]']
+    # a source without samples (the tests' and older callers'): the reason as before
+    _, _, reasons = rp.read_company(_Src(rows()), "X", dossier(), quarters=1)
+    assert reasons == []

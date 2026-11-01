@@ -1,6 +1,8 @@
 """XBRL_FILER_CHECKS (F219, TODO 111): where the filer's own XBRL contradicts itself, two signals must agree."""
 from __future__ import annotations
 
+import pytest
+
 from bse_intel import xbrl
 from bse_intel.xbrl import eps_signs, filer_profit, owners_share
 
@@ -144,33 +146,52 @@ def test_a_right_whole_profit_is_never_replaced_by_a_wrong_sum():
         assert values.get(("pat", "Q")) not in (50.0, 120.0)
 
 
-def _ports(monkeypatch, tci=123_867_000_000 // 10):
-    # ADANIPORTS-like: whole profit 3,500 (the EPS does not fit it), minority 179.14, owners' tag 1,238.67 = the owners' share of comprehensive income;
-    # EPS on the other periods' share count makes `filer_profit` hold the whole profit, as it did on the 17 cards
-    body = HEAD + _ctx("OneD", "2026-01-01", "2026-03-31") + _ctx("TwoD", "2025-10-01", "2025-12-31") \
-        + _ctx("ThreeD", "2025-07-01", "2025-09-30")
-    for ctx, pat, owners, minority, eps in (("OneD", 3500.0, 1238.67, 179.14, "30.0"), ("TwoD", 3000.0, 3000.0, 0, "13.9"),
-                                            ("ThreeD", 2900.0, 2900.0, 0, "13.4")):
-        body += _fact("ProfitLossForPeriod", ctx, int(pat * 1e7)) + _fact("ProfitOrLossAttributableToOwnersOfParent", ctx, int(owners * 1e7))
-        body += _fact("ProfitOrLossAttributableToNonControllingInterests", ctx, int(minority * 1e7))
-        body += _fact("BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations", ctx, eps, "INRPerShare")
-    body += _fact("ComprehensiveIncomeForThePeriodAttributableToOwnersOfParent", "OneD", int(1238.67 * 1e7))
+def _file(rows, eps=True) -> bytes:
+    """A results file of Q4FY26 (OneD) and FY26 (FourD) with the figures of the stored facts (facts-dump run 41321814793), in Cr:
+    (ctx, profit, owners, minority, other comprehensive income, total comprehensive income, EPS)."""
+    body = HEAD + _ctx("OneD", "2026-01-01", "2026-03-31") + _ctx("FourD", "2025-04-01", "2026-03-31")
+    for ctx, pat, owners, minority, oci, tci, per_share in rows:
+        body += _fact("ProfitLossForPeriod", ctx, round(pat * 1e7)) + _fact("ProfitOrLossAttributableToOwnersOfParent", ctx, round(owners * 1e7))
+        body += _fact("ProfitOrLossAttributableToNonControllingInterests", ctx, round(minority * 1e7))
+        body += _fact("OtherComprehensiveIncomeNetOfTaxes", ctx, round(oci * 1e7)) + _fact("ComprehensiveIncomeForThePeriod", ctx, round(tci * 1e7))
+        if eps:
+            body += _fact("BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations", ctx, str(per_share), "INRPerShare")
     return (body + "</xbrli:xbrl>").encode()
 
 
-def test_an_owners_profit_that_is_the_comprehensive_income_share_is_not_swapped_in(monkeypatch):
-    raw = _ports(monkeypatch)
+# Adani Ports' stored figures; the EPS are not in the dump (its pattern missed the EPS tags): the statement's owners' profit
+# (3,328.96 and FY26's) over about 216 crore shares, an assumption that only sets the share count
+PORTS = [("OneD", 3308.30, 1238.67, 179.14, 1417.81, 4726.11, 15.41), ("FourD", 12782.03, 914.83, 322.51, 1237.34, 14019.37, 57.68)]
+COFORGE = [("OneD", 666.2, 572.2, 60.8, -33.2, 633.0, 18.1), ("FourD", 1744.7, 1565.9, 203.4, 24.6, 1769.3, 46.4)]
+
+
+def _figures(raw: bytes) -> dict:
+    return {(m.metric, m.period): m.value for m in xbrl.parse(raw).metrics}
+
+
+@pytest.mark.parametrize("rows,profit", [(PORTS, 3308.30), (COFORGE, 666.2)], ids=["ADANIPORTS", "COFORGE"])
+def test_owners_and_minority_that_are_comprehensive_income_shares_leave_the_profit_standing(monkeypatch, rows, profit):
+    raw = _file(rows)
     _on(monkeypatch)
-    on = xbrl.parse(raw)
-    got = {(m.metric, m.period): m.value for m in on.metrics}
-    assert got.get(("pat_owners", "Q4FY26")) != 1238.67
-    assert not any(m.metric.startswith("_") for m in on.metrics) and not any(m.metric.startswith("_") for m in on.memory_extra)
-    # the guard alone: an owners' figure that is the comprehensive income share and misfits the profit goes
-    values = {("pat", "Q"): 3500.0, ("pat_owners", "Q"): 1238.67, ("pat_minority", "Q"): 179.14}
-    assert xbrl.tci_owners(values, {"Q": 1238.67}) == 1 and ("pat_owners", "Q") not in values
-    # one that fits the profit stays, even when it equals the comprehensive income (no other comprehensive income)
-    fits = {("pat", "Q"): 100.0, ("pat_owners", "Q"): 100.0}
-    assert xbrl.tci_owners(fits, {"Q": 100.0}) == 0 and fits[("pat_owners", "Q")] == 100.0
+    on = _figures(raw)
+    assert on.get(("pat", "Q4FY26")) == profit                 # main held it and showed the share instead
+    assert ("pat_owners", "Q4FY26") not in on and ("pat_owners", "FY26") not in on
+    assert not any(k[0].startswith("_") for k in on)
+    monkeypatch.setenv("XBRL_FILER_CHECKS", "0")
+    assert _figures(raw).get(("pat", "Q4FY26")) == profit      # off: as before
+
+
+def test_comprehensive_shares_on_the_real_figures():
+    ci = lambda tci, oci: {(xbrl._CI_TOTAL, "Q"): tci, (xbrl._CI_OTHER, "Q"): oci}
+    # Wabag Q4FY26: 141.2 - 0.1 = 141.1, its total comprehensive income
+    wabag = {("pat", "Q"): 128.0, ("pat_owners", "Q"): 141.2, ("pat_minority", "Q"): -0.1}
+    assert xbrl.comprehensive_shares(wabag, ci(141.1, 13.1)) == 1 and wabag == {("pat", "Q"): 128.0}
+    # ABREL Q4FY26: 10.84 - 5.45 = 5.39, the PDF's profit, neither comprehensive figure: left for filer_profit
+    abrel = {("pat", "Q"): -110.31, ("pat_owners", "Q"): 10.84, ("pat_minority", "Q"): -5.45}
+    assert xbrl.comprehensive_shares(abrel, ci(-122.44, -12.13)) == 0 and len(abrel) == 3
+    # no other comprehensive income: owners + minority are the profit and the total alike, and stay
+    plain = {("pat", "Q"): 100.0, ("pat_owners", "Q"): 90.0, ("pat_minority", "Q"): 10.0}
+    assert xbrl.comprehensive_shares(plain, ci(100.0, 0.0)) == 0 and len(plain) == 3
 
 
 def test_a_lender_whose_revenue_is_its_income_with_no_other_income_keeps_it(monkeypatch):

@@ -1315,3 +1315,13 @@ def test_the_pending_command_queues_the_backlog_before_reading(monkeypatch, sett
     assert cli.cmd_call_memory(_pending_args(tmp_path, backlog=2), settings, sink) == 0
     assert call_queue.pending(sink) == []   # c and b were queued, read (given up by the stub) and settled
     assert call_queue.enqueue_backlog(sink, 2) == ["a"]   # the next run takes the next one
+
+
+def test_backlog_never_queues_a_document_twice_after_its_queue_key_ages_out():
+    sink = BacklogSink([_card("invite", 3), _card("older", 2)])
+    assert call_queue.enqueue_backlog(sink, 1) == ["invite"]
+    for item in call_queue.pending(sink):   # an invitation: given up, no memory entry
+        call_queue.settle(sink, item, "gave_up", "invitation")
+    for key in [k for k in sink.kv if k.startswith("callmem:q:") or k.startswith("callmem:s:")]:
+        del sink.kv[key]   # QUEUE_DAYS later the day's keys are no longer read
+    assert call_queue.enqueue_backlog(sink, 1) == ["older"]

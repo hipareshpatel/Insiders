@@ -28,6 +28,7 @@ from datetime import datetime, timedelta, timezone
 log = logging.getLogger(__name__)
 
 QUEUE_DAYS = 14      # how far back the job looks; an older entry is left unread
+BACKLOG_TRIED = "callmem:backlog"   # {news_id: day queued} of every document `enqueue_backlog` queued (~2,000 at most)
 MAX_ATTEMPTS = 3     # a transient failure leaves the filing queued; after this many it is given up with the reason
 _lock = threading.Lock()
 
@@ -132,7 +133,9 @@ def enqueue_backlog(sink, limit: int) -> list[str]:
     """Old transcripts and decks filed before the queue existed, a few at a time (`call-memory --pending --backlog N`): only when
     the queue is empty (so no entry ages past QUEUE_DAYS unread), newest filed first, at most `limit`. Candidates are the stored
     published CONCALL_PRESENTATION cards (the rule memory_recall_export.candidates and the pipeline's queue step use), minus any
-    news_id already in the company's dossier `call_memory` and any in a queue key of the last QUEUE_DAYS days. Returns the ids."""
+    news_id already in the company's dossier `call_memory`, any in a queue key of the last QUEUE_DAYS days and any the backlog
+    queued before (BACKLOG_TRIED, kept for good: an invitation or a document with no text is given up without a memory entry,
+    and would otherwise come back every QUEUE_DAYS days). Returns the ids."""
     from .memory_recall_export import EVENT, PAGE
 
     if limit <= 0 or pending(sink):
@@ -147,7 +150,8 @@ def enqueue_backlog(sink, limit: int) -> list[str]:
         if len(page) < PAGE:
             break
     rows.sort(reverse=True)
-    queued, dossiers, picked = known_ids(sink), {}, []
+    tried = set(_load(sink, BACKLOG_TRIED))
+    queued, dossiers, picked = known_ids(sink) | tried, {}, []
     for filed_at, news_id, scrip in rows:
         if len(picked) >= limit:
             break
@@ -159,4 +163,8 @@ def enqueue_backlog(sink, limit: int) -> list[str]:
             continue
         enqueue(sink, news_id, scrip, filed_at)
         picked.append(news_id)
+    if picked:   # one writer: the queue job (its own concurrency group)
+        marks = _load(sink, BACKLOG_TRIED)
+        marks.update({n: _day() for n in picked})
+        sink.kv_set(BACKLOG_TRIED, json.dumps(marks, ensure_ascii=False), _stamp())
     return picked

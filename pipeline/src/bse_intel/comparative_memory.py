@@ -34,38 +34,41 @@ def _metric_before(text: str, at: int) -> str | None:
 
 
 _BASIS_WORD = re.compile(r"\b(standalone|consolidated)\b", re.I)
+# an adjusted or non-GAAP figure is no reported line (BLUESTONE's adjusted EBITDA 147.4 against 125.74: blind read of 41345924894)
+_ADJUSTED = re.compile(r"\b(?:adjusted|underlying|normali[sz]ed|non[- ]?gaap|core|recurring|pre[- ]?ind[- ]?as|excluding|"
+                       r"before\s+exceptional|ex[- ]exceptional)\b", re.I)
 
 
-def _memory_by_basis(dossier: dict | None) -> dict[tuple[str, str], dict[str | None, set[float]]]:
-    """{(metric, period): {basis or None: values}} from memory's figures."""
-    from .watch_code import _entry_basis
+def _file_figures(dossier: dict | None) -> dict[tuple[str, str, str], float]:
+    """{(metric, period, basis): value} of memory's figures the exchange's own results file gave (a source labelled ``file``, on a
+    named basis); a calculated or a model-read figure, or one with no basis, is none (blind read of 41345924894: IOB's 1,962.67
+    and STARHEALTH's 111.33 were not in their filings)."""
+    from .watch_code import _sources_of, _src_basis
 
-    out: dict[tuple[str, str], dict[str | None, set[float]]] = {}
+    out: dict[tuple[str, str, str], float] = {}
     for m in (dossier or {}).get("financial_metrics") or []:
-        if isinstance(m, dict) and isinstance(m.get("value"), (int, float)) and m.get("period") and m.get("metric"):
-            b = _entry_basis(m)
-            out.setdefault((m["metric"], m["period"]), {}).setdefault(b.upper() if b else None, set()).add(float(m["value"]))
+        if not isinstance(m, dict) or not m.get("period") or not m.get("metric"):
+            continue
+        for src in _sources_of(m):
+            lab = src.get("lab") if isinstance(src.get("lab"), dict) else {}
+            basis = _src_basis(src, m)
+            if lab.get("by") == "file" and basis and isinstance(src.get("value"), (int, float)):
+                out.setdefault((m["metric"], m["period"], basis.upper()), float(src["value"]))
     return out
 
 
-def _held(by_basis: dict[str | None, set[float]] | None, basis: str | None) -> float | None:
-    """Memory's one figure on ``basis`` (blind review of release check 41318733817: a standalone card figure was set against
-    consolidated memory, 1,274.46 vs 1,240.62); with the basis unknown, only a figure memory holds on one basis alone."""
-    if not by_basis:
-        return None
-    if basis:   # memory that labels no basis at all is read as before; a figure labelled another basis never is
-        values = by_basis.get(basis.upper()) or (by_basis.get(None, set()) if set(by_basis) == {None} else set())
-    else:
-        values = set().union(*by_basis.values()) if len(by_basis) == 1 else set()
-    return next(iter(values)) if len(values) == 1 else None
+def _decimals(raw: str) -> int:
+    return len(raw.split(".")[1]) if "." in raw else 0
 
 
 def contradictions(texts: list[str], dossier: dict | None, basis: str | None = None) -> list[str]:
-    """Each "metric period: card X vs memory Y" the card's words state against memory, when the switch is on. Memory is read on
-    the basis the figure's clause names, else the card's ``basis``."""
+    """Each "metric period: card X vs memory Y" the card's words state against memory, when the switch is on (blind read of release
+    check 41345924894, 9 of 20 holds wrong): only on the card's own basis (the figure's clause names it, else the card's
+    ``basis``; none known, no hold), only against a figure the exchange's own file gave for that quarter and basis, at the card's
+    printed precision ("₹3 Cr" is 3.11), and never for an adjusted figure."""
     if not card_comparative_matches_memory():
         return []
-    memory = _memory_by_basis(dossier)
+    memory = _file_figures(dossier)
     if not memory:
         return []
     found = []
@@ -75,14 +78,19 @@ def contradictions(texts: list[str], dossier: dict | None, basis: str | None = N
             metric = _metric_before(flat, m.start())
             period = canonical_period(re.sub(r"\s|'", "", m.group(2)).upper()) or m.group(2)
             clause = re.split(r";|\.\s", flat[:m.start()])[-1]
+            if not metric or _ADJUSTED.search(clause):
+                continue
             word = _BASIS_WORD.findall(clause)
-            on = word[-1].upper() if word else basis
-            held = _held(memory.get((metric, period)), on) if metric else None
+            on = (word[-1] if word else basis or "").upper()
+            if not on:
+                continue
+            held = memory.get((metric, period, on))
             if held is None and metric == "pat":
-                held = _held(memory.get(("pat_owners", period)), on)
+                held = memory.get(("pat_owners", period, on))
             if held is None:
                 continue
-            said = abs(float(m.group(1).replace(",", "")))
-            if abs(said - abs(held)) > max(0.005, 0.02 * abs(held)):
+            raw = m.group(1).replace(",", "")
+            said = abs(float(raw))
+            if abs(said - abs(held)) > max(0.005, 0.5 * 10 ** -_decimals(raw), 0.02 * abs(held)):
                 found.append(f"{metric} {period}: the card says ₹{said:g} Cr, memory (the exchange's file) ₹{abs(held):g} Cr")
     return list(dict.fromkeys(found))

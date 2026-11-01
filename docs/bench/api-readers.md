@@ -75,8 +75,10 @@ scored on that replay. **All of this is in-sample**: the guards were written aft
 - **Mistral OCR.** HTTP 429 "Rate limit exceeded" (code 1300) on every call in runs 41072420377 (30 Oct), 41076952339
   (30 Oct, with 2, 5 and 10 s retries) and 41267832784 (1 Nov, after the monthly allowance reset).
   - A limit that holds on the first calls of a new month, through ~17 s of retries, is not a rate or budget limit.
-  - Assumption, not measured: the Free plan does not allow OCR. The lead is asking the owner what the Mistral admin
-    page shows.
+  - Owner, 1 Nov: the admin page shows OCR allowed on the Free plan; October cost $4.3.
+  - Measured 1 Nov, run 41272136846 (one page, spaced, Retry-After honoured): the 429 carries
+    `x-ratelimit-limit-req-minute: 0`. Our key's request limit for the OCR model is zero a minute, so no spacing or retry
+    can pass. Unblocking it is an owner setting (the console's per-model limits), if the Free plan allows a non-zero one.
 - **nemotron-parse-2.0.** Each request form was refused:
   - Without tool_choice: 400 '"auto" tool choice requires --enable-auto-tool-choice'.
   - Once: 502 Bad Gateway.

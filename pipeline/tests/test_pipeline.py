@@ -1408,3 +1408,36 @@ def test_a_folded_release_is_given_up_after_three_unfinished_re_runs_and_never_a
     assert release_fold.pending(sink) == {}
     release_fold.add(sink, "r-1", {"news_id": "p-1", "date": "2026-10-30", "text": "x"})
     assert release_fold.pending(sink) == {}
+
+
+def test_a_note_whose_results_file_is_set_aside_defers_to_the_quarters_card(settings, monkeypatch):
+    """TMB nse-106836238 (31 Oct 2026): an ECL note typed RESULTS found the bank's Q2FY27 file by quarter; the file's figures
+    were not in the note, so the file was set aside, the note had no quarter and published a second Q2FY27 results card.
+    D20_DROPPED_FILE_PERIOD keeps the set-aside file's quarter for the one-card check only; off, the note publishes as before."""
+    from dataclasses import replace
+    from types import SimpleNamespace
+
+    from bse_intel import results_card
+    from bse_intel import xbrl as xbrl_fast_path
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1, second_opinion=False)
+    now = now_ist() - timedelta(days=6)   # the note comes after the 3-day companion window (companion_quarter)
+    first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    note = _filing("q-2", "Disclosure on provisioning for expected credit loss", now + timedelta(days=5), "Result")
+    note_text = "The Board noted an additional provision towards expected credit loss in line with the RBI direction."
+    for switch, want in (("0", "ANALYZED"), ("1", "DUPLICATE")):
+        monkeypatch.setenv("D20_DROPPED_FILE_PERIOD", switch)
+        pipeline, sink, fake = build(settings, [first, note], {first.pdf_url: _pdf(RESULT_TEXT), note.pdf_url: _pdf(note_text)},
+                                     {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 2})
+        pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+        pipeline._results_quarters.clear()   # a later run: memory knows the quarter has its card
+        file = SimpleNamespace(kind="RESULTS", period="Q2FY27", basis="STANDALONE", template="", metrics=[], raw=None)
+        monkeypatch.setattr(pipeline, "_xbrl", lambda f: file)
+        monkeypatch.setattr(xbrl_fast_path, "confirm", lambda tagged, text: False)
+        monkeypatch.setattr(results_card, "agrees_with_memory", lambda tagged, known: False)
+        out = pipeline.analyze(note.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS",
+                                                       "xbrl_url": "https://nsearchives.nseindia.com/x.xml"}))
+        assert out.update["status"] == want, (switch, out.update)
+        if want == "DUPLICATE":
+            assert "same results quarter Q2FY27, D20" in out.update["reason"]
+        monkeypatch.undo()

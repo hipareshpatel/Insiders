@@ -3558,8 +3558,11 @@ class Pipeline:
             # CORPORATE_ACTION skipped the quarter's claim and its XBRL and became a second results card (O3, 2026-10-20)
             log.info("%s carries a results statement: %s -> RESULTS before pass 2", filing.news_id, event_type)
             event_type = "RESULTS"
-        elif event_type == "RESULTS" and results_needs_statement() and lacks_results(doc.select_text(10_000_000, [])):
-            # a note about the results is no results filing (RESULTS_NEEDS_STATEMENT, off until measured)
+        elif (event_type == "RESULTS" and results_needs_statement() and not filing.xbrl_url
+              and lacks_results(doc.select_text(10_000_000, []))):
+            # a note about the results is no results filing (RESULTS_NEEDS_STATEMENT, off until measured): only one with no results
+            # file of its own (TMB's ECL note had none and borrowed the bank's; 181 of 2,305 stored cards retyped without this, among
+            # them TATAELXSI and HINDZINC's real results, release-check of 31 Oct 2026)
             log.info("%s is typed RESULTS but carries no results statement; read as OTHER", filing.news_id)
             filing = filing.model_copy(update={"event_type": "OTHER"})
             event_type = "OTHER"

@@ -113,3 +113,7 @@ def test_results_statement_check_marks_a_results_card_whose_text_has_no_results(
     assert rc.changed_by_diff(note["diff"]) and "TYPE: OTHER (no results statement in the text)" in note["on_lines"]
     real = rc.check_results_statement(card, row, "Statement of unaudited financial results for the quarter ended" + pad)
     assert not rc.changed_by_diff(real["diff"])
+    # a results file of its own keeps it RESULTS, whatever its text (TATAELXSI, HINDZINC: real results retyped on 31 Oct)
+    own = rc.check_results_statement(card, row | {"filing_xbrl_url": "https://nsearchives.nseindia.com/x.xml"},
+                                     "A provision of Rs 304.24 crore towards ECL." + pad)
+    assert not rc.changed_by_diff(own["diff"])

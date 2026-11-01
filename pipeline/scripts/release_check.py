@@ -231,7 +231,7 @@ def switches_on(*names: str):
 def check_results_statement(card: dict, row: dict, text: str) -> dict:
     """results_statement: a RESULTS card whose stored text carries no results statement (pipeline.lacks_results) would be read
     as OTHER with RESULTS_NEEDS_STATEMENT on: no results table, no quarter claim, the event's own card instead."""
-    retyped = P.lacks_results(text)
+    retyped = P.lacks_results(text) and not row.get("filing_xbrl_url")   # a results file of its own keeps it RESULTS (TMB had none)
     off = [f"TYPE: {card.get('event_type') or 'RESULTS'}", f"HEADLINE: {card.get('headline') or ''}"]
     on = ["TYPE: OTHER (no results statement in the text)", f"HEADLINE: {card.get('headline') or ''}"] if retyped else list(off)
     return _record(row, card, off, on)

@@ -512,10 +512,9 @@ def check_comparative_memory(card: dict, row: dict, dossier: dict | None) -> dic
     return _record(row, card, off, off + [f"HELD: {w}" for w in wrong])
 
 
-def unit_fix_trace(card: dict, text: str | None) -> list[str]:
-    """Which reading of `grounding.unit_slips` makes each recorded correction, and the filing's words around the source figure it
-    matched: the card's texts with each correction put back as written, read again against the stored filing text (memory and
-    the scale block are not passed, so a correction they would stop may show here; read only, for the root cause)."""
+def _unit_trace(card: dict, text: str | None) -> list[dict]:
+    """`grounding.unit_slips`' trace of a stored card's recorded corrections: its texts with each correction put back as written,
+    read again against the stored filing text."""
     from bse_intel import grounding
 
     fixes = (card.get("grounding") or {}).get("unit_fixes") or {}
@@ -531,6 +530,17 @@ def unit_fix_trace(card: dict, text: str | None) -> list[str]:
             texts.append(t)
     trace: list[dict] = []
     grounding.unit_slips(texts, text, trace=trace)
+    return trace
+
+
+def unit_fix_trace(card: dict, text: str | None) -> list[str]:
+    """Which reading of `grounding.unit_slips` makes each recorded correction, and the filing's words around the source figure it
+    matched: the card's texts with each correction put back as written, read again against the stored filing text (memory and
+    the scale block are not passed, so a correction they would stop may show here; read only, for the root cause)."""
+    fixes = (card.get("grounding") or {}).get("unit_fixes") or {}
+    if not text or not fixes:
+        return []
+    trace = _unit_trace(card, text)
     out = []
     for raw in fixes:
         hit = next((t for t in trace if t["raw"] == raw), None)
@@ -544,6 +554,7 @@ def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None, text: str 
     UNIT_FIX_SCALE_GUARD would refuse: the figure as written is at the company's own scale (within 3x of one of its latest
     quarters' figures in memory, either basis) and the correction is not (CDSL nse-106838164: 272 made 2.72)."""
     scale = P.scale_crore(dossier)
+    trace = {t["raw"]: t for t in _unit_trace(card, text)}
     off, on = [], []
     for raw, right in ((card.get("grounding") or {}).get("unit_fixes") or {}).items():
         try:
@@ -551,7 +562,8 @@ def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None, text: str 
         except ValueError:
             continue
         off.append(f"UNIT FIX {raw} Cr -> {right} Cr")
-        refused = bool(scale) and P._at_scale(value, scale) and not P._at_scale(fixed, scale)
+        # a correction its source proves is never refused (P.unit_fix_proven); one the stored text cannot re-make is judged by scale
+        refused = bool(scale) and not P.unit_fix_proven(trace.get(raw)) and P._at_scale(value, scale) and not P._at_scale(fixed, scale)
         on.append(f"UNIT FIX {raw} Cr kept (the company's scale)" if refused else f"UNIT FIX {raw} Cr -> {right} Cr")
     return _record(row, card, off, on, extra=unit_fix_trace(card, text))
 

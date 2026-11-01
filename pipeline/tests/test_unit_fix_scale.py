@@ -20,14 +20,37 @@ def test_no_memory_no_scale():
     assert P.scale_crore(None) == [] and P.scale_crore({}) == []
 
 
-def test_fix_unit_slips_refuses_a_correction_off_the_companys_scale():
-    """Both modes on the same slip: no scale (switch off) corrects 493.92 -> 49.39; a scale where 493.92 sits keeps it."""
+def test_fix_unit_slips_refuses_an_unproven_correction_off_the_companys_scale():
+    """The CDSL class (release check 41338082613): the card copies a printed figure's digits ("₹4,939.22 Cr") and a lakh table
+    makes it ₹49.39 Cr. No scale (switch off) corrects it; a scale where 4,939.22 sits keeps it."""
     from test_cards import LAKH_STATEMENT, _results_reply
 
-    off = _results_reply(["Revenue ₹951.96 Cr, PAT ₹493.92 Cr"], [], [])
-    assert P.fix_unit_slips(off, (LAKH_STATEMENT, "", "")) == {"493.92": "49.39"}
+    off = _results_reply(["Revenue ₹951.96 Cr, PAT ₹4,939.22 Cr"], [], [])
+    assert P.fix_unit_slips(off, (LAKH_STATEMENT, "", "")) == {"4,939.22": "49.39"}
+    on = _results_reply(["Revenue ₹951.96 Cr, PAT ₹4,939.22 Cr"], [], [])
+    assert P.fix_unit_slips(on, (LAKH_STATEMENT, "", ""), (), [951.96, 4000.0]) == {}
+    assert on.card.what_happened[0].text == "Revenue ₹951.96 Cr, PAT ₹4,939.22 Cr"
+    real = _results_reply(["Revenue ₹951.96 Cr, PAT ₹4,939.22 Cr"], [], [])
+    assert P.fix_unit_slips(real, (LAKH_STATEMENT, "", ""), (), [49.0, 95.2]) == {"4,939.22": "49.39"}   # off its scale: fixed
+
+
+def test_a_correction_its_source_proves_is_never_refused():
+    """GOODYEAR 3c2d45df / ENGINERSIN nse-106836580 (release check 41338082613): the card shifted the printed figure's decimal
+    point ("4,939.22" lakh carded "₹493.92 Cr"); the guard blocked the right correction. Proven, it goes through at any scale."""
+    from test_cards import LAKH_STATEMENT, _results_reply
+
     on = _results_reply(["Revenue ₹951.96 Cr, PAT ₹493.92 Cr"], [], [])
-    assert P.fix_unit_slips(on, (LAKH_STATEMENT, "", ""), (), [951.96, 480.0]) == {}
-    assert on.card.what_happened[0].text == "Revenue ₹951.96 Cr, PAT ₹493.92 Cr"
-    real = _results_reply(["Revenue ₹951.96 Cr, PAT ₹493.92 Cr"], [], [])
-    assert P.fix_unit_slips(real, (LAKH_STATEMENT, "", ""), (), [49.0, 95.2]) == {"493.92": "49.39"}   # a real slip still fixed
+    assert P.fix_unit_slips(on, (LAKH_STATEMENT, "", ""), (), [951.96, 480.0]) == {"493.92": "49.39"}
+
+
+def test_unit_fix_proven_on_the_traced_cards():
+    # release check 41338082613's TRACE lines
+    five_star = {"raw": "1,322.46", "reading": 3, "unit": 10, "source": "ment Loan Portfolio 844 ₹ 12,133 Mn ₹ 132,246 Mn +9 +96"}
+    goodyear = {"raw": "1,528.7", "reading": 3, "unit": 100, "source": "ome tax matters* (refer note (i) below) 15,287 14,525 C."}
+    engineers = {"raw": "2,042.05", "reading": 3, "unit": 10, "source": "Total Order Book 204205 144,242 121,443"}
+    tvs = {"raw": "1,933", "reading": 2, "source": "the INR 193,31,19,436.71 price at which the shares are acquire"}
+    hdfcamc = {"raw": "9,691", "reading": 1, "source": "ERLY AVERAGE AUM² ₹9,210 bn ₹6,280 bn ₹9,691 bn ₹6,507 bn"}
+    assert all(P.unit_fix_proven(t) for t in (five_star, goodyear, engineers, tvs, hdfcamc))
+    cdsl = {"raw": "272", "reading": 3, "unit": 100, "source": "DA w/o Dividend 233 205 339 179 168 272 255 247 212 101 165 Q2FY26"}
+    heritage = {"raw": "62.11", "reading": 3, "unit": 10, "source": ""}
+    assert not any(P.unit_fix_proven(t) for t in (cdsl, heritage, None))

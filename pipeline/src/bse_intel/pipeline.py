@@ -463,6 +463,24 @@ def _at_scale(value: float, scale: list[float]) -> bool:
     return any(s / SCALE_BAND <= abs(value) <= s * SCALE_BAND for s in scale)
 
 
+_SOURCE_NUMBER = re.compile(r"(?<![\d.])\d[\d,]*(?:\.\d+)?")
+
+
+def unit_fix_proven(trace: dict | None) -> bool:
+    """UNIT_FIX_SCALE_GUARD: a correction its source proves, which the scale guard never refuses (release check 41338082613, the
+    unit_slips trace of 19 cards): a figure with its own unit word ("₹ 132,246 Mn", reading 1) or a whole-rupee amount ("INR
+    193,31,19,436.71", reading 2); a table figure in the declared unit (reading 3) only when the card shifted its decimal point
+    ("15,287" in a lakh table carded "₹1,528.7 Cr") rather than copying the printed digits (CDSL's deck "272" carded "₹272 Cr",
+    which a lakh table elsewhere in the filing made ₹2.72 Cr). A correction whose source the filing's text does not show is not
+    proven: the scale guard decides it as before."""
+    if not trace or not trace.get("source"):
+        return False
+    if trace.get("reading") in (1, 2):
+        return True
+    raw = str(trace.get("raw") or "").replace(",", "")
+    return not any(m.group(0).replace(",", "") == raw for m in _SOURCE_NUMBER.finditer(trace["source"]))
+
+
 def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...], xbrl_crore=(), scale=()) -> dict[str, str]:
     """Correct, in code, card amounts that are a statement figure read at the wrong unit (grounding.
     unit_slips): in the card's text, its key numbers and changes, the timeline entry, and the reply's
@@ -470,12 +488,14 @@ def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...], xbrl_crore=(), sc
 
     `scale` (UNIT_FIX_SCALE_GUARD, CDSL nse-106838164): the company's own quarter figures; a correction that takes a figure at
     their scale (within 3x) to one that is not is no correction ("₹272 Cr" standalone revenue made ₹2.72 Cr beside a ₹394 Cr
-    consolidated quarter)."""
+    consolidated quarter); a correction its source proves (unit_fix_proven) is never refused."""
     if out.card is None or not sources:
         return {}
-    slips = unit_slips(_card_texts(out), sources[0], *sources[1:], xbrl_crore=xbrl_crore)
+    trace: list[dict] = []
+    slips = unit_slips(_card_texts(out), sources[0], *sources[1:], xbrl_crore=xbrl_crore, trace=trace)
     if scale:
-        kept = [s for s in slips if not (_at_scale(s[1], list(scale)) and not _at_scale(s[3], list(scale)))]
+        proven = {t["raw"] for t in trace if unit_fix_proven(t)}
+        kept = [s for s in slips if s[0] in proven or not (_at_scale(s[1], list(scale)) and not _at_scale(s[3], list(scale)))]
         for raw, value, _, right, _ in slips:
             if (raw, value) not in {(k[0], k[1]) for k in kept}:
                 log.info("unit fix %s -> %s refused: %s is the company's own scale (UNIT_FIX_SCALE_GUARD)", raw, right, raw)

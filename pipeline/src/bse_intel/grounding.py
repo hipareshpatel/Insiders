@@ -885,9 +885,9 @@ def _blank_malformed(text: str) -> str:
 _ANY_NUMBER = re.compile(r"(?<![\d.])\d[\d,]*(?:\.\d+)?")
 
 
-def _window(filing: str, target: float) -> str:
-    """About 80 characters of the filing around the first figure equal to ``target`` (to its own rounding), or "" (a read-only
-    trace for the release check)."""
+def _window(filing: str, target: float, slack: float = 0.0) -> str:
+    """About 80 characters of the filing around the first figure equal to ``target`` (to its own rounding, or within ``slack``:
+    a correction rounded to two places times its unit, 49.39 x 100 beside the printed 4,939.22), or "" (the unit fixer's trace)."""
     for m in _ANY_NUMBER.finditer(filing or ""):
         raw = m.group(0).replace(",", "")
         try:
@@ -895,7 +895,7 @@ def _window(filing: str, target: float) -> str:
         except ValueError:
             continue
         places = len(raw.split(".")[1]) if "." in raw else 0
-        if abs(v - target) <= 0.5 * 10 ** (-places) + 1e-9 and v:
+        if abs(v - target) <= max(0.5 * 10 ** (-places), slack) + 1e-9 and v:
             return " ".join(filing[max(0, m.start() - 40):m.end() + 40].split())
     return ""
 
@@ -993,7 +993,7 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                 slips[raw] = (raw, value, decimals, *fits[0])
                 if trace is not None:
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 3, "unit": unit,
-                                  "source": _window(filing, fits[0][0] * unit)})
+                                  "source": _window(filing, fits[0][0] * unit, 0.5 * 10 ** (-fits[0][1]) * unit)})
     return list(slips.values())
 
 

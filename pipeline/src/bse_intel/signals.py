@@ -31,7 +31,7 @@ from . import eps_adjust
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period, results_due
-from .settings import card_guidance_dated, card_watch_verdict
+from .settings import card_guidance_dated, card_watch_verdict, volume_series_one_segment
 
 STRAIN_GAP_PP = 15.0      # receivable/inventory growth minus revenue growth, percentage points
 MAX_OVERDUE_SIGNALS = 2
@@ -184,6 +184,31 @@ def _auditor(after: dict, filing: Filing) -> list[Signal]:
 VOLUME_METRICS = ("sales_volume", "volumes", "total_sales", "sales_units", "units_sold", "dispatches", "production", "despatches")
 
 
+SERIES_RATIO = 4   # a month's figure more than this many times off the filing's own is another business line
+
+
+def _same_series(entry: dict, main: dict) -> dict | None:
+    """The month's figure that belongs to the filing's series. Memory keeps one row per metric and month with every
+    filing's figure under `sources`, and the newest one wins the row, so Eicher's Royal Enfield April (113,164) sat over
+    VECV's (7,318). Of the row and its sources take the one closest to the filing's figure, and none if even that is
+    off by more than SERIES_RATIO: a month left out beats two business lines in one strip."""
+    base = main.get("value")
+    if not base or entry["period"] == main["period"]:
+        return entry
+    best = None
+    for c in [entry, *(entry.get("sources") or [])]:
+        v = c.get("value")
+        if not v or v <= 0 or base <= 0:
+            continue
+        gap = max(v / base, base / v)
+        if gap <= SERIES_RATIO and (best is None or gap < best[0]):
+            best = (gap, c)
+    if not best:
+        return None
+    c = best[1]
+    return {**entry, "value": c["value"], "yoy_pct": c.get("yoy_pct")}
+
+
 def volume_strip(after: dict, news_id: str, months: int = 6) -> dict | None:
     """The card's monthly strip: the main volume metric this filing reported, over the last months
     memory holds (as of the filing), each with its YoY change."""
@@ -197,7 +222,10 @@ def volume_strip(after: dict, news_id: str, months: int = 6) -> dict | None:
                    and period_kind(e["period"]) == "M" and due_date(e["period"]) and e.get("value") is not None),
                   key=lambda e: due_date(e["period"]))
     end = due_date(main["period"])
-    rows = [e for e in rows if due_date(e["period"]) <= end][-months:]
+    rows = [e for e in rows if due_date(e["period"]) <= end]
+    if volume_series_one_segment():
+        rows = [r for r in (_same_series(e, main) for e in rows) if r]
+    rows = rows[-months:]
     if len(rows) < 2:
         return None
     return {"metric": main["metric"], "unit": main.get("unit"),

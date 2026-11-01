@@ -276,6 +276,15 @@ def card_guidance_dated() -> bool:
     return _switch("CARD_GUIDANCE_DATED")
 
 
+def volume_series_one_segment() -> bool:
+    """VOLUME_SERIES_ONE_SEGMENT (default off; blind audit of 1 Nov 2026, EICHERMOT nse-106838761): the card's monthly
+    volume strip shows one series, the filing's own. Memory holds one volumes row per month, and Royal Enfield's
+    motorcycle figures (113,164 in April) had overwritten VECV's (7,318) in the strip beside VECV's October 10,861.
+    On: each month takes the stored figure nearest the filing's (any filing's, from the row's sources) within 4x, and
+    a month with none is left out. Off: the row's newest figure, whatever business it is. Read at the call."""
+    return _switch("VOLUME_SERIES_ONE_SEGMENT")
+
+
 def card_one_basis() -> bool:
     """CARD_ONE_BASIS (on in config/switches.toml; live audit of 26 Oct 2026, class "two bases of one figure"): a card states one basis for a
     figure. A profit, or its change, whose quarter or comparison base holds a discontinued operation is labelled with it (an

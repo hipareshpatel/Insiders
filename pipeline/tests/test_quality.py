@@ -189,3 +189,36 @@ def test_a_negative_interest_cover_does_not_read_as_barely_covered():
     rows = _quarter("Q4FY27", 100, 58, 10, 10, 13, 8, 7, fin=10, dep=13, news=N)
     found = kinds(quality_signals({"financial_metrics": rows, "balance_sheet": []}, N))
     assert found["DISTRESS"]["text"].startswith("EBIT/interest +0.00x")
+
+
+def _eicher_memory():
+    """EICHERMOT nse-106838761 (1 Nov 2026): the newest filing's figure (Royal Enfield) wins the month's row, VECV's own
+    figure sits under sources."""
+    def row(period, re_value, vecv):
+        src = [{"news_id": "v", "value": vecv, "yoy_pct": 7.0}, {"news_id": "re", "value": re_value, "yoy_pct": 31.0}]
+        return {"metric": "volumes", "period": period, "value": re_value, "yoy_pct": 31.0, "sources": src,
+                "source_news_id": "re", "as_of": "2026-05-01T10:00:00+05:30"}
+    rows = [row("APR-2026", 113164.0, 7318.0), row("MAY-2026", 103231.0, 7978.0),
+            _m("volumes", "OCT-2026", 10861.0, N) | {"yoy_pct": 34.9}]
+    return {"financial_metrics": rows}
+
+
+def test_volume_strip_one_segment_off_keeps_old_mix(monkeypatch):
+    from bse_intel.signals import volume_strip
+
+    monkeypatch.setenv("VOLUME_SERIES_ONE_SEGMENT", "0")
+    strip = volume_strip(_eicher_memory(), N)
+    assert [m["value"] for m in strip["months"]] == [113164.0, 103231.0, 10861.0]
+
+
+def test_volume_strip_one_segment_on_shows_one_series(monkeypatch):
+    from bse_intel.signals import volume_strip
+
+    monkeypatch.setenv("VOLUME_SERIES_ONE_SEGMENT", "1")
+    strip = volume_strip(_eicher_memory(), N)
+    assert [(m["period"], m["value"], m["yoy_pct"]) for m in strip["months"]] == [
+        ("APR-2026", 7318.0, 7.0), ("MAY-2026", 7978.0, 7.0), ("OCT-2026", 10861.0, 34.9)]
+    mem = _eicher_memory()
+    for r in mem["financial_metrics"][:2]:
+        r["sources"] = [s for s in r["sources"] if s["news_id"] == "re"]   # no VECV figure stored: months left out
+    assert volume_strip(mem, N) is None

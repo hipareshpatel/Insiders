@@ -276,6 +276,15 @@ def card_guidance_dated() -> bool:
     return _switch("CARD_GUIDANCE_DATED")
 
 
+def volume_series_one_segment() -> bool:
+    """VOLUME_SERIES_ONE_SEGMENT (default off; blind audit of 1 Nov 2026, EICHERMOT nse-106838761): the card's monthly
+    volume strip shows one series, the filing's own. Memory holds one volumes row per month, and Royal Enfield's
+    motorcycle figures (113,164 in April) had overwritten VECV's (7,318) in the strip beside VECV's October 10,861.
+    On: each month takes the stored figure nearest the filing's (any filing's, from the row's sources) within 4x, and
+    a month with none is left out. Off: the row's newest figure, whatever business it is. Read at the call."""
+    return _switch("VOLUME_SERIES_ONE_SEGMENT")
+
+
 def card_one_basis() -> bool:
     """CARD_ONE_BASIS (on in config/switches.toml; live audit of 26 Oct 2026, class "two bases of one figure"): a card states one basis for a
     figure. A profit, or its change, whose quarter or comparison base holds a discontinued operation is labelled with it (an
@@ -334,6 +343,24 @@ def unit_slip_xbrl_guard() -> bool:
     (Hubtown's ₹408.47 Cr was made 0.41 from the PDF's lakh "40,847"). It lets fewer corrections through, so a check accepts more:
     on only after the on/off check over stored cards (release_check.py unit_slip_guard) and a blind sample. Read at the call."""
     return _switch("UNIT_SLIP_XBRL_GUARD")
+
+
+def discontinued_needs_figure() -> bool:
+    """DISCONTINUED_NEEDS_FIGURE (default off; blind audit of 1 Nov 2026): a card says "includes ₹X Cr from discontinued operations"
+    only when the period has a discontinued-operations figure of its own (ProfitLossFromDiscontinuedOperationsAfterTax, a line every
+    SEBI results statement prints). Total profit less "continuing" profit is otherwise the associates' share (the taxonomy's
+    continuing profit is before it) or a scheme's restatement: GABRIEL 48.3 Cr, SARDAEN's Q1FY27 15.32 Cr and Q2FY26 12.53 Cr,
+    POLICYBZR, all called discontinued. It changes card text: on after release_check discontinued_figure. Read at the call."""
+    return _switch("DISCONTINUED_NEEDS_FIGURE")
+
+
+def deck_discussed_period() -> bool:
+    """DECK_DISCUSSED_PERIOD (default off; 1 Nov 2026 blind audit, KRN Heat Exchanger nse-106836198): a call or investor deck prints
+    no results table, so the F172 gate (guidance_dated) found no period it reports and hid a missed "EBITDA margin above 19% due
+    Q2FY27 results" target as "not due for the period this filing reports". On, a CONCALL_PRESENTATION counts the quarter it
+    discusses (dossier._discussed) as its period, with memory's figures for it. It makes the gate accept more, so a check accepts
+    more: on only after the on/off check over stored cards (release_check.py deck_period) and a blind sample. Read at the call."""
+    return _switch("DECK_DISCUSSED_PERIOD")
 
 
 def annual_scale_fix() -> bool:

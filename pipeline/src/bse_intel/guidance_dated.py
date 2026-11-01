@@ -33,15 +33,35 @@ def _name(metric: str | None) -> str:
     return re.sub(r"_?growth$", "", s).replace("_", "")
 
 
-def _own_periods(metrics: list[dict], news_id: str) -> dict[str, set[str]]:
-    """The periods this filing printed figures for, each with the metric names it printed for that period."""
+def _own_periods(metrics: list[dict], news_id: str, discussed: str | None = None) -> dict[str, set[str]]:
+    """The periods this filing printed figures for, each with the metric names it printed for that period. A call or
+    investor deck states no table of its own: the quarter it discusses (``discussed``, the period its card shows from the
+    results filing that reported it) counts as its period, with memory's figures for it (KRN Heat Exchanger's Q2FY27 deck,
+    live audit 1 Nov 2026: a missed EBITDA-margin target was hidden as "not due for the period this filing reports")."""
     from .dossier import reported_by
 
     out: dict[str, set[str]] = {}
     for m in metrics:
-        if m.get("value") is not None and m.get("period") and reported_by(m, news_id):
-            out.setdefault(canonical_period(m["period"]), set()).add(_name(m.get("metric")))
+        if m.get("value") is None or not m.get("period"):
+            continue
+        period = canonical_period(m["period"])
+        if reported_by(m, news_id) or (discussed and period == canonical_period(discussed)):
+            out.setdefault(period, set()).add(_name(m.get("metric")))
     return out
+
+
+def discussed_period(event_type: str | None, metrics: list[dict], filed_at: str) -> str | None:
+    """The quarter a call or investor deck filed on ``filed_at`` discusses (the card's own rule, dossier._discussed), else None."""
+    if event_type != "CONCALL_PRESENTATION":
+        return None
+    from .dossier import _discussed, _latest_reported
+
+    try:
+        filed = date.fromisoformat((filed_at or "")[:10])
+    except ValueError:
+        return None
+    latest = _latest_reported({"financial_metrics": metrics}, filed)
+    return canonical_period(latest[1]) if latest and _discussed(latest[0], filed) else None
 
 
 def _same_period(due: str | None, due_iso: str | None, period: str) -> bool:
@@ -52,13 +72,13 @@ def _same_period(due: str | None, due_iso: str | None, period: str) -> bool:
     return end is not None and end == due_date(period) and bool(re.fullmatch(r"Q[1-4]FY\d{2}", period))
 
 
-def why_no_verdict(g: dict, metrics: list[dict], news_id: str) -> str | None:
+def why_no_verdict(g: dict, metrics: list[dict], news_id: str, discussed: str | None = None) -> str | None:
     """None when memory target ``g`` may be judged by filing ``news_id``; else why not, in plain words."""
     if not g.get("due_date"):
         return "the target has no date"
     if g["due_date"] < (g.get("given_on") or "")[:10]:
         return "the target's date is before the day it was said"
-    own = _own_periods(metrics, news_id)
+    own = _own_periods(metrics, news_id, discussed)
     periods = [p for p in own if _same_period(g.get("due"), g.get("due_date"), p)]
     if not periods:
         return "the target is not due for the period this filing reports"
@@ -67,7 +87,7 @@ def why_no_verdict(g: dict, metrics: list[dict], news_id: str) -> str | None:
     return None
 
 
-def why_no_watch_verdict(w: dict, metrics: list[dict], news_id: str) -> str | None:
+def why_no_watch_verdict(w: dict, metrics: list[dict], news_id: str, discussed: str | None = None) -> str | None:
     """The same rule for a KPI watch item: its own check date, its quarter among the filing's periods, and a target that
     is a plain figure to compare with (not "progress toward 6,000 Cr", a cumulative build-up that a quarter's P&L line
     cannot settle)."""
@@ -75,7 +95,7 @@ def why_no_watch_verdict(w: dict, metrics: list[dict], news_id: str) -> str | No
         return None
     if not w.get("check_by") or w["check_by"] < (w.get("created_on") or "")[:10]:
         return "the check has no date, or one before it was set"
-    own = _own_periods(metrics, news_id)
+    own = _own_periods(metrics, news_id, discussed)
     if canonical_period(w.get("check_in") or "") not in own:
         return "the check is not due for the period this filing reports"
     if not _KPI_TARGET.fullmatch(str(w.get("target") or "")):

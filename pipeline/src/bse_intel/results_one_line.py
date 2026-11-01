@@ -340,10 +340,27 @@ _PROFIT_WORD = re.compile(r"\b(PAT|net profit|profit after tax|net income|(?<!op
 _KEY_PROFIT = re.compile(r"(?:q[1-4]\s*(?:fy\d{2})?\s*)?(?:consolidated\s+|standalone\s+)?(?:PAT|net profit|profit after tax|profit|"
                          r"net income)(?:\s+to\s+shareholders)?", re.I)
 _EARLIER = re.compile(r"\b(?:vs\.?|versus|against|compared\s+(?:to|with)|over)\s*$", re.I)
+# the earlier period's figure: one led in by "against / from ..." anywhere in its clause ("rose to ₹X from ₹Y": ₹Y), or "compared
+# with" (the clause split cuts at "with"), or followed in its clause by an earlier period's name ("₹Y a year earlier")
+_LED_BY_EARLIER = re.compile(r"\b(?:vs\.?|versus|against|from|compared\s+to)\b", re.I)
+_FOLLOWED_BY_EARLIER = re.compile(r"^\s*(?:\w+\s+){0,2}?(?:a\s+(?:year|quarter)\s+(?:earlier|ago)|year[- ]ago|quarter[- ]ago|last\s+year|"
+                                  r"(?:the\s+)?previous\s+(?:quarter|year))\b", re.I)
+_AFTER_ON = re.compile(r"\bon\s*$", re.I)   # "PAT ₹100.7 Cr on ₹671.5 Cr revenue": the figure after "on" is the base
 _OWN_BASIS = re.compile(r"before exceptional items?|excluding exceptional items?|adjusted|underlying|normali[sz]ed|"
                         r"pre[- ]?Ind[- ]?AS[- ]?116|non[- ]?GAAP", re.I)
 _PROFIT_ROWS = ("pat", "pat_owners", "pat_continuing")
 _LABELLED = re.compile(r"\s*\((?:company-reported|calculated from the statement)[^)]*\)")
+
+
+def _earlier_figure(text: str, at: int, end: int) -> bool:
+    """Whether the figure at text[at:end] is not the amount itself: an earlier period's ("vs", "from", "a year earlier"), a
+    base ("on ₹671.5 Cr revenue") or inside a bracketed label already there."""
+    before = text[:at]
+    after = re.split(_FIG, text[end:], maxsplit=1, flags=re.I)[0]   # up to the next figure: that one's own words come after
+    after = _CLAUSE.split(after)[0]
+    clause = _CLAUSE.split(before)[-1]
+    return bool(_EARLIER.search(before) or _AFTER_ON.search(before) or _LED_BY_EARLIER.search(clause)
+                or _FOLLOWED_BY_EARLIER.search(after) or before.count("(") > before.count(")"))
 
 
 def profit_label_card_json(card_json: dict) -> list[str]:
@@ -358,9 +375,10 @@ def profit_label_card_json(card_json: dict) -> list[str]:
     shown = {s.get("key") for s in results.get("lines") or [] if isinstance(s, dict)}
     reported = [abs(results[k]["value"]) for k in _PROFIT_ROWS
                 if isinstance(results.get(k), dict) and isinstance(results[k].get("value"), (int, float))]
+    reported += [abs(results[k]) for k in _PROFIT_ROWS if isinstance(results.get(k), (int, float)) and not isinstance(results[k], bool)]
     pat = next((results[k]["value"] for k in ("pat", "pat_owners") if k in shown and isinstance(results.get(k), dict)
                 and isinstance(results[k].get("value"), (int, float))), None)
-    if pat is None or not reported:
+    if not pat or not reported:   # no profit row, or a PAT of 0: nothing to set a figure against
         return []
     period = results.get("period")
     notes: list[str] = []
@@ -387,7 +405,7 @@ def profit_label_card_json(card_json: dict) -> list[str]:
         bare = _LABELLED.sub("", text)   # another figure's label ("(company-reported; results table ₹2,437.56 Cr)") names no basis here
         for word, figure, stated, at in _headline_figures(bare, _PROFIT_WORD):
             end = re.compile(_FIG, re.I).match(bare, at).end()
-            if stated or _EARLIER.search(bare[:at]) or _other_period(bare, period, at, end) or not other(figure):
+            if stated or _earlier_figure(bare, at, end) or _other_period(bare, period, at, end) or not other(figure):
                 continue
             where = text.find(bare[at:end], at) + (end - at)   # right after the figure: the labels of others only come later
             card_json[attr] = f"{text[:where]} ({tag()}){text[where:]}"

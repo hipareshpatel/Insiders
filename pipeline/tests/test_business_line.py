@@ -83,6 +83,7 @@ def test_code_names_the_line_from_the_headline_whatever_the_model_said(monkeypat
 
 def test_statement_lines_never_take_a_line(monkeypatch):
     monkeypatch.setenv("METRIC_BUSINESS_LINE", "1")
+    monkeypatch.setenv("MEMORY_FILE_ONLY", "0")   # the model's PAT must reach memory here (CI runs with the live switches)
     d = new_dossier(_filing("seed", "2026-04-01T09:00:00+05:30", "h"))
     out = _out([{"metric": "pat", "period": "Q1FY27", "value": 5.0, "line": "VECV"}])
     business_line.assign(out.dossier_delta.financial_metrics, _filing("a", "2026-08-01T10:00:00+05:30", "h"), d)

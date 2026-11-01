@@ -463,22 +463,15 @@ def _at_scale(value: float, scale: list[float]) -> bool:
     return any(s / SCALE_BAND <= abs(value) <= s * SCALE_BAND for s in scale)
 
 
-_SOURCE_NUMBER = re.compile(r"(?<![\d.])\d[\d,]*(?:\.\d+)?")
-
-
 def unit_fix_proven(trace: dict | None) -> bool:
     """UNIT_FIX_SCALE_GUARD: a correction its source proves, which the scale guard never refuses (release check 41338082613, the
-    unit_slips trace of 19 cards): a figure with its own unit word ("₹ 132,246 Mn", reading 1) or a whole-rupee amount ("INR
-    193,31,19,436.71", reading 2); a table figure in the declared unit (reading 3) only when the card shifted its decimal point
-    ("15,287" in a lakh table carded "₹1,528.7 Cr") rather than copying the printed digits (CDSL's deck "272" carded "₹272 Cr",
-    which a lakh table elsewhere in the filing made ₹2.72 Cr). A correction whose source the filing's text does not show is not
-    proven: the scale guard decides it as before."""
-    if not trace or not trace.get("source"):
-        return False
-    if trace.get("reading") in (1, 2):
-        return True
-    raw = str(trace.get("raw") or "").replace(",", "")
-    return not any(m.group(0).replace(",", "") == raw for m in _SOURCE_NUMBER.finditer(trace["source"]))
+    unit_slips trace of 19 cards). The proof is grounding.unit_slips' own (lead's review of #362: a source window is no proof):
+    the same printed number as the card's figure, decimal-shifted. Reading 1, the card's exact digits with a currency before
+    and a unit word after, not a count ("₹9,691 bn"); reading 2, a whole-rupee amount that is the card's figure shifted exactly,
+    in a clause sharing the card's label ("INR 193,31,19,436.71" cost of acquisition); reading 3, the table's figure equal to
+    the correction times its unit while the filing prints the card's own digits nowhere ("15,287" lakh carded "₹1,528.7 Cr";
+    CDSL's deck "272" is printed, so not proven). Anything else the scale guard decides as before."""
+    return bool(trace and trace.get("proven"))
 
 
 def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...], xbrl_crore=(), scale=()) -> dict[str, str]:

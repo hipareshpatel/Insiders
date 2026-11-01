@@ -900,6 +900,66 @@ def _window(filing: str, target: float, slack: float = 0.0) -> str:
     return ""
 
 
+_COUNT_NOUN = re.compile(r"\b(?:equity\s+)?(?:shares?|warrants?|options?|units?|securities|stocks?)\b", re.I)
+_CURRENCY_BEFORE = re.compile(r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s+)?$", re.I)
+_LABEL_STOP = {"crore", "crores", "from", "with", "against", "during", "quarter", "year", "period", "total", "rose", "fell",
+               "grew", "stood", "were", "reported", "compared", "which", "that", "this", "their", "about", "around", "nearly"}
+
+
+def _proof_own_unit(filing: str, raw: str) -> bool:
+    """Reading 1's proof: the filing prints the card's exact figure with a currency before it and a unit word right after it
+    (within three words), and not as a count ("13.07 million shares": ACEVECTOR, lead's review of #362)."""
+    want = raw.replace(",", "")
+    for m in _ANY_NUMBER.finditer(filing):
+        if m.group(0).replace(",", "") != want:
+            continue
+        after = filing[m.end():m.end() + 60].split()[:3]
+        unit = next((i for i, w in enumerate(after) if _UNIT_WORD.fullmatch(w.strip(".,;:()"))), None)
+        if unit is None or _COUNT_NOUN.search(" ".join(filing[m.end():m.end() + 60].split()[:unit + 4])):
+            continue
+        if _CURRENCY_BEFORE.search(filing[max(0, m.start() - 12):m.start()]):
+            return True
+    return False
+
+
+def _label_words(text: str, pos: int) -> set[str]:
+    """The card's own words for a figure: the content words of its clause before it ("employee cost", "revenue")."""
+    clause = re.split(r"[.;:]\s", text[:pos])[-1]
+    return {w.lower() for w in re.findall(r"[A-Za-z]{4,}", clause)} - _LABEL_STOP
+
+
+def _proof_whole_rupees(filing: str, value: float, decimals: int, crore: float, label: set[str]) -> bool:
+    """Reading 2's proof: a whole-rupee amount that is the card's figure decimal-shifted exactly (to the card's rounding, no
+    0.2% slack), in a clause sharing a word with the card's own label for the figure; a card that names none proves nothing
+    (paid-up capital Rs 1,25,00,00,000 against "revenue ₹1,250 Cr": lead's review of #362)."""
+    if not label:
+        return False
+    tolerance = 0.5 * 10 ** (-decimals) + 1e-9
+    for m in _WHOLE_RUPEES.finditer(filing):
+        try:
+            c = float(m.group(1).replace(",", "")) / 1e7
+        except ValueError:
+            continue
+        if abs(c - crore) > 1e-6 * max(1.0, crore) or not any(abs(value - c * 10 ** k) <= tolerance for k in (-3, -2, -1, 1, 2, 3)):
+            continue
+        clause = re.split(r"[.;\n]", filing[max(0, m.start() - 160):m.start()])[-1] + filing[m.start():m.end() + 80].split(".")[0]
+        if label & {w.lower() for w in re.findall(r"[A-Za-z]{4,}", clause)}:
+            return True
+    return False
+
+
+def _proof_table(filing: str, raw: str, right: float, places: int, unit: float) -> bool:
+    """Reading 3's proof: the table prints the correction times its unit (to the correction's own rounding) and nowhere does the
+    filing print the card's own figure; a card whose digits are printed may have copied them (CDSL's deck "272"; a "271.9"
+    elsewhere is no proof: lead's review of #362)."""
+    value = float(raw.replace(",", ""))
+    printed = [float(m.group(0).replace(",", "")) for m in _ANY_NUMBER.finditer(filing) if m.group(0).replace(",", "").replace(".", "", 1).isdigit()]
+    if any(abs(p - value) <= 1e-9 for p in printed):
+        return False
+    slack = max(0.5 * 10 ** (-places) * unit, 1e-9)
+    return any(abs(p - right * unit) <= slack for p in printed)
+
+
 def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace: list | None = None) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
 
@@ -944,7 +1004,8 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
                 if trace is not None:
-                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 1, "source": _window(filing, value)})
+                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 1, "source": _window(filing, value),
+                                  "proven": _proof_own_unit(filing, raw)})
                 continue
             # a bare table figure counts in the table's declared unit, never as crore when another unit is declared
             if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES):
@@ -962,7 +1023,9 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                     exact = [c for c in whole if round(c, _places(c)) == fits[0][0]]
                     found = next((w for w in (_window(filing, c * 1e7) for c in exact) if w), "") \
                         or next((w for k in (-3, -2, -1, 1, 2, 3) if (w := _window(filing, value * 10 ** (7 - k)))), "")
-                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 2, "source": found})
+                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 2, "source": found,
+                                  "proven": any(_proof_whole_rupees(filing, value, decimals, c, _label_words(text or "", pos))
+                                                for c in exact)})
                 continue
             if not unit or value < 10:
                 continue   # a small bare figure is ambiguous against a table's unit
@@ -993,7 +1056,8 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                 slips[raw] = (raw, value, decimals, *fits[0])
                 if trace is not None:
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 3, "unit": unit,
-                                  "source": _window(filing, fits[0][0] * unit, 0.5 * 10 ** (-fits[0][1]) * unit)})
+                                  "source": _window(filing, fits[0][0] * unit, 0.5 * 10 ** (-fits[0][1]) * unit),
+                                  "proven": _proof_table(filing, raw, fits[0][0], fits[0][1], unit)})
     return list(slips.values())
 
 

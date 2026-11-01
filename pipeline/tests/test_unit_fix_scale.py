@@ -43,14 +43,39 @@ def test_a_correction_its_source_proves_is_never_refused():
     assert P.fix_unit_slips(on, (LAKH_STATEMENT, "", ""), (), [951.96, 480.0]) == {"493.92": "49.39"}
 
 
-def test_unit_fix_proven_on_the_traced_cards():
-    # release check 41338082613's TRACE lines
-    five_star = {"raw": "1,322.46", "reading": 3, "unit": 10, "source": "ment Loan Portfolio 844 ₹ 12,133 Mn ₹ 132,246 Mn +9 +96"}
-    goodyear = {"raw": "1,528.7", "reading": 3, "unit": 100, "source": "ome tax matters* (refer note (i) below) 15,287 14,525 C."}
-    engineers = {"raw": "2,042.05", "reading": 3, "unit": 10, "source": "Total Order Book 204205 144,242 121,443"}
-    tvs = {"raw": "1,933", "reading": 2, "source": "the INR 193,31,19,436.71 price at which the shares are acquire"}
-    hdfcamc = {"raw": "9,691", "reading": 1, "source": "ERLY AVERAGE AUM² ₹9,210 bn ₹6,280 bn ₹9,691 bn ₹6,507 bn"}
-    assert all(P.unit_fix_proven(t) for t in (five_star, goodyear, engineers, tvs, hdfcamc))
-    cdsl = {"raw": "272", "reading": 3, "unit": 100, "source": "DA w/o Dividend 233 205 339 179 168 272 255 247 212 101 165 Q2FY26"}
-    heritage = {"raw": "62.11", "reading": 3, "unit": 10, "source": ""}
-    assert not any(P.unit_fix_proven(t) for t in (cdsl, heritage, None))
+# --- the lead's probes on #362: the proof is the same printed number, decimal-shifted ------------------------------------------
+
+def _guarded(text: str, filing: str, scale: list[float]) -> dict:
+    from test_cards import _results_reply
+
+    out = _results_reply([text], [], [])
+    return P.fix_unit_slips(out, (filing, "", ""), (), scale)
+
+
+def test_reading_two_needs_the_cards_own_label_beside_the_rupee_amount():
+    # unrelated whole-rupee amounts that are the card's figure shifted: no proof, the guard keeps the figure at its scale
+    assert _guarded("Revenue ₹1,250 Cr in the quarter.",
+                    "Statement of results.\nPaid-up capital Rs 1,25,00,00,000 as at 30.09.2026.\n", [1000.0]) == {}
+    assert _guarded("Revenue ₹125 Cr in the quarter.", "Notes.\nEquity share capital INR 12,50,00,000 fully paid.\n", [100.0]) == {}
+    assert _guarded("Order inflow ₹220 Cr in the quarter.", "Notes.\nGuarantee of Rs. 22,00,00,000 given to a bank.\n", [200.0]) == {}
+    # TVSMOTOR nse-106627227: the amount sits in the clause the card names ("cost of acquisition"): proven, fixed at any scale
+    assert _guarded("Cost of acquisition ₹1,933 Cr for the stake.",
+                    "8. Cost of acquisition and/or the INR 193,31,19,436.71 price at which the shares are acquired.\n",
+                    [1500.0]) == {"1,933": "193.31"}
+
+
+def test_reading_one_needs_a_currency_and_no_count():
+    # ACEVECTOR's class: "13.07 million shares" is a count, not money: refused at scale
+    assert _guarded("Revenue ₹13.07 Cr for the quarter.",
+                    "(₹ in Lakhs)\nRevenue from operations 50,000.00 45,000.00\nShares issued 13.07 million shares to investors.\n",
+                    [10.0]) == {}
+    # HDFCAMC: "₹9,691 bn" is the card's exact figure with its currency and unit
+    assert _guarded("Average AUM ₹9,691 Cr for the quarter.", "QUARTERLY AVERAGE AUM ₹9,210 bn ₹6,280 bn ₹9,691 bn ₹6,507 bn\n",
+                    [9000.0]) == {"9,691": "969,100"}
+
+
+def test_reading_three_is_never_proven_when_the_cards_digits_are_printed():
+    # CDSL's class with a near number placed first ("271.9"): the filing prints "272", so the card may have copied it
+    filing = ("(₹ in Lakhs)\nOther income 271.9 230.0 " + "x" * 100 + "\nEBITDA 272 255 247 212\n"
+              "Revenue from operations 39,448.00 30,000.00\n")
+    assert _guarded("EBITDA ₹272 Cr for the quarter.", filing, [300.0]) == {}

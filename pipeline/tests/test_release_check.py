@@ -90,7 +90,9 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
                           "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
                           "adjusted_profit", "words_match_figures",
-                          "filer_checks", "figure_matches_file", "guided_not_actual"}
+                          "filer_checks", "figure_matches_file", "guided_not_actual", "event_repeat",
+                          "press_release_fold", "unit_fix_scale",
+                          "comparative_memory"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -179,3 +181,47 @@ def test_filer_checks_reads_the_cards_own_file_off_and_on(monkeypatch):
     assert "TABLE revenue Q4FY26 CONSOLIDATED: 593.12" in note["off_lines"]
     assert "TABLE revenue Q4FY26 CONSOLIDATED: 593.12" not in note["on_lines"] and rc.changed_by_diff(note["diff"])
     assert os.environ.get("XBRL_FILER_CHECKS") != "1"   # restored after
+
+
+def test_event_repeat_check_holds_a_second_card_on_one_order():
+    """CARD_EVENT_REPEAT (S2): ARIS's press release of the ₹250 Cr Transcon order already filed as an intimation."""
+    rc = _script()
+    row = {"news_id": "nse-106830842", "symbol": "ARIS", "scrip_code": "544419", "pdf_url": "u",
+           "company_name": "Arisinfra Solutions Limited", "filed_at": "2026-10-27T18:45:34+05:30"}
+    card = {"event_type": "ORDER_WIN", "headline": "Arisinfra subsidiary wins ₹250 Cr DaaS mandate for Transcon Ramdev Plaza"}
+    memory = {"timeline": [{"event_type": "ORDER_WIN", "date": "2026-10-27T18:40:37+05:30", "news_id": "nse-106830824",
+                            "summary": "Arisinfra's subsidiary secured a ₹250 Cr DaaS service order from Transcon Iconica."}]}
+    note = rc.check_event_repeat(card, row, memory)
+    assert rc.changed_by_diff(note["diff"]) and any(line.startswith("HELD: repeat of nse-106830824") for line in note["on_lines"])
+    assert not rc.changed_by_diff(rc.check_event_repeat(card, row, {"timeline": []})["diff"])
+
+
+def test_press_release_fold_pairs_a_release_with_its_quarters_first_card():
+    """RESULTS_PRESS_RELEASE (TODO 135): a later same-quarter card whose file name says "PressRelease" (glued), with no exchange
+    file and no statement in its text, would be folded into the quarter's first card."""
+    rc = _script()
+    first = {"scrip": "1", "period": "Q2FY27", "news_id": "nse-1", "headline": "Acme Q2FY27 revenue ₹100 Cr",
+             "filed_at": "2026-10-28T15:00:00+05:30", "symbol": "ACME", "pdf_url": "u1"}
+    card = {"event_type": "RESULTS", "headline": "Acme Q2FY27: revenue up 12%"}
+    row = {"news_id": "nse-2", "pdf_url": "https://x/corporate/ACME_28102026_PressRelease_Q2.pdf"}
+    assert rc.release_candidate(card, row, "Acme reported revenue of Rs 100 crore, up 12%. " * 50)
+    assert rc.release_candidate(card, row, "Statement of unaudited financial results for the quarter ended") is None
+    assert rc.release_candidate(dict(card, xbrl={"url": "f.xml"}), row, None) is None       # its own file: a statement filing
+    assert rc.release_candidate(card, {"news_id": "nse-2", "pdf_url": "https://x/Outcome.pdf"}, "text") is None
+    later = dict(first, news_id="nse-2", filed_at="2026-10-28T16:00:00+05:30", why="x")
+    pairs = rc.fold_pairs([first, later], [later])
+    assert len(pairs) == 1 and pairs[0]["into"] == "nse-1"
+    assert rc.fold_pairs([later], [later]) == []      # no earlier card: it stays the quarter's card
+
+
+def test_unit_fix_scale_keeps_a_figure_at_the_companys_own_scale():
+    """UNIT_FIX_SCALE_GUARD (CDSL nse-106838164): the deck's ₹272 Cr standalone revenue was "corrected" to ₹2.72 Cr."""
+    rc = _script()
+    row = {"news_id": "nse-106838164", "symbol": "CDSL", "scrip_code": "1", "pdf_url": "u"}
+    card = {"event_type": "CONCALL_PRESENTATION", "grounding": {"unit_fixes": {"272": "2.72", "45,582": "455.82"}}}
+    memory = {"financial_metrics": [{"metric": "revenue", "period": "Q2FY27", "value": 394.48},
+                                    {"metric": "pat", "period": "Q2FY27", "value": 173.85}]}
+    note = rc.check_unit_fix_scale(card, row, memory)
+    assert "UNIT FIX 272 Cr kept (the company's scale)" in note["on_lines"]
+    assert "UNIT FIX 45,582 Cr -> 455.82 Cr" in note["on_lines"]   # a correction onto its scale stays
+    assert not rc.changed_by_diff(rc.check_unit_fix_scale(card, row, None)["diff"])   # no memory: nothing refused

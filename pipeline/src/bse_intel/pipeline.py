@@ -58,7 +58,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, card_other_issuer, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_slip_xbrl_guard, d20_dropped_file_period
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, card_other_issuer, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_fix_scale_guard, unit_slip_xbrl_guard, d20_dropped_file_period
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -75,7 +75,7 @@ from . import xbrl_facts, xbrl_store
 from . import statements
 from . import directions
 from . import results_card
-from . import footer_plausible, guided_actual, one_basis, results_one_line, words_figures
+from . import comparative_memory, event_repeats, footer_plausible, guided_actual, one_basis, results_one_line, words_figures
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -444,13 +444,42 @@ def fix_foreign_crore(out: Pass2Output, text: str) -> list[str]:
     return [f"foreign amount set right: {k} -> {v}" for k, v in fixes.items()]
 
 
-def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...], xbrl_crore=()) -> dict[str, str]:
+SCALE_BAND = 3.0   # UNIT_FIX_SCALE_GUARD: within this factor of one of the company's own quarter figures is "its scale"
+
+
+def scale_crore(dossier: dict | None, periods: int = 2) -> list[float]:
+    """The company's own money figures of its latest quarters in memory, both bases (revenue, total income, EBITDA, PBT, PAT):
+    the scale a card amount is checked against by UNIT_FIX_SCALE_GUARD."""
+    metrics = ("revenue", "total_income", "ebitda", "pbt", "pat", "pat_owners")
+    d = dossier or {}
+    rows = [m for m in list(d.get("financial_metrics") or []) + list((d.get("standalone") or {}).get("metrics") or [])
+            if isinstance(m, dict) and m.get("metric") in metrics and isinstance(m.get("value"), (int, float))
+            and re.fullmatch(r"Q[1-4]FY\d{2}", str(m.get("period") or ""))]
+    latest = sorted({m["period"] for m in rows}, key=lambda p: quarter_index(p) or -1)[-periods:]
+    return [abs(m["value"]) for m in rows if m["period"] in latest and abs(m["value"]) >= 1]
+
+
+def _at_scale(value: float, scale: list[float]) -> bool:
+    return any(s / SCALE_BAND <= abs(value) <= s * SCALE_BAND for s in scale)
+
+
+def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...], xbrl_crore=(), scale=()) -> dict[str, str]:
     """Correct, in code, card amounts that are a statement figure read at the wrong unit (grounding.
     unit_slips): in the card's text, its key numbers and changes, the timeline entry, and the reply's
-    ₹ crore metrics for memory. Returns {as written: corrected}."""
+    ₹ crore metrics for memory. Returns {as written: corrected}.
+
+    `scale` (UNIT_FIX_SCALE_GUARD, CDSL nse-106838164): the company's own quarter figures; a correction that takes a figure at
+    their scale (within 3x) to one that is not is no correction ("₹272 Cr" standalone revenue made ₹2.72 Cr beside a ₹394 Cr
+    consolidated quarter)."""
     if out.card is None or not sources:
         return {}
     slips = unit_slips(_card_texts(out), sources[0], *sources[1:], xbrl_crore=xbrl_crore)
+    if scale:
+        kept = [s for s in slips if not (_at_scale(s[1], list(scale)) and not _at_scale(s[3], list(scale)))]
+        for raw, value, _, right, _ in slips:
+            if (raw, value) not in {(k[0], k[1]) for k in kept}:
+                log.info("unit fix %s -> %s refused: %s is the company's own scale (UNIT_FIX_SCALE_GUARD)", raw, right, raw)
+        slips = kept
     if not slips:
         return {}
     mapping = {raw: f"{right:,.{places}f}".rstrip("0").rstrip(".") if places else f"{right:,.0f}"
@@ -3870,7 +3899,7 @@ class Pipeline:
             # UNIT_SLIP_XBRL_GUARD: the file's own money facts reach the unit fixer only, never the grounding sources
             guard = (xbrl_facts.money_crore(getattr(tagged, "raw", None), filing.scrip_code, filing.xbrl_url or "")
                      if tagged and unit_slip_xbrl_guard() else ())
-            units = fix_unit_slips(candidate, sources, guard)
+            units = fix_unit_slips(candidate, sources, guard, scale_crore(dossier) if unit_fix_scale_guard() else ())
             foreign_fixes = fix_foreign_crore(candidate, filed_text)
             counts = fix_count_millions(candidate, sources)
             changes = sheet_cuts + built + fix_change_percentages(candidate, sources) + counts + foreign_fixes
@@ -3945,8 +3974,25 @@ class Pipeline:
         # a card whose figures are its own XBRL file's, every amount grounded: the garbled text layer cannot have
         # given it a wrong figure (held-card audit, 22 Oct 2026: 15 such holds, all false)
         checks.held += self._held_reasons(filing, text, xbrl_backed=bool(tagged) and not checks.amounts_ungrounded)
+        # a checks.held reason only publishes the card as unverified; these take it out of the feed (held), its facts kept
+        hide: list[str] = []
         if other_issuer:
-            checks.held.append(f"The results in this filing are {other_issuer}'s, not {filing.company_name}'s own (CARD_OTHER_ISSUER)")
+            hide.append(f"The results in this filing are {other_issuer}'s, not {filing.company_name}'s own (CARD_OTHER_ISSUER)")
+        if out.card is not None and not tagged and (out.event_type or event_type) == "RESULTS":
+            # a PDF-read results card whose earlier quarters contradict memory read its columns out of order (MASKINVEST)
+            wrong = comparative_memory.contradictions(
+                [out.card.headline or "", out.card.takeaway or "", out.timeline_entry or ""]
+                + [f.text for f in out.card.what_happened] + [f"{k.label} {k.value} {k.change or ''}" for k in out.card.key_numbers],
+                dossier)
+            if wrong:
+                hide.append("Earlier quarters contradict memory, columns read out of order: " + "; ".join(wrong[:3])
+                            + " (CARD_COMPARATIVE_MATCHES_MEMORY)")
+        if out.card is not None and (repeat := event_repeats.match(
+                out.event_type or event_type, filing.filed_at, f"{out.card.headline or ''} {out.timeline_entry or ''}",
+                filing.company_name, dossier.get("timeline"), filing.news_id)):
+            # the same order or deal from a second document (S2): this card's facts stay stored, the first card is the event's
+            hide.append(f"Repeat of {repeat[0]}: {repeat[1]} (CARD_EVENT_REPEAT)")
+        checks.held += hide
         unchecked: list[str] = []
         if checks.only_quotes:
             # the points whose quote does not carry them leave the face, behind a tap; the card is published, not held
@@ -4149,6 +4195,7 @@ class Pipeline:
             # every line sorted into part 1 or part 2 by code, after every edit above (indexes point at the final lists)
             card_json["parts"] = two_parts.split_card(card_json, text, blocks, two_hidden.get(id(out)))
         held = (review or {}).get("status") == "UNRESOLVED" and not checks.only_style
+        held = held or bool(hide)   # another company's results, a repeat, columns out of order: out of the feed (switches above)
         # A held card is one for review whatever made it so: a card held only for an unfound amount had
         # needs_review = 0, so it escaped the review count and the scoring veto (76 of 118 held cards in the
         # smoke-test funnel, 2026-10-18).

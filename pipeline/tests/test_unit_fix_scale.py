@@ -105,3 +105,16 @@ def test_the_same_head_under_a_table_row_still_proves():
     # a lakh table's row read a power of ten off (GOODYEAR's shape): "Profit for the period 4,939.22" carded ₹493.92 Cr
     from test_cards import LAKH_STATEMENT
     assert _guarded("PAT ₹493.92 Cr in the quarter.", LAKH_STATEMENT, [480.0]) == {"493.92": "49.39"}
+
+
+def test_other_income_other_equity_and_profit_on_are_no_head():
+    """Third review of #362: a bare income, other equity and a qualified profit proved the wrong figure."""
+    for text, filing in (("Revenue ₹272 Cr for the quarter.", "(₹ in Lakhs)\nOther income 2,720\n"),
+                         ("Revenue ₹272 Cr for the quarter.", "(₹ in Lakhs)\nInterest income 2,720\n"),
+                         ("Revenue ₹272 Cr for the quarter.", "(₹ in Lakhs)\nTotal comprehensive income 2,720\n"),
+                         ("Net worth ₹272 Cr at the year end.", "(₹ in Lakhs)\nOther equity 2,720\n"),
+                         ("PAT ₹272 Cr for the quarter.", "(₹ in Lakhs)\nTax on profit 2,720\n"),
+                         ("PAT ₹272 Cr for the quarter.", "(₹ in Lakhs)\nProfit on sale of investments 2,720\n")):
+        assert _guarded(text, filing, [272.0]) == {}, (text, filing)
+    # the revenue row itself still proves it
+    assert _guarded("Revenue ₹272 Cr for the quarter.", "(₹ in Lakhs)\nRevenue from operations 2,720\n", [272.0]) == {"272": "27.2"}

@@ -911,13 +911,13 @@ _HEADS = [(re.compile(rf"\b(?:{words})\b", re.I), head) for words, head in (
     (r"assets\s+under\s+management|aum|loan\s+portfolio|loan\s+book|portfolio", "aum"),
     (r"order\s+book|order\s+inflows?|orders?", "order"),
     (r"capital\s+expenditure|capex", "capex"),
-    (r"revenues?|sales|turnover|income", "revenue"),
+    # a bare "income" (other, interest, comprehensive, tax income) names no revenue (third review of #362)
+    (r"revenues?|sales|turnover|income\s+from\s+operations|total\s+income", "revenue"),
     (r"expenses?|expenditure|costs?", "expense"),
-    (r"share\s+capital|net\s*worth|equity", "equity"),
+    (r"share\s+capital|net\s*worth|total\s+equity", "equity"),   # "other equity" is no net worth
     (r"debt|borrowings?|loans?|ncds?|debentures?", "debt"),
     (r"dividends?", "dividend"),
-    (r"profits?", "pat"),
-)]
+)]   # no bare "profit": "tax on profit", "profit on sale of investments" are no PAT
 
 
 def _head(label: str) -> str | None:

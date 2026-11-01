@@ -67,6 +67,9 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      (3) the scale block (market cap, revenue, net worth, debt) is empty. Each can only make a drop that live
                      would not make, so the drop list is an upper bound. The blind sample (up to 60 dropped items, seeded, no
                      verdict hints) is for a reviewer to judge TRUE (supported, the drop loses true content) or FALSE.
+  other_issuer       CARD_OTHER_ISSUER (1 Nov 2026, HEGAM nse-106837190): `pipeline.other_issuer_results` on each RESULTS card's
+                     stored text with the company's former names from memory; a card whose statement is another company's
+                     is read as OTHER and marked unverified. Complete (the type and the hold are code's, not the model's).
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
                      correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
                      bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
@@ -127,7 +130,7 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
           ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"),
           ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"),
-          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"))
+          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"), ("other_issuer", "CARD_OTHER_ISSUER"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -241,6 +244,20 @@ def check_results_statement(card: dict, row: dict, text: str) -> dict:
     retyped = P.lacks_results(text)
     off = [f"TYPE: {card.get('event_type') or 'RESULTS'}", f"HEADLINE: {card.get('headline') or ''}"]
     on = ["TYPE: OTHER (no results statement in the text)", f"HEADLINE: {card.get('headline') or ''}"] if retyped else list(off)
+    return _record(row, card, off, on)
+
+
+def check_other_issuer(card: dict, row: dict, text: str, dossier: dict | None) -> dict:
+    """other_issuer: a RESULTS card whose stored text carries another company's results (pipeline.other_issuer_results, the
+    company's former names from memory) would be read as OTHER with CARD_OTHER_ISSUER on: no results table, nothing into
+    memory, and the card marked unverified with whose results they are (HEGAM nse-106837190)."""
+    from bse_intel.models import Filing
+    filing = Filing(news_id=row["news_id"], scrip_code=str(row.get("scrip_code") or ""), company_name=row.get("company_name") or "",
+                    headline="", subject="", filed_at=row.get("filed_at") or "", filing_date=row.get("filing_date") or "")
+    other = P.other_issuer_results(filing, text, ((dossier or {}).get("identity") or {}).get("former_names"))
+    off = [f"TYPE: {card.get('event_type') or 'RESULTS'}", f"HEADLINE: {card.get('headline') or ''}"]
+    on = ([f"TYPE: OTHER ({other}'s results, not {filing.company_name}'s)", f"HEADLINE: {card.get('headline') or ''}",
+           f"HELD: the results in this filing are {other}'s"] if other else list(off))
     return _record(row, card, off, on)
 
 
@@ -971,6 +988,15 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_results_statement(card, row, text))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "other_issuer":
+                    if not results:
+                        skipped[name]["not a results card"] += 1
+                    elif text is None:
+                        skipped[name]["no text"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_other_issuer(card, row, text, memory() or None))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "unit_slip_guard":
                     url = (card.get("xbrl") or {}).get("url")

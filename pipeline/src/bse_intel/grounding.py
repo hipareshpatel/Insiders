@@ -902,37 +902,72 @@ def _window(filing: str, target: float, slack: float = 0.0) -> str:
 
 _COUNT_NOUN = re.compile(r"\b(?:equity\s+)?(?:shares?|warrants?|options?|units?|securities|stocks?)\b", re.I)
 _CURRENCY_BEFORE = re.compile(r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s+)?$", re.I)
-_LABEL_STOP = {"crore", "crores", "from", "with", "against", "during", "quarter", "year", "period", "total", "rose", "fell",
-               "grew", "stood", "were", "reported", "compared", "which", "that", "this", "their", "about", "around", "nearly"}
+_BOUNDARY = re.compile(r"[.;:|\t\n](?:\s|$)|[|\t\n]")
+# a label's head noun, longest phrase first (lead's review of #362): one figure proves another only under the same head
+_HEADS = [(re.compile(rf"\b(?:{words})\b", re.I), head) for words, head in (
+    (r"profit\s+before\s+tax|pbt", "pbt"),
+    (r"profit\s+after\s+tax|net\s+profit|profit\s+for\s+the\s+(?:period|year|quarter)|pat|net\s+loss|loss\s+for\s+the\s+(?:period|year|quarter)", "pat"),
+    (r"ebitda|ebidta", "ebitda"),
+    (r"assets\s+under\s+management|aum|loan\s+portfolio|loan\s+book|portfolio", "aum"),
+    (r"order\s+book|order\s+inflows?|orders?", "order"),
+    (r"capital\s+expenditure|capex", "capex"),
+    (r"revenues?|sales|turnover|income", "revenue"),
+    (r"expenses?|expenditure|costs?", "expense"),
+    (r"share\s+capital|net\s*worth|equity", "equity"),
+    (r"debt|borrowings?|loans?|ncds?|debentures?", "debt"),
+    (r"dividends?", "dividend"),
+    (r"profits?", "pat"),
+)]
 
 
-def _proof_own_unit(filing: str, raw: str) -> bool:
-    """Reading 1's proof: the filing prints the card's exact figure with a currency before it and a unit word right after it
-    (within three words), and not as a count ("13.07 million shares": ACEVECTOR, lead's review of #362)."""
+def _head(label: str) -> str | None:
+    """The head noun of a label: the head of the phrase nearest its end ("revenue from operations" -> revenue, "profit
+    before tax" -> pbt); modifiers (consolidated, operating, net, total, gross) carry none."""
+    best = None
+    for pattern, head in _HEADS:
+        for m in pattern.finditer(label or ""):
+            if best is None or m.start() > best[0] or (m.start() == best[0] and m.end() > best[1]):
+                best = (m.start(), m.end(), head)
+    return best[2] if best else None
+
+
+def _row_label(text: str, at: int) -> str:
+    """The words directly before a figure on its own line or table row, up to six, after the last clause boundary, with the
+    row's other figures and units taken out ("Gross Loan Portfolio 844 ₹ 12,133 Mn ₹" -> "Gross Loan Portfolio")."""
+    segment = _BOUNDARY.split(text[max(0, at - 200):at])[-1]
+    words = [w for w in segment.split() if not re.fullmatch(r"[\d,.()%₹+-]+|₹|rs\.?|inr|" + _UNIT_WORD.pattern, w, re.I)]
+    return " ".join(words[-6:])
+
+
+def _card_head(text: str, pos: int) -> str | None:
+    """The card's own label head for a figure: the clause before it ("Consolidated revenue ₹1,250 Cr" -> revenue)."""
+    return _head(_BOUNDARY.split(text[:pos])[-1])
+
+
+def _proof_own_unit(filing: str, raw: str, head: str | None) -> bool:
+    """Reading 1's proof: the filing prints the card's exact figure with a currency before it, a unit word within three words
+    after it, no count in the rest of its clause ("₹13.07 million from sale of shares") and, on its own line, a label with the
+    card's head noun ("Loan of ₹13.07 million" proves no net profit; lead's review of #362)."""
+    if head is None:
+        return False
     want = raw.replace(",", "")
     for m in _ANY_NUMBER.finditer(filing):
-        if m.group(0).replace(",", "") != want:
+        if m.group(0).replace(",", "") != want or not _CURRENCY_BEFORE.search(filing[max(0, m.start() - 12):m.start()]):
             continue
-        after = filing[m.end():m.end() + 60].split()[:3]
-        unit = next((i for i, w in enumerate(after) if _UNIT_WORD.fullmatch(w.strip(".,;:()"))), None)
-        if unit is None or _COUNT_NOUN.search(" ".join(filing[m.end():m.end() + 60].split()[:unit + 4])):
+        rest = _BOUNDARY.split(filing[m.end():m.end() + 200])[0]
+        after = rest.split()[:3]
+        if not any(_UNIT_WORD.fullmatch(w.strip(".,;:()")) for w in after) or _COUNT_NOUN.search(rest):
             continue
-        if _CURRENCY_BEFORE.search(filing[max(0, m.start() - 12):m.start()]):
+        if _head(_row_label(filing, m.start())) == head:
             return True
     return False
 
 
-def _label_words(text: str, pos: int) -> set[str]:
-    """The card's own words for a figure: the content words of its clause before it ("employee cost", "revenue")."""
-    clause = re.split(r"[.;:]\s", text[:pos])[-1]
-    return {w.lower() for w in re.findall(r"[A-Za-z]{4,}", clause)} - _LABEL_STOP
-
-
-def _proof_whole_rupees(filing: str, value: float, decimals: int, crore: float, label: set[str]) -> bool:
+def _proof_whole_rupees(filing: str, value: float, decimals: int, crore: float, head: str | None) -> bool:
     """Reading 2's proof: a whole-rupee amount that is the card's figure decimal-shifted exactly (to the card's rounding, no
-    0.2% slack), in a clause sharing a word with the card's own label for the figure; a card that names none proves nothing
-    (paid-up capital Rs 1,25,00,00,000 against "revenue ₹1,250 Cr": lead's review of #362)."""
-    if not label:
+    0.2% slack) under a label with the card's head noun on its own line (paid-up capital or equity against revenue, expenses
+    against income, profit before tax against net profit prove nothing; lead's review of #362)."""
+    if head is None:
         return False
     tolerance = 0.5 * 10 ** (-decimals) + 1e-9
     for m in _WHOLE_RUPEES.finditer(filing):
@@ -942,22 +977,24 @@ def _proof_whole_rupees(filing: str, value: float, decimals: int, crore: float, 
             continue
         if abs(c - crore) > 1e-6 * max(1.0, crore) or not any(abs(value - c * 10 ** k) <= tolerance for k in (-3, -2, -1, 1, 2, 3)):
             continue
-        clause = re.split(r"[.;\n]", filing[max(0, m.start() - 160):m.start()])[-1] + filing[m.start():m.end() + 80].split(".")[0]
-        if label & {w.lower() for w in re.findall(r"[A-Za-z]{4,}", clause)}:
+        if _head(_row_label(filing, m.start())) == head:
             return True
     return False
 
 
-def _proof_table(filing: str, raw: str, right: float, places: int, unit: float) -> bool:
-    """Reading 3's proof: the table prints the correction times its unit (to the correction's own rounding) and nowhere does the
-    filing print the card's own figure; a card whose digits are printed may have copied them (CDSL's deck "272"; a "271.9"
-    elsewhere is no proof: lead's review of #362)."""
+def _proof_table(filing: str, raw: str, right: float, places: int, unit: float, head: str | None) -> bool:
+    """Reading 3's proof: the filing prints the card's own figure nowhere (a card whose digits are printed may have copied them,
+    CDSL's deck "272"), and a table row under the card's head noun prints the correction times its unit, to the correction's
+    own rounding ("Revenue 2,720" in a lakh table proves no EBITDA of ₹272 Cr; lead's review of #362)."""
+    if head is None:
+        return False
     value = float(raw.replace(",", ""))
-    printed = [float(m.group(0).replace(",", "")) for m in _ANY_NUMBER.finditer(filing) if m.group(0).replace(",", "").replace(".", "", 1).isdigit()]
-    if any(abs(p - value) <= 1e-9 for p in printed):
+    numbers = [(m, float(m.group(0).replace(",", ""))) for m in _ANY_NUMBER.finditer(filing)
+               if m.group(0).replace(",", "").replace(".", "", 1).isdigit()]
+    if any(abs(v - value) <= 1e-9 for _, v in numbers):
         return False
     slack = max(0.5 * 10 ** (-places) * unit, 1e-9)
-    return any(abs(p - right * unit) <= slack for p in printed)
+    return any(abs(v - right * unit) <= slack and _head(_row_label(filing, m.start())) == head for m, v in numbers)
 
 
 def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace: list | None = None) -> list[tuple[str, float, int, float, int]]:
@@ -1005,7 +1042,7 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                 slips[raw] = (raw, value, decimals, *fits[0])
                 if trace is not None:
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 1, "source": _window(filing, value),
-                                  "proven": _proof_own_unit(filing, raw)})
+                                  "proven": _proof_own_unit(filing, raw, _card_head(text or "", pos))})
                 continue
             # a bare table figure counts in the table's declared unit, never as crore when another unit is declared
             if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES):
@@ -1024,7 +1061,7 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                     found = next((w for w in (_window(filing, c * 1e7) for c in exact) if w), "") \
                         or next((w for k in (-3, -2, -1, 1, 2, 3) if (w := _window(filing, value * 10 ** (7 - k)))), "")
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 2, "source": found,
-                                  "proven": any(_proof_whole_rupees(filing, value, decimals, c, _label_words(text or "", pos))
+                                  "proven": any(_proof_whole_rupees(filing, value, decimals, c, _card_head(text or "", pos))
                                                 for c in exact)})
                 continue
             if not unit or value < 10:
@@ -1057,7 +1094,8 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                 if trace is not None:
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 3, "unit": unit,
                                   "source": _window(filing, fits[0][0] * unit, 0.5 * 10 ** (-fits[0][1]) * unit),
-                                  "proven": _proof_table(filing, raw, fits[0][0], fits[0][1], unit)})
+                                  "proven": _proof_table(filing, raw, fits[0][0], fits[0][1], unit,
+                                                         _card_head(text or "", pos))})
     return list(slips.values())
 
 

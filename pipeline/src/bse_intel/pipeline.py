@@ -465,12 +465,13 @@ def _at_scale(value: float, scale: list[float]) -> bool:
 
 def unit_fix_proven(trace: dict | None) -> bool:
     """UNIT_FIX_SCALE_GUARD: a correction its source proves, which the scale guard never refuses (release check 41338082613, the
-    unit_slips trace of 19 cards). The proof is grounding.unit_slips' own (lead's review of #362: a source window is no proof):
-    the same printed number as the card's figure, decimal-shifted. Reading 1, the card's exact digits with a currency before
-    and a unit word after, not a count ("₹9,691 bn"); reading 2, a whole-rupee amount that is the card's figure shifted exactly,
-    in a clause sharing the card's label ("INR 193,31,19,436.71" cost of acquisition); reading 3, the table's figure equal to
-    the correction times its unit while the filing prints the card's own digits nowhere ("15,287" lakh carded "₹1,528.7 Cr";
-    CDSL's deck "272" is printed, so not proven). Anything else the scale guard decides as before."""
+    unit_slips trace of 19 cards). The proof is grounding.unit_slips' own (lead's reviews of #362): the same printed number as
+    the card's figure, decimal-shifted, under a row label with the card label's head noun (revenue, EBITDA, PAT, PBT, costs,
+    equity, debt, orders, AUM, capex, dividend; modifiers never count). Reading 1: the card's exact digits with a currency
+    before, a unit word after and no count in the clause ("₹9,691 bn" AUM); reading 2: a whole-rupee amount that is the figure
+    shifted exactly ("INR 193,31,19,436.71" cost of acquisition); reading 3: the table row's figure equal to the correction
+    times its unit while the filing prints the card's own digits nowhere ("Profit for the period 4,939.22" lakh carded ₹493.92
+    Cr). Anything else the scale guard decides as before."""
     return bool(trace and trace.get("proven"))
 
 

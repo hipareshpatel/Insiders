@@ -79,3 +79,29 @@ def test_reading_three_is_never_proven_when_the_cards_digits_are_printed():
     filing = ("(₹ in Lakhs)\nOther income 271.9 230.0 " + "x" * 100 + "\nEBITDA 272 255 247 212\n"
               "Revenue from operations 39,448.00 30,000.00\n")
     assert _guarded("EBITDA ₹272 Cr for the quarter.", filing, [300.0]) == {}
+
+
+# --- the second review of #362: the source figure's own row label must carry the card label's head noun ----------------------
+
+def test_a_shared_generic_word_is_no_proof():
+    refused = [
+        ("Consolidated revenue ₹1,250 Cr in the quarter.", "Consolidated equity Rs 1,25,00,00,000 reported.\n", [1000.0]),   # G1
+        ("Operating income ₹1,250 Cr in the quarter.", "Operating expenses Rs 1,25,00,00,000 incurred.\n", [1000.0]),        # G2
+        ("Net profit ₹1,250 Cr in the quarter.", "Profit before tax Rs 1,25,00,00,000\n", [1000.0]),                          # G3
+        ("Revenue from operations ₹1,250 Cr in the quarter.",
+         "Revenue from operations grew; Rs 1,25,00,00,000 was raised as debt from operations.\n", [1000.0]),                  # G4
+        ("EBITDA ₹272 Cr for the quarter.", "(₹ in Lakhs)\nRevenue 2,720\nOther income 100\n", [300.0]),                      # R3
+        ("Revenue ₹13.07 Cr for the quarter.", "Revenue ₹13.07 million from sale of shares to promoters.\n", [10.0]),         # R1a
+        ("Net profit ₹13.07 Cr for the quarter.", "Net profit fell. Loan of ₹13.07 million raised via NCDs.\n", [10.0]),      # R1b
+    ]
+    for text, filing, scale in refused:
+        assert _guarded(text, filing, scale) == {}, text
+
+
+def test_the_same_head_under_a_table_row_still_proves():
+    # FIVESTAR nse-106603286: the loan portfolio row in ₹ Mn, the card's AUM a tenth of it
+    assert _guarded("AUM ₹1,322.46 Cr at the quarter end.",
+                    "(₹ in Mn)\nGross Loan Portfolio 844 ₹ 12,133 Mn ₹ 132,246 Mn +9 +96\n", [1300.0]) == {"1,322.46": "13,224.6"}
+    # a lakh table's row read a power of ten off (GOODYEAR's shape): "Profit for the period 4,939.22" carded ₹493.92 Cr
+    from test_cards import LAKH_STATEMENT
+    assert _guarded("PAT ₹493.92 Cr in the quarter.", LAKH_STATEMENT, [480.0]) == {"493.92": "49.39"}

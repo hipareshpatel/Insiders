@@ -396,7 +396,10 @@ def _memory_period(figure: float, period: str | None, dossier: dict | None, basi
     """The year-sized period (year, nine months, half) whose profit in memory, any of the four lines on the card's basis, equals
     ``figure`` (within rounding), else None (c17 of 41338082613: a nine-month 150 was set against the quarter's 43.05)."""
     wanted = _year_of(period)
-    for m in _memory_rows(dossier, basis):
+    rows = _memory_rows(dossier, basis)
+    if any(m.get("period") == period and not _differs(abs(figure), abs(m["value"]), 0.015) for m in rows):
+        return None   # the quarter's own profit (Q2 100 beside H1 101.2 when Q1 was 1.2; lead's read of #363): no period tag
+    for m in rows:
         if m.get("period") in wanted and not _differs(abs(figure), abs(m["value"]), 0.015):
             return m["period"]
     return None

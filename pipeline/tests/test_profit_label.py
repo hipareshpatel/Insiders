@@ -282,3 +282,20 @@ def test_a_headline_figure_that_is_memorys_half_gets_the_half_tag(monkeypatch):
     card["headline"], card["key_numbers"] = "Acme Q2FY27 PAT at ₹60 Cr", []
     notes = R.profit_label_card_json(card, MEM)
     assert card["headline"] == "Acme Q2FY27 PAT at ₹60 Cr (H1FY27)" and len(notes) == 1
+
+
+def test_the_quarters_own_profit_near_its_half_gets_no_tag(monkeypatch):
+    """Lead's read of #363: Q1 1.2, Q2 100, H1 101.2; the Q2 card's real PAT of 100 is within 1.5% of the half."""
+    on(monkeypatch)
+    memory = {"financial_metrics": [{"metric": "pat", "period": "Q1FY27", "value": 1.2},
+                                    {"metric": "pat", "period": "Q2FY27", "value": 100.0},
+                                    {"metric": "pat", "period": "H1FY27", "value": 101.2}]}
+    card = _card("Q2FY27", 100.0, "PAT", "₹100.00 Cr", "PAT of Rs 100 crore")
+    assert R.profit_label_card_json(card, memory) == [] and card["key_numbers"][0]["label"] == "PAT"
+    # a half's figure apart from the quarter's still gets its tag (Q1 30, Q2 100, H1 130)
+    apart = {"financial_metrics": [{"metric": "pat", "period": "Q1FY27", "value": 30.0},
+                                   {"metric": "pat", "period": "Q2FY27", "value": 100.0},
+                                   {"metric": "pat", "period": "H1FY27", "value": 130.0}]}
+    card = _card("Q2FY27", 100.0, "PAT", "₹130.00 Cr", "PAT of Rs 130 crore for the half")
+    R.profit_label_card_json(card, apart)
+    assert card["key_numbers"][0]["label"] == "PAT (H1FY27)"

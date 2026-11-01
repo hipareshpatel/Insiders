@@ -93,6 +93,8 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+**Who works what (owner, 1 Nov 2026 ~15:50 IST: "other lead will not work, you need to take care everything"):** this session (ccr-c282922e-vajnv9) leads every lane: data, cards, reviews, merges, Maintenance runs. The reader session (session_016X4g5YFAhugJ9L6DfUTcjf, branch ccr-d86d5b66-tvxfy0) takes items the lead hands it; every change gets an independent review before merge. The other account's session (claude/bank-annual-report-pdf-reader-u1cfqv) is stopped: its last commit 1 Nov 09:39 IST.
+
 ### 3.0 The one open list (consolidated 1 Nov 2026, ~09:30 IST; owner: "check past pending items ... many are cleared, not required or superseded")
 
 Every list was swept: this section 3 (the lead's list and the 31 Oct table below), 3b, docs/TODO.md, TASKS, PLAN, HANDOVER, docs/handover/2026-10-31.md and docs/audit/actions-pending.md, each item checked against git, switches.toml and the code. **This sub-section is the one current list; everything below it in section 3 and 3b is history** (kept for its findings). Lanes (co-leads, #303): **cards** = second session; **data** = lead; **reader** = reader session; **owner** = needs the owner.

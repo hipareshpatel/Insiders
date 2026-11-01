@@ -136,22 +136,20 @@ def test_other_issuer_check_marks_a_results_card_on_another_companys_statement()
     assert not rc.changed_by_diff(own["diff"])
 
 
-def test_adjusted_profit_check_labels_a_profit_that_is_not_the_tables():
-    """CARD_ADJUSTED_PROFIT_LABEL (TI nse-106837308): the release's adjusted PAT ₹68 Cr beside the table's reported ₹22.27 Cr."""
+def test_adjusted_profit_check_tags_a_figure_with_its_memory_period():
+    """CARD_ADJUSTED_PROFIT_LABEL (reviews of #363): only a figure memory holds for the year, nine months or half gets a tag."""
     rc = _script()
     row = {"news_id": "nse-106837308", "symbol": "TI", "scrip_code": "507205", "pdf_url": "u"}
     card = {"event_type": "RESULTS", "headline": "Tilaknagar Q2FY27 PAT up 30% to ₹68 Cr", "takeaway": "",
             "key_numbers": [{"label": "PAT", "value": "₹68 Cr", "quote": "PAT1 increased by 30% to Rs. 68 crore"}],
             "results": {"period": "Q2FY27", "pat": {"value": 22.27}, "lines": [{"key": "pat", "label": "PAT"}]}}
-    memory = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27},
-                                    {"metric": "pat_owners", "period": "Q2FY27", "value": 22.27},
-                                    {"metric": "pat", "period": "H1FY27", "value": 60.0}]}
-    note = rc.check_adjusted_profit(card, row, memory)
-    assert rc.changed_by_diff(note["diff"]) and "KEY PAT (company-reported; reported PAT ₹22.27 Cr): ₹68 Cr" in note["on_lines"]
+    half = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27},
+                                  {"metric": "pat", "period": "H1FY27", "value": 68.0}]}
+    note = rc.check_adjusted_profit(card, row, half)
+    assert rc.changed_by_diff(note["diff"]) and "KEY PAT (H1FY27): ₹68 Cr" in note["on_lines"]
     assert card["key_numbers"][0]["label"] == "PAT"   # the stored card is not changed
-    same = dict(card, headline="Tilaknagar Q2FY27 PAT ₹22.27 Cr", key_numbers=[{"label": "PAT", "value": "₹22.27 Cr"}])
-    assert not rc.changed_by_diff(rc.check_adjusted_profit(same, row, memory)["diff"])
-    assert not rc.changed_by_diff(rc.check_adjusted_profit(card, row)["diff"])   # no memory: nothing labelled
+    none = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27}]}
+    assert not rc.changed_by_diff(rc.check_adjusted_profit(card, row, none)["diff"])   # memory does not hold ₹68 Cr: nothing
 
 
 def test_words_figures_check_softens_a_word_the_figures_contradict():

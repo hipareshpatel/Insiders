@@ -77,7 +77,7 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      is read as OTHER and marked unverified. Complete (the type and the hold are code's, not the model's).
   adjusted_profit    CARD_ADJUSTED_PROFIT_LABEL (1 Nov 2026, TI nse-106837308): `results_one_line.profit_label_card_json` on a copy
                      of each stored results card with a table, off and on; a profit figure in the headline, takeaway or key
-                     numbers that is none of the table's reported profit rows gets the table's PAT beside it. Complete.
+                     numbers that is memory's year, nine-month or half profit on the card's basis gets that period's tag. Complete.
   words_match_figures CARD_WORDS_MATCH_FIGURES (1 Nov 2026, blind audit "arithmetic in words"): `words_figures.apply_card_json`
                      on a copy of each stored results card with a table, memory for the previous quarter's YoY; the words it
                      softens and the list items it drops. Complete.

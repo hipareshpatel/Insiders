@@ -17,9 +17,8 @@ TI = {
 }
 
 
-# memory's profit for the card's quarter: with none, nothing is labelled (lead's review of release check 41338082613)
-# complete memory: the quarter's whole and owners' profit and the half the quarter closes, so a figure that is none of them can be
-# called company-reported (review of #363)
+# memory's profit lines for the card's quarter and the half it closes: a figure is tagged only when it is one of the half's
+# (reviews of #363)
 MEM = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27},
                              {"metric": "pat_owners", "period": "Q2FY27", "value": 22.27},
                              {"metric": "pat", "period": "H1FY27", "value": 60.0}]}
@@ -29,22 +28,12 @@ def on(monkeypatch):
     monkeypatch.setenv("CARD_ADJUSTED_PROFIT_LABEL", "1")
 
 
-def test_an_adjusted_pat_beside_the_reported_one_is_labelled(monkeypatch):
+def test_an_adjusted_pat_memory_does_not_hold_gets_no_label(monkeypatch):
+    """TI's ₹68 Cr (PAT before exceptional items) is no profit line memory holds: no "company-reported" guess any more (lead's
+    review of #363), nothing changes."""
     on(monkeypatch)
     card = copy.deepcopy(TI)
-    notes = R.profit_label_card_json(card, MEM)
-    assert len(notes) == 2
-    assert card["key_numbers"][1]["label"] == "PAT (company-reported; reported PAT ₹22.27 Cr)"
-    assert card["headline"].endswith("PAT up 30% to ₹68 Cr (company-reported; reported PAT ₹22.27 Cr)")
-    assert card["key_numbers"][0]["label"] == "EBITDA"   # not a profit figure
-
-
-def test_the_companys_own_words_for_its_basis_go_in_the_label(monkeypatch):
-    on(monkeypatch)
-    card = copy.deepcopy(TI)
-    card["key_numbers"][1]["quote"] = "PAT before exceptional items increased by 30% to Rs. 68 crore"
-    R.profit_label_card_json(card, MEM)
-    assert card["key_numbers"][1]["label"] == "PAT (company-reported, before exceptional items; reported PAT ₹22.27 Cr)"
+    assert R.profit_label_card_json(card, MEM) == [] and card == TI
 
 
 def test_the_reported_profit_a_loss_an_earlier_figure_and_a_labelled_one_are_left_alone(monkeypatch):
@@ -90,8 +79,8 @@ def test_another_profit_line_in_the_headline_is_not_pat(monkeypatch):
         card["headline"], card["key_numbers"] = headline, []
         assert R.profit_label_card_json(card, MEM) == [], headline
     card = copy.deepcopy(TI)
-    card["headline"], card["key_numbers"] = "Acme Q2FY27 profit jumps to ₹68 Cr", []
-    assert len(R.profit_label_card_json(card, MEM)) == 1   # a bare profit that is the headline's PAT is still compared
+    card["headline"], card["key_numbers"] = "Acme Q2FY27 profit jumps to ₹60 Cr", []
+    assert len(R.profit_label_card_json(card, MEM)) == 1   # a bare profit that is memory's H1 is still tagged
 
 
 def _headline(monkeypatch, text, results=None):
@@ -112,8 +101,8 @@ def test_the_earlier_periods_figure_is_not_labelled(monkeypatch):
         card, notes = _headline(monkeypatch, text)
         assert all("₹52" not in n for n in notes), text
         assert "₹52 Cr (company" not in card["headline"], text
-    card, notes = _headline(monkeypatch, "Acme Q2FY27 net profit of ₹68 Cr against net profit of ₹52 Cr a year earlier")
-    assert "net profit of ₹68 Cr (company-reported" in card["headline"]   # the current figure is still compared
+    card, notes = _headline(monkeypatch, "Acme Q2FY27 net profit of ₹60 Cr against net profit of ₹52 Cr a year earlier")
+    assert "net profit of ₹60 Cr (H1FY27)" in card["headline"]   # the current figure is still compared
 
 
 def test_a_figure_after_on_is_the_base_not_profit(monkeypatch):
@@ -201,7 +190,7 @@ def test_emudhra_a_year_figure_on_a_q4_card_is_named_with_its_year(monkeypatch):
     card = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
     notes = R.profit_label_card_json(card, memory)
     assert card["key_numbers"][0]["label"] == "PAT (FY25)" and "memory's FY25 profit" in notes[0]
-    # no memory year that matches: labelled company-reported as before (an adjusted figure, TI)
+    # no memory year that matches: no label (reviews of #363)
     other = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
     R.profit_label_card_json(other, {"financial_metrics": [{"metric": "pat", "period": "FY25", "value": 99.0},
                                                            {"metric": "pat", "period": "Q4FY25", "value": 23.89}]})
@@ -240,6 +229,7 @@ def test_a_nine_month_figure_gets_its_period_and_no_memory_labels_nothing(monkey
     on(monkeypatch)
     # c17: a nine-month 150 against the quarter's 43.05 (the nine months in the standalone block)
     card = _card("Q3FY27", 43.05, "PAT", "₹150.00 Cr", "PAT of Rs 150 crore")
+    card["basis"] = "STANDALONE"
     memory = {"financial_metrics": [{"metric": "pat", "period": "Q3FY27", "value": 43.05}],
               "standalone": {"metrics": [{"metric": "pat", "period": "9MFY27", "value": 150.0}]}}
     R.profit_label_card_json(card, memory)
@@ -251,19 +241,44 @@ def test_a_nine_month_figure_gets_its_period_and_no_memory_labels_nothing(monkey
 
 # --- review of #363: memory that cannot rule out the missing line labels nothing -------------------------------------------------
 
-def test_partial_memory_does_not_guess_company_reported(monkeypatch):
+def test_a_figure_memory_does_not_hold_is_never_labelled(monkeypatch):
+    """Reviews of #363: every "company-reported" rule leaked, so a figure memory does not hold gets nothing, however complete."""
     on(monkeypatch)
-    # memory has only the owners' 1,585.6: the whole 1,609.7 (with the minority share) could be the missing line
     card = _card("Q2FY27", 1585.6, "Net profit", "₹1,609.70 Cr", "Net profit of Rs 1,609.7 crore")
     owners_only = {"financial_metrics": [{"metric": "pat_owners", "period": "Q2FY27", "value": 1585.6},
                                          {"metric": "pat", "period": "H1FY27", "value": 3100.0}]}
     assert R.profit_label_card_json(card, owners_only) == [] and card["key_numbers"][0]["label"] == "Net profit"
-    # a Q4 card with only the quarter's profit: the year's 87.23 could be the missing FY line
     card = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
     quarter_only = {"financial_metrics": [{"metric": "pat", "period": "Q4FY25", "value": 23.89},
                                           {"metric": "pat_owners", "period": "Q4FY25", "value": 23.89}]}
     assert R.profit_label_card_json(card, quarter_only) == [] and card["key_numbers"][0]["label"] == "PAT"
-    # complete memory (whole, owners' and the year): the figure that is none of them is company-reported
-    full = {"financial_metrics": quarter_only["financial_metrics"] + [{"metric": "pat", "period": "FY25", "value": 99.0}]}
-    R.profit_label_card_json(card, full)
-    assert card["key_numbers"][0]["label"].startswith("PAT (company-reported")
+    # Q2 whole = owners' 22.27 and H1 60: "PAT ₹30 Cr" could be a continuing or before-minority figure: nothing
+    card = _card("Q2FY27", 22.27, "PAT", "₹30.00 Cr", "PAT of Rs 30 crore")
+    assert R.profit_label_card_json(card, MEM) == [] and card["key_numbers"][0]["label"] == "PAT"
+    # an H1 that holds only the owners' line, and memory mixing the two blocks, label nothing that does not match
+    card = _card("Q2FY27", 22.27, "PAT", "₹30.00 Cr", "PAT of Rs 30 crore")
+    mixed = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27},
+                                   {"metric": "pat_owners", "period": "H1FY27", "value": 55.0}],
+             "standalone": {"metrics": [{"metric": "pat_owners", "period": "Q2FY27", "value": 22.0}]}}
+    assert R.profit_label_card_json(card, mixed) == []
+
+
+def test_the_other_blocks_figure_never_tags_a_card(monkeypatch):
+    # a consolidated card's ₹30 equals the standalone block's H1: not its basis, no tag
+    on(monkeypatch)
+    card = _card("Q2FY27", 22.27, "PAT", "₹30.00 Cr", "PAT of Rs 30 crore")
+    card["basis"] = "CONSOLIDATED"
+    memory = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27}],
+              "standalone": {"metrics": [{"metric": "pat", "period": "H1FY27", "value": 30.0}]}}
+    assert R.profit_label_card_json(card, memory) == []
+    card["basis"] = "STANDALONE"
+    R.profit_label_card_json(card, memory)
+    assert card["key_numbers"][0]["label"] == "PAT (H1FY27)"
+
+
+def test_a_headline_figure_that_is_memorys_half_gets_the_half_tag(monkeypatch):
+    on(monkeypatch)
+    card = copy.deepcopy(TI)
+    card["headline"], card["key_numbers"] = "Acme Q2FY27 PAT at ₹60 Cr", []
+    notes = R.profit_label_card_json(card, MEM)
+    assert card["headline"] == "Acme Q2FY27 PAT at ₹60 Cr (H1FY27)" and len(notes) == 1

@@ -13,10 +13,10 @@ from bse_intel.models import Filing
 FILED = "2026-04-22T16:02:56+05:30"
 
 
-def _e(metric, period, value, by="file", news="nse-106596942"):
+def _e(metric, period, value, by="file", news="nse-106596942", basis="CONSOLIDATED"):
     return {"metric": metric, "period": period, "value": value, "unit": "INR_CR", "as_of": FILED,
-            "sources": [{"news_id": news, "as_of": FILED, "value": value, "unit": "INR_CR", "basis": "CONSOLIDATED",
-                         "lab": {"by": by, "doc": "results", "basis": "CONSOLIDATED"}}]}
+            "sources": [{"news_id": news, "as_of": FILED, "value": value, "unit": "INR_CR", "basis": basis,
+                         "lab": {"by": by, "doc": "results", "basis": basis}}]}
 
 
 def _memory(pat=259.27, owners=263.24, owners_ago=1040.3, by="file"):
@@ -80,24 +80,91 @@ def test_reliance_key_that_disagrees_with_the_headline_is_rebuilt(monkeypatch):
     assert keys["Net profit to shareholders"] == "₹16,971 Cr" and "Net profit" not in keys
 
 
-def test_a_v2_face_a_model_headline_and_no_memory_are_left(monkeypatch):
+def test_a_v2_face_and_no_memory_are_left(monkeypatch):
     _on(monkeypatch)
     # a V2 card: one profit key, filed after V2 went on
     v2 = _card()
     del v2["key_numbers"][1]
     before = copy.deepcopy(v2)
     assert F.apply_card_json(v2, _memory(), "2026-10-31T10:00:00+05:30", "Tata Communications Limited") == [] and v2 == before
-    # a headline and takeaway the model wrote stay, the code keys are still rebuilt
-    card = _card()
-    card["headline"] = "Tata Communications profit falls 75% as other income dries up"
-    card["takeaway"] = "Profit fell sharply on lower treasury income."
-    assert F.apply_card_json(card, _memory(), FILED, "Tata Communications Limited")
-    assert card["headline"].startswith("Tata Communications profit falls") and card["takeaway"].startswith("Profit fell")
-    assert _profits(card) == ["Net profit to shareholders"]
     # memory without the quarter's file figures (a model's reading only): nothing
     card = _card()
     assert F.apply_card_json(card, _memory(by="ai"), FILED, "Tata Communications Limited") == [] and card == _card()
     assert F.apply_card_json(card, None, FILED, "Tata Communications Limited") == []
+
+
+# --- the lead's four probes on #358 -------------------------------------------------------------------------------------------
+
+def test_probe1_a_model_headline_or_takeaway_in_codes_shape_stays(monkeypatch):
+    _on(monkeypatch)
+    card = _card()
+    card["headline"] = "Tata Communications Q4FY26: profit collapses as treasury gains vanish"
+    card["takeaway"] = "Q4FY26: profit fell on weak treasury income."
+    assert F.apply_card_json(card, _memory(), FILED, "Tata Communications Limited")
+    assert card["headline"] == "Tata Communications Q4FY26: profit collapses as treasury gains vanish"
+    assert card["takeaway"] == "Q4FY26: profit fell on weak treasury income."
+    assert _profits(card) == ["Net profit to shareholders"]   # the old profit keys are still put right
+
+
+def test_probe2_unknown_basis_is_left_and_a_known_one_never_reads_the_other(monkeypatch):
+    _on(monkeypatch)
+    both = _memory()
+    both["financial_metrics"] += [_e(m, p, v / 2, basis="STANDALONE") for m, p, v in
+                                  [(x["metric"], x["period"], x["value"]) for x in _memory()["financial_metrics"]]]
+    card = _card()
+    del card["basis"]
+    assert F.apply_card_json(card, both, FILED, "Tata Communications Limited") == []
+    card = _card()
+    F.apply_card_json(card, both, FILED, "Tata Communications Limited")
+    assert {k["label"]: k["value"] for k in card["key_numbers"]}["Net profit to shareholders"] == "₹263.24 Cr"   # not 131.62
+    # an unlabelled row counts only for a period memory labels nowhere
+    t = F.tagged_from_memory({"financial_metrics": both["financial_metrics"] + [
+        {"metric": "pat", "period": "Q4FY26", "value": 1.0, "unit": "INR_CR", "as_of": FILED,
+         "sources": [{"news_id": "xbrl:res:500483:Q4FY26", "value": 1.0}]}]}, "Q4FY26", "CONSOLIDATED")
+    assert {(m.metric, m.period): m.value for m in t.metrics}[("pat", "Q4FY26")] == 259.27
+
+
+def test_probe3_only_the_old_profit_keys_and_eps_change_in_place(monkeypatch):
+    _on(monkeypatch)
+    card = _card()
+    card["key_numbers"] = [{"label": "Depreciation", "value": "₹700 Cr", "quote": "- depreciation Q4FY26: 700 Cr"},
+                           {"label": "Net profit", "value": "₹259.27 Cr", "quote": "- pat Q4FY26: 259.27 Cr"},
+                           {"label": "EPS", "value": "₹9.10", "quote": "- eps Q4FY26: 9.1 INR"},
+                           {"label": "Net profit to shareholders", "value": "₹263.24 Cr", "quote": "- pat_owners Q4FY26: 263.24 Cr"},
+                           {"label": "Total income", "value": "₹6,600 Cr", "quote": "- total_income Q4FY26: 6600 Cr"},
+                           {"label": "Revenue from operations", "value": "₹6,554.15 Cr", "quote": "- revenue Q4FY26: 6554.15 Cr"},
+                           {"label": "Order book", "value": "₹10,000 Cr", "quote": "order book stood at 10,000 crore"}]
+    assert F.apply_card_json(card, _memory(), FILED, "Tata Communications Limited")
+    assert [k["label"] for k in card["key_numbers"]] == ["Depreciation", "Net profit to shareholders", "Total income",
+                                                         "Revenue from operations", "Order book"]   # nothing added or cut
+    assert card["key_numbers"][1]["value"] == "₹263.24 Cr"
+
+
+def test_probe3b_an_eps_key_alone_is_dropped_for_the_profit_line(monkeypatch):
+    # owner rule 26 Oct 2026: no EPS on cards; a pre-V2 card with one profit key and an EPS key (filed before V2)
+    _on(monkeypatch)
+    card = _card()
+    card["key_numbers"] = [card["key_numbers"][2], {"label": "EPS", "value": "₹9.10", "quote": "- eps Q4FY26: 9.1 INR"},
+                           card["key_numbers"][3]]
+    assert F.apply_card_json(card, _memory(), FILED, "Tata Communications Limited")
+    assert [k["label"] for k in card["key_numbers"]] == ["Net profit to shareholders", "Order book"]
+
+
+def test_probe4_without_the_year_ago_figures_nothing_is_replaced(monkeypatch):
+    _on(monkeypatch)
+    only_now = {"financial_metrics": [m for m in _memory()["financial_metrics"] if m["period"] == "Q4FY26"]}
+    card = _card()
+    assert F.apply_card_json(card, only_now, FILED, "Tata Communications Limited") == [] and card == _card()
+
+
+def test_a_bad_filing_time_is_judged_by_the_profit_keys_only(monkeypatch):
+    one = _card()
+    del one["key_numbers"][1]
+    assert not F.predates_v2(one, "not a time") and not F.predates_v2(one, None)
+    assert F.predates_v2(_card(), "not a time")
+    _on(monkeypatch)
+    card = _card()
+    assert F.apply_card_json(card, _memory(), "not a time", "Tata Communications Limited")
 
 
 def test_predates_v2_by_its_profit_keys_or_its_filing_time():
@@ -116,3 +183,12 @@ def test_the_refresh_rebuilds_the_face_with_the_switch_on(monkeypatch):
     _on(monkeypatch)
     on, changed = card_refresh.refresh(_card(), _memory(), filing, None)
     assert _profits(on) == ["Net profit to shareholders"] and "key_numbers" in changed and on["grounding"]["results_face"]
+
+
+def test_an_eps_key_beside_a_profit_key_in_the_companys_words_adds_no_second_profit(monkeypatch):
+    _on(monkeypatch)
+    card = _card()
+    card["key_numbers"] = [{"label": "Profit after tax", "value": "₹263.24 Cr", "quote": "- pat_owners Q4FY26: 263.24 Cr"},
+                           {"label": "EPS", "value": "₹9.10", "quote": "- eps Q4FY26: 9.1 INR"}]
+    F.apply_card_json(card, _memory(), FILED, "Tata Communications Limited")
+    assert [k["label"] for k in card["key_numbers"]] == ["Profit after tax"]

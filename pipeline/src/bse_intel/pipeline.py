@@ -4111,6 +4111,9 @@ class Pipeline:
         # each results row on one statement line, a figure on another basis labelled (CARD_RESULTS_ONE_LINE; off: nothing)
         if one_line_notes := results_one_line.apply_card_json(card_json):
             card_json.setdefault("grounding", {})["one_line"] = one_line_notes
+        # a profit figure that is not the table's reported profit is labelled with it (CARD_ADJUSTED_PROFIT_LABEL; off: nothing)
+        if profit_notes := results_one_line.profit_label_card_json(card_json):
+            card_json.setdefault("grounding", {})["profit_label"] = profit_notes
         # the results table's rows are the exchange file's sheet (CARD_FACT_SHEET; off or no sheet: nothing); the card keeps what changed
         if results_sheet:
             card_json.setdefault("grounding", {})["fact_sheet"] = {

@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import re
 
-from .settings import card_results_one_line
+from .settings import card_adjusted_profit_label, card_results_one_line
 
 NOTES_KEY = "one_line"   # where the table keeps its notes until the card's change log takes them
 
@@ -254,7 +254,7 @@ def _stated_near(text: str, lo: int, hi: int) -> bool:
     return bool(_STATED.search(" ".join(text[:lo].split()[-3:] + [text[lo:hi]] + text[hi:].split()[:3])))
 
 
-def _headline_figures(text: str) -> list[tuple[str, float, bool, int]]:
+def _headline_figures(text: str, head_word: re.Pattern = _HEAD_WORD) -> list[tuple[str, float, bool, int]]:
     """Each ₹ crore figure of the headline bound to the nearest metric word before it, in its clause and with no other metric
     word between ("EBITDA margin 27.2% on revenue of ₹696 Cr" states revenue 696; "Revenue up 22% and PAT ₹129 Cr" states no
     revenue). A figure that is a change ("up ₹50 Cr to ₹700 Cr", "by ₹50 Cr") or the earlier figure ("to ₹16.37 Cr from
@@ -264,7 +264,7 @@ def _headline_figures(text: str) -> list[tuple[str, float, bool, int]]:
     for fig in re.finditer(_FIG, text, re.I):
         before = text[:fig.start()]
         clause = _CLAUSE.split(before)[-1]
-        words = list(_HEAD_WORD.finditer(clause))
+        words = list(head_word.finditer(clause))
         if not words or _OTHER_METRIC.search(clause[words[-1].end():]):
             continue
         if re.search(r"\b(?:up|down|by|rises?|falls?|adds?|added|from)\s*$", before, re.I) or re.match(r"\s*to\s*₹", text[fig.end():], re.I):
@@ -326,4 +326,68 @@ def apply_card_json(card_json: dict) -> list[str]:
                 card_json["headline"] = f"{headline.rstrip().rstrip('.')} ({tag(block)})"
                 notes.append(f"headline: {word} {_cr(figure)} is not the block's ({_cr(block)}), labelled company-reported")
                 break
+    return notes
+
+
+# CARD_ADJUSTED_PROFIT_LABEL (blind audit 1 Nov 2026, TI nse-106837308): Tilaknagar's release headlined "PAT ₹68 Cr, +30%", its
+# PAT before exceptional items and acquisition amortisation (its footnote), and the card showed it bare as "PAT" above its own
+# results table's reported ₹22.27 Cr (-57.7% YoY). A profit figure in the headline, takeaway or key numbers that is not the
+# table's reported profit is labelled with the table's figure, in the company's own words for its basis when its quote has them.
+_PROFIT_WORD = re.compile(r"\b(PAT|net profit|profit after tax|profit|net income)\b", re.I)
+_KEY_PROFIT = re.compile(r"(?:q[1-4]\s*(?:fy\d{2})?\s*)?(?:consolidated\s+|standalone\s+)?(?:PAT|net profit|profit after tax|profit|"
+                         r"net income)(?:\s+to\s+shareholders)?", re.I)
+_EARLIER = re.compile(r"\b(?:vs\.?|versus|against|compared\s+(?:to|with)|over)\s*$", re.I)
+_OWN_BASIS = re.compile(r"before exceptional items?|excluding exceptional items?|adjusted|underlying|normali[sz]ed|"
+                        r"pre[- ]?Ind[- ]?AS[- ]?116|non[- ]?GAAP", re.I)
+_PROFIT_ROWS = ("pat", "pat_owners", "pat_continuing")
+_LABELLED = re.compile(r"\s*\((?:company-reported|calculated from the statement)[^)]*\)")
+
+
+def profit_label_card_json(card_json: dict) -> list[str]:
+    """CARD_ADJUSTED_PROFIT_LABEL: a profit figure in the headline, takeaway or a key number that matches none of the results
+    table's reported profit rows (total, owners', continuing; a loss by its size) is labelled "company-reported" with the
+    table's PAT, in the company's own words for its basis when the key number's quote states them ("before exceptional
+    items"). A label that already names a basis, another period, a guided figure or an earlier figure ("vs ₹52 Cr") is left
+    alone. Returns what was changed."""
+    results = card_json.get("results")
+    if not card_adjusted_profit_label() or not isinstance(results, dict):
+        return []
+    shown = {s.get("key") for s in results.get("lines") or [] if isinstance(s, dict)}
+    reported = [abs(results[k]["value"]) for k in _PROFIT_ROWS
+                if isinstance(results.get(k), dict) and isinstance(results[k].get("value"), (int, float))]
+    pat = next((results[k]["value"] for k in ("pat", "pat_owners") if k in shown and isinstance(results.get(k), dict)
+                and isinstance(results[k].get("value"), (int, float))), None)
+    if pat is None or not reported:
+        return []
+    period = results.get("period")
+    notes: list[str] = []
+
+    def other(figure: float) -> bool:
+        return all(_differs(abs(figure), r, 0.015) for r in reported)
+
+    def tag(quote: str | None = None) -> str:
+        own = _OWN_BASIS.search(quote or "")
+        return f"company-reported{f', {own.group(0).strip()}' if own else ''}; reported PAT {_cr(pat)}"
+
+    for key in [k for k in card_json.get("key_numbers") or [] if isinstance(k, dict)]:
+        label = str(key.get("label") or "").strip()
+        figure = _amount(key.get("value"))
+        if not _KEY_PROFIT.fullmatch(label) or figure is None or _STATED.search(label) or _other_period(label, period):
+            continue
+        if other(figure):
+            key["label"] = f"{label} ({tag(key.get('quote'))})"
+            notes.append(f"key_numbers {label}: {_cr(figure)} is not the table's reported profit ({_cr(pat)}), labelled company-reported")
+    for attr in ("headline", "takeaway"):
+        text = card_json.get(attr)
+        if not isinstance(text, str) or "reported PAT" in text or _GUIDANCE.search(text):
+            continue
+        bare = _LABELLED.sub("", text)   # another figure's label ("(company-reported; results table ₹2,437.56 Cr)") names no basis here
+        for word, figure, stated, at in _headline_figures(bare, _PROFIT_WORD):
+            end = re.compile(_FIG, re.I).match(bare, at).end()
+            if stated or _EARLIER.search(bare[:at]) or _other_period(bare, period, at, end) or not other(figure):
+                continue
+            where = text.find(bare[at:end], at) + (end - at)   # right after the figure: the labels of others only come later
+            card_json[attr] = f"{text[:where]} ({tag()}){text[where:]}"
+            notes.append(f"{attr}: {word} {_cr(figure)} is not the table's reported profit ({_cr(pat)}), labelled company-reported")
+            break
     return notes

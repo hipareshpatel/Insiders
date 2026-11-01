@@ -296,6 +296,14 @@ def card_results_one_line() -> bool:
     return _switch("CARD_RESULTS_ONE_LINE")
 
 
+def card_adjusted_profit_label() -> bool:
+    """CARD_ADJUSTED_PROFIT_LABEL (default off; 1 Nov 2026, TI nse-106837308): a profit figure in a results card's headline,
+    takeaway or key numbers that is none of its results table's reported profit rows is labelled "company-reported" with the
+    table's PAT (results_one_line.profit_label_card_json), never shown bare as "PAT". On only after the on/off check over
+    stored cards (release_check.py adjusted_profit) and a blind sample. Read at the call."""
+    return _switch("CARD_ADJUSTED_PROFIT_LABEL")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

@@ -63,3 +63,42 @@ def test_the_switch_is_off_by_default(monkeypatch):
     monkeypatch.delenv("CARD_OTHER_ISSUER", raising=False)
     monkeypatch.delenv("REPO_VARS", raising=False)
     assert card_other_issuer() is False
+
+
+STMT = "\nStatement of Unaudited Financial Results for the quarter ended 30 September 2026\nRevenue from operations 10.00"
+
+
+def test_a_letter_to_the_exchange_is_not_another_issuer():
+    t = ("To, BSE Limited, Phiroze Jeejeebhoy Towers\nNational Stock Exchange of India Limited\nSub: results of Zeta Foods "
+         "Limited\nBSE Limited" + STMT)
+    assert other_issuer_results(f("Zeta Foods Limited"), t) is None
+    assert other_issuer_results(f("Zeta Foods Limited"), "BSE Limited\nCSE Limited" + STMT + " Zeta Foods Limited") is None
+
+
+def test_a_letterhead_prefix_does_not_hold():
+    t = "Enduring Value ITC Limited\nACC Cement ACC LIMITED\nAuditors' Limited" + STMT
+    assert other_issuer_results(f("ACC Limited"), t) is None
+    assert other_issuer_results(f("ITC Limited"), "Enduring Value ITC Limited" + STMT) is None
+
+
+def test_ocr_garble_in_the_own_name_does_not_hold():
+    t = "Induslnd Bank Limited\nEnterprises Limited" + STMT
+    assert other_issuer_results(f("IndusInd Bank Limited"), t) is None
+    assert other_issuer_results(f("Martin Burn Limited"), "Ma1tin Burn Limited" + STMT) is None
+
+
+def test_ampersand_and_spelling_variants_do_not_hold():
+    t = "Housing & Urban Development Corporation Limited" + STMT
+    assert other_issuer_results(f("Housing and Urban Development Corporation Limited"), t) is None
+    assert other_issuer_results(f("Chambal Fertilisers and Chemicals Limited"),
+                                "Chambal Fertilizers & Chemicals Limited" + STMT) is None
+
+
+def test_a_former_name_in_the_text_does_not_hold():
+    t = "Mudhra Limited\nPrivate Limited" + STMT
+    assert other_issuer_results(f("eMudhra Limited"), t, ["Mudhra Limited"]) is None
+
+
+def test_a_name_with_the_own_name_nowhere_is_still_held():
+    t = "Alpha Graphite Limited" + STMT
+    assert other_issuer_results(f("Beta Holdings Limited"), t) == "Alpha Graphite Limited"

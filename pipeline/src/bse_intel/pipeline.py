@@ -1418,6 +1418,45 @@ def _bare_company(name: str | None) -> str:
     return _COMPANY_FILLER.sub("", (name or "").lower())
 
 
+_NAME_STOP = {"the", "limited", "ltd", "private", "pvt", "and", "of", "company", "co"}
+_EXCHANGE = re.compile(r"\b(?:stock\s+exchange|nse|bse|cse|nseindia|bseindia|exchange)\b|^(?:national|bombay|calcutta)\b", re.I)
+
+
+def _name_words(s: str) -> list[str]:
+    """Words of a name for a fuzzy compare: case, "&"/"and", punctuation, Limited/Ltd/Private and ise/ize ignored."""
+    s = re.sub(r"[^a-z0-9]+", " ", (s or "").lower().replace("&", " and "))
+    return [re.sub(r"is(e[sd]?|ing|ation)\b", r"iz\1", w) for w in s.split() if w not in _NAME_STOP]
+
+
+def _edit_within(a: str, b: str, limit: int) -> bool:
+    if abs(len(a) - len(b)) > limit:
+        return False
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1] <= limit
+
+
+def _name_present(name: str | None, head: str) -> bool:
+    """Whether a company's name (fuzzily: all its distinctive words, or its squashed name within 2 edits for OCR garble)
+    appears in the text."""
+    words, hw = _name_words(name or ""), _name_words(head)
+    if not words:
+        return False
+    if set(words) <= set(hw):
+        return True
+    bare = "".join(words)
+    limit = 2 if len(bare) >= 8 else 1 if len(bare) >= 5 else 0
+    for k in range(max(1, len(words) - 1), len(words) + 2):
+        for i in range(len(hw) - k + 1):
+            if _edit_within("".join(hw[i:i + k]), bare, limit):
+                return True
+    return False
+
+
 def other_issuer_results(filing: Filing, text: str, former_names: list[str] | None = None) -> str | None:
     """The company whose results this filing carries when it is not the listed company (CARD_OTHER_ISSUER), else None.
     Read from the name printed just above each results statement heading and from "results of <name>" in the covering
@@ -1429,12 +1468,16 @@ def other_issuer_results(filing: Filing, text: str, former_names: list[str] | No
     formers = {_bare_company(n if isinstance(n, str) else (n or {}).get("name")) for n in former_names or []} - {""}
     flat = " ".join((text or "")[:40000].split())
 
+    formerly: set[str] = set()   # non-own names printed with a "(formerly ...)" clause
+
     def owner(m: re.Match) -> tuple[str, bool]:
         """(the issuer's name, whether it is the listed company)."""
         tail = re.search(rf"({_COMPANY})$", m.group("name"))   # the last company name, not the words before it
         name = (tail.group(1) if tail else m.group("name")).strip(" ,.")
         name = re.sub(r"^(?:\S+[.:;]\s+)+(?=[A-Z])", "", name)   # "Board. HEG LIMITED": a sentence's end is no part of it
         bare, former = _bare_company(name), _bare_company(m.group("former"))
+        if former and bare != own and not (bare in formers and (former == own or former in formers)):
+            formerly.add(name)
         if bare == own or (len(own) >= 4 and own in bare):
             return name, True
         if bare in formers and (not former or former == own or former in formers):
@@ -1447,9 +1490,22 @@ def other_issuer_results(filing: Filing, text: str, former_names: list[str] | No
         found = list(_ISSUER_NAMED.finditer(window))
         if found:
             named.append(owner(found[-1]))
+    named = [(n, o) for n, o in named if not _EXCHANGE.search(n)]   # the exchange the letter is addressed to is no issuer
     if not named or any(is_own for _, is_own in named):
         return None
-    return named[0][0]
+    # Hold only when the listed company's own name, or a former one, is nowhere in the letter's first 6,000 characters
+    # (false holds: name fragments, OCR garble, letterhead prefixes, spellings, former names).
+    # Exception (HEGAM): a name printed with "(formerly ...)" that is not the listed company's, in "results of <name>" or
+    # a statement heading, is positive evidence by itself: the own name in the letterhead does not clear it, and that
+    # name being one of the listed company's former names is just what happened there (the other company took it).
+    strong = {_bare_company(n) for n, o in named if n in formerly}
+    head = flat[:6000]
+    own_names = [filing.company_name] + [n for n in former_names or [] if _bare_company(n if isinstance(n, str) else (n or {}).get("name")) not in strong]
+    if strong:
+        return next(n for n, _ in named if _bare_company(n) in strong)
+    if not any(_name_present(n if isinstance(n, str) else (n or {}).get("name"), head) for n in own_names):
+        return named[0][0]
+    return None
 
 
 _ESG = re.compile(r"\besg\b|sustainability\s+(?:rating|score)|environmental,?\s+social", re.I)

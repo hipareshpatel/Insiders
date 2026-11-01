@@ -289,6 +289,7 @@ def test_signals_switch_off_keeps_the_models_verdict_and_on_the_code_decides(mon
     before = {"watchlist": [W("GNPA ratio", "at or below 1.45%")]}
     after = {**before, "financial_metrics": GNPA}
     out = _out("MISSED", "GNPA ratio 1.25% in Q2FY27, GNPA ratio check.")
+    monkeypatch.setenv("CARD_VERDICT_NEEDS_FIGURE", "0")   # this test pins CARD_WATCH_VERDICT alone; the figure rule would turn a beat called missed
     monkeypatch.delenv("CARD_WATCH_VERDICT", raising=False)
     assert _types(signals._promises(before, after, out, _filing())) == [("WATCH_RESOLVED", "WARNING", "KPI check missed")]
     monkeypatch.setenv("CARD_WATCH_VERDICT", "1")

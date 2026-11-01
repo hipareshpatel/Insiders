@@ -107,3 +107,43 @@ def test_a_pace_word_about_something_else_is_not_judged(monkeypatch):
     assert W.apply_card_json(card, MEMORY) == []
     card["what_happened"] = [{"text": "Revenue growth slowed to 30% YoY."}]
     assert len(W.apply_card_json(card, MEMORY)) == 1
+
+
+def _judged(monkeypatch, headline, **row):
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    card["takeaway"], card["what_happened"] = "", []
+    card["headline"] = headline
+    card["results"]["revenue"].update(row)
+    return card, W.apply_card_json(card, MEMORY)
+
+
+def test_another_period_is_not_judged_against_the_quarter_row(monkeypatch):
+    card, notes = _judged(monkeypatch, "FY26 revenue doubled", yoy_pct=40.0)
+    assert notes == [] and card["headline"] == "FY26 revenue doubled"
+
+
+def test_the_column_named_nearest_the_word_is_the_one_judged(monkeypatch):
+    card, notes = _judged(monkeypatch, "Revenue doubled QoQ", qoq_pct=110.0, yoy_pct=20.0)
+    assert notes == [] and card["headline"] == "Revenue doubled QoQ"
+    card, notes = _judged(monkeypatch, "Revenue doubled", qoq_pct=110.0, yoy_pct=None)
+    assert notes == []
+    card, notes = _judged(monkeypatch, "Revenue doubled", qoq_pct=110.0, yoy_pct=20.0)   # no column named: YoY alone
+    assert len(notes) == 1
+
+
+def test_the_metric_is_the_noun_directly_before_the_word(monkeypatch):
+    card, notes = _judged(monkeypatch, "Provisions tripled while PAT rose 10%")
+    card["results"]["pat"]["yoy_pct"] = 10.0
+    assert W.apply_card_json(card, MEMORY) == [] and notes == []
+    card, notes = _judged(monkeypatch, "PAT is down as provisions tripled")
+    assert notes == []
+    card, notes = _judged(monkeypatch, "Revenue and content investment doubled")
+    assert notes == []
+
+
+def test_a_modifier_is_softened_with_its_word(monkeypatch):
+    card, _ = _judged(monkeypatch, "PAT nearly doubled to ₹50 Cr")
+    assert card["headline"] == "PAT rose to ₹50 Cr"
+    card, _ = _judged(monkeypatch, "Revenue more than doubled to ₹50 Cr", yoy_pct=40.0)
+    assert card["headline"] == "Revenue rose to ₹50 Cr"

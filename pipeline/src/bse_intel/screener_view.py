@@ -639,6 +639,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     whole, owners = r.cr("ProfitLossForPeriod"), r.cr("ProfitOrLossAttributableToOwnersOfParent")
     if not owners and whole and not r.cr("ProfitOrLossAttributableToNonControllingInterests"):
         owners = whole      # a filler zero (Paradeep Q2FY26-Q1FY27: owners 0 and minority 0): the owners' share is the whole profit
+    elif _owners_is_comprehensive(r, owners, whole):
+        owners = whole
     out["Net Profit"] = Row(whole, ("ProfitLossForPeriod (whole profit)" if whole is not None else "missing ProfitLossForPeriod") + src
                             + (f"; owners' share {_fmt(owners)}" if owners is not None else ""))
     if owners is not None:
@@ -733,6 +735,14 @@ def bank_pl(r: _Reader, source: str = "", pdf: dict | None = None) -> dict[str, 
     return out
 
 
+def _owners_is_comprehensive(r: _Reader, owners: float | None, whole: float | None) -> bool:
+    """The owners' tag holding the period's comprehensive income, with no minority share: the owners' profit is then the whole profit
+    (CHOLAFIN Q2FY27 consolidated: ProfitOrLossAttributableToOwnersOfParent 1,763.61 = ComprehensiveIncomeForThePeriod, profit
+    1,630.34, minority 0.0; the Results page showed the owners' profit above the total)."""
+    return (owners is not None and whole is not None and owners != whole
+            and not r.cr("ProfitOrLossAttributableToNonControllingInterests") and owners == r.cr("ComprehensiveIncomeForThePeriod"))
+
+
 def nbfc_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     """An NBFC (Ind AS NBFC template): every row of a lender's page (Revenue, Financing Profit) and a holding company's
     (Sales, Operating Profit) from the template's elements."""
@@ -744,6 +754,9 @@ def nbfc_pl(r: _Reader, source: str = "") -> dict[str, Row]:
                       ("Net Profit (owners)", "ProfitOrLossAttributableToOwnersOfParent")):
         v = r.cr(name)
         out[row] = Row(v, (name if v is not None else "missing " + name) + src)
+    if _owners_is_comprehensive(r, out["Net Profit (owners)"].value, out["Net Profit"].value):
+        out["Net Profit (owners)"] = Row(out["Net Profit"].value,
+                                         "ProfitLossForPeriod (the owners' tag held the comprehensive income)" + src)
     # the associates' share is in PBT as for every company (policy): the holding companies and NBFCs of the 500 largest were
     # short by it in 93 quarters (Bajaj Holdings Q2FY24 1,464.08; Jio Financial Q3FY24 66.11; M&M Finance Q3FY24 12.75)
     share, pbt = r.cr(ASSOCIATES), out["Profit before tax"].value

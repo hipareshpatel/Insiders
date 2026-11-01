@@ -86,6 +86,7 @@ in older files are history.
 |---|---|---|---|
 | 21-24 Oct, pooled | 218 | 22% | 17-28% |
 | Cards filed 26 Oct (audited 27 Oct, `docs/audit/live/2026-10-27-audit.md`) | 154 | 18.8% | 13.4-25.7% |
+| Cards filed 30 Oct - 1 Nov (audited 1 Nov, `docs/audit/live/2026-11-01-audit.md`) | 50 | 14.0% | 7.0-26.2% |
 | Cards from the single run with the 13 switches | not yet | | |
 
 Not met. The rate has stayed between 15% and 23% for a week while about 120 fixes shipped (F104-F222).

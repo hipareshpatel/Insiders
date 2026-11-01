@@ -25,12 +25,12 @@ from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
 from .nse import FileCapReached
-from . import footer_plausible, one_basis, results_one_line
+from . import footer_plausible, one_basis, results_one_line, words_figures
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
 from .prices import point_in_time
 from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
-from .settings import card_adjusted_profit_label, card_footer_plausible, card_one_basis, card_results_one_line
+from .settings import card_adjusted_profit_label, card_footer_plausible, card_one_basis, card_results_one_line, card_words_match_figures
 
 log = logging.getLogger(__name__)
 
@@ -119,9 +119,15 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
         new = {**new, "key_numbers": [dict(k) for k in new.get("key_numbers") or []]}
         if notes := results_one_line.profit_label_card_json(new):
             new["grounding"] = {**(new.get("grounding") or {}), "profit_label": notes}
+    if card_words_match_figures() and new.get("results"):
+        # a comparison word its own figures contradict is dropped or softened, as at card time (off: nothing)
+        new = {**new, **{k: list(new.get(k) or []) for k in ("what_happened", "why_it_matters", "notable_changes")}}
+        if notes := words_figures.apply_card_json(new, dossier):
+            new["grounding"] = {**(new.get("grounding") or {}), "words_figures": notes}
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
-    changed += [k for k in ("headline", "takeaway", "key_numbers", "grounding")
-                if (card_results_one_line() or card_one_basis() or card_adjusted_profit_label()) and k not in changed
+    changed += [k for k in ("headline", "takeaway", "key_numbers", "grounding", "what_happened", "why_it_matters", "notable_changes")
+                if (card_results_one_line() or card_one_basis() or card_adjusted_profit_label() or card_words_match_figures())
+                and k not in changed
                 and json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
     hidden = footer_plausible.card_notes(new) if card_footer_plausible() else []
     if (new.get("grounding") or {}).get("footer_hidden", []) != hidden:   # F182: for the owner's Issues page; a stale note goes

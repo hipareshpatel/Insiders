@@ -27,8 +27,14 @@ _COMMON = {w.lower() for w in """January February March April May June July Augu
     Energy Letter Intent Award Awarded Announces Announced Signs Signed Definitive Completion Completes Tender Offer Public""".split()}
 
 
+# an order book, backlog or running total is no order's own amount (lead's review of #329: two orders whose cards both cite
+# "order book now ₹12,400 Cr" would match on it)
+_TOTAL = re.compile(r"\b(?:order\s*book|backlog|pipeline|total|cumulative|aggregat\w*|year[- ]to[- ]date|YTD)\b[^₹]{0,30}$", re.I)
+
+
 def _amounts(text: str) -> set[float]:
-    return {float(m.group(1).replace(",", "")) for m in _AMOUNT.finditer(text or "")}
+    text = text or ""
+    return {float(m.group(1).replace(",", "")) for m in _AMOUNT.finditer(text) if not _TOTAL.search(text[max(0, m.start() - 60):m.start()])}
 
 
 def _names(text: str, own: set[str]) -> set[str]:

@@ -46,3 +46,14 @@ def test_off_by_default(monkeypatch):
     monkeypatch.delenv("REPO_VARS", raising=False)
     monkeypatch.setenv("BSE_INTEL_SWITCHES", "/no/such/file.toml")
     assert E.match("ORDER_WIN", "2026-10-27T18:45:34+05:30", RELEASE, "Arisinfra Solutions Limited", TIMELINE) is None
+
+
+def test_an_order_book_total_is_no_order_amount(monkeypatch):
+    """Lead's review of #329: two different orders whose cards both cite the order book must not match on it."""
+    on(monkeypatch)
+    tl = [{"event_type": "ORDER_WIN", "date": "2026-10-27T10:00:00+05:30", "news_id": "n1",
+           "summary": "KEC wins a ₹410 Cr Powergrid line order; order book now ₹12,400 Cr."}]
+    later = "KEC wins ₹220 Cr Powergrid substation order, taking its order book to ₹12,400 Cr"
+    assert E.match("ORDER_WIN", "2026-10-28T10:00:00+05:30", later, "KEC International Limited", tl) is None
+    same = "KEC wins ₹410 Cr Powergrid line order (press release); order book ₹12,400 Cr"
+    assert E.match("ORDER_WIN", "2026-10-28T10:00:00+05:30", same, "KEC International Limited", tl)[0] == "n1"

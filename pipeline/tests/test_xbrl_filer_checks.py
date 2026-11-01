@@ -142,3 +142,48 @@ def test_a_right_whole_profit_is_never_replaced_by_a_wrong_sum():
                   ("pat", "P"): 100.0, ("eps", "P"): 10.0}
         filer_profit(values)
         assert values.get(("pat", "Q")) not in (50.0, 120.0)
+
+
+def _ports(monkeypatch, tci=123_867_000_000 // 10):
+    # ADANIPORTS-like: whole profit 3,500 (the EPS does not fit it), minority 179.14, owners' tag 1,238.67 = the owners' share of comprehensive income;
+    # EPS on the other periods' share count makes `filer_profit` hold the whole profit, as it did on the 17 cards
+    body = HEAD + _ctx("OneD", "2026-01-01", "2026-03-31") + _ctx("TwoD", "2025-10-01", "2025-12-31") \
+        + _ctx("ThreeD", "2025-07-01", "2025-09-30")
+    for ctx, pat, owners, minority, eps in (("OneD", 3500.0, 1238.67, 179.14, "30.0"), ("TwoD", 3000.0, 3000.0, 0, "13.9"),
+                                            ("ThreeD", 2900.0, 2900.0, 0, "13.4")):
+        body += _fact("ProfitLossForPeriod", ctx, int(pat * 1e7)) + _fact("ProfitOrLossAttributableToOwnersOfParent", ctx, int(owners * 1e7))
+        body += _fact("ProfitOrLossAttributableToNonControllingInterests", ctx, int(minority * 1e7))
+        body += _fact("BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations", ctx, eps, "INRPerShare")
+    body += _fact("ComprehensiveIncomeForThePeriodAttributableToOwnersOfParent", "OneD", int(1238.67 * 1e7))
+    return (body + "</xbrli:xbrl>").encode()
+
+
+def test_an_owners_profit_that_is_the_comprehensive_income_share_is_not_swapped_in(monkeypatch):
+    raw = _ports(monkeypatch)
+    _on(monkeypatch)
+    on = xbrl.parse(raw)
+    got = {(m.metric, m.period): m.value for m in on.metrics}
+    assert got.get(("pat_owners", "Q4FY26")) != 1238.67
+    assert not any(m.metric.startswith("_") for m in on.metrics) and not any(m.metric.startswith("_") for m in on.memory_extra)
+    # the guard alone: an owners' figure that is the comprehensive income share and misfits the profit goes
+    values = {("pat", "Q"): 3500.0, ("pat_owners", "Q"): 1238.67, ("pat_minority", "Q"): 179.14}
+    assert xbrl.tci_owners(values, {"Q": 1238.67}) == 1 and ("pat_owners", "Q") not in values
+    # one that fits the profit stays, even when it equals the comprehensive income (no other comprehensive income)
+    fits = {("pat", "Q"): 100.0, ("pat_owners", "Q"): 100.0}
+    assert xbrl.tci_owners(fits, {"Q": 100.0}) == 0 and fits[("pat_owners", "Q")] == 100.0
+
+
+def test_a_lender_whose_revenue_is_its_income_with_no_other_income_keeps_it(monkeypatch):
+    # BAJAJFINSV-like: revenue equals total income, other income 0, no other revenue from operations
+    monkeypatch.setattr(xbrl, "LENDER_TEMPLATES", ("INDAS",))
+    monkeypatch.setattr(xbrl, "taxonomy", lambda data: "INDAS")
+    _on(monkeypatch)
+    body = HEAD + _ctx("OneD", "2026-01-01", "2026-03-31")
+    body += _fact("RevenueFromOperations", "OneD", 384_937_900_000) + _fact("Income", "OneD", 384_937_900_000)
+    body += _fact("OtherIncome", "OneD", 0) + _fact("ProfitLossForPeriod", "OneD", 52_262_600_000)
+    got = {m.metric for m in xbrl.parse((body + "</xbrli:xbrl>").encode()).metrics}
+    assert "revenue" in got and "total_income" in got
+    assert xbrl._lender_revenue({("revenue", "Q"): 5.0, ("total_income", "Q"): 5.0, ("other_income", "Q"): 0,
+                                 (xbrl._OTHER_REVENUE, "Q"): 0}, True) == 0
+    # Aptus stays held: other revenue from operations above 0 beside revenue = income
+    assert "revenue" not in {m.metric for m in xbrl.parse(_aptus(monkeypatch, True)).metrics}

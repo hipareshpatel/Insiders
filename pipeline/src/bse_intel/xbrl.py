@@ -658,6 +658,8 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     filer_checks = xbrl_filer_checks()
     if filer_checks and lender:
         tags = {**tags, "OtherRevenueFromOperations": _OTHER_REVENUE}   # read only to settle the lender's revenue, never kept
+    if filer_checks:
+        tags = {**tags, _TCI_OWNERS_TAG: _TCI_OWNERS}   # read only to recognise it in the owners' profit tag, never kept
     year_end = fy_end_month(text_facts)
     values: dict[tuple[str, str], float] = {}
     ends: dict[str, date] = {}
@@ -755,7 +757,9 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     # where the file has one (a 0 there is a filler), else the group's.
     minority: dict[tuple[str, str], float] = {}
     tagged_minority = {label for (m, label), v in values.items() if m == "pat_minority" and v}
+    tci = {label: values.pop((m, label)) for m, label in [k for k in values if k[0] == _TCI_OWNERS]}
     if filer_checks:
+        tci_owners(values, tci)   # before filer_profit holds the whole profit, which owners_share needs to test the owners'
         filer_profit(values)
     continuing_before_share(values)
     owners_share(values, minority)
@@ -841,6 +845,29 @@ def _lender_revenue(values: dict, check: bool) -> int:
             del values[("revenue", label)]
             held += 1
     return held
+
+
+_TCI_OWNERS = "_tci_owners"
+_TCI_OWNERS_TAG = "ComprehensiveIncomeForThePeriodAttributableToOwnersOfParent"
+
+
+def tci_owners(values: dict, tci: dict[str, float]) -> int:
+    """XBRL_FILER_CHECKS: drop an owners' profit that is the file's own share of total comprehensive income (`tci`, by
+    period) and does not fit the whole profit less the minority share. Adani Ports' Q4FY26 tags 1,238.67 as the owners'
+    profit where the statement prints 3,328.96; with `filer_profit` holding the whole profit first, `owners_share` could not
+    test it and 17 cards (Adani Ports, Coforge, NIIT Learning, Wabag, JK Tyre, Control Print) gave the share of
+    comprehensive income as the owners' profit (measured, 31 Oct 2026). An owners' profit that equals it and also fits
+    stays: with no other comprehensive income the two are the same figure. Returns how many it dropped."""
+    dropped = 0
+    for label, comprehensive in tci.items():
+        owners, whole = values.get(("pat_owners", label)), values.get(("pat", label))
+        if owners is None or whole is None or abs(owners - comprehensive) > 0.02 + 0.001 * abs(comprehensive):
+            continue
+        minority = values.get(("pat_minority", label)) or 0.0
+        if abs(owners + minority - whole) > max(0.5, 0.01 * abs(whole)):
+            values.pop(("pat_owners", label))
+            dropped += 1
+    return dropped
 
 
 def _fits_shares(profit: float | None, eps: float, refs: list[float]) -> bool:

@@ -274,3 +274,7 @@ def test_beating_a_two_sided_range_on_its_good_side_is_no_miss():
     assert numeric_contradiction("1.0-1.2%", "credit cost 1.5%", "Credit cost") is not None
     assert numeric_contradiction("33-35 bps", "operating margin 36 bps",
                                  "Operating margin as bps of AUM within the stated corridor") is not None   # HDFCAMC
+    assert numeric_contradiction("₹100-120 Cr", "cost savings of ₹135 Cr", "Cost savings programme") is None   # more is better
+    assert numeric_contradiction("₹100-120 Cr", "cost savings of ₹80 Cr", "Cost savings programme") is not None
+    assert numeric_contradiction("60-65", "order book of 90 days", "Order book days") is None   # not a working-capital day count
+    assert numeric_contradiction("7.0-7.5%", "margin 7.9%") is None and numeric_contradiction("between 7-8%", "margin 9%") is not None

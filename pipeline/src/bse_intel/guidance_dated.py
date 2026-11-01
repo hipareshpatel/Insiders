@@ -167,8 +167,9 @@ def _bound(target: str):
     return (v, None, strict, False, cur, unit) if up else (None, v, False, strict, cur, unit)
 
 
-_LOWER_BETTER = re.compile(r"\b(?:cost|costs|expense|expenses|npa|gnpa|nnpa|slippages?|debt|leverage|attrition|opex|losses?|"
-                           r"deficit|days|churn)\b", re.I)
+_LOWER_BETTER = re.compile(r"\b(?:cost|costs|expense|expenses|npa|gnpa|nnpa|slippages?|debt|leverage|attrition|opex|losses|"
+                           r"deficit|churn|(?:debtor|receivable|inventory|working[- ]capital|cash[- ]conversion)\s+days)\b", re.I)
+_SAVING = re.compile(r"\b(?:savings?|reduction|reduce[sd]?|cut)\b", re.I)   # "cost savings of 100-120 Cr": more is better
 _CORRIDOR = re.compile(r"\b(?:within|corridor|band|between)\b", re.I)
 
 
@@ -194,7 +195,8 @@ def numeric_contradiction(target: str | None, evidence: str | None, topic: str |
     v = got.pop()
     ok = (lo is None or (v > lo if slo else v >= lo)) and (hi is None or (v < hi if shi else v <= hi))
     if not ok and lo is not None and hi is not None and not _CORRIDOR.search(f"{topic or ''} {target or ''}"):
-        lower_better = bool(_LOWER_BETTER.search(f"{topic or ''} {target or ''}"))
+        words = f"{topic or ''} {target or ''}"
+        lower_better = bool(_LOWER_BETTER.search(words)) and not _SAVING.search(words)
         if (v < lo) if lower_better else (v > hi):
             return None   # beat the range: the model's verdict stands
     return None if ok else f"the filing's figure {v:g} is outside the target ({target})"

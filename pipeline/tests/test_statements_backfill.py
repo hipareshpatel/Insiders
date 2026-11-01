@@ -362,7 +362,7 @@ def test_a_december_year_before_the_stored_quarters_comes_from_the_annual_report
     for december in (True, False):
         asked.clear()
         cf = SimpleNamespace(results={(p, "STANDALONE"): p for p in quarters}, december=december,
-                             annual={("FY25", "STANDALONE"): "ar25", ("FY26", "STANDALONE"): "ar26"}, family=lambda b: "corporate")
+                             annual={("FY25-12", "STANDALONE"): "ar25", ("FY26-12", "STANDALONE"): "ar26"}, family=lambda b: "corporate")
         entries, _ = sb.company_entries(cf, {}, "t")
         got = {(e["table"], e["period"]) for e in entries if e["period"].startswith("YE:")}
         if december:
@@ -389,7 +389,7 @@ def test_a_june_year_whose_quarters_start_in_september_keeps_that_june(monkeypat
 
     monkeypatch.setattr(sv, "_ours", ours)
     quarters = ("Q2FY26", "Q3FY26", "Q4FY26", "Q1FY27")
-    cf = SimpleNamespace(results={(p, "STANDALONE"): p for p in quarters}, annual={("FY26", "STANDALONE"): "ar26"},
+    cf = SimpleNamespace(results={(p, "STANDALONE"): p for p in quarters}, annual={("FY26-06", "STANDALONE"): "ar26"},
                          family=lambda b: "corporate")
     entries, _ = sb.company_entries(cf, {}, "t")
     assert {e["period"] for e in entries if e["table"] == "annual" and e["period"].startswith("YE:")} == set(years)

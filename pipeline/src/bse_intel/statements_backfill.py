@@ -146,10 +146,12 @@ def _earlier_year_ends(year_ends: list[str], reports: set[str], cf: sv.CompanyFa
     every-company check run 41254893012; KENNAMET June and FOSECOIND likewise). Only for a month that already gives a twelve-month
     year, so a March company, whose December quarter is nine months, asks nothing more."""
     months = sorted({ye[-2:] for ye in year_ends if (sv._ours(cf, fam, basis, "annual", ye, memo)[0] or {})})
-    nums = [sv._fy_num(fy) for fy in reports if sv._fy_num(fy) > 0]
-    if not months or not nums:
+    # a report's label names the year it closes: "FY25" ends March 2025, "FY25-12" December 2024 (xbrl_facts.fy_of); ELANTAS's
+    # reports are FY25-12 and FY26-12, so a bare FY number read none of them (the 1 Nov rebuild built nothing older)
+    ends = [2000 + int(m[1]) - (1 if m[2] else 0) for m in (re.fullmatch(r"FY(\d{2})(?:-(\d{2}))?", fy) for fy in reports) if m]
+    if not months or not ends:
         return []
-    first = 2000 + min(nums) - 2
+    first = min(ends) - 1   # the oldest report's comparative year
     # up to each month's own first stored year: a June company whose quarters start in September has YE:2025-09 first, and its
     # YE:2025-06 is still wanted (review of #310)
     return [f"YE:{y}-{m}" for m in months for y in range(first, min(int(ye[3:7]) for ye in year_ends if ye[-2:] == m) + 1)

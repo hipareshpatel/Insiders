@@ -107,3 +107,53 @@ def test_memory_context_labels_guidance_as_guided(monkeypatch):
     on(monkeypatch)
     first = memory_context(before, "FUNDRAISE", "2026-10-31T10:00:00+05:30")[0]
     assert "guided" in first["label"] and "by FY27" in first["text"]
+
+
+def test_a_dated_actual_beside_a_later_target_is_not_refused_as_guided(monkeypatch):
+    on(monkeypatch)
+    said = ["Net debt stood at ₹3,500 Cr as of Sep 30, and management will target ₹3,000 Cr by FY28."]
+    assert G.guided_balance_fields({"net_debt_cr": 3500.0}, "call", said) == []
+    assert G.guided_balance_fields({"net_debt_cr": 3000.0}, "call", said) == ["net_debt_cr"]
+    assert G.guided_balance_fields({"cash_cr": 800.0}, "call", ["Cash of ₹800 Cr as of Sep 30 will fund the project."]) == []
+
+
+def test_the_refused_field_is_recorded_on_memory(monkeypatch):
+    from bse_intel.dossier import merge
+    from bse_intel.models import Filing, Pass2Output
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION", "timeline_entry": "call",
+        "card": {"impact_level": "LOW", "headline": "Birla Corp Q4 earnings call highlights", "what_happened": [{"text": "x"}],
+                 "call_takeaways": [{"category": "Guidance", "text": CALL_TAKEAWAY}]},
+        "dossier_delta": {"balance_sheet": {"net_debt_cr": 4000.0}}})
+    filing = Filing.model_construct(news_id="nse-1", scrip_code="500335", company_name="Birla", headline="Earnings call transcript",
+                                    subject="Transcript", event_type="CONCALL_PRESENTATION", filed_at="2026-05-14T16:16:55+05:30")
+    on(monkeypatch)
+    kept = merge({}, out, filing, None, "2026-05-14T16:16:55+05:30")
+    assert kept["guided_refused"][0]["field"] == "net_debt_cr" and kept["guided_refused"][0]["value"] == 4000.0
+
+
+def test_coincident_numbers_are_not_a_guided_figure_stated_as_actual(monkeypatch):
+    on(monkeypatch)
+    memory = {"guidance": [{"id": "g", "statement": "We target 15% revenue growth, 100 MTPA capacity and capex of ₹900 Cr", "metric": "revenue",
+                            "target": "15%", "status": "OPEN"}],
+              "financial_metrics": [{"metric": "capex", "period": "FY26", "value": 900.0}]}
+    card = {"what_happened": [{"text": "Revenue rose 15% YoY.", "quote": "growth 15.2%"},
+                              {"text": "Capacity is 100 MTPA currently.", "quote": None},
+                              {"text": "Capex was ₹900 Cr in FY26.", "quote": None, "basis": "MEMORY"}]}
+    before = copy.deepcopy(card)
+    assert G.apply_card_json(card, memory) == [] and card == before
+
+
+def test_a_filing_point_with_no_quote_is_noted_not_dropped(monkeypatch):
+    on(monkeypatch)
+    card = {"why_it_matters": [{"text": "Net debt was ₹4,000 Cr at the end of FY26.", "basis": "FILING", "quote": None}]}
+    notes = G.apply_card_json(card, MEMORY)
+    assert len(card["why_it_matters"]) == 1 and notes and "left for review" in notes[0]
+
+
+def test_a_quote_within_rounding_keeps_the_point(monkeypatch):
+    on(monkeypatch)
+    card = {"why_it_matters": [{"text": "Net debt was ₹4,000 Cr at the end of FY26.", "basis": "FILING",
+                                "quote": "Net debt 4,010"}]}
+    assert G.apply_card_json(card, MEMORY) == [] and len(card["why_it_matters"]) == 1

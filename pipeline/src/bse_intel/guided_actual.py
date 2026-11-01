@@ -35,6 +35,18 @@ _LINES = (("net debt", r"net[- ]debt"), ("gross debt", r"gross debt|total debt|b
 _FIELD = {"net debt": "net_debt_cr", "gross debt": "gross_debt_cr", "cash": "cash_cr", "net worth": "net_worth_cr"}
 _CALL_DOCS = ("call", "slides")
 _LISTS = ("what_happened", "why_it_matters", "notable_changes")
+_RUPEES = re.compile(r"(?:₹|Rs\.?)\s*(\d[\d,]*(?:\.\d+)?)|(\d[\d,]*(?:\.\d+)?)\s*(?:Cr\b|crore)", re.I)
+
+
+def _rupee_amounts(text: str) -> list[float]:
+    """Amounts written as money (₹, Rs, Cr, crore): a percentage, a year or a capacity in tonnes is not one."""
+    out = []
+    for a, b in _RUPEES.findall(text or ""):
+        try:
+            out.append(float(((a or b)).replace(",", "")))
+        except ValueError:
+            pass
+    return out
 
 
 def _amounts(text: str) -> list[float]:
@@ -51,8 +63,8 @@ def _lines(text: str) -> set[str]:
     return {name for name, rx in _LINES if re.search(rf"\b(?:{rx})", text or "", re.I)}
 
 
-def _same(a: float, b: float) -> bool:
-    return a == b or (a != 0 and abs(a - b) <= 0.005 * abs(a))
+def _same(a: float, b: float, tol: float = 0.005) -> bool:
+    return a == b or (a != 0 and abs(a - b) <= tol * abs(a))
 
 
 def _sentences(text: str) -> list[str]:
@@ -70,10 +82,29 @@ def guided_balance_fields(snapshot: dict, doc: str, texts: list[str]) -> list[st
         if not isinstance(value, (int, float)):
             continue
         for sentence in (s for t in texts for s in _sentences(t)):
-            if line in _lines(sentence) and GUIDED.search(sentence) and any(_same(value, a) for a in _amounts(sentence)):
+            if line in _lines(sentence) and _guided_beside(sentence, value):
                 found.append(field)
                 break
     return found
+
+
+# the words that make a figure guidance when they sit beside it; a bare will/plan/aim/project does not (a verb elsewhere in the sentence)
+_NEAR = re.compile(r"\b(?:expect\w*|guid\w*|peak\w*|target\w*|anticipat\w*|forecast\w*|estimat\w*|by\s+(?:FY|the end of FY)\w*)\b", re.I)
+_ACTUAL_BEFORE = re.compile(r"\b(?:as\s+(?:of|at|on)|stood\s+at|was|were|at\s+the\s+end\s+of|closed\s+at|ended\s+at)\b", re.I)
+WINDOW = 6   # words either side of the figure
+
+
+def _guided_beside(sentence: str, value: float) -> bool:
+    """A guided word within WINDOW words of an amount equal to ``value``, the amount not dated as an actual ("stood at", "as of")."""
+    tokens = sentence.split()
+    for i, tok in enumerate(tokens):
+        if not any(_same(value, a) for a in _amounts(tok)):
+            continue
+        if _ACTUAL_BEFORE.search(" ".join(tokens[max(0, i - 4):i + 4])):
+            continue
+        if _NEAR.search(" ".join(tokens[max(0, i - WINDOW):i + WINDOW + 1])):
+            return True
+    return False
 
 
 def unstated_period(snap: dict) -> bool:
@@ -145,6 +176,9 @@ def _actual_values(dossier: dict, line: str) -> list[float]:
     for m in dossier.get("financial_metrics") or []:
         if isinstance(m.get("value"), (int, float)) and (m.get("metric") or "").lower().replace(" ", "_").startswith(word):
             vals.append(float(m["value"]))
+    if line in ("capex", "order book"):   # what was spent or won is a deal's amount, not only a metric row
+        vals += [float(d["amount_cr"]) for d in dossier.get("deals") or [] if isinstance(d.get("amount_cr"), (int, float))
+                 and (line == "order book" or str(d.get("kind") or "").upper() == "CAPEX")]
     return vals
 
 
@@ -154,13 +188,13 @@ def _guided_misread(text: str, quote: str | None, guided: list[dict], dossier: d
         if GUIDED.search(sentence):
             continue
         sentence_lines = _lines(sentence)
-        for value in _amounts(sentence):
-            if value < 10:   # a ratio, a count, a year's digits: not a rupee line
+        for value in _rupee_amounts(sentence):
+            if value < 10:   # a small count: not a rupee line
                 continue
             hits = [g for g in guided if sentence_lines & g["lines"] and _same(value, g["value"])]
             if not hits:
                 continue
-            if quote and any(_same(value, a) for a in _amounts(quote)):
+            if quote and any(_same(value, a, 0.02) for a in _amounts(quote)):
                 continue   # the filing itself prints it
             if any(_same(value, a) for line in sentence_lines & hits[0]["lines"] for a in _actual_values(dossier, line)):
                 continue
@@ -189,6 +223,10 @@ def apply_card_json(card_json: dict, dossier: dict | None) -> list[str]:
             text = item.get("text") if isinstance(item, dict) else item if isinstance(item, str) else None
             quote = item.get("quote") if isinstance(item, dict) else None
             why = _guided_misread(text, quote, guided, dossier) if isinstance(text, str) else None
+            if why and not quote and not (isinstance(item, dict) and item.get("basis") in ("MEMORY", "BALANCE_SHEET")):
+                # a filing point with no quote: the reader cannot tell it from the filing's own figure, so it is noted, not dropped
+                notes.append(f"{name}: '{text[:80]}' may state a guided figure as an actual ({why}); left for review")
+                why = None
             if why:
                 notes.append(f"{name}: dropped '{text[:80]}', it states a guided figure as an actual ({why})")
                 continue

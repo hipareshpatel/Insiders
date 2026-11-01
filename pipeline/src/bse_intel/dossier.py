@@ -1260,6 +1260,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                 [f"{g.statement or ''} {g.metric or ''} {g.target or ''}" for g in delta.guidance]
         for field in guided_actual.guided_balance_fields(snapshot, doc, texts):
             log.info("memory: %s %s from %s refused: the call words it as guided, not an actual", field, snapshot[field], news_id)
+            d["guided_refused"] = [*(x for x in d.get("guided_refused", []) if x.get("source_news_id") != news_id),
+                                   {"field": field, "value": snapshot[field], "source_news_id": news_id, "as_of": as_of}][-20:]
             snapshot.pop(field)
         for field in _out_of_scale(snapshot, d.get("balance_sheet", []), news_id):
             log.info("memory: %s %s %s from %s refused: out of scale with the other sources for that date",

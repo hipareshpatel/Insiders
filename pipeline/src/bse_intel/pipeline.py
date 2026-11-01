@@ -57,7 +57,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_slip_xbrl_guard
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_slip_xbrl_guard, d20_dropped_file_period
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -3011,7 +3011,7 @@ class Pipeline:
         return held
 
     def _same_results_quarter(self, filing: Filing, dossier: dict, quarter: str | None,
-                              basis: str | None = None) -> tuple[str, str] | None:
+                              basis: str | None = None, claim: bool = True) -> tuple[str, str] | None:
         """(news_id, quarter) of the results filing that already has this company's card for the quarter
         (decision D20: one card per company per results quarter; the others are linked to it). Novartis
         filed one quarter's results as three documents, Ahluwalia as a board outcome and a later meeting
@@ -3057,6 +3057,8 @@ class Pipeline:
                 standalone_owners.append(claimed)
             if owners and set(owners) - set(standalone_owners):
                 return owners[0], quarter
+            if not claim:
+                return None   # only looking for an earlier card (D20_DROPPED_FILE_PERIOD): never takes the quarter
             self._results_quarters[key] = filing.news_id
             self._results_quarter_basis[key] = basis
             if standalone_owners:
@@ -3585,6 +3587,7 @@ class Pipeline:
                     what = "its consolidated results XBRL" if standalone_only else "its results XBRL"
                     raise EventXbrlPending(f"waiting for {what} ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
+        dropped_period = None   # the quarter of a results file set aside below (its figures are not in the text): D20 only
         # the same quarter's standalone file beside a consolidated one: its figures are what a mixed card copies
         standalone_file = self._standalone_file(filing, tagged) if tagged and tagged.basis == "CONSOLIDATED" else None
         if xbrl_fast_path.needs_standalone_bank_ratios(tagged):
@@ -3600,6 +3603,7 @@ class Pipeline:
             else:
                 if tagged.kind == "RESULTS":
                     log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
+                    dropped_period = tagged.period
                 tagged = None
         events_table = event_xbrl.table(events)
         if not text.strip() and not tagged and not events:
@@ -3618,10 +3622,18 @@ class Pipeline:
         results_q = None   # the quarter this results filing is the card of (D20), named on its timeline entry (TODO 133)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
             quarter = results_quarter(tagged, text, filing.filed_at)
+            from_dropped = False
+            if quarter is None and dropped_period and d20_dropped_file_period():
+                # TMB nse-106836238: an ECL note typed RESULTS found the bank's Q2FY27 file by quarter, the file's figures were
+                # not in the note so it was set aside, the note had no quarter and published as a second Q2FY27 results card.
+                # The file's quarter still names the quarter it would claim; used only to find an earlier card of it.
+                quarter, from_dropped = dropped_period, True
             if quarter is None and not tagged and not _RESULTS_STATEMENT.search(text[:20000]) and amounts(text) < FIGURE_PAGE_AMOUNTS:
                 # no statement, no file, few figures: a press release or an update, never a new quarter's statement
                 quarter = companion_quarter(filing, dossier)
-            earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None))
+            # a set-aside file's quarter only defers to an earlier card; it never takes the quarter from the real statement
+            earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None),
+                                                 claim=not from_dropped)
             # stamped only when the quarter is the file's or a statement's own, never a text guess (blind review)
             results_q = quarter if (tagged or _RESULTS_STATEMENT.search(text[:20000])) else None
             if earlier:

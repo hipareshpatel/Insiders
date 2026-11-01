@@ -320,6 +320,14 @@ def card_fact_sheet_lenders() -> bool:
     return _switch("CARD_FACT_SHEET_LENDERS")
 
 
+def d20_dropped_file_period() -> bool:
+    """D20_DROPPED_FILE_PERIOD (default off; 1 Nov 2026, TMB nse-106836238): a RESULTS filing whose results file is set aside
+    (its figures are not in the text) still claims that file's quarter for the one-card-per-quarter check, so a note typed
+    RESULTS defers to the quarter's earlier results card instead of publishing a second one. It holds more cards back: on only
+    after counting the stored RESULTS cards it would have held and a blind read of them. Read at the call."""
+    return _switch("D20_DROPPED_FILE_PERIOD")
+
+
 def unit_slip_xbrl_guard() -> bool:
     """UNIT_SLIP_XBRL_GUARD (default off; owner, 1 Nov 2026: "a figure in the exchange's XBRL file must never be overruled by the
     PDF"): the unit fixer (grounding.unit_slips) leaves alone a card amount equal to any money fact of the filing's XBRL file

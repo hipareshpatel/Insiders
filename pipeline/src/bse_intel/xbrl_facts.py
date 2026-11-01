@@ -274,6 +274,12 @@ class Facts:
                 return value
         return None
 
+    def money_crore(self) -> list[float]:
+        """Every money fact in crore, dimensioned or not (the unit fixer's guard: a card figure the exchange's file states is never
+        rescaled from the PDF)."""
+        return [value / CRORE for _, _, unit, value, _ in self.rows
+                if self._is_money(unit) and isinstance(value, (int, float)) and not isinstance(value, bool)]
+
     def cr(self, name: str, **period) -> float | None:
         """A money fact in crore."""
         for el, ctx_id, unit, value, _ in self.rows:
@@ -354,6 +360,15 @@ class Facts:
 
     def element_names(self) -> set[str]:
         return {row[0] for row in self.rows}
+
+
+def money_crore(raw: bytes | None, scrip: str = "", url: str = "") -> list[float]:
+    """Every money fact of a raw XBRL results file in crore; [] when there is no file or it cannot be read. Never raises."""
+    try:
+        doc = parse_facts(raw, scrip, url) if raw else None
+        return Facts(doc).money_crore() if doc else []
+    except Exception:   # noqa: BLE001 - a guard must never stop a card
+        return []
 
 
 def load(sink, scrip: str, period: str, basis: str | None) -> Facts | None:

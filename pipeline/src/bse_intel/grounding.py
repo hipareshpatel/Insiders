@@ -882,13 +882,16 @@ def _blank_malformed(text: str) -> str:
     return _MALFORMED_GROUPS.sub(lambda m: " " * len(m.group(0)), text)
 
 
-def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
+def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=()) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
 
     Three readings, in order: a figure the filing writes with its own unit ("INR 3 (Three) Million" carded "₹3 Cr",
     Excelsoft), whatever unit the tables declare; an amount written out in whole rupees ("Rs 11,10,59,061" carded "₹1.11
     Cr", Nestle; "Rs. 1,165,179,600" as "₹1,165 Cr", Anlon); and a table figure in the declared unit read a power of
     ten off ("(Rs billion) 1,562.8" carded "₹15,628 Cr", RBL). A card figure the filing states in crore is never touched.
+
+    `xbrl_crore` (UNIT_SLIP_XBRL_GUARD): every money fact of the exchange's XBRL file in crore; a card figure equal to one
+    (within its own rounding) is never corrected, whatever the PDF's tables say (Hubtown's ₹408.47 Cr, 1 Nov 2026).
 
     An enlargement (the correction is the larger figure) needs a figure with well-formed digit groups: LCC's "4,558,21"
     (the OCR's 4,558.21 in ₹ million) read as 455,821 "corrected" a right ₹455.82 Cr to ₹45,582 Cr (30 Oct 2026)."""
@@ -912,6 +915,8 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
             if other_index.stated_crore(value, decimals, (1,)) or _near_amount(other_index, value) \
                     or _near(filing_index._by_unit.get(1, []), value, tolerance):
                 continue   # memory, the scale block or the filing itself writes this many crore
+            if xbrl_crore and any(abs(value - c) <= tolerance for c in xbrl_crore):
+                continue   # the exchange's own file states this figure in crore: the PDF never overrules it
             if read_right(value, decimals):
                 continue   # already the right reading of a figure at its own page's unit: never "corrected"
             # 1. a figure with its own unit, whatever unit the tables declare

@@ -40,6 +40,59 @@ def test_a_september_quarter_gives_the_half_years_balance_sheet_and_a_bank_its_o
     assert "Revenue" in by["quarters"]["rows"] and "Sales" not in by["quarters"]["rows"]
 
 
+def _shifted(doc, months_back):
+    """The same file with every date moved back: a December-year company's December file from a March company's March one."""
+    import copy
+    from datetime import date
+
+    def last(y, m):
+        return (date(y + m // 12, m % 12 + 1, 1) - timedelta(days=1)).day
+
+    def back(iso):
+        y, m, d = (int(x) for x in iso.split("-"))
+        ny, nm = (y, m - months_back) if m > months_back else (y - 1, m - months_back + 12)
+        return date(ny, nm, last(ny, nm) if d == last(y, m) else d).isoformat()   # a month end stays a month end
+
+    out = copy.deepcopy(doc)
+    for c in out["contexts"].values():
+        for k in ("s", "e", "i"):
+            if c.get(k):
+                c[k] = back(c[k])
+    return out
+
+
+def test_a_december_year_end_file_writes_its_year_as_YE_and_a_march_company_s_december_file_none():
+    # 1 Nov 2026: the live run wrote a year only from a March file, so VBL's or ABB's December year waited for the rebuild
+    dec = _shifted(_doc("nse_dolphin_q4fy24_cons.xml"), 3)
+    dec["period"] = dec["file_period"] = "Q3FY24"
+    d = {}
+    assert statements.remember(d, dec, "n1", AS_OF, AT) == 4
+    by = {e["table"]: e["period"] for e in d["statements"]}
+    assert by == {"quarters": "Q3FY24", "balance": "Q3FY24", "annual": "YE:2023-12", "cash_flow": "YE:2023-12"}
+    # a March company's December file: nine months to December, no twelve, so no year
+    nine = _shifted(_doc("nse_dolphin_q4fy24_cons.xml"), 3)
+    nine["period"] = "Q3FY24"
+    for c in nine["contexts"].values():
+        if c.get("m") == 12:
+            c["m"], c["s"] = 9, "2023-04-01"
+    d = {}
+    statements.remember(d, nine, "n1", AS_OF, AT)
+    assert not {"annual", "cash_flow"} & {e["table"] for e in d["statements"]}
+
+
+def test_a_live_ye_year_never_overwrites_the_rebuilt_one():
+    dec = _shifted(_doc("nse_dolphin_q4fy24_cons.xml"), 3)
+    dec["period"] = "Q3FY24"
+    kept = {"period": "YE:2023-12", "basis": "CONSOLIDATED", "table": "annual", "rows": {"Sales": 1.0},
+            "lab": {"from": "stored facts"}}
+    d = {"statements": [kept]}
+    statements.remember(d, dec, "n1", AS_OF, AT)
+    assert [e for e in d["statements"] if e["period"] == "YE:2023-12" and e["table"] == "annual"] == [kept]
+    fresh: dict = {}   # with no rebuilt year, the live file writes it
+    statements.remember(fresh, dec, "n1", AS_OF, AT)
+    assert [e["source_news_id"] for e in fresh["statements"] if (e["period"], e["table"]) == ("YE:2023-12", "annual")] == ["n1"]
+
+
 def test_a_revised_file_replaces_the_same_period_basis_and_table_and_nothing_else():
     d = {"statements": [{"period": "Q3FY24", "basis": "CONSOLIDATED", "table": "quarters", "rows": {"Sales": 1.0}}]}
     statements.remember(d, _doc("nse_dolphin_q4fy24_cons.xml"), "n1", AS_OF, AT)
@@ -128,3 +181,12 @@ def test_remember_stores_the_corrected_profit_lines(monkeypatch):
     d: dict = {}
     assert statements.remember(d, {"period": "Q2FY26", "basis": "CONSOLIDATED", "template": "INDAS"}, "n1", "2025-10-17", "t") == 1
     assert d["statements"][0]["rows"]["Net Profit (owners)"] == 179.24
+
+
+def test_a_ye_year_sorts_with_the_quarter_that_ends_it_and_is_not_dropped_first():
+    assert statements._order("YE:2023-12") == statements._order("Q3FY24")
+    assert statements._order("YE:2025-06") == statements._order("Q1FY26")
+    old = [{"period": "Q1FY20", "table": "quarters"}] + [{"period": "YE:2025-12", "table": "annual"}] \
+        + [{"period": f"Q{q}FY{y}", "table": t} for y in range(21, 31) for q in (1, 2, 3, 4) for t in ("quarters", "balance", "x")]
+    kept = statements.keep_latest(old)
+    assert {"period": "YE:2025-12", "table": "annual"} in kept and {"period": "Q1FY20", "table": "quarters"} not in kept

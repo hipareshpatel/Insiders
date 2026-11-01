@@ -15,6 +15,7 @@ filing goes on: the statements are an addition, never a reason to fail a filing.
 from __future__ import annotations
 
 import logging
+import re
 
 from . import screener_view as sv
 from . import segments
@@ -26,12 +27,16 @@ from .periods import quarter_index
 log = logging.getLogger(__name__)
 
 KEY = "statements"
-MAX_ENTRIES = 120      # about 12 quarters x 2 bases x 3 tables, plus room; the oldest go first
+MAX_ENTRIES = 120      # about 60 a basis (a quarter, a balance sheet at most quarters, the years); the oldest go first
 
 
 def _order(period: str) -> int:
-    """A column's place in time: a quarter by its index, a year ("FY26") as its March quarter."""
+    """A column's place in time: a quarter by its index, a year ("FY26") as its March quarter, a year to another month ("YE:2025-12")
+    as the quarter that ends it (Q3FY26), so keep_latest never drops it first as the oldest."""
     p = str(period or "")
+    if m := re.fullmatch(r"YE:(\d{4})-(\d{2})", p):
+        y, mo = int(m[1]), int(m[2])
+        return quarter_index(f"Q{(mo - 4) % 12 // 3 + 1}FY{(y + (mo > 3)) % 100:02d}") or 0
     return quarter_index(f"Q4{p}" if p.startswith("FY") else p) or 0
 
 
@@ -52,8 +57,10 @@ def corrected_entry(e: dict) -> dict:
 
 
 def rows_of(doc: dict, source: str = "") -> list[tuple[str, dict[str, sv.Row], str]]:
-    """The (table, rows, column) the file gives for its own period: always the quarter's P&L; the balance sheet when the period ends
-    a half or a full year (Q2, Q4); the 12-month cash flow when it ends the year (Q4)."""
+    """The (table, rows, column) the file gives for its own period, as the stored-facts rebuild (statements_backfill) builds them:
+    always the quarter's P&L; the balance sheet at any quarter whose file has one; the year's P&L and cash flow when the file holds
+    twelve months to its quarter end: a March file's year named "FY26", any other month's "YE:2025-12" (1 Nov 2026: a December,
+    June or September company's year-end result, VBL or ABB, was written by the rebuild only, never by the live run)."""
     period = doc.get("period") or ""
     end = quarter_end(period) if period.startswith("Q") else None
     if end is None:
@@ -61,13 +68,15 @@ def rows_of(doc: dict, source: str = "") -> list[tuple[str, dict[str, sv.Row], s
     facts = xbrl_facts.Facts(doc)
     fam = sv.family(doc.get("template"))
     out = [("quarters", sv.pl_rows(fam, sv._Reader(facts, end=end, months=3), source=source), period)]
-    if period.startswith(("Q2", "Q4")):
-        out.append(("balance", sv.bs_rows(fam, sv._Reader(facts, instant=end), source, half_year=period.startswith("Q2"),
-                                          standalone=doc.get("basis") == sv.STANDALONE), period))
-    if period.startswith("Q4"):
-        # the year closed by a March file, named as the year ("FY26"), as statements_backfill names it from the same recipes
-        out.append(("annual", sv.pl_rows(fam, sv._Reader(facts, end=end, months=12), source=source), period[2:]))
-        out.append(("cash_flow", sv.cf_rows(sv._Reader(facts, end=end, months=12), source), period[2:]))
+    q4 = period.startswith("Q4")
+    # a quarter with no balance sheet in its file gives no rows, and remember() writes nothing for it
+    out.append(("balance", sv.bs_rows(fam, sv._Reader(facts, instant=end), source, half_year=not q4,
+                                      standalone=doc.get("basis") == sv.STANDALONE), period))
+    year = period[2:] if q4 else f"YE:{end.year}-{end.month:02d}"
+    # a March company's December file has nine months, not twelve, so its 12-month reader gives no rows and no year is written
+    year_reader = sv._Reader(facts, end=end, months=12)
+    out.append(("annual", sv.pl_rows(fam, year_reader, source=source), year))
+    out.append(("cash_flow", sv.cf_rows(year_reader, source), year))
     return out
 
 

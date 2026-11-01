@@ -3017,6 +3017,7 @@ class Pipeline:
                 with stages.stage("xbrl"):
                     data = self._attachment(link.url, 8_000_000)
                 xbrl_store.put(self.sink, link.url, data)
+                xbrl_facts.keep(self.sink, data, filing.scrip_code, link.url)
             result = xbrl_fast_path.parse(data, filing.news_id)
             if result is not None and result.kind == "RESULTS":
                 result.raw, result.url = data, link.url   # its screener-rule statements, for the company page's standalone view
@@ -3406,6 +3407,7 @@ class Pipeline:
                 return None
             if data:
                 xbrl_store.put(self.sink, filing.xbrl_url, data)
+                xbrl_facts.keep(self.sink, data, filing.scrip_code, filing.xbrl_url)   # even if the card sets the file aside
             if data and path:
                 try:
                     path.parent.mkdir(parents=True, exist_ok=True)

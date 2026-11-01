@@ -41,6 +41,7 @@ def _kinds(found: list) -> list[tuple[str, str]]:
 @pytest.fixture(autouse=True)
 def _off(monkeypatch):
     monkeypatch.delenv("CARD_GUIDANCE_DATED", raising=False)
+    monkeypatch.delenv("DECK_DISCUSSED_PERIOD", raising=False)
 
 
 def _castrol():
@@ -164,3 +165,33 @@ def test_memory_status_is_not_set_by_a_verdict_that_fails_the_rule(monkeypatch):
     assert run() == "MISSED"
     monkeypatch.setenv("CARD_GUIDANCE_DATED", "1")
     assert run() == "OPEN"
+
+
+def _krn_deck(monkeypatch):
+    """KRN Heat Exchanger, live audit 1 Nov 2026: the Q2FY27 results (29 Oct) stated the margin; the investor deck (30 Oct)
+    prints no table of its own. A target due "Q2FY27 results" is due for the deck that discusses Q2FY27."""
+    monkeypatch.setenv("CARD_GUIDANCE_DATED", "1")
+    watch = {"id": "w_51343734", "kind": "KPI", "text": "Consolidated EBITDA margin", "check_in": "Q2FY27 results",
+             "target": "above 19%", "check_by": "2026-09-30", "created_on": "2026-08-13T22:35:50+05:30",
+             "source_news_id": "nse-106743256", "status": "OPEN", "status_history": []}
+    before = {"watchlist": [watch]}
+    after = {**before, "financial_metrics": [_metric("ebitda_margin", "Q2FY27", 15.27, "nse-106834552"),
+                                              _metric("revenue", "Q2FY27", 319.14, "nse-106834552")]}
+    out = _out(watches=[("w_51343734", "MISSED", "EBITDA margin at 15.27% in Q2FY27, below the 19% target.")])
+    return before, after, out, _filing("nse-106836198", "2026-10-30T13:31:07+05:30")
+
+
+def test_a_target_due_this_quarters_results_is_judged_by_the_deck_that_discusses_it(monkeypatch):
+    before, after, out, deck = _krn_deck(monkeypatch)
+    deck = deck.model_copy(update={"event_type": "CONCALL_PRESENTATION"})
+    found = signals._promises(before, after, out, deck)   # DECK_DISCUSSED_PERIOD off: as on main
+    assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] and "not due for the period" in found[0].text
+    monkeypatch.setenv("DECK_DISCUSSED_PERIOD", "1")
+    found = signals._promises(before, after, out, deck)
+    assert _kinds(found) == [("WATCH_RESOLVED", "WARNING")] and found[0].text.startswith("KPI check missed")
+
+
+def test_a_non_deck_filing_without_the_figure_still_settles_nothing(monkeypatch):
+    before, after, out, deck = _krn_deck(monkeypatch)
+    found = signals._promises(before, after, out, deck.model_copy(update={"event_type": "GOVERNANCE"}))
+    assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] and "not due for the period" in found[0].text

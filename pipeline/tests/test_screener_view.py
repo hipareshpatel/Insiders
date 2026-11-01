@@ -399,6 +399,19 @@ def test_a_text_counts_once_even_on_two_members_as_the_older_files_tag_the_year_
     assert [v for _, _, v in got] == [30.0]
 
 
+def test_a_levy_row_larger_than_total_expenses_is_a_note_amount_not_a_levy():
+    """Godrej Industries FY25: a contingent-liability row "GST demands ..." (23,361 Cr) sits on the expenses element; it is no
+    sales tax. A genuine row inside the expenses breakdown (BPCL's excise duty) is read as before."""
+    base = [r for r in ANNUAL if r[0] != "ExciseDuty"]
+    big = base + [("DescriptionOfOtherExpenses", "D2026_M5", "GST demands relating to issues pertaining to cenva"),
+                  ("OtherExpenses", "D2026_M5", 5000.0)]
+    got = values(sv.corporate_pl(sv._Reader(xf.Facts(doc(big)), end=END, months=12)))
+    assert got["Sales"] == 1000.0 and got["Expenses"] == 750 - 20 - 40 - 5
+    small = base + [("DescriptionOfOtherExpenses", "D2026_M5", "Excise duty"), ("OtherExpenses", "D2026_M5", 100.0)]
+    got = values(sv.corporate_pl(sv._Reader(xf.Facts(doc(small)), end=END, months=12)))
+    assert got["Sales"] == 900.0 and got["Expenses"] == 750 - 20 - 40 - 100 - 5
+
+
 def test_a_balance_sheet_with_no_debt_line_has_borrowings_of_zero():
     facts = xf.Facts(doc([r for r in ANNUAL if not r[0].startswith(("Borrowings", "OtherCurrentFinancial", "OtherNoncurrentFinancial",
                                                                       "DescriptionOfOtherCurrentFinancial",

@@ -31,7 +31,7 @@ from . import eps_adjust
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period, results_due
-from .settings import card_guidance_dated, card_watch_verdict
+from .settings import card_guidance_dated, card_watch_verdict, volume_series_one_segment
 
 STRAIN_GAP_PP = 15.0      # receivable/inventory growth minus revenue growth, percentage points
 MAX_OVERDUE_SIGNALS = 2
@@ -184,6 +184,31 @@ def _auditor(after: dict, filing: Filing) -> list[Signal]:
 VOLUME_METRICS = ("sales_volume", "volumes", "total_sales", "sales_units", "units_sold", "dispatches", "production", "despatches")
 
 
+SERIES_RATIO = 4   # a month's figure more than this many times off the filing's own is another business line
+
+
+def _same_series(entry: dict, main: dict) -> dict | None:
+    """The month's figure that belongs to the filing's series. Memory keeps one row per metric and month with every
+    filing's figure under `sources`, and the newest one wins the row, so Eicher's Royal Enfield April (113,164) sat over
+    VECV's (7,318). Of the row and its sources take the one closest to the filing's figure, and none if even that is
+    off by more than SERIES_RATIO: a month left out beats two business lines in one strip."""
+    base = main.get("value")
+    if not base or entry["period"] == main["period"]:
+        return entry
+    best = None
+    for c in [entry, *(entry.get("sources") or [])]:
+        v = c.get("value")
+        if not v or v <= 0 or base <= 0:
+            continue
+        gap = max(v / base, base / v)
+        if gap <= SERIES_RATIO and (best is None or gap < best[0]):
+            best = (gap, c)
+    if not best:
+        return None
+    c = best[1]
+    return {**entry, "value": c["value"], "yoy_pct": c.get("yoy_pct")}
+
+
 def volume_strip(after: dict, news_id: str, months: int = 6) -> dict | None:
     """The card's monthly strip: the main volume metric this filing reported, over the last months
     memory holds (as of the filing), each with its YoY change."""
@@ -197,7 +222,10 @@ def volume_strip(after: dict, news_id: str, months: int = 6) -> dict | None:
                    and period_kind(e["period"]) == "M" and due_date(e["period"]) and e.get("value") is not None),
                   key=lambda e: due_date(e["period"]))
     end = due_date(main["period"])
-    rows = [e for e in rows if due_date(e["period"]) <= end][-months:]
+    rows = [e for e in rows if due_date(e["period"]) <= end]
+    if volume_series_one_segment():
+        rows = [r for r in (_same_series(e, main) for e in rows) if r]
+    rows = rows[-months:]
     if len(rows) < 2:
         return None
     return {"metric": main["metric"], "unit": main.get("unit"),
@@ -287,7 +315,10 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
     out: list[Signal] = []
     dated = card_guidance_dated()   # F172: a verdict only from a dated target for this filing's period and metric
     if dated:
-        from .guidance_dated import said_on, why_no_verdict, why_no_watch_verdict
+        from .guidance_dated import discussed_period, said_on, why_no_verdict, why_no_watch_verdict
+        from .settings import deck_discussed_period
+        discussed = (discussed_period(filing.event_type, after.get("financial_metrics", []), filing.filed_at)
+                     if deck_discussed_period() else None)   # DECK_DISCUSSED_PERIOD: KRN nse-106836198
     known = {g["id"]: g for g in (before or {}).get("guidance", []) if g.get("given_on", "") < filing.filed_at}
     for update in output.dossier_delta.promise_updates:
         g = known.get(update.guidance_id)
@@ -295,7 +326,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             continue
         when = g.get("given_on", "")[:10]
         if dated and update.status in ("DELIVERED", "DELAYED", "MISSED"):
-            why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id)
+            why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id, discussed)
             if why:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
                 continue
@@ -328,7 +359,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         if code in ("MET", "MISSED"):
             status = code
         if dated and status in ("MET", "MISSED"):
-            why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id)
+            why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id, discussed)
             if why:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(w, why), w["id"]))
                 continue
@@ -356,7 +387,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > _judged_on(g))
     ]
     for g in sorted(overdue, key=lambda g: g["due_date"])[:MAX_OVERDUE_SIGNALS]:
-        why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id) if dated else None
+        why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id, discussed) if dated else None
         if why:
             out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
             continue

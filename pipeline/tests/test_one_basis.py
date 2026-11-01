@@ -185,3 +185,24 @@ def test_a_presentation_ebitda_within_three_percent_of_the_table_is_left(monkeyp
 def test_no_table_no_work(monkeypatch, value):
     monkeypatch.setenv("CARD_ONE_BASIS", "1")
     assert one_basis.apply_card_json({"basis": "STANDALONE", "results": value}, {}) == []
+
+
+def test_with_discontinued_needs_figure_an_associates_share_is_never_called_discontinued(monkeypatch):
+    """Blind audit of 1 Nov 2026: NETWORK18's 107.19 Cr associates' share, GABRIEL 48.3, SARDAEN 15.32 were each written as "from
+    discontinued operations": the taxonomy's continuing profit is before the share, so total less continuing is the share."""
+    monkeypatch.setenv("CARD_ONE_BASIS", "1")
+    monkeypatch.setenv("DISCONTINUED_NEEDS_FIGURE", "1")
+    found = one_basis.values(_rows(pat={"Q2FY27": 161.42}, pat_continuing={"Q2FY27": 54.23}, share_associates={"Q2FY27": 107.19}))
+    assert one_basis.discontinued_part(found, "Q2FY27") is None
+    monkeypatch.setenv("DISCONTINUED_NEEDS_FIGURE", "0")
+    assert one_basis.discontinued_part(found, "Q2FY27") == pytest.approx(107.19)   # the old gap rule
+
+
+def test_with_discontinued_needs_figure_a_real_discontinued_operation_keeps_its_label(monkeypatch):
+    monkeypatch.setenv("CARD_ONE_BASIS", "1")
+    monkeypatch.setenv("DISCONTINUED_NEEDS_FIGURE", "1")
+    rows = LTTS_ROWS + _rows(pat_discontinued={"Q2FY27": 168.6})
+    out = _ltts()
+    one_basis.apply(out, LTTS_TAGGED, rows)
+    assert "includes ₹168.6 Cr from discontinued operations" in out.card.headline
+    assert "continuing operations ₹380.1 Cr" in out.card.headline

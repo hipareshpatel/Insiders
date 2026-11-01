@@ -459,6 +459,13 @@ def _levies(r: _Reader) -> tuple[dict[str, float], list[str]]:
             notes.append(f"{part} {_fmt(out[part])} ({', '.join(n for n, _ in found)})")
             continue
         rows = r.rows(EXPENSE_PARENTS, rx)
+        # a line of the expenses breakdown cannot be larger than the total of expenses: a "row" bigger than it is a note's amount
+        # (a contingent liability, a disputed demand, a government rebate) tagged on the same element, never a levy. Annual
+        # reports of Godrej Industries (GST demands, 23,361 Cr against Sales 19,657), Ajanta, LTTS, Welspun Living, Bikaji,
+        # Salzer, Elgi Rubber: FY25 / FY26 Sales and Expenses both far below screener's (screener-rows every-company run 1 Nov 2026)
+        total = r.cr("Expenses")
+        if rows and total is not None and _sum_rows(rows) > total:
+            rows = []
         if rows:
             out[part] = _sum_rows(rows)
             notes.append(f"{part} {_fmt(out[part])} (row " + "; ".join(t[:50] for _, t, _ in rows) + ")")

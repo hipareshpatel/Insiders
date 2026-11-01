@@ -117,8 +117,40 @@ Replays, offline from the kept answers (each reproduces its run exactly first):
   With numbers-first first, the fully unseen part is 145/7/153 (numbers-first alone 126/6/173 on the same figures).
 - Hard set: nemotron alone 185/1/154 → 155/1/184. With numbers-first first, 292/0/48 (alone 272/0/68).
 
+### Fresh unseen set: run 41278380328 (1 Nov 2026), **FAIL**
+
+Key `docs/bench/oos/key-run41268044336.csv` (pdf-oos seed 31): 343 figures in 48 PDFs, never seen by either reader's
+fixes, 159 nemotron pages. The guard-off line is an offline replay of the same 159 kept answers; the replay with the guard on
+reproduces the run exactly (71 / 3 / 269, 159 calls) first.
+
+| Order (right / wrong / no answer of 343) | Guard off | Guard on |
+|---|---|---|
+| Numbers-first alone | 183 / 2 / 158 | 183 / 2 / 158 |
+| Nemotron alone | 79 / 3 / 261 | 71 / 3 / 269 |
+| **Numbers-first first, nemotron on its no-answers** | 205 / 5 / 133 | **203 / 5 / 135** |
+| Nemotron first | - | 203 / 5 / 135 |
+
+**Pass mark (set before scoring): 0 wrong among the readings nemotron adds over numbers-first. Result: 3. FAIL.**
+The guard removed 8 right readings and no wrong one on this set.
+
+The three added wrongs are one class the guard cannot see: on a consolidated statement with joint-venture, associate or
+non-controlling-interest lines, nemotron reads another profit line than the filed PAT. Numbers-first gave no answer on all
+three (it found no consolidated row it could prove by arithmetic). All three key rows are tagged `xbrl:found_ambiguous`.
+- ZYDUSLIFE Q1FY27 consolidated PAT: read 939.8 against 990.2. Page 11 (INR million) prints 9,902 "Net profit before
+  non-controlling interests" and 9,398 "Net profit for the period" after them; nemotron took the second.
+- PHOENIXLTD Q1FY27 consolidated PAT: read 393.55 against 394.51 (page 7 prints 39,354.75 lakh; the lines are PAT before
+  and after the associates' share).
+- COFFEEDAY Q1FY27 consolidated PAT: read 8.39 against 4.52 (page 24: profit before and after the joint venture's share,
+  then the owners' share).
+
+Numbers-first's own two wrongs are PBT (SOLARWORLD 12.85 vs 12.72, VSTTILLERS 62.19 vs 62.49), the known PBT
+definition gap; the slip check never asks for PBT.
+
+Follow-up, not built: a basis guard that also reads rows naming a basis inside the grid (review point 4) would not change
+this result; the class to fix first is the PAT line choice. NEMOTRON_BASIS_GUARD stays off; nemotron stays a bench reader.
+
 ## Next
 
 - A second probe with the fixes: Mistral (retry) and nemotron-parse-2.0 (tool named). If either answers, the full 65
   pages, before the artifact expires on 2 Nov.
-- The fresh unseen set for NEMOTRON_BASIS_GUARD (source: the lead's call), then the owner's decision on live use.
+- The owner's decision on nemotron (fresh set failed the pass mark: +20 right, +3 wrong over numbers-first).

@@ -75,3 +75,4 @@ RESULTS_PRESS_RELEASE = false    # pipeline._fold_release, event_catchup.release
 # largest (screener-rows 41082974431 on, 41082987950 off): Borrowings +34 pairs, Other Liabilities +34, 2 broke each
 # (SHILPAMED Q4FY23-24, 1.31 Cr twice), totals unchanged. On 30 Oct 2026 ~21:30 IST (owner: "Show some guts and continue").
 SCREENER_CMLTD = true            # screener_view.corporate_bs: CurrentMaturitiesOfLongTermDebt in Borrowings
+ANNUAL_SCALE_FIX = true          # MEASUREMENT ONLY on the branch (dry run); reverted before merge

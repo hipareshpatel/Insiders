@@ -363,7 +363,31 @@ def _earlier_figure(text: str, at: int, end: int) -> bool:
                 or _FOLLOWED_BY_EARLIER.search(after) or before.count("(") > before.count(")"))
 
 
-def profit_label_card_json(card_json: dict) -> list[str]:
+# a key number code wrote from memory or the file (results_card): its quote is the table line "- pat Q4FY26: 259.27 Cr"
+_CODE_KEY = re.compile(r"^-\s+[a-z_]+\s+\S+:\s")
+# the takeaway code wrote from the file's profit bridge (results_card.profit_driver) or its figures ("Q4FY26: ... .")
+_CODE_TAKEAWAY = re.compile(r"\bthe largest move was\b|^(?:Q[1-4]|H[12]|9M)?FY\d{2}:\s", re.I)
+_BASIS_WORD = re.compile(r"\b(?:standalone|consolidated)\b", re.I)
+
+
+def _year_of(period: str | None) -> list[str]:
+    """The year-sized periods a quarter's card can state beside it: its year, nine months and half ("Q4FY26" -> FY26, 9MFY26,
+    H1FY26)."""
+    m = re.fullmatch(r"Q[1-4](FY\d{2})", period or "")
+    return [m[1], f"9M{m[1]}", f"H1{m[1]}"] if m else []
+
+
+def _memory_period(figure: float, period: str | None, dossier: dict | None) -> str | None:
+    """The year-sized period whose profit (whole or owners') in memory equals ``figure`` (within rounding), else None."""
+    wanted = _year_of(period)
+    for m in (dossier or {}).get("financial_metrics") or []:
+        if isinstance(m, dict) and m.get("metric") in ("pat", "pat_owners") and m.get("period") in wanted \
+                and isinstance(m.get("value"), (int, float)) and not _differs(abs(figure), abs(m["value"]), 0.015):
+            return m["period"]
+    return None
+
+
+def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list[str]:
     """CARD_ADJUSTED_PROFIT_LABEL: a profit figure in the headline, takeaway or a key number that matches none of the results
     table's reported profit rows (total, owners', continuing; a loss by its size) is labelled "company-reported" with the
     table's PAT, in the company's own words for its basis when the key number's quote states them ("before exceptional
@@ -395,13 +419,22 @@ def profit_label_card_json(card_json: dict) -> list[str]:
         figure = _amount(key.get("value"))
         if not _KEY_PROFIT.fullmatch(label) or figure is None or _STATED.search(label) or _other_period(label, period):
             continue
+        if _CODE_KEY.match(str(key.get("quote") or "")) or _BASIS_WORD.search(label):
+            continue   # code wrote it from memory or the file, or its label names its basis: not the company's own figure (triage of run 41318733817)
         if other(figure):
+            year = _memory_period(figure, period, dossier)
+            if year:   # the year's (or nine months', or the half's) profit on a quarter's card: named as such, not "company-reported"
+                key["label"] = f"{label} ({year})"
+                notes.append(f"key_numbers {label}: {_cr(figure)} is memory's {year} profit, labelled {year}")
+                continue
             key["label"] = f"{label} ({tag(key.get('quote'))})"
             notes.append(f"key_numbers {label}: {_cr(figure)} is not the table's reported profit ({_cr(pat)}), labelled company-reported")
     for attr in ("headline", "takeaway"):
         text = card_json.get(attr)
         if not isinstance(text, str) or "reported PAT" in text or _GUIDANCE.search(text):
             continue
+        if attr == "takeaway" and _CODE_TAKEAWAY.search(text):
+            continue   # code's own takeaway from the file's profit bridge or figures
         bare = _LABELLED.sub("", text)   # another figure's label ("(company-reported; results table ₹2,437.56 Cr)") names no basis here
         for word, figure, stated, at in _headline_figures(bare, _PROFIT_WORD):
             end = re.compile(_FIG, re.I).match(bare, at).end()

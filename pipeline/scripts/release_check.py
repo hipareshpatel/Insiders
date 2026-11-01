@@ -305,7 +305,7 @@ def check_other_issuer(card: dict, row: dict, text: str, dossier: dict | None) -
     return _record(row, card, off, on)
 
 
-def check_adjusted_profit(card: dict, row: dict) -> dict:
+def check_adjusted_profit(card: dict, row: dict, dossier: dict | None = None) -> dict:
     """adjusted_profit: `results_one_line.profit_label_card_json` on a copy of a stored results card with CARD_ADJUSTED_PROFIT_LABEL
     off and on; the headline, takeaway and key-number lines it labels (TI nse-106837308)."""
     from bse_intel import results_one_line
@@ -316,7 +316,7 @@ def check_adjusted_profit(card: dict, row: dict) -> dict:
 
     on_card = copy.deepcopy(card)
     with switches_on("CARD_ADJUSTED_PROFIT_LABEL"):
-        results_one_line.profit_label_card_json(on_card)
+        results_one_line.profit_label_card_json(on_card, dossier)
     return _record(row, card, lines(card), lines(on_card))
 
 
@@ -1313,7 +1313,7 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         skipped[name]["not a results card with a table"] += 1
                     else:
                         seen[name] += 1
-                        keep(name, check_adjusted_profit(card, row))
+                        keep(name, check_adjusted_profit(card, row, memory() or None))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "words_match_figures":
                     if not results or not isinstance(card.get("results"), dict):

@@ -1,0 +1,136 @@
+{
+ "c01": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Filing (Rs mn, consolidated): net profit 505.51 (prior 305.01), owners 339.42 (prior 194.20), EPS 4.38. X shows EPS and mixes owners (headline) with whole-profit (takeaway); Y consistent on owners."
+ },
+ "c02": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Filing: net profit 1,549.42, owners 1,460.16 vs 853.64 (+71.1%), EPS ok. X shows EPS and no YoY on owners; Y gives owners YoY and no EPS."
+ },
+ "c03": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated: PAT 5.27 vs (434.30), EPS 0.66 true but banned; all other figures match. Y has no EPS."
+ },
+ "c04": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated lakh: PAT incl associates 51,436.39 (=514.36 Cr), owners 51,470.44, prior (8,463.93). Y adds EPS 84.13 (correct) which is banned."
+ },
+ "c05": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated Rs lakh: profit 3,499.44 (34.99 Cr), owners 3,468.35, prior (3,793.98)/(3,785.86); EPS 4.04 true. X consistent on owners and no EPS; Y mixes headline owners with takeaway whole profit and shows EPS."
+ },
+ "c06": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated Rs cr: profit 45.70 vs 49.05, owners 45.64 vs 49.01, EPS 7.08. Both profit lines present in both; Y shows EPS and mixes bases in headline/takeaway."
+ },
+ "c07": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Q4: PAT 254.79 vs 62.33 (+308.8%), EPS 3.15 true. Y adds redundant 'to shareholders' line and EPS."
+ },
+ "c08": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Rs mn: revenue 22,303.03, profit 4,568.37 vs 2,778.05, owners 4,568.25, EPS 10.14. Figures fine both sides; X shows EPS."
+ },
+ "c09": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "KEY Net profit: 6,547.43 (+53.6% YoY) - quarter figure on an H1 card; filing H1 profit is 15,397.24",
+   "HEADLINE/TAKEAWAY/KEY Net profit to shareholders label: says 534.33 Cr is from discontinued operations; filing shows it is share of joint-venture profit, no discontinued operations"
+  ],
+  "wrong_y": [
+   "HEADLINE/TAKEAWAY/KEY Net profit label: says 534.33 Cr is from discontinued operations; filing shows it is share of joint-venture profit, no discontinued operations",
+   "KEY Net profit to shareholders label: says 534.33 Cr is from discontinued operations; filing shows it is share of joint-venture profit, no discontinued operations"
+  ],
+  "note": "Filing Rs cr: H1 profit 15,397.24, owners 15,368.20; Q2 profit 6,547.43. X mixes quarter profit into H1 card; both mislabel the 534.33 JV share as discontinued ops."
+ },
+ "c10": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated lakh: profit 6,783.98 (67.84) vs 5,351.67 (53.52, but prior 5,352), owners 6,030.72. X shows both lines consistent with takeaway; Y takeaway cites 67.84 which is absent from its KEY lines."
+ },
+ "c11": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Rs mn: profit 9,899.97 vs 6,929.59 (+42.9%), owners 9,773.74 (977.37), EPS 64.87 true. X has duplicate Net profit row (990.00 and 990) and omits owners row; Y shows EPS which is banned. Close call."
+ },
+ "c12": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Rs lakh: profit 32,684.73 vs 6,972.88, EPS 21.06 true; only difference is EPS in Y."
+ },
+ "c13": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated lakh: profit 16,204.57 vs 2,189.34 (+640.3%), owners 16,202.30, EPS 14.73 true. X shows EPS; Y omits owners row but nothing wrong."
+ },
+ "c14": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Rs lakh: profit 783.24 vs 535.12, revenue 5,679.72 vs 3,323.64, EPS 13.58 true. X shows EPS."
+ },
+ "c15": {
+  "verdict": "X BETTER",
+  "wrong_x": [
+   "KEY Net loss to shareholders YoY -2600.1% (profit to loss swing: arithmetically right, meaningless; minor)"
+  ],
+  "wrong_y": [],
+  "note": "Consolidated Rs cr: loss 8,101.41 vs profit 324.04, EPS (99.10). Y shows EPS and a redundant duplicate profit line (-8,101.41)."
+ },
+ "c16": {
+  "verdict": "SAME",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated Rs cr: loss 25.55 vs 166.42, revenue 575.51 vs 320.82; only label wording differs."
+ },
+ "c17": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Rs lakh: PAT 53,413.84 vs 31,790.43 (+68.0%), EPS 3.32 true. Y adds EPS."
+ },
+ "c18": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Consolidated Rs lakh: net profit 108,408 vs 66,431 (+63.2%), EPS 0.35 true. X keeps YoY on profit; Y drops YoY and adds EPS."
+ },
+ "c19": {
+  "verdict": "X BETTER",
+  "wrong_x": [
+   "HEADLINE net profit to shareholders 1,238.67 - not in filing; press release shows PAT 3,308 (contradicts KEY 3,308.30)",
+   "duplicate Net profit row (cosmetic)"
+  ],
+  "wrong_y": [
+   "HEADLINE net profit to shareholders 1,238.67 - not in filing; PAT 3,308",
+   "KEY EPS 14.45 - quarterly EPS not in the filing (FY26 EPS 58.23)"
+  ],
+  "note": "Filing is a press release: Q4 revenue 10,738, EBITDA 6,020, PAT 3,308 vs 3,023; no owners figure and no 1,238.67 anywhere. Both headlines wrong; Y also adds unsupported banned EPS."
+ },
+ "c20": {
+  "verdict": "SAME",
+  "wrong_x": [],
+  "wrong_y": [],
+  "note": "Rs lakh: profit 3,611.12 = owners (no NCI) vs 1,802.12 (+100.4%); revenue 31,913.58 vs 15,206.82. Wording only; Y repeats identical figure on two lines."
+ }
+}

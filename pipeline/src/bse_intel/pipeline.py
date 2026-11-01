@@ -57,7 +57,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_slip_xbrl_guard
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -70,7 +70,7 @@ from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import eps_adjust, no_eps, restated_pdf
 from . import annual_xbrl, fact_sheet
-from . import xbrl_store
+from . import xbrl_facts, xbrl_store
 from . import statements
 from . import directions
 from . import results_card
@@ -443,13 +443,13 @@ def fix_foreign_crore(out: Pass2Output, text: str) -> list[str]:
     return [f"foreign amount set right: {k} -> {v}" for k, v in fixes.items()]
 
 
-def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]:
+def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...], xbrl_crore=()) -> dict[str, str]:
     """Correct, in code, card amounts that are a statement figure read at the wrong unit (grounding.
     unit_slips): in the card's text, its key numbers and changes, the timeline entry, and the reply's
     ₹ crore metrics for memory. Returns {as written: corrected}."""
     if out.card is None or not sources:
         return {}
-    slips = unit_slips(_card_texts(out), sources[0], *sources[1:])
+    slips = unit_slips(_card_texts(out), sources[0], *sources[1:], xbrl_crore=xbrl_crore)
     if not slips:
         return {}
     mapping = {raw: f"{right:,.{places}f}".rstrip("0").rstrip(".") if places else f"{right:,.0f}"
@@ -3778,7 +3778,10 @@ class Pipeline:
                                         results_card.history_from_view(full_view), filed_text, found_facts,
                                         self.settings.results_rich)
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
-            units = fix_unit_slips(candidate, sources)
+            # UNIT_SLIP_XBRL_GUARD: the file's own money facts reach the unit fixer only, never the grounding sources
+            guard = (xbrl_facts.money_crore(getattr(tagged, "raw", None), filing.scrip_code, filing.xbrl_url or "")
+                     if tagged and unit_slip_xbrl_guard() else ())
+            units = fix_unit_slips(candidate, sources, guard)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)
             counts = fix_count_millions(candidate, sources)
             changes = sheet_cuts + built + fix_change_percentages(candidate, sources) + counts + foreign_fixes

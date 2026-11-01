@@ -320,6 +320,14 @@ def card_fact_sheet_lenders() -> bool:
     return _switch("CARD_FACT_SHEET_LENDERS")
 
 
+def unit_slip_xbrl_guard() -> bool:
+    """UNIT_SLIP_XBRL_GUARD (default off; owner, 1 Nov 2026: "a figure in the exchange's XBRL file must never be overruled by the
+    PDF"): the unit fixer (grounding.unit_slips) leaves alone a card amount equal to any money fact of the filing's XBRL file
+    (Hubtown's ₹408.47 Cr was made 0.41 from the PDF's lakh "40,847"). It lets fewer corrections through, so a check accepts more:
+    on only after the on/off check over stored cards (release_check.py unit_slip_guard) and a blind sample. Read at the call."""
+    return _switch("UNIT_SLIP_XBRL_GUARD")
+
+
 def results_needs_statement() -> bool:
     """RESULTS_NEEDS_STATEMENT (default off; 31 Oct 2026, TMB nse-106836238): a filing typed RESULTS whose text holds no results
     statement, no covering letter submitting results and no "financial results for the quarter/half/year" is read as OTHER

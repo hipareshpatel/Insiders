@@ -67,6 +67,12 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      (3) the scale block (market cap, revenue, net worth, debt) is empty. Each can only make a drop that live
                      would not make, so the drop list is an upper bound. The blind sample (up to 60 dropped items, seeded, no
                      verdict hints) is for a reviewer to judge TRUE (supported, the drop loses true content) or FALSE.
+  unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
+                     correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
+                     bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
+                     (`xbrl_facts.money_crore`), and each correction whose as-written figure equals a fact (within its own
+                     rounding) is listed: the guard on would leave that figure as written (Hubtown's ₹408.47 Cr). A card with
+                     no unit correction, no exchange file on it, or a file R2 no longer holds is counted as skipped, not replayed.
 A card or part that cannot be replayed is never faked: it is counted as "not_replayable", written to NAME-unreplayable.json
 and NAME-unreplayable.md (the stored lines and the pdf link, for the blind sample: judge the stored card as it is).
 
@@ -101,7 +107,7 @@ sys.path.insert(0, str(HERE / "daily_audit"))
 import audit_card_v2 as v2  # noqa: E402
 import audit_precision as prec  # noqa: E402
 import audit_two_parts as two  # noqa: E402
-from bse_intel import card_support, event_xbrl, gate, one_basis, signals  # noqa: E402
+from bse_intel import card_support, event_xbrl, gate, one_basis, signals, xbrl_facts, xbrl_store  # noqa: E402
 from bse_intel import pipeline as P  # noqa: E402
 from bse_intel.dossier import dossier_as_of, latest_fundamentals, results_snapshot, view_as_of, with_year_hold  # noqa: E402
 from bse_intel.extract import Document  # noqa: E402
@@ -114,13 +120,14 @@ from onoff_facts import tagged_from_memory  # noqa: E402
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
                 "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK",
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
-                "RESULTS_NEEDS_STATEMENT")
+                "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
           ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
           ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"),
-          ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"))
+          ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"),
+          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -235,6 +242,24 @@ def check_results_statement(card: dict, row: dict, text: str) -> dict:
     off = [f"TYPE: {card.get('event_type') or 'RESULTS'}", f"HEADLINE: {card.get('headline') or ''}"]
     on = ["TYPE: OTHER (no results statement in the text)", f"HEADLINE: {card.get('headline') or ''}"] if retyped else list(off)
     return _record(row, card, off, on)
+
+
+def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
+    """unit_slip_guard: each unit correction the stored card records (`grounding.unit_fixes`, {as written: corrected}) whose
+    as-written figure equals a money fact of the filing's XBRL file (within its own rounding) is one the guard leaves alone: the
+    card would keep the figure as written (off: the corrected text, on: the figure the file states)."""
+    facts = xbrl_facts.money_crore(xbrl_bytes, str(row.get("scrip_code")), ((card.get("xbrl") or {}).get("url")) or "")
+    off, on = [], []
+    for raw, right in ((card.get("grounding") or {}).get("unit_fixes") or {}).items():
+        try:
+            value = float(str(raw).replace(",", ""))
+        except ValueError:
+            continue
+        decimals = len(str(raw).split(".")[1]) if "." in str(raw) else 0
+        off.append(f"UNIT FIX {raw} Cr -> {right} Cr")
+        hit = [c for c in facts if abs(value - c) <= 0.5 * 10 ** (-decimals) + 1e-9]
+        on.append(f"UNIT FIX {raw} Cr kept (XBRL fact {hit[0]:,.4f} Cr)" if hit else f"UNIT FIX {raw} Cr -> {right} Cr")
+    return _record(row, card, off, on, facts=len(facts))
 
 
 def _record(row: dict, card: dict, off: list[str], on: list[str], **extra) -> dict:
@@ -754,6 +779,9 @@ class PlatformSource:
     def text_body(self, news_id: str):
         return self.sink.get_object(P.text_key(news_id))
 
+    def xbrl_body(self, url: str):
+        return xbrl_store.get(self.sink, url)
+
     def dossier(self, scrip: str) -> dict:
         if scrip not in self._memory:
             self._memory[scrip] = self.sink.get_dossier(scrip) or {}
@@ -944,6 +972,20 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         seen[name] += 1
                         keep(name, check_results_statement(card, row, text))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "unit_slip_guard":
+                    url = (card.get("xbrl") or {}).get("url")
+                    if not (card.get("grounding") or {}).get("unit_fixes"):
+                        skipped[name]["no unit correction recorded"] += 1
+                    elif not url:
+                        skipped[name]["no exchange file on the card"] += 1
+                    else:
+                        body = getattr(source, "xbrl_body", lambda _u: None)(url)
+                        if not body:
+                            skipped[name]["exchange file not stored (R2 keeps it 180 days) or no source for it"] += 1
+                        else:
+                            seen[name] += 1
+                            keep(name, check_unit_slip_guard(card, body, row))
+                            row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "one_basis":
                     seen[name] += 1
                     keep(name, check_one_basis(card, memory() or None, row, period if results else None))

@@ -128,3 +128,14 @@ def test_the_backfill_walks_the_history_a_week_at_a_time(monkeypatch):
     assert report["windows"] == 2 and len(asked) == 4
     assert asked[0][1:] == (date(2026, 10, 9), date(2026, 10, 15)) and asked[2][1:] == (date(2026, 10, 16), date(2026, 10, 22))
     assert report["filed"] == 1 and report["in_universe"] == 2 and not report["errors"]
+
+
+def test_a_bigger_order_is_no_stage_update_of_an_earlier_one():
+    # OSWALPUMPS nse-106836003 (audit of 1 Nov 2026): Rs 235.92 Cr for an additional 10,000 pumps linked to May's Rs 162.06 Cr
+    from bse_intel.models import DealValue
+    from bse_intel.pipeline import grown_order
+    view = {"deals": [{"id": "d_a95fc979", "kind": "ORDER", "amount_cr": 162.06}]}
+    assert grown_order(DealValue(kind="ORDER", amount_cr=235.92, updates_deal_id="d_a95fc979"), view)
+    assert not grown_order(DealValue(kind="ORDER", amount_cr=162.06, updates_deal_id="d_a95fc979"), view)   # the LOI's work order
+    assert not grown_order(DealValue(kind="ORDER", amount_cr=29.0, updates_deal_id="d_a95fc979"), view)     # part of it converted
+    assert not grown_order(DealValue(kind="ORDER", amount_cr=235.92), view)

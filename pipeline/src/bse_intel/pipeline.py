@@ -1966,6 +1966,21 @@ def derived_figures(card, quant, sources: tuple[str, ...]) -> list[float]:
     return derived
 
 
+GROWN_ORDER = 1.25   # a stage move (LOI -> work order) keeps the order's value; more than a quarter bigger is another order
+
+
+def grown_order(deal, view: dict | None) -> bool:
+    """An order said to move an earlier order on, but more than a quarter bigger than it: a new order (OSWALPUMPS nse-106836003,
+    audit of 1 Nov 2026: a Rs 235.92 Cr order for an additional 10,000 pumps linked to May's Rs 162.06 Cr one as its work order,
+    so the card said "stage update, not a new order" and memory's May order became Rs 235.92 Cr). A smaller amount stays
+    (part of an LOI converted)."""
+    if deal is None or deal.kind != "ORDER" or not deal.updates_deal_id or not deal.amount_cr:
+        return False
+    earlier = next((d for d in (view or {}).get("deals", []) if d.get("id") == deal.updates_deal_id), None)
+    base = (earlier or {}).get("amount_cr")
+    return isinstance(base, (int, float)) and base > 0 and deal.amount_cr > GROWN_ORDER * base
+
+
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
     """Memory-id hygiene, then the number, math, claim and scale checks (`history`: the dossier's
     stored financial metrics, which the reply's quarterly figures are compared with)."""
@@ -1975,6 +1990,8 @@ def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...]
         insight.memory_refs = [r for r in insight.memory_refs if r in valid_refs]
     if card.deal_value and card.deal_value.updates_deal_id not in valid_refs:
         card.deal_value.updates_deal_id = None  # only a deal the model was shown can be updated
+    if card.deal_value and grown_order(card.deal_value, view):
+        card.deal_value.updates_deal_id = None  # a bigger order is a new one, not the earlier order's next stage
     reconcile_call_read(card, view)
     quant = check_quant(card.quantified_impact, *sources)
     derived = derived_figures(card, quant, sources)

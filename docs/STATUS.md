@@ -93,6 +93,37 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+### 3.0 The one open list (consolidated 1 Nov 2026, ~09:30 IST; owner: "check past pending items ... many are cleared, not required or superseded")
+
+Every list was swept: this section 3 (the lead's list and the 31 Oct table below), 3b, docs/TODO.md, TASKS, PLAN, HANDOVER, docs/handover/2026-10-31.md and docs/audit/actions-pending.md, each item checked against git, switches.toml and the code. **This sub-section is the one current list; everything below it in section 3 and 3b is history** (kept for its findings). Lanes (co-leads, #303): **cards** = second session; **data** = lead; **reader** = reader session; **owner** = needs the owner.
+
+**Open, by impact on the go-live bar (cards WRONG <= 5%, now 14.0%, 7.0-26.2%, 1 Nov audit) and on the Screener match:**
+
+| # | Item | Lane | Next step |
+|---|---|---|---|
+| 1 | The 1 Nov audit's WRONG classes (7 of 50): footer fixed in #311; five single cases left (ZEEL quarter called half-year, KRN FY25 as FY26, POLICYBZR associates as discontinued, OSWALPUMPS new order as stage update, MEDIASSIST buyback as FUNDRAISE) and 2 "Our reading" WRONGs | cards | fix each with a test, then a fresh 50-card blind audit; repeat on the commonest class until <= 5% |
+| 2 | `CARD_TEXT_SUPPORT` (off) | cards | grade the release-check `text_support` blind sample (run 41261609960), switch on only if true items survive |
+| 3 | Headline tag "(company-reported; results table ...)" against a table of the other basis; some headlines wrong at source (CDSL, BLIL "standalone revenue") | cards | tag by the headline's own basis word, or fix the headline at source |
+| 4 | `RESULTS_PRESS_RELEASE` (off, #269) | cards | on/off on live results filings, then switch |
+| 5 | `UNIT_SLIP_XBRL_GUARD` (off, #313) | data | release-check `unit_slip_guard`, blind sample, switch on |
+| 6 | `D20_DROPPED_FILE_PERIOD` (off, #314; TMB root cause) | data | count stored RESULTS cards it would hold, blind read, switch on; `RESULTS_NEEDS_STATEMENT` stays off (superseded by this) |
+| 7 | `ANNUAL_SCALE_FIX` (TDPOWERSYS, MSPL annual reports 1e5 small) | data | read the branch dry run, merge off, then on/off audit and apply |
+| 8 | Screener gap: annual P&L ~90%, balance 92%, cash flow 94%, quarters 96% (FY25 on) | data | annual-report notes (Screener's regrouping of Expenses / Other Income); measure after each rebuild |
+| 9 | Bank PDF reader full run (TODO 148 follow-up): City Union, Bank of Maharashtra FY23-25, UCO 0.0 depreciation | data | full `bank-pdf-read`, then rebuild |
+| 10 | Memory gaps: 47 companies without stored facts; raw XBRL files with no facts copy (10 are Q2FY27: is the live path storing raw without facts?) | data | root-cause the live path; `xbrl-facts` on the 47 |
+| 11 | Restated year-ago figures from the PDF (`restated-pdf`): trial 40431994775 stored nothing (reader slips) | data | fix the reader slips, re-run the trial, then top 500 |
+| 12 | Memory errors (TODO 88-90, 96b: EPS sign flips) | data | re-read only the affected filings (DATA_QUALITY routine); owner go |
+| 13 | REITs: Brookfield operating profit 713.6 vs Screener 701; daily refresh step; R2 lifecycle for raw/reit-xbrl/; step 2 (NDCF, DPU, NAV) | data | daily refresh and lifecycle first |
+| 14 | Auto-fix chain (TODO 69-74) | data | approved "after the PDF trial (row 68) passes": check row 68 first |
+| 15 | PDF readers (TODO 112/119/122): nemotron guard `NEMOTRON_BASIS_GUARD` (#315, off); Mistral and nemotron-parse-2.0 dead ends | reader | fresh-set score (pdf-oos seed 31), pass mark 0 added wrong; owner decides live use |
+| 16 | Call memory v2 (9.2-9.6% WRONG vs 2% bar; TODO 136/144 blocked) | owner | choose A keep off / B vision for slide quotes / D stronger model |
+| 17 | Results and stock-page leftovers (A1 ADANIENT standalone, A4, B2, B5; TODO 143) | cards | low priority |
+
+**Owner decisions / account actions:** merge #281 (Design E); minimum group size (proposed 5); Mistral: is OCR allowed on the Free plan, and October spend; nemotron-3.5-parse model id; results filing made twice: table on the repeat card?; Cloudflare Workers Paid renewal before 21 Nov; daily card-audit routine on or by hand; B3 held-card display; B5 bhavcopy prices; G9 rate-limit rule; whether the 5% bar fits long cards; "Later" items (TODO 37/38/41/46/47/58/59/83/101/113).
+
+**Cleared in the sweep (evidence):** TODO 1/2/6 (on main), 7/9 (no gap / nothing needed), 18-20/25/26 (F132-F136 built), 45 prune-companies (2,496 removed 26 Oct; 3b's "dry run never run" was stale), 129 Borrowings (#270/#273/#298; SHILPAMED recorded exception), 140/141, 147 unit slips (#294-#301), 148 bank reader (#299), 149 weekly Screener check (screener-weekly.yml, #298), 150 (#298), 151 lender fact sheet (#300, on in #304); Hubtown nse-106629168 and BANKBARODA cards right; Varun Beverages no mapping fault; card switches 3b.1 listed as "waiting" are ON in switches.toml since 27/30 Oct (CARD_EBITDA_PROFIT_V2, CARD_TWO_PARTS, CARD_CONSOLIDATED_ONLY, CARD_RESULTS_ONE_LINE, CARD_WATCH_VERDICT, CARD_FOOTER_PLAUSIBLE, EPS_SHARE_COUNT_CHECK, CARD_GUIDANCE_DATED, CARD_ONE_BASIS, CARD_GROUNDED_FIGURES, QUOTE_EXACT_NUMBERS, CARD_SAME_DEFINITION; the 1 Nov audit is their post-switch measure); VITE_SCREENER_LINES and BSE_FILL_PRE_NSE default on; REIT full run done (41153853516). **Superseded:** TODO 3/10/13/16 (by MEMORY_FILE_ONLY and CARD_FACT_SHEET, both on), 103/100/108 (BSE_FILL_PRE_NSE), 114/116 (weekly check), RESULTS_NEEDS_STATEMENT (by D20_DROPPED_FILE_PERIOD); laptop-era TASKS/PLAN/HANDOVER lists. **Not needed:** G8, TODO 29/42/54 (owner No), 146 (Later), 8 (Later), 17 (measured). **Unclear (to decide):** MEMORY_YEAR_CHECK, LINE_MAP, MEMORY_SCREENER, MEMORY_STANDALONE_ONLY, MEMORY_RESTATED (built, off, no on/drop decision found); TODO 62/66/75/81/94/96b (Tijori follow-ups: did tijori-referee run?); docs/audit/actions-pending.md's 21-23 Oct requeues (live cards not re-checked).
+
+
 **Handover, 31 Oct 2026 ~06:25 IST: the Results page and REITs session (branch `ccr-69266234-c8jxew`).** In plain words, for the next
 session. Read this block, then the table below.
 

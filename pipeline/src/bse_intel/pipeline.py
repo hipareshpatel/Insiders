@@ -75,7 +75,7 @@ from . import xbrl_facts, xbrl_store
 from . import statements
 from . import directions
 from . import results_card
-from . import comparative_memory, event_repeats, footer_plausible, guided_actual, one_basis, results_one_line, words_figures
+from . import comparative_memory, event_repeats, footer_plausible, guided_actual, one_basis, results_one_line, words_figures, year_ago_label
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -4227,6 +4227,9 @@ class Pipeline:
         # a comparison word its own figures contradict is dropped or softened (CARD_WORDS_MATCH_FIGURES; off: nothing)
         if words_notes := words_figures.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["words_figures"] = words_notes
+        # a year-ago label one year too old is put right (CARD_YEAR_AGO_LABEL; off: nothing)
+        if year_notes := year_ago_label.apply_card_json(card_json):
+            card_json.setdefault("grounding", {})["year_ago_label"] = year_notes
         # a figure only memory's guidance holds, stated as an actual, is dropped (CARD_GUIDED_NOT_ACTUAL; off: nothing)
         if guided_notes := guided_actual.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["guided_not_actual"] = guided_notes

@@ -342,6 +342,14 @@ def card_words_match_figures() -> bool:
     return _switch("CARD_WORDS_MATCH_FIGURES")
 
 
+def card_year_ago_label() -> bool:
+    """CARD_YEAR_AGO_LABEL (default off; 1 Nov 2026, blind audit, GICRE nse-106837460 and HEGAM nse-106837190): a year-ago label in a
+    card's words that names two years before the card's period, in a comparison ("from ₹5,404 Cr in H1 FY25" on an H1FY27 card),
+    is put right (year_ago_label.apply_card_json). On only after the on/off check over stored cards (release_check.py year_ago_label)
+    and a blind sample. Read at the call."""
+    return _switch("CARD_YEAR_AGO_LABEL")
+
+
 def card_event_repeat() -> bool:
     """CARD_EVENT_REPEAT (default off; STATUS S2, 1 Nov 2026: 47 repeat pairs in 30 days): an ORDER_WIN or M_AND_A card that
     repeats a memory timeline entry of the same company (same kind, up to 3 days earlier, the same crore amount and a shared

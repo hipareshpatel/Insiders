@@ -161,6 +161,9 @@ export interface ClassificationResponse { quarter: string | null; tree: ClassNod
 export type GroupBy = "index" | "sector" | "industry";
 export type Cut = "all" | "ex_financials" | "financials";
 
+/** Companies a group needs reported before it is ranked or named as leading (owner, 1 Nov 2026). */
+export const GROUP_RANK_MIN = 5;
+
 export interface GroupRow {
   id: string;                                   // index id, or the classification path of the group
   label: string;

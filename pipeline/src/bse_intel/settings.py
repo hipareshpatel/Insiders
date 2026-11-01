@@ -336,6 +336,14 @@ def unit_slip_xbrl_guard() -> bool:
     return _switch("UNIT_SLIP_XBRL_GUARD")
 
 
+def annual_scale_fix() -> bool:
+    """ANNUAL_SCALE_FIX (default off; 1 Nov 2026: TD Power and MSP Steel's annual reports state lakh with no scale, every money fact
+    1e5 small, so the statements rebuild left their annual years out): an annual report whose year's Sales AND Net Profit are both
+    10^k off (k 2, 3, 5, 7), the same k, the sum of its four stored quarters is read at that factor. It lets the backfill's memory
+    check accept years it refused, so on only after the on/off check and a sample. Read at the call."""
+    return _switch("ANNUAL_SCALE_FIX")
+
+
 def results_needs_statement() -> bool:
     """RESULTS_NEEDS_STATEMENT (default off; 31 Oct 2026, TMB nse-106836238): a filing typed RESULTS whose text holds no results
     statement, no covering letter submitting results and no "financial results for the quarter/half/year" is read as OTHER

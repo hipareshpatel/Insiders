@@ -75,3 +75,7 @@ RESULTS_PRESS_RELEASE = false    # pipeline._fold_release, event_catchup.release
 # largest (screener-rows 41082974431 on, 41082987950 off): Borrowings +34 pairs, Other Liabilities +34, 2 broke each
 # (SHILPAMED Q4FY23-24, 1.31 Cr twice), totals unchanged. On 30 Oct 2026 ~21:30 IST (owner: "Show some guts and continue").
 SCREENER_CMLTD = true            # screener_view.corporate_bs: CurrentMaturitiesOfLongTermDebt in Borrowings
+# Turned on 1 Nov 2026 ~10:05 IST (lead, measured): an annual report whose money facts are a power of ten off is read at the factor
+# its year's four quarters prove on both Sales and Net Profit. Dry run 41268278744 with it on: left out 38 -> 29, the 9 returned are
+# exactly TDPOWERSYS (533553) and MSPL (532650) years (1e5 small), 27 entries added, no other company changed.
+ANNUAL_SCALE_FIX = true          # screener_view.CompanyFacts._rescale_annual

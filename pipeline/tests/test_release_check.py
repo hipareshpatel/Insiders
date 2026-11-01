@@ -88,7 +88,7 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
     total = json.loads((out / "release-check.json").read_text(encoding="utf-8"))
     assert set(total) == {"ebitda_v2", "same_definition", "consolidated_only", "two_parts", "quote_exact",
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
-                          "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period"}
+                          "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -113,3 +113,19 @@ def test_results_statement_check_marks_a_results_card_whose_text_has_no_results(
     assert rc.changed_by_diff(note["diff"]) and "TYPE: OTHER (no results statement in the text)" in note["on_lines"]
     real = rc.check_results_statement(card, row, "Statement of unaudited financial results for the quarter ended" + pad)
     assert not rc.changed_by_diff(real["diff"])
+
+
+def test_other_issuer_check_marks_a_results_card_on_another_companys_statement():
+    """CARD_OTHER_ISSUER (HEGAM nse-106837190): HEG Limited's results, filed by HEG Advanced Materials (formerly HEG Limited)."""
+    rc = _script()
+    row = {"news_id": "nse-106837190", "symbol": "HEGAM", "scrip_code": "509631", "pdf_url": "u",
+           "company_name": "HEG Advanced Materials Limited"}
+    memory = {"identity": {"former_names": ["HEG Limited", "Hindustan Electro Graphites Limited"]}}
+    card = {"event_type": "RESULTS", "headline": "HEG Limited Q2FY27 revenue at ₹740.40 Cr"}
+    text = ("HEG LIMITED (Formerly known as HEG Graphite Limited)\nRegd. Office: Mandideep\n"
+            "Statement of Unaudited Financial Results for the quarter ended 30th September, 2026")
+    note = rc.check_other_issuer(card, row, text, memory)
+    assert rc.changed_by_diff(note["diff"]) and any(line.startswith("TYPE: OTHER (HEG LIMITED's") for line in note["on_lines"])
+    own = rc.check_other_issuer(card, row, "HEG ADVANCED MATERIALS LIMITED\nStatement of Unaudited Financial Results for the "
+                                           "quarter ended 30th September, 2026", memory)
+    assert not rc.changed_by_diff(own["diff"])

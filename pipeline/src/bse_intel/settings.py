@@ -379,6 +379,15 @@ def results_needs_statement() -> bool:
     return _switch("RESULTS_NEEDS_STATEMENT")
 
 
+def card_other_issuer() -> bool:
+    """CARD_OTHER_ISSUER (default off; 1 Nov 2026, HEGAM nse-106837190): a filing typed RESULTS whose statement heading or
+    covering letter names another company (pipeline.other_issuer_results; a former name of the listed company counts as its
+    own unless the heading shows another company now holds it) takes no results path and puts nothing into memory, as a
+    subsidiary's results do, and its card is marked unverified with whose results they are. On only after the on/off check over
+    stored cards (release_check.py other_issuer) and a blind sample. Read at the call."""
+    return _switch("CARD_OTHER_ISSUER")
+
+
 def memory_file_only() -> bool:
     """MEMORY_FILE_ONLY (owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules not using cards
     data"): a statement line (dossier.STATEMENT_FIGURES) enters memory only from the exchange's own file; a model's reading of

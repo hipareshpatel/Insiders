@@ -47,6 +47,8 @@ def test_not_available_without_a_key(monkeypatch):
 @respx.mock
 def test_extract_posts_the_pdf_counts_pages_and_keeps_the_answer(monkeypatch, tmp_path):
     monkeypatch.setenv("MISTRAL_API_KEY", " k ")
+    monkeypatch.setenv("MISTRAL_OCR_PER_PAGE", "0")
+    monkeypatch.setenv("MISTRAL_OCR_SPACING_S", "0")
     monkeypatch.setenv("MISTRAL_OCR_RAW_DIR", str(tmp_path))
     monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
     route = respx.post("https://api.mistral.ai/v1/ocr").mock(return_value=httpx.Response(200, json=ANSWER))
@@ -62,6 +64,7 @@ def test_extract_posts_the_pdf_counts_pages_and_keeps_the_answer(monkeypatch, tm
 @respx.mock
 def test_page_cap_stops_before_the_call(monkeypatch):
     monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setenv("MISTRAL_OCR_PER_PAGE", "0")
     monkeypatch.setenv("MISTRAL_OCR_PAGE_CAP", "3")
     monkeypatch.setattr(MistralOcrReader, "pages_used", 2)
     route = respx.post("https://api.mistral.ai/v1/ocr").mock(return_value=httpx.Response(200, json=ANSWER))
@@ -137,7 +140,7 @@ def test_a_refusal_is_kept_with_its_status_and_body(monkeypatch, tmp_path):
         NemotronParse35Reader().extract(_pdf(1))
     assert json.loads(route.calls[0].request.content)["model"] == "nvidia/nemotron-3.5-parse"
     kept = json.loads((tmp_path / "refused-0.json").read_text())
-    assert kept == {"status": 404, "body": '{"detail":"Function not found"}'}
+    assert kept == {"status": 404, "body": '{"detail":"Function not found"}', "headers": {}}
 
 
 @respx.mock
@@ -197,10 +200,28 @@ def test_nemotron2_names_its_tool_and_v1_does_not(monkeypatch):
 def test_mistral_retries_a_429(monkeypatch):
     monkeypatch.setenv("MISTRAL_API_KEY", "k")
     monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
-    monkeypatch.setattr("time.sleep", lambda s: None)
+    slept = []
+    monkeypatch.setattr("time.sleep", slept.append)
     route = respx.post("https://api.mistral.ai/v1/ocr").mock(
-        side_effect=[httpx.Response(429, text="Rate limit exceeded"), httpx.Response(200, json=ANSWER)])
-    assert len(MistralOcrReader().extract(_pdf(2))) == 2 and route.call_count == 2
+        side_effect=[httpx.Response(429, text="Rate limit exceeded", headers={"retry-after": "7"}), httpx.Response(200, json=ANSWER)])
+    assert len(MistralOcrReader().extract(_pdf(1))) == 2 and route.call_count == 2
+    assert 7.0 in slept                                                    # its Retry-After, not the default wait
+
+
+@respx.mock
+def test_mistral_sends_one_page_a_request_spaced_out(monkeypatch, tmp_path):
+    monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setenv("MISTRAL_OCR_RAW_DIR", str(tmp_path))
+    monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    one = {"pages": [ANSWER["pages"][0]], "usage_info": {"pages_processed": 1}}
+    route = respx.post("https://api.mistral.ai/v1/ocr").mock(
+        side_effect=[httpx.Response(200, json=one), httpx.Response(429, text="x", headers={"x-ratelimit-remaining-req-minute": "0"})] + [httpx.Response(429, text="x")] * 3)
+    grids = MistralOcrReader().extract(_pdf(2))
+    assert route.call_count == 5 and MistralOcrReader.pages_used == 1        # page 1 read alone; page 2 refused after 3 waits
+    assert grids and {p for p, _ in grids} == {1}                            # what was read is kept
+    kept = json.loads((tmp_path / "refused-0.json").read_text())
+    assert kept["status"] == 429 and "headers" in kept
 
 
 def test_garbled_figure_spares_dates_and_sees_through_marks():
@@ -232,3 +253,41 @@ def test_nemotron_a_short_line_after_a_table_is_its_footnote(monkeypatch):
     first, second, third = nemotron_grids(_answer(elements))
     assert second[0][0].startswith("Particulars")                        # table A's footnote is not table B's header
     assert third[:2] == [["Segment results"], ["(Rs in crore)"]]           # a new title opens the next block again
+
+
+def test_basis_guard_reads_only_a_table_whose_own_header_names_one_basis(monkeypatch):
+    monkeypatch.setenv("NEMOTRON_BASIS_GUARD", "1")
+    title = lambda t: {"type": "Section-header", "text": t}
+    named = nemotron_grids(_answer([title("Statement of unaudited consolidated results"), {"type": "Table", "text": TABLE}]))
+    assert len(named) == 1 and named[0][0] == ["Statement of unaudited consolidated results"]
+    assert nemotron_grids(_answer([title("Five-Star Business Finance Limited"), {"type": "Table", "text": TABLE}])) == []
+    both = [title("Standalone and consolidated results"), {"type": "Table", "text": TABLE}]
+    assert nemotron_grids(_answer(both)) == []                                     # both bases named: not its own to tell
+    notes = [title("NOTES TO UNAUDITED CONSOLIDATED FINANCIAL RESULTS"), {"type": "Table", "text": TABLE}]
+    assert nemotron_grids(_answer(notes)) == []                                    # a notes heading never sets the basis
+    monkeypatch.setenv("NEMOTRON_BASIS_GUARD", "0")
+    assert len(nemotron_grids(_answer(notes))) == 1                                # off by default: as before
+
+
+@respx.mock
+def test_mistral_keeps_pages_already_read_when_a_later_page_is_refused(monkeypatch):
+    monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    one = {"pages": [ANSWER["pages"][0]], "usage_info": {"pages_processed": 1}}
+    respx.post("https://api.mistral.ai/v1/ocr").mock(
+        side_effect=[httpx.Response(200, json=one), httpx.Response(403, text="no"), httpx.Response(200, json=one)])
+    grids = MistralOcrReader().extract(_pdf(3))
+    assert [p for p, _ in grids] == [1] and MistralOcrReader.pages_used == 1    # page 1 kept, the read stops at page 2
+
+
+@respx.mock
+def test_mistral_negative_retry_after_does_not_crash(monkeypatch):
+    monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
+    slept = []
+    monkeypatch.setattr("time.sleep", slept.append)
+    respx.post("https://api.mistral.ai/v1/ocr").mock(
+        side_effect=[httpx.Response(429, text="x", headers={"retry-after": "-5"}), httpx.Response(200, json=ANSWER)])
+    MistralOcrReader().extract(_pdf(1))
+    assert all(s >= 0 for s in slept)

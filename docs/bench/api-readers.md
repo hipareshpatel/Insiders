@@ -70,9 +70,87 @@ scored on that replay. **All of this is in-sample**: the guards were written aft
 - nemotron-3.5-parse: HTTP 404 "404 page not found" for `nvidia/nemotron-3.5-parse`. The name is not served at this
   endpoint. Assumption, not found by a search on 30 Oct: it may have another id or another URL.
 
+## Mistral OCR and nemotron-parse-2.0: stopped (lead, 1 Nov 2026)
+
+- **Mistral OCR.** HTTP 429 "Rate limit exceeded" (code 1300) on every call in runs 41072420377 (30 Oct), 41076952339
+  (30 Oct, with 2, 5 and 10 s retries) and 41267832784 (1 Nov, after the monthly allowance reset).
+  - A limit that holds on the first calls of a new month, through ~17 s of retries, is not a rate or budget limit.
+  - Owner, 1 Nov: the admin page shows OCR allowed on the Free plan; October cost $4.3.
+  - Measured 1 Nov, run 41272136846 (one page, spaced, Retry-After honoured): the 429 carries
+    `x-ratelimit-limit-req-minute: 0`. Our key's request limit for the OCR model is zero a minute, so no spacing or retry
+    can pass. Unblocking it is an owner setting (the console's per-model limits), if the Free plan allows a non-zero one.
+- **nemotron-parse-2.0.** Each request form was refused:
+  - Without tool_choice: 400 '"auto" tool choice requires --enable-auto-tool-choice'.
+  - Once: 502 Bad Gateway.
+  - With the tool named in tool_choice: 400 "requires --tool-call-parser to be set".
+  - The hosted endpoint takes no tool calls at all, and NVIDIA's catalogue lists the model as downloadable only. A
+    no-tool reader that parses the raw bbox-tagged text would be new code for a model we cannot rely on being hosted.
+- **nemotron-3.5-parse.** 404 for `nvidia/nemotron-3.5-parse`. Waiting on the exact model id from the owner.
+
+## Out of sample: run 41077643109 (api-reader-oos, 30 Oct 2026)
+
+`docs/bench/oos/key-union.csv`: 552 figures in 67 kept PDFs, no exchange read, 172 nemotron pages. Fully unseen by both
+readers' fixes: run 1 groups 4-6 plus the third run's 52 extra figures (308).
+
+| Order | Fully unseen (308) | Run 1 groups 1-3, seen while fixing numbers-first (244) | All (552) |
+|---|---|---|---|
+| Numbers-first alone | 129 / 6 / 173 | 117 / 5 / 122 | 246 / 11 / 295 |
+| Guarded nemotron-parse alone | 58 / 2 / 248 | 45 / 3 / 196 | 103 / 5 / 444 |
+| **Numbers-first first, nemotron on its no-answers** | **148 / 7 / 153** | 130 / 7 / 107 | 278 / 14 / 260 |
+| Nemotron first | 147 / 8 / 153 | 129 / 8 / 107 | 276 / 16 / 260 |
+
+The three wrongs nemotron adds in the numbers-first-first order:
+- SMARTWORKS consolidated PAT 10.28: the standalone key-figures note under a "NOTES TO ... CONSOLIDATED RESULTS" heading.
+- PFOCUS consolidated revenue 1,256.08: the page prints 125,608.42 lakh, and the key's 1,266.82 is not on the page (key
+  tag `xbrl:not_found`). The reader matches the page; the key does not.
+- DOLATALGO PAT 53.864: printed, against the filed 53.87 (a rounding gap in the key).
+
+## NEMOTRON_BASIS_GUARD (off; lead, 1 Nov 2026)
+
+A nemotron table is read only when its own header rows (the lines above it in the answer, or its first two rows) name
+exactly one basis. A "Notes to ..." heading never counts, and the page context never decides. Written after the out-of-sample
+misses above, so the replays below are checks only. **The score is a fresh unseen set; the pass mark, set before scoring, is
+0 wrong among the readings it adds over numbers-first.**
+
+Replays, offline from the kept answers (each reproduces its run exactly first):
+- Out of sample: nemotron alone 103/5/444 → 100/1/451. Only PFOCUS is left, where the reader matches the page (above).
+  With numbers-first first, the fully unseen part is 145/7/153 (numbers-first alone 126/6/173 on the same figures).
+- Hard set: nemotron alone 185/1/154 → 155/1/184. With numbers-first first, 292/0/48 (alone 272/0/68).
+
+### Fresh unseen set: run 41278380328 (1 Nov 2026), **FAIL**
+
+Key `docs/bench/oos/key-run41268044336.csv` (pdf-oos seed 31): 343 figures in 48 PDFs, never seen by either reader's
+fixes, 159 nemotron pages. The guard-off line is an offline replay of the same 159 kept answers; the replay with the guard on
+reproduces the run exactly (71 / 3 / 269, 159 calls) first.
+
+| Order (right / wrong / no answer of 343) | Guard off | Guard on |
+|---|---|---|
+| Numbers-first alone | 183 / 2 / 158 | 183 / 2 / 158 |
+| Nemotron alone | 79 / 3 / 261 | 71 / 3 / 269 |
+| **Numbers-first first, nemotron on its no-answers** | 205 / 5 / 133 | **203 / 5 / 135** |
+| Nemotron first | - | 203 / 5 / 135 |
+
+**Pass mark (set before scoring): 0 wrong among the readings nemotron adds over numbers-first. Result: 3. FAIL.**
+The guard removed 8 right readings and no wrong one on this set.
+
+The three added wrongs are one class the guard cannot see: on a consolidated statement with joint-venture, associate or
+non-controlling-interest lines, nemotron reads another profit line than the filed PAT. Numbers-first gave no answer on all
+three (it found no consolidated row it could prove by arithmetic). All three key rows are tagged `xbrl:found_ambiguous`.
+- ZYDUSLIFE Q1FY27 consolidated PAT: read 939.8 against 990.2. Page 11 (INR million) prints 9,902 "Net profit before
+  non-controlling interests" and 9,398 "Net profit for the period" after them; nemotron took the second.
+- PHOENIXLTD Q1FY27 consolidated PAT: read 393.55 against 394.51 (page 7 prints 39,354.75 lakh; the lines are PAT before
+  and after the associates' share).
+- COFFEEDAY Q1FY27 consolidated PAT: read 8.39 against 4.52 (page 24: profit before and after the joint venture's share,
+  then the owners' share).
+
+Numbers-first's own two wrongs are PBT (SOLARWORLD 12.85 vs 12.72, VSTTILLERS 62.19 vs 62.49), the known PBT
+definition gap; the slip check never asks for PBT.
+
+Follow-up, not built: a basis guard that also reads rows naming a basis inside the grid (review point 4) would not change
+this result; the class to fix first is the PAT line choice. NEMOTRON_BASIS_GUARD stays off; nemotron stays a bench reader.
+
 ## Next
 
 - A second probe with the fixes: Mistral (retry) and nemotron-parse-2.0 (tool named). If either answers, the full 65
   pages, before the artifact expires on 2 Nov.
-- The out-of-sample check before any live use (lead): numbers-first first plus guarded nemotron-parse, on the normal key and
-  the pdf-oos keys, both orders.
+- The owner's decision on nemotron (fresh set failed the pass mark: +20 right, +3 wrong over numbers-first).

@@ -211,6 +211,8 @@
 #   67 PDFs, both out-of-sample runs' keys), from the PDFs runs 40933340958 and 40991728993 kept (artifacts pdf-oos-pdfs);
 #   no exchange is read. 800 pages a run; the scoring stops cleanly at 300 minutes and what it read is kept
 #   (hardset-readings.json is saved every 10 figures). Artifact `api-reader-oos`. Writes nothing else; never a live path.
+#   A fresh set (lead, 1 Nov): `ids` = the pdf-oos run whose pdf-oos-pdfs it reads, scored on docs/bench/oos/key-run<ids>.csv;
+#   `apply` turns NEMOTRON_BASIS_GUARD on.
 # - api-reader-hardset (lead, 30 Oct 2026): document-parsing APIs scored as more readers on the hard set
 #   (docs/bench/hardpdf/key.csv): Mistral's Document OCR (`mistral`, MISTRAL_API_KEY) and NVIDIA's nemotron-parse and
 #   nemotron-parse-2.0 and nemotron-3.5-parse (`nemotron`, `nemotron2`, `nemotron35`, NVIDIA_API_KEY); `backup` = the readers
@@ -2562,6 +2564,7 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
       - name: Download the out-of-sample PDFs, first run (GitHub only, no exchange)
+        if: inputs.ids == ''
         uses: actions/download-artifact@v4
         with:
           name: pdf-oos-pdfs
@@ -2569,15 +2572,26 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ runner.temp }}/pdfs
       - name: Download the out-of-sample PDFs, third run (GitHub only, no exchange)
+        if: inputs.ids == ''
         uses: actions/download-artifact@v4
         with:
           name: pdf-oos-pdfs
           run-id: 40991728993
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ runner.temp }}/pdfs
+      - name: Download a fresh set's PDFs, the run `ids` names (GitHub only, no exchange)
+        if: inputs.ids != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: pdf-oos-pdfs
+          run-id: ${{ inputs.ids }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/pdfs
       - name: Score the readers against the out-of-sample key (stops at 300 minutes and keeps what it read)
         env:
           PDF_READERS: ${{ inputs.backup || 'numfirst,nemotron' }}
+          NEMOTRON_BASIS_GUARD: ${{ inputs.apply && '1' || '0' }}
+          KEY: ${{ inputs.ids != '' && format('../docs/bench/oos/key-run{0}.csv', inputs.ids) || '../docs/bench/oos/key-union.csv' }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           NEMOTRON_PARSE_PAGE_CAP: "800"
@@ -2591,7 +2605,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/out"
           ls "$RUNNER_TEMP/pdfs" | wc -l
           code=0
-          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run ../docs/bench/oos/key-union.csv "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/out" ${LIMIT} || code=$?
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run "$KEY" "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/out" ${LIMIT} || code=$?
           if [ "$code" = 124 ]; then echo "::warning::stopped at 300 minutes; hardset-readings.json holds what was read"; elif [ "$code" != 0 ]; then exit "$code"; fi
           ls "$RUNNER_TEMP/out/raw-nemotron" 2>/dev/null | wc -l
       - uses: actions/upload-artifact@v4

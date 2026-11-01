@@ -109,3 +109,8 @@ CARD_EVENT_REPEAT = true         # a second order or deal card on the same amoun
 # reviewer: ON better 4, OFF better 1 (AWL: a growth target met in absolute revenue figures), same 14, unreadable 1; WRONG lines 0 ON vs
 # 4 OFF; of 7 verdicts turned to "not judged", 5 were wrong or unsupported, 1 right (docs/audit/live/release-2026-11-01c/).
 CARD_VERDICT_NEEDS_FIGURE = true # a model's guidance/watch verdict with no figure in the target's unit is "not judged"
+# Turned on 2 Nov 2026 ~04:45 IST (lead): release check 41345924894 over 10,938 stored cards, 9 changed (every changed line a year-ago
+# label two years back put right); blind read of all 9 against their filings by an independent reviewer: ON better 9 of 9, WRONG lines
+# 4 ON vs 13 OFF. Residual: a second comparison line on the same card keeps its old label when memory lacks that line (GICRE
+# underwriting loss, HEGAM PBT), and two cards quote total income as revenue (a separate class) (docs/audit/live/release-2026-11-02/).
+CARD_YEAR_AGO_LABEL = true       # a year-ago label two years before the card's period, in a comparison, names the year-ago period

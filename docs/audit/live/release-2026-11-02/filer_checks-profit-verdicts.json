@@ -1,0 +1,278 @@
+{
+ "p01": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 -10.45",
+    "action": "adds",
+    "verdict": "WRONG",
+    "filing": "-10.45 Cr = equity holders' share of CONTINUING ops (-1,045 lakh, p12 item 15); total owners profit = -1,045+1,235 = +190 lakh = +1.90 Cr"
+   },
+   {
+    "line": "pat FY26 0.71",
+    "action": "removes",
+    "verdict": "WRONG",
+    "filing": "Net profit (item 11) FY26 = 72 lakh = 0.72 Cr (p11); 0.71 is correct to rounding"
+   },
+   {
+    "line": "pat_continuing FY26 -7.75",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "Profit after tax from continuing ops FY26 = (1,163) lakh = -11.63 Cr (p11); -7.75 matches nothing"
+   }
+  ],
+  "card": "OFF better",
+  "note": "Before: pat 0.71 (whole PAT, matches 0.72; owners total is 1.90). After: -10.45 labelled owners' profit, which is continuing-only and the wrong sign vs total. Scanned filing, read from images."
+ },
+ "p02": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 33.04",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "Owners of company FY26 = 4,031.34 million = 403.13 Cr (p15, in Rs million)"
+   },
+   {
+    "line": "pat_owners Q4FY26 26.41",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "Owners Q4 = 1,717.70 million = 171.77 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "33.04/26.41 match nothing (likely million/lakh slip). Whole PAT 403.03 / 171.72 Cr remains, close to owners 403.13 / 171.77. Scanned filing."
+ },
+ "p03": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 11.08",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "11.08 = Total Other Comprehensive Income FY26 (p16); profit for the period / net profit attributable to owners = 56.03 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "11.08 is OCI, not profit. Q4 owners 18.14, FY 56.03."
+ },
+ "p04": {
+  "lines": [
+   {
+    "line": "pat_owners Q4FY26 23.09",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "23.09 Cr = Total Comprehensive Income Q4 (consolidated, 2309); profit after associates/JV = 32.41 Cr; no owners split printed"
+   }
+  ],
+  "card": "ON better",
+  "note": "Headline profit 32.41 Cr (after share of associates/JV); 23.09 was TCI. Text layer of filing is OCR-garbled but figures read consistently (EPS 1.81 fits 32.41)."
+ },
+ "p05": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 -103.22",
+    "action": "adds",
+    "verdict": "RIGHT",
+    "filing": "Owners of the Company FY26 = (103.22) Cr (p16)"
+   },
+   {
+    "line": "pat_owners Q4FY26 10.84",
+    "action": "adds",
+    "verdict": "RIGHT",
+    "filing": "Owners Q4 = 10.84 Cr"
+   },
+   {
+    "line": "pat FY26 -338.07",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "-338.07 is loss from CONTINUING ops (item 11); whole net loss FY26 = -114.82"
+   },
+   {
+    "line": "pat Q4FY26 -110.31",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "-110.31 is continuing-ops loss; whole net profit Q4 = +5.39"
+   }
+  ],
+  "card": "ON better",
+  "note": "Headline owners: -103.22 FY, +10.84 Q4. Before showed continuing loss -338.07/-110.31 (Q4 even wrong sign vs owners). Whole PAT -114.82/5.39 not shown by either."
+ },
+ "p06": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 -2808.0",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "-2,808 Cr = Total comprehensive loss FY26 (item XI); loss for year / attributable to owners = -4,154 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "-2,808 is TCI (includes +1,350 FVTOCI gain). True owners loss -4,154."
+ },
+ "p07": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 877.0",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "877.00 = consolidated Total Comprehensive Income FY26 (printed under 'Attributable to: Owners' of TCI); profit for period consolidated = 1,243.10 Cr"
+   },
+   {
+    "line": "pat_owners Q4FY26 257.09",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "257.09 = consolidated TCI Q4; profit = 299.46 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "Owners attribution printed only for TCI; real profit 1,243.10 / 299.46."
+ },
+ "p08": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 277.65",
+    "action": "adds",
+    "verdict": "RIGHT",
+    "filing": "Owners of the Company FY26 = 27,765.38 lakh = 277.65 Cr (consolidated)"
+   },
+   {
+    "line": "pat_owners Q4FY26 83.26",
+    "action": "adds",
+    "verdict": "RIGHT",
+    "filing": "Owners Q4 = 8,325.90 lakh = 83.26 Cr"
+   },
+   {
+    "line": "pat FY26 270.03",
+    "action": "removes",
+    "verdict": "WRONG",
+    "filing": "Net profit FY26 consolidated = 27,002.83 lakh = 270.03 Cr: correct whole PAT"
+   },
+   {
+    "line": "pat Q4FY26 80.98",
+    "action": "removes",
+    "verdict": "WRONG",
+    "filing": "Net profit Q4 = 8,098.38 lakh = 80.98 Cr: correct whole PAT"
+   },
+   {
+    "line": "pat_continuing FY26 270.03",
+    "action": "removes",
+    "verdict": "UNSURE",
+    "filing": "No discontinued ops in statement, so continuing = total 270.03; figure correct but redundant"
+   },
+   {
+    "line": "pat_continuing Q4FY26 80.98",
+    "action": "removes",
+    "verdict": "UNSURE",
+    "filing": "Same: 80.98 equals whole PAT, no discontinued ops"
+   }
+  ],
+  "card": "ON better",
+  "note": "Owners printed (277.65/83.26) is the headline; ON shows it. The two pat removals drop correct whole-PAT figures, so only the owners line remains."
+ },
+ "p09": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 229.83",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "22,983 lakh = 229.83 Cr = Total Comprehensive Income FY26; net profit after associates = 31,738 lakh = 317.38 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "No owners split printed; 229.83 was TCI. Profit 317.38 Cr."
+ },
+ "p10": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 1300.4",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "13,004 Rs mn = 1,300.4 Cr = Total Comprehensive Income; profit for year 13,208 mn = 1,320.8 Cr"
+   },
+   {
+    "line": "pat_owners Q4FY26 159.6",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "1,596 mn = 159.6 Cr = TCI Q4; profit Q4 2,002 mn = 200.2 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "Both removed figures are TCI."
+ },
+ "p11": {
+  "lines": [
+   {
+    "line": "pat_owners Q4FY26 29.13",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "29.13 Cr = Total Comprehensive Income Q4 (item 11); profit/owners Q4 = 36.09 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "Owners profit 36.09 Cr Q4."
+ },
+ "p12": {
+  "lines": [
+   {
+    "line": "pat_owners FY26 46.94",
+    "action": "adds",
+    "verdict": "RIGHT",
+    "filing": "Printed: Owners of the Company FY26 = 4,694 lakh = 46.94 Cr (p16). Caveat: filing is internally inconsistent (PAT 4,082 lakh, NCI -1)"
+   },
+   {
+    "line": "pat_owners Q4FY26 18.37",
+    "action": "adds",
+    "verdict": "RIGHT",
+    "filing": "Printed: Owners Q4 = 1,837 lakh = 18.37 Cr. Same inconsistency (PAT 1,224, EPS 6.17)"
+   },
+   {
+    "line": "pat FY26 40.83",
+    "action": "removes",
+    "verdict": "WRONG",
+    "filing": "Profit for the period FY26 = 4,082 lakh = 40.82 Cr (card 40.83 rounding): correct whole PAT"
+   },
+   {
+    "line": "pat Q4FY26 12.24",
+    "action": "removes",
+    "verdict": "WRONG",
+    "filing": "Profit for the period Q4 = 1,224 lakh = 12.24 Cr: correct whole PAT"
+   },
+   {
+    "line": "pat_continuing FY26 40.83",
+    "action": "removes",
+    "verdict": "UNSURE",
+    "filing": "No discontinued ops; equals whole PAT"
+   },
+   {
+    "line": "pat_continuing Q4FY26 12.24",
+    "action": "removes",
+    "verdict": "UNSURE",
+    "filing": "Same"
+   }
+  ],
+  "card": "ON better",
+  "note": "By the stated rule (owners where printed) ON is closer, but the printed owners figures look like a filing typo (owners > total PAT, EPS 6.17 implies about 12.9 Cr). Real profit is likely 12.24 / 40.82; ON would then show a wrong number. Low confidence; risky card."
+ },
+ "p13": {
+  "lines": [
+   {
+    "line": "pat_owners Q2FY27 26.0",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "26 Cr = Total other comprehensive income Q2 (item 10); profit 112 Cr, owners 112 Cr, TCI 138"
+   }
+  ],
+  "card": "ON better",
+  "note": "26 was OCI."
+ },
+ "p14": {
+  "lines": [
+   {
+    "line": "pat_owners Q2FY27 68.92",
+    "action": "removes",
+    "verdict": "RIGHT",
+    "filing": "6,891.93 lakh = 68.92 Cr = Total Comprehensive Income Q2; profit/owners = 7,147.23 lakh = 71.47 Cr"
+   }
+  ],
+  "card": "ON better",
+  "note": "68.92 was TCI."
+ }
+}

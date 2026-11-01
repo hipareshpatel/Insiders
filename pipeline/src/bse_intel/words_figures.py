@@ -19,32 +19,68 @@ from __future__ import annotations
 import re
 
 from .grounding import _tokens
+from .results_one_line import _differs_from, _periods
 from .periods import prior_quarter_period, prior_year_period
 from .settings import card_words_match_figures
 
 _METRICS = (("revenue", r"revenue|sales|top[- ]?line|total income"), ("ebitda", r"EBITDA|operating profit"),
             ("pat", r"PAT|net profit|profit after tax|bottom[- ]?line|(?<!operating )(?<!gross )profit(?!\s+before)"),
             ("pbt", r"PBT|profit before tax"))
-_MULTIPLE = re.compile(r"\b(doubl(?:ed|es|ing)|tripl(?:ed|es|ing)|halv(?:ed|es|ing)|more than doubled)\b", re.I)
+_MULTIPLE = re.compile(r"\b((?:(?:nearly|almost|more than|over)\s+)?(?:doubl|tripl)(?:ed|es|ing)|halv(?:ed|es|ing))\b", re.I)
 _PACE = re.compile(r"\b(accelerat(?:ed|es|ing)|slow(?:ed|s|ing)|decelerat(?:ed|es|ing))\b", re.I)
 _OUTPACE = re.compile(r"\b((?:far\s+)?out(?:pac|perform|grow|grew|strip)\w*)\b", re.I)
 _SENTENCE = re.compile(r"(?<=[.;])\s+")
 _SOFT = {"doubled": "rose", "doubles": "rises", "doubling": "rising", "tripled": "rose", "triples": "rises", "tripling": "rising",
-         "halved": "fell", "halves": "falls", "halving": "falling", "more than doubled": "rose",
+         "halved": "fell", "halves": "falls", "halving": "falling",
+         **{f"{m} {w}": "rose" for m in ("nearly", "almost", "more than", "over") for w in ("doubled", "tripled")},
          "accelerated": "rose", "accelerates": "rises", "accelerating": "rising",
          "slowed": "fell", "slows": "falls", "slowing": "falling", "decelerated": "fell", "decelerates": "falls", "decelerating": "falling"}
 _LISTS = ("what_happened", "why_it_matters", "notable_changes")
 
 
+_CLAUSE_BREAK = re.compile(r"[;,]|\b(?:while|but|whereas|and)\b")
+_NOT_METRIC = re.compile(r"\b(?:provisions?|investments?|costs?|expenses?|orders?|volumes?|customers?|margins?)\b", re.I)
+
+
+def _clause_at(text: str, at: int) -> tuple[str, int]:
+    """The clause of ``text`` holding position ``at``, and where that clause starts."""
+    start = 0
+    for m in _CLAUSE_BREAK.finditer(text):
+        if m.end() <= at:
+            start = m.end()
+        elif m.start() >= at:
+            return text[start:m.start()], start
+    return text[start:], start
+
+
 def _metric_before(text: str, at: int) -> str | None:
-    """The table metric the words name last before position ``at``, in the same clause."""
-    clause = re.split(r"[;,]|\b(?:while|but|whereas|and)\b", text[:at])[-1]
+    """The table metric directly before position ``at``: named within the 4 words before it, in the same clause, with no other
+    noun (provisions, investment, costs, orders, volume, customers) between the metric and the word."""
+    clause = _CLAUSE_BREAK.split(text[:at])[-1]
+    words = list(re.finditer(r"\S+", clause))[-4:]
+    window = clause[words[0].start():] if words else ""
     best = None
     for key, pattern in _METRICS:
-        for m in re.finditer(rf"\b(?:{pattern})\b", clause, re.I):
+        for m in re.finditer(rf"\b(?:{pattern})\b", window, re.I):
             if best is None or m.start() > best[1]:
-                best = (key, m.start())
-    return best[0] if best else None
+                best = (key, m.start(), m.end())
+    if best is None or _NOT_METRIC.search(window[best[2]:]):
+        return None
+    return best[0]
+
+
+def _other_period_named(sentence: str, period: str | None) -> bool:
+    """The sentence names a period other than the table's quarter and its comparison quarters (FY, 9M, H1, a year, another
+    quarter): not judged against its row. "Revenue doubled YoY to ₹200 Cr in Q2FY27 from ₹100 Cr in Q2FY26" names the year-ago
+    quarter, which is the table's own comparison, so it is judged (lead's review of #337)."""
+    allowed = [p for q in (period, prior_year_period(period or ""), prior_quarter_period(period or "")) if q
+               for p in _periods(q)[:1]]
+    if not allowed:
+        allowed = [None]
+    return any(all(_differs_from(p, a) for a in allowed) for p in _periods(sentence))
+
+
+_COLUMNS = re.compile(r"\b(?P<yoy>YoY|year[- ]on[- ]year|year[- ]ago)\b|\b(?P<qoq>QoQ|sequential(?:ly)?|quarter[- ]on[- ]quarter)\b", re.I)
 
 
 def _row(results: dict, key: str) -> dict | None:
@@ -52,15 +88,16 @@ def _row(results: dict, key: str) -> dict | None:
     return row if isinstance(row, dict) else None
 
 
-def _multiple_wrong(word: str, text: str, row: dict) -> bool:
-    w = word.lower()
-    floor = 190.0 if w.startswith("tripl") else 90.0
+def _multiple_wrong(word: str, sentence: str, at: int, row: dict) -> bool:
+    w = " ".join(word.lower().split())
+    loose = w.startswith(("nearly", "almost"))   # "nearly doubled" is true a little under +100%
+    floor = (150.0 if loose else 190.0) if "tripl" in w else (75.0 if loose else 90.0)
     want = (lambda c: c <= -45.0) if w.startswith("halv") else (lambda c: c >= floor)
-    named = "qoq" if re.search(r"\bQoQ\b|sequential|quarter[- ]on[- ]quarter", text, re.I) else \
-        "yoy" if re.search(r"\bYoY\b|year[- ]on[- ]year|year[- ]ago", text, re.I) else None
-    changes = [row.get(f"{k}_pct") for k in ((named,) if named else ("yoy", "qoq"))]
-    changes = [c for c in changes if isinstance(c, (int, float))]
-    return bool(changes) and not any(want(c) for c in changes)
+    clause, start = _clause_at(sentence, at)
+    named = [(abs(m.start() - (at - start)), "yoy" if m.group("yoy") else "qoq") for m in _COLUMNS.finditer(clause)]
+    column = min(named)[1] if named else "yoy"   # the column the text names nearest the word, else YoY alone
+    change = row.get(f"{column}_pct")
+    return isinstance(change, (int, float)) and not want(change)
 
 
 def _previous_yoy(found: dict[tuple[str, str], float], key: str, period: str | None) -> float | None:
@@ -114,12 +151,13 @@ def _judge(text: str, results: dict, found: dict[tuple[str, str], float]) -> lis
     """(word, why) for each comparison word of ``text`` its figures contradict."""
     wrong = []
     for sentence in _SENTENCE.split(text.replace("**", "")):
-        for m in _MULTIPLE.finditer(sentence):
+        other_period = _other_period_named(sentence, results.get("period"))
+        for m in ([] if other_period else _MULTIPLE.finditer(sentence)):
             key = _metric_before(sentence, m.start())
             row = _row(results, key) if key else None
-            if row and _multiple_wrong(m.group(1), sentence, row):
+            if row and _multiple_wrong(m.group(1), sentence, m.start(), row):
                 wrong.append((m.group(1), f"{key} change YoY {row.get('yoy_pct')}%, QoQ {row.get('qoq_pct')}%"))
-        for m in _PACE.finditer(sentence):
+        for m in ([] if other_period else _PACE.finditer(sentence)):
             key = _metric_before(sentence, m.start())
             row = _row(results, key) if key else None
             if row and _bound_to_growth(sentence, m):
@@ -133,7 +171,7 @@ def _judge(text: str, results: dict, found: dict[tuple[str, str], float]) -> lis
 
 
 def _soften(text: str, word: str) -> str | None:
-    soft = _SOFT.get(word.lower())
+    soft = _SOFT.get(" ".join(word.lower().split()))   # "nearly  doubled" across two spaces or a line break
     if soft is None:
         return None
     return re.sub(rf"\b{re.escape(word)}\b", lambda m: soft.capitalize() if m.group(0)[0].isupper() else soft, text, count=1)

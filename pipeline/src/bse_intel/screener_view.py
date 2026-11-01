@@ -1459,15 +1459,18 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
             result = cf_rows(reader, label), ""
     else:   # balance
         end = quarter_end(period)
-        if period.startswith("Q4"):
+        year_sheet = period.startswith("Q4")
+        if year_sheet:
             f, label, _ = cf.year(period[2:], basis, fam, instant=True)
         else:
             f, label = cf.year_end_sheet(end, basis, fam)
+            # a non-March year end read from its annual report is screener's year column, not a half-year one (lead's review of #347)
+            year_sheet = f is not None
             if f is None:
                 f, label = cf.result(period, basis), f"results file {period}"
         reader = _Reader(f, instant=end) if f is not None and end else None
         pdf = cf.bank_pdf.get((period[2:], basis)) if period.startswith("Q4") else None
-        sheet = bs_rows(fam, reader, label, half_year=not period.startswith("Q4"), standalone=basis == STANDALONE, pdf=pdf) \
+        sheet = bs_rows(fam, reader, label, half_year=not year_sheet, standalone=basis == STANDALONE, pdf=pdf) \
             if reader else None
         result = (sheet, "") if reader \
             else (None, f"no facts for {period}")

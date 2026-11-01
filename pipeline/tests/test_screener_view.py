@@ -1081,6 +1081,13 @@ def test_a_december_year_end_balance_sheet_comes_from_its_annual_report():
     assert with_report.year_end_sheet(end, "CONSOLIDATED", sv.CORPORATE)[1] == "annual report FY25-12"
     rows, _ = sv._ours(with_report, sv.CORPORATE, "CONSOLIDATED", "balance", "Q3FY25", {})
     assert rows["Borrowings"].value == pytest.approx(51.53)
+    # a year column, not a half-year one: intangibles under development are CWIP, as in a March year's column (review of #347)
+    iaud = [("IntangibleAssetsUnderDevelopment", "IY", 7.0), ("CapitalWorkInProgress", "IY", 20.0)]
+    both = _store({xf.annual_key("1", "FY25-12", "CONSOLIDATED"): dec(sheet + iaud, "annual"),
+                   xf.key("1", "Q3FY25", "CONSOLIDATED"): dec(sheet + iaud, "results")})
+    assert sv._ours(both, sv.CORPORATE, "CONSOLIDATED", "balance", "Q3FY25", {})[0]["CWIP"].value == pytest.approx(27.0)
+    only_results = _store({xf.key("1", "Q3FY25", "CONSOLIDATED"): dec(sheet + iaud, "results")})
+    assert sv._ours(only_results, sv.CORPORATE, "CONSOLIDATED", "balance", "Q3FY25", {})[0]["CWIP"].value == pytest.approx(20.0)
     # no report: the results file, exactly as before
     alone = _store({xf.key("1", "Q3FY25", "CONSOLIDATED"): results_file})
     assert alone.year_end_sheet(end, "CONSOLIDATED", sv.CORPORATE) == (None, "")

@@ -261,6 +261,16 @@ def test_numeric_contradiction_steps_aside_on_signs_and_quoted_targets():
     from bse_intel.guidance_dated import numeric_contradiction, smaller_count
     assert numeric_contradiction("at most -2%", "margin was -5%") is None
     assert numeric_contradiction("above 37%", "Delivered above 37% margin; revenue growth 12%") is None
-    assert numeric_contradiction("33-35 bps", "operating margin 36 bps") is not None
+    assert numeric_contradiction("33-35 bps", "operating margin 36 bps", "Operating margin within the corridor") is not None
     assert smaller_count("reduce receivable days to under 100 days", "92 days") is None
     assert smaller_count("limit slippages under 120 accounts", "80 accounts") is None
+
+
+def test_beating_a_two_sided_range_on_its_good_side_is_no_miss():
+    from bse_intel.guidance_dated import numeric_contradiction
+    assert numeric_contradiction("7.0-7.5%", "Q2FY27 EBITDA margin reported at 7.9%", "EBITDA margin") is None   # SKYGOLD
+    assert numeric_contradiction("7.0-7.5%", "EBITDA margin 6.4%", "EBITDA margin") is not None
+    assert numeric_contradiction("1.0-1.2%", "credit cost 0.8%", "Credit cost") is None   # lower is better: below is a beat
+    assert numeric_contradiction("1.0-1.2%", "credit cost 1.5%", "Credit cost") is not None
+    assert numeric_contradiction("33-35 bps", "operating margin 36 bps",
+                                 "Operating margin as bps of AUM within the stated corridor") is not None   # HDFCAMC

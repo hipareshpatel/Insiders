@@ -346,7 +346,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             if small:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, small), g["id"]))
                 continue
-            wrong = numeric_contradiction(g.get("target"), update.evidence)
+            wrong = numeric_contradiction(g.get("target"), update.evidence, g.get("statement"))
             if wrong:
                 update = update.model_copy(update={"status": "MISSED", "evidence": f"{update.evidence or ''} (code check: {wrong})".strip()})
         if card_watch_verdict() and update.status in ("DELIVERED", "DELAYED", "MISSED"):   # F205: two periods of one metric
@@ -379,7 +379,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             status = code
         if dated and discussed and status == "MET" and code != "MET":   # DECK_DISCUSSED_PERIOD: "36 bps" is not within "33-35 bps"
             from .guidance_dated import numeric_contradiction
-            wrong = numeric_contradiction(w.get("target"), update.evidence)
+            wrong = numeric_contradiction(w.get("target"), update.evidence, w.get("text"))
             if wrong:
                 status = "MISSED"
                 update = update.model_copy(update={"evidence": f"{update.evidence or ''} (code check: {wrong})".strip()})

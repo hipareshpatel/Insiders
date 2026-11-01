@@ -70,6 +70,7 @@ import bisect
 import csv
 import io
 import json
+import math
 import os
 import re
 from concurrent.futures import ThreadPoolExecutor
@@ -1173,6 +1174,9 @@ def cf_rows(r: _Reader, source: str = "") -> dict[str, Row]:
 
 # --- a company's stored facts ---------------------------------------------------------------------------------------
 
+ANNUAL_SCALE_POWERS = (2, 3, 5, 7)
+ANNUAL_SCALE_TOL = 0.02    # the quarters' sum against the report's year, after the factor
+
 _DOC = re.compile(r"(annual-)?((?:Q[1-4])?FY\d{2}(?:-\d{2})?)-(consolidated|standalone|unknown)\.json\.gz")
 
 
@@ -1189,6 +1193,7 @@ class CompanyFacts:
             if m:
                 (self.annual if m[1] else self.results)[(m[2], m[3].upper())] = key
         self._cache: dict[str, xbrl_facts.Facts | None] = {}
+        self.rescaled: dict[str, int] = {}           # an annual report's key -> the power of ten its money facts were put right by
         self.bse_periods: set[str] | None = None     # the quarters BSE's results list holds; None: BSE not asked yet
         # a bank's annual-report readings by (year, basis) (``bank_pdf.load``, TODO 148); {}: none stored, nothing changes
         self.bank_pdf: dict[tuple[str, str], dict] = {}
@@ -1215,7 +1220,48 @@ class CompanyFacts:
                 self._cache[key] = xbrl_facts.Facts(xbrl_facts.loads(body)) if body else None
             except Exception:   # noqa: BLE001 - a damaged object is no facts
                 self._cache[key] = None
+            if self._cache[key] is not None and key in self.annual.values():
+                self._rescale_annual(key, self._cache[key])
         return self._cache[key]
+
+    def _scale_label(self, key: str, label: str) -> str:
+        return f"{label}, rescaled x1e{self.rescaled[key]}" if key in self.rescaled else label
+
+    def _rescale_annual(self, key: str, f: xbrl_facts.Facts) -> None:
+        """An annual report whose money facts are a power of ten off (ANNUAL_SCALE_FIX, default off): TD Power's reports state their
+        figures in lakh with no scale (Net Profit 0.000968 Cr against 96.81, exactly 1e5 small), MSP Steel's likewise (1 Nov 2026). Put
+        right only when Sales AND Net Profit of one year of the report are both 10^k off (k in 2, 3, 5, 7) the sum of that year's four
+        stored quarters, within ANNUAL_SCALE_TOL, and the factor is the same on both; one row off, or two factors, change nothing."""
+        from .settings import annual_scale_fix
+
+        if not annual_scale_fix():
+            return
+        basis = next((b for (_, b), k in self.annual.items() if k == key), None)
+        afy = next((a for (a, _), k in self.annual.items() if k == key), None)
+        if basis is None or afy is None or _fy_num(afy) < 1:
+            return
+        for fy in (afy, f"FY{_fy_num(afy) - 1:02d}"):       # its own year, then its comparative: a year whose four quarters we hold
+            end = _fy_end(fy)
+            quarters = [self.result(f"Q{i}{fy}", basis) for i in (1, 2, 3, 4)]
+            if end is None or any(q is None for q in quarters):
+                continue
+            factors = set()
+            for name in ("RevenueFromOperations", "ProfitLossForPeriod"):
+                year = f.cr(name, end=end, months=12)
+                parts = [q.cr(name, end=quarter_end(f"Q{i}{fy}"), months=3) for i, q in zip((1, 2, 3, 4), quarters)]
+                if not year or any(x is None for x in parts):
+                    factors.add(None)
+                    continue
+                total = sum(parts)
+                k = round(math.log10(abs(total / year))) if total and (total > 0) == (year > 0) else None
+                factors.add(k if k in ANNUAL_SCALE_POWERS and abs(total / year / 10 ** k - 1) <= ANNUAL_SCALE_TOL else None)
+            if len(factors) == 1 and None not in factors:
+                k = factors.pop()
+                for row in f.rows:
+                    if f._is_money(row[2]) and isinstance(row[3], (int, float)) and not isinstance(row[3], bool):
+                        row[3] = row[3] * 10 ** k
+                self.rescaled[key] = k
+            return
 
     def year_end(self, period: str, basis: str) -> tuple[xbrl_facts.Facts | None, str]:
         """(facts, label) of twelve months to a year end that is not March ("YE:2025-12"): the nearest annual report that holds them
@@ -1233,7 +1279,7 @@ class CompanyFacts:
         for afy, key in reports:
             f = self._load(key)
             if f is not None and holds(f):
-                return f, f"annual report {afy}"
+                return f, self._scale_label(key, f"annual report {afy}")
         for (p, b), key in self.results.items():
             if b == basis and quarter_end(p) == end:
                 f = self._load(key)
@@ -1273,7 +1319,7 @@ class CompanyFacts:
                 if f is None:
                     continue
                 if holds(f):
-                    return f, f"annual report {afy}", q4
+                    return f, self._scale_label(key, f"annual report {afy}"), q4
             return None
 
         near = holding([1, 0])                              # the newest first, as before: the next year's report, then the year's own

@@ -1441,3 +1441,27 @@ def test_a_note_whose_results_file_is_set_aside_defers_to_the_quarters_card(sett
         if want == "DUPLICATE":
             assert "same results quarter Q2FY27, D20" in out.update["reason"]
         monkeypatch.undo()
+
+
+def test_a_set_aside_files_quarter_never_takes_the_quarter(settings, monkeypatch):
+    """Review of #314: with no earlier card, the note publishes as before and leaves the quarter unclaimed, so the real
+    statement read later in the same run still takes it."""
+    from dataclasses import replace
+    from types import SimpleNamespace
+
+    from bse_intel import results_card
+    from bse_intel import xbrl as xbrl_fast_path
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1, second_opinion=False)
+    monkeypatch.setenv("D20_DROPPED_FILE_PERIOD", "1")
+    note = _filing("q-2", "Disclosure on provisioning for expected credit loss", now_ist() - timedelta(hours=3), "Result")
+    pipeline, sink, fake = build(settings, [note], {note.pdf_url: _pdf("The Board noted an additional provision for credit loss.")},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    file = SimpleNamespace(kind="RESULTS", period="Q2FY27", basis="STANDALONE", template="", metrics=[], raw=None)
+    monkeypatch.setattr(pipeline, "_xbrl", lambda f: file)
+    monkeypatch.setattr(xbrl_fast_path, "confirm", lambda tagged, text: False)
+    monkeypatch.setattr(results_card, "agrees_with_memory", lambda tagged, known: False)
+    out = pipeline.analyze(note.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS",
+                                                   "xbrl_url": "https://nsearchives.nseindia.com/x.xml"}))
+    assert out.update["status"] != "DUPLICATE"
+    assert ("999001", "Q2FY27") not in pipeline._results_quarters and "q-2" not in pipeline._superseding

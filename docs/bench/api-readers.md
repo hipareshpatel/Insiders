@@ -70,9 +70,38 @@ scored on that replay. **All of this is in-sample**: the guards were written aft
 - nemotron-3.5-parse: HTTP 404 "404 page not found" for `nvidia/nemotron-3.5-parse`. The name is not served at this
   endpoint. Assumption, not found by a search on 30 Oct: it may have another id or another URL.
 
+## Out of sample: run 41077643109 (api-reader-oos, 30 Oct 2026)
+
+`docs/bench/oos/key-union.csv`: 552 figures in 67 kept PDFs, no exchange read, 172 nemotron pages. Fully unseen by both
+readers' fixes: run 1 groups 4-6 plus the third run's 52 extra figures (308).
+
+| Order | Fully unseen (308) | Run 1 groups 1-3, seen while fixing numbers-first (244) | All (552) |
+|---|---|---|---|
+| Numbers-first alone | 129 / 6 / 173 | 117 / 5 / 122 | 246 / 11 / 295 |
+| Guarded nemotron-parse alone | 58 / 2 / 248 | 45 / 3 / 196 | 103 / 5 / 444 |
+| **Numbers-first first, nemotron on its no-answers** | **148 / 7 / 153** | 130 / 7 / 107 | 278 / 14 / 260 |
+| Nemotron first | 147 / 8 / 153 | 129 / 8 / 107 | 276 / 16 / 260 |
+
+The three wrongs nemotron adds in the numbers-first-first order:
+- SMARTWORKS consolidated PAT 10.28: the standalone key-figures note under a "NOTES TO ... CONSOLIDATED RESULTS" heading.
+- PFOCUS consolidated revenue 1,256.08: the page prints 125,608.42 lakh, and the key's 1,266.82 is not on the page (key
+  tag `xbrl:not_found`). The reader matches the page; the key does not.
+- DOLATALGO PAT 53.864: printed, against the filed 53.87 (a rounding gap in the key).
+
+## NEMOTRON_BASIS_GUARD (off; lead, 1 Nov 2026)
+
+A nemotron table is read only when its own header rows (the lines above it in the answer, or its first two rows) name
+exactly one basis. A "Notes to ..." heading never counts, and the page context never decides. Written after the out-of-sample
+misses above, so the replays below are checks only. **The score is a fresh unseen set; the pass mark, set before scoring, is
+0 wrong among the readings it adds over numbers-first.**
+
+Replays, offline from the kept answers (each reproduces its run exactly first):
+- Out of sample: nemotron alone 103/5/444 → 100/1/451. Only PFOCUS is left, where the reader matches the page (above).
+  With numbers-first first, the fully unseen part is 145/7/153 (numbers-first alone 126/6/173 on the same figures).
+- Hard set: nemotron alone 185/1/154 → 155/1/184. With numbers-first first, 292/0/48 (alone 272/0/68).
+
 ## Next
 
 - A second probe with the fixes: Mistral (retry) and nemotron-parse-2.0 (tool named). If either answers, the full 65
   pages, before the artifact expires on 2 Nov.
-- The out-of-sample check before any live use (lead): numbers-first first plus guarded nemotron-parse, on the normal key and
-  the pdf-oos keys, both orders.
+- The fresh unseen set for NEMOTRON_BASIS_GUARD (source: the lead's call), then the owner's decision on live use.

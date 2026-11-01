@@ -1372,6 +1372,11 @@ def nemotron_grids(answer: dict) -> list[list[list[str]]]:
     in it or above it."""
     header_on = os.environ.get("NEMOTRON_HEADER", "1") != "0"
     need_unit = os.environ.get("NEMOTRON_NEED_UNIT", "0") == "1"
+    # NEMOTRON_BASIS_GUARD (default off; lead, 1 Nov 2026): a table is read only when its own header rows (the lines above it
+    # in this answer, or its first two rows) name exactly one basis, consolidated or standalone ("Notes to ..." headings never
+    # count); the page's context never decides its basis.
+    # Out of sample (run 41077643109) the one real basis wrong was a table whose basis came from elsewhere (SMARTWORKS)
+    basis_guard = os.environ.get("NEMOTRON_BASIS_GUARD", "0") == "1"
     grids = []
     for choice in answer.get("choices") or []:
         for call in (choice.get("message") or {}).get("tool_calls") or []:
@@ -1405,6 +1410,15 @@ def nemotron_grids(answer: dict) -> list[list[list[str]]]:
                 above = []
                 for grid in found:
                     if need_unit and not (_UNIT_WORD.search(text) or any(_UNIT_WORD.search(h[0]) for h in head)):
+                        continue
+                    if basis_guard:
+                        # a "Notes to ..." heading names the statement the notes belong to, not the table under it
+                        # (SMARTWORKS: standalone key figures under "NOTES TO ... CONSOLIDATED RESULTS", run 41077643109)
+                        own = [h for h in head if not re.match(r"\s*notes?\b", h[0], re.I)]
+                        text = "\n".join([h[0] for h in own] + [" ".join(r) for r in grid[:2]])
+                        if bool(_CONS_WORD.search(text)) == bool(_ALONE_WORD.search(text)):
+                            continue          # no basis named, or both: the table's basis is not its own to tell
+                        grids.append(own + grid)
                         continue
                     grids.append(head + grid)
     return grids

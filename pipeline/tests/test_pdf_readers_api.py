@@ -232,3 +232,17 @@ def test_nemotron_a_short_line_after_a_table_is_its_footnote(monkeypatch):
     first, second, third = nemotron_grids(_answer(elements))
     assert second[0][0].startswith("Particulars")                        # table A's footnote is not table B's header
     assert third[:2] == [["Segment results"], ["(Rs in crore)"]]           # a new title opens the next block again
+
+
+def test_basis_guard_reads_only_a_table_whose_own_header_names_one_basis(monkeypatch):
+    monkeypatch.setenv("NEMOTRON_BASIS_GUARD", "1")
+    title = lambda t: {"type": "Section-header", "text": t}
+    named = nemotron_grids(_answer([title("Statement of unaudited consolidated results"), {"type": "Table", "text": TABLE}]))
+    assert len(named) == 1 and named[0][0] == ["Statement of unaudited consolidated results"]
+    assert nemotron_grids(_answer([title("Five-Star Business Finance Limited"), {"type": "Table", "text": TABLE}])) == []
+    both = [title("Standalone and consolidated results"), {"type": "Table", "text": TABLE}]
+    assert nemotron_grids(_answer(both)) == []                                     # both bases named: not its own to tell
+    notes = [title("NOTES TO UNAUDITED CONSOLIDATED FINANCIAL RESULTS"), {"type": "Table", "text": TABLE}]
+    assert nemotron_grids(_answer(notes)) == []                                    # a notes heading never sets the basis
+    monkeypatch.setenv("NEMOTRON_BASIS_GUARD", "0")
+    assert len(nemotron_grids(_answer(notes))) == 1                                # off by default: as before

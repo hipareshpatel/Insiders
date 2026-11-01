@@ -79,3 +79,7 @@ SCREENER_CMLTD = true            # screener_view.corporate_bs: CurrentMaturities
 # its year's four quarters prove on both Sales and Net Profit. Dry run 41268278744 with it on: left out 38 -> 29, the 9 returned are
 # exactly TDPOWERSYS (533553) and MSPL (532650) years (1e5 small), 27 entries added, no other company changed.
 ANNUAL_SCALE_FIX = true          # screener_view.CompanyFacts._rescale_annual
+# Turned on 1 Nov 2026 ~11:10 IST (lead, measured; owner: "a figure in the exchange's XBRL file must never be overruled by the
+# PDF"): release-check unit_slip_guard (run 41263548723) over 9,884 stored cards: 70 carry a unit correction, 3 have their exchange file,
+# 0 would change (each of the 3 was a real slip, 1,000 -> 10, 262.66 -> 2.63, 13.07 -> 1.31, not a figure the file states).
+UNIT_SLIP_XBRL_GUARD = true      # grounding.unit_slips: a card figure equal to a money fact of the filing's XBRL file is never rescaled

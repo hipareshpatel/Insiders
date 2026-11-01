@@ -104,7 +104,7 @@ def test_anup_profit_is_held_beside_an_eps_the_other_period_supports():
     assert ("eps", "FY25") not in backed and backed[("pat", "FY25")] == -22.06
 
 
-def _aptus(monkeypatch, on, other_income=0, other_ops=18_780_000):
+def _aptus(monkeypatch, on, other_income=0, other_ops=187_800_000):   # 18.78 Cr, the filed figure
     body = HEAD.replace("in-bse-fin", "in-bse-fin") + _ctx("OneD", "2026-01-01", "2026-03-31")
     body += _fact("RevenueFromOperations", "OneD", 5_931_200_000) + _fact("Income", "OneD", 5_931_200_000)
     body += _fact("OtherIncome", "OneD", other_income) + _fact("OtherRevenueFromOperations", "OneD", other_ops)
@@ -208,3 +208,61 @@ def test_a_lender_whose_revenue_is_its_income_with_no_other_income_keeps_it(monk
                                  (xbrl._OTHER_REVENUE, "Q"): 0}, True) == 0
     # Aptus stays held: other revenue from operations above 0 beside revenue = income
     assert "revenue" not in {m.metric for m in xbrl.parse(_aptus(monkeypatch, True)).metrics}
+
+
+def _disc_file(rows) -> bytes:
+    """Q4FY26 (OneD) and FY26 (FourD) of a company with a discontinued operation, the stored figures in Cr (facts-dump run
+    41323023287): (ctx, profit, continuing, discontinued, owners, minority, continuing EPS, whole EPS); the continuing EPS tag
+    comes first in the file, as in the real ones, so it is the `eps` kept."""
+    body = HEAD + _ctx("OneD", "2026-01-01", "2026-03-31") + _ctx("FourD", "2025-04-01", "2026-03-31")
+    for ctx, pat, cont, disc, owners, minority, eps_c, eps_t in rows:
+        body += _fact("BasicEarningsLossPerShareFromContinuingOperations", ctx, str(eps_c), "INRPerShare")
+        body += _fact("BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations", ctx, str(eps_t), "INRPerShare")
+        for tag, v in (("ProfitLossForPeriod", pat), ("ProfitLossForPeriodFromContinuingOperations", cont),
+                       ("ProfitLossFromDiscontinuedOperationsAfterTax", disc), ("ProfitOrLossAttributableToOwnersOfParent", owners),
+                       ("ProfitOrLossAttributableToNonControllingInterests", minority)):
+            body += _fact(tag, ctx, round(v * 1e7))
+    return (body + "</xbrli:xbrl>").encode()
+
+
+TMPV = [("OneD", 5878.0, 5744.0, 0.0, 5783.0, 95.0, 15.71, 15.71),
+        ("FourD", 82645.0, -1823.0, 84022.0, 82390.0, 255.0, -4.43, -0.61)]
+CAMLIN = [("OneD", 86.2773, -0.409, 85.3034, 88.2019, -1.9246, 0.35, 4.59),
+          ("FourD", 23.5432, -33.1931, 55.0742, 27.6272, -4.084, -1.59, 1.46)]
+
+
+@pytest.mark.parametrize("rows,profit,continuing", [(TMPV, 82645.0, -1823.0), (CAMLIN, 23.54, -33.19)], ids=["TMPV", "CAMLINFINE"])
+def test_a_year_with_a_discontinued_operation_keeps_its_profit(monkeypatch, rows, profit, continuing):
+    raw = _disc_file(rows)
+    _on(monkeypatch)
+    on = _figures(raw)
+    assert on.get(("pat", "FY26")) == profit and on.get(("pat_continuing", "FY26")) == continuing   # main held both
+    monkeypatch.setenv("XBRL_FILER_CHECKS", "0")
+    assert _figures(raw).get(("pat", "FY26")) == profit
+
+
+def test_corroboration_reads_the_minority_owners_share_kept():
+    values = {("pat", "FY26"): 82645.0, ("pat_owners", "FY26"): 82390.0}
+    assert not xbrl._profit_corroborated(values, "FY26")
+    assert xbrl._profit_corroborated(values, "FY26", {("pat_minority", "FY26"): 255.0})
+
+
+def test_continuing_eps_only_with_a_discontinued_figure(monkeypatch):
+    _on(monkeypatch)
+    base = {("eps", "Y"): -4.43, ("eps_continuing", "Y"): -4.43, ("eps_total", "Y"): -0.61, ("pat_continuing", "Y"): -1823.0,
+            ("pat", "Y"): 82645.0, ("pat_owners", "Y"): 82390.0}
+    assert xbrl._eps_profit({**base, ("pat_discontinued", "Y"): 84022.0}, "eps", "Y") == -1823.0
+    assert xbrl._eps_profit({**base, ("pat_discontinued", "Y"): 0.0}, "eps", "Y") == 82390.0   # no discontinued figure
+    whole_first = {**base, ("eps", "Y"): -0.61, ("pat_discontinued", "Y"): 84022.0}             # the whole EPS kept first
+    assert xbrl._eps_profit(whole_first, "eps", "Y") == 82390.0
+    _on(monkeypatch, False)
+    assert xbrl._eps_profit({**base, ("pat_discontinued", "Y"): 84022.0}, "eps", "Y") == 82390.0
+
+
+def test_lender_other_revenue_under_one_percent_holds_nothing():
+    # LTF Q2FY27: other revenue 0.07 Cr beside revenue = income 5,484.23, other income 0: kept
+    ltf = {("revenue", "Q"): 5484.23, ("total_income", "Q"): 5484.23, ("other_income", "Q"): 0.0, (xbrl._OTHER_REVENUE, "Q"): 0.07}
+    assert xbrl._lender_revenue(ltf, True) == 0 and ("revenue", "Q") in ltf
+    # HDBFS Q2FY27: 345.38 beside 5,005.32 (6.9%), the Aptus shape: still held, for the PDF to settle
+    hdb = {("revenue", "Q"): 5005.32, ("total_income", "Q"): 5005.32, ("other_income", "Q"): 0.0, (xbrl._OTHER_REVENUE, "Q"): 345.38}
+    assert xbrl._lender_revenue(hdb, True) == 1 and ("revenue", "Q") not in hdb

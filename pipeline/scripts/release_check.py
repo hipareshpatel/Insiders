@@ -354,7 +354,7 @@ def check_year_ago_label(card: dict, row: dict) -> dict:
     return _record(row, card, lines(card), lines(on_card))
 
 
-def check_ratio_columns(card: dict, row: dict) -> dict:
+def check_ratio_columns(card: dict, row: dict, dossier: dict | None = None) -> dict:
     """ratio_columns: `ratio_columns.apply_card_json` on a copy of a stored card with CARD_RATIO_COLUMNS off and on; every list
     item and structured previous value it drops or corrects (VIMTALABS nse-106836191), for the blind sample."""
     from bse_intel import ratio_columns
@@ -367,7 +367,7 @@ def check_ratio_columns(card: dict, row: dict) -> dict:
 
     on_card = copy.deepcopy(card)
     with switches_on("CARD_RATIO_COLUMNS"):
-        ratio_columns.apply_card_json(on_card)
+        ratio_columns.apply_card_json(on_card, dossier)
     return _record(row, card, lines(card), lines(on_card))
 
 
@@ -1328,7 +1328,7 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "ratio_columns":
                     seen[name] += 1
-                    keep(name, check_ratio_columns(card, row))
+                    keep(name, check_ratio_columns(card, row, memory() or None))
                     row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "figure_matches_file":
                     if not results or not isinstance(card.get("results"), dict) or not (card["results"].get("ebitda") or {}).get("value"):

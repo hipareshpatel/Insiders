@@ -247,7 +247,10 @@ def test_ratio_columns_check_lists_a_shifted_ratio_comparison():
             "what_happened": [{"text": "EBITDA for Q2FY27 was ₹40.8 Cr.", "quote": "EBIDTA 408 411 -0.8% 369 10.5% 819 723 13.2%"}],
             "why_it_matters": [{"text": "EBITDA margin of 35.5% in Q2FY27 is higher than the 35.3% in Q1FY27.",
                                 "quote": "EBIDTA (%) 35.5% 36.4% 35.3% 36.0% 35.5%"}]}
-    note = rc.check_ratio_columns(card, row)
+    m = lambda metric, period, value: {"metric": metric, "period": period, "value": value, "basis": "CONSOLIDATED"}  # noqa: E731
+    memory = {"financial_metrics": [m("ebitda", "Q2FY27", 40.8), m("ebitda", "Q1FY27", 41.1), m("ebitda", "Q2FY26", 36.9),
+                                    m("revenue", "Q1FY27", 112.91), m("revenue", "Q2FY26", 104.53)]}
+    note = rc.check_ratio_columns(card, row, memory)
     assert rc.changed_by_diff(note["diff"]) and not any("35.3%" in line for line in note["on_lines"])
     assert "35.3%" in card["why_it_matters"][0]["text"]   # the stored card is not changed
 

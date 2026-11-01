@@ -83,3 +83,7 @@ ANNUAL_SCALE_FIX = true          # screener_view.CompanyFacts._rescale_annual
 # PDF"): release-check unit_slip_guard (run 41263548723) over 9,884 stored cards: 70 carry a unit correction, 3 have their exchange file,
 # 0 would change (each of the 3 was a real slip, 1,000 -> 10, 262.66 -> 2.63, 13.07 -> 1.31, not a figure the file states).
 UNIT_SLIP_XBRL_GUARD = true      # grounding.unit_slips: a card figure equal to a money fact of the filing's XBRL file is never rescaled
+# Turned on 1 Nov 2026 ~17:50 IST (owner: "ON", option B): call-vision-bench run 41294872537 over the judged deck points (free vision
+# route, 36 calls): WRONG kept 27 of 293 (9.2%) -> 12 of 264 (4.5%), RIGHT dropped 14 of 266 (5.3%). The 2% bar is not met; the
+# owner chose it for halving the errors.
+CALL_MEMORY_VISION_CHECK = true  # call_memory.vision_confirm: a deck point assembled across a slide is kept only on a vision yes

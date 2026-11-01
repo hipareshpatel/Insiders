@@ -50,6 +50,11 @@ jobs:
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}   # call memory only (providers.gemini_3, only_routes)
       NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}       # free spare on the call_memory route
+      # CALL_MEMORY_VISION_CHECK (owner: ON, 1 Nov 2026): the free `vision` route's own keys; never GEMINI_API_KEY (the cards'),
+      # so the route uses zai, mistral (free plan) and openrouter :free here
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

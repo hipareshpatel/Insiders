@@ -78,6 +78,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
   words_match_figures CARD_WORDS_MATCH_FIGURES (1 Nov 2026, blind audit "arithmetic in words"): `words_figures.apply_card_json`
                      on a copy of each stored results card with a table, memory for the previous quarter's YoY; the words it
                      softens and the list items it drops. Complete.
+  filer_checks       XBRL_FILER_CHECKS (S3, TODO 111, F219): each results card's own exchange file (R2, 180 days) read twice by
+                     `xbrl.parse`, off and on; the figures it changes or holds. Read only; over stored memory's source files.
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
                      correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
                      bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
@@ -134,7 +136,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
-                "CARD_WORDS_MATCH_FIGURES")
+                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -144,7 +146,8 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"), ("discontinued_figure", "DISCONTINUED_NEEDS_FIGURE"),
           ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"),
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
-          ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"))
+          ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
+          ("filer_checks", "XBRL_FILER_CHECKS"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -305,6 +308,27 @@ def check_words_figures(card: dict, row: dict, dossier: dict | None) -> dict:
     with switches_on("CARD_WORDS_MATCH_FIGURES"):
         words_figures.apply_card_json(on_card, dossier)
     return _record(row, card, lines(card), lines(on_card))
+
+
+def filer_lines(result) -> list[str]:
+    """A parsed results file's figures as table lines ("TABLE pat Q4FY26 CONSOLIDATED: 1340.97"); a held figure is absent."""
+    if result is None:
+        return ["TABLE file: no results read"]
+    return sorted(f"TABLE {m.metric} {m.period} {result.basis or ''}: {m.value}" for m in result.metrics if m.value is not None)
+
+
+def check_filer_checks(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
+    """filer_checks: the card's own results file (R2, F191) read twice by `xbrl.parse`, XBRL_FILER_CHECKS off and on (S3, TODO
+    111, F219); every figure the switch changes or holds (owners' + minority against the whole profit, a profit its EPS share
+    count contradicts, a lender's revenue equal to its total income). Read only: memory is what the file gives off; the on
+    lines are what it would give."""
+    from bse_intel import xbrl
+
+    with switches_on():
+        off = filer_lines(xbrl.parse(xbrl.as_utf8(xbrl_bytes)))
+    with switches_on("XBRL_FILER_CHECKS"):
+        on = filer_lines(xbrl.parse(xbrl.as_utf8(xbrl_bytes)))
+    return _record(row, card, off, on)
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
@@ -1106,6 +1130,20 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         else:
                             seen[name] += 1
                             keep(name, check_unit_slip_guard(card, body, row))
+                            row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "filer_checks":
+                    url = (card.get("xbrl") or {}).get("url")
+                    if not results:
+                        skipped[name]["not a results card"] += 1
+                    elif not url:
+                        skipped[name]["no exchange file on the card"] += 1
+                    else:
+                        body = getattr(source, "xbrl_body", lambda _u: None)(url)
+                        if not body:
+                            skipped[name]["exchange file not stored (R2 keeps it 180 days) or no source for it"] += 1
+                        else:
+                            seen[name] += 1
+                            keep(name, check_filer_checks(card, body, row))
                             row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "discontinued_figure":
                     seen[name] += 1

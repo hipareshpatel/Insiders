@@ -143,7 +143,9 @@ def test_adjusted_profit_check_labels_a_profit_that_is_not_the_tables():
     card = {"event_type": "RESULTS", "headline": "Tilaknagar Q2FY27 PAT up 30% to ₹68 Cr", "takeaway": "",
             "key_numbers": [{"label": "PAT", "value": "₹68 Cr", "quote": "PAT1 increased by 30% to Rs. 68 crore"}],
             "results": {"period": "Q2FY27", "pat": {"value": 22.27}, "lines": [{"key": "pat", "label": "PAT"}]}}
-    memory = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27}]}
+    memory = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27},
+                                    {"metric": "pat_owners", "period": "Q2FY27", "value": 22.27},
+                                    {"metric": "pat", "period": "H1FY27", "value": 60.0}]}
     note = rc.check_adjusted_profit(card, row, memory)
     assert rc.changed_by_diff(note["diff"]) and "KEY PAT (company-reported; reported PAT ₹22.27 Cr): ₹68 Cr" in note["on_lines"]
     assert card["key_numbers"][0]["label"] == "PAT"   # the stored card is not changed

@@ -18,7 +18,11 @@ TI = {
 
 
 # memory's profit for the card's quarter: with none, nothing is labelled (lead's review of release check 41338082613)
-MEM = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27}]}
+# complete memory: the quarter's whole and owners' profit and the half the quarter closes, so a figure that is none of them can be
+# called company-reported (review of #363)
+MEM = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27},
+                             {"metric": "pat_owners", "period": "Q2FY27", "value": 22.27},
+                             {"metric": "pat", "period": "H1FY27", "value": 60.0}]}
 
 
 def on(monkeypatch):
@@ -201,7 +205,7 @@ def test_emudhra_a_year_figure_on_a_q4_card_is_named_with_its_year(monkeypatch):
     other = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
     R.profit_label_card_json(other, {"financial_metrics": [{"metric": "pat", "period": "FY25", "value": 99.0},
                                                            {"metric": "pat", "period": "Q4FY25", "value": 23.89}]})
-    assert other["key_numbers"][0]["label"].startswith("PAT (company-reported")
+    assert other["key_numbers"][0]["label"] == "PAT"   # memory lacks the quarter's owners' line: no guess (review of #363)
     monkeypatch.setenv("CARD_ADJUSTED_PROFIT_LABEL", "0")
     off = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
     assert R.profit_label_card_json(off, memory) == [] and off["key_numbers"][0]["label"] == "PAT"
@@ -243,3 +247,23 @@ def test_a_nine_month_figure_gets_its_period_and_no_memory_labels_nothing(monkey
     # memory without the quarter's profit: nothing is labelled
     card = _card("Q3FY27", 43.05, "PAT", "₹68.00 Cr", "PAT of Rs 68 crore")
     assert R.profit_label_card_json(card, {"financial_metrics": []}) == [] and R.profit_label_card_json(card, None) == []
+
+
+# --- review of #363: memory that cannot rule out the missing line labels nothing -------------------------------------------------
+
+def test_partial_memory_does_not_guess_company_reported(monkeypatch):
+    on(monkeypatch)
+    # memory has only the owners' 1,585.6: the whole 1,609.7 (with the minority share) could be the missing line
+    card = _card("Q2FY27", 1585.6, "Net profit", "₹1,609.70 Cr", "Net profit of Rs 1,609.7 crore")
+    owners_only = {"financial_metrics": [{"metric": "pat_owners", "period": "Q2FY27", "value": 1585.6},
+                                         {"metric": "pat", "period": "H1FY27", "value": 3100.0}]}
+    assert R.profit_label_card_json(card, owners_only) == [] and card["key_numbers"][0]["label"] == "Net profit"
+    # a Q4 card with only the quarter's profit: the year's 87.23 could be the missing FY line
+    card = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
+    quarter_only = {"financial_metrics": [{"metric": "pat", "period": "Q4FY25", "value": 23.89},
+                                          {"metric": "pat_owners", "period": "Q4FY25", "value": 23.89}]}
+    assert R.profit_label_card_json(card, quarter_only) == [] and card["key_numbers"][0]["label"] == "PAT"
+    # complete memory (whole, owners' and the year): the figure that is none of them is company-reported
+    full = {"financial_metrics": quarter_only["financial_metrics"] + [{"metric": "pat", "period": "FY25", "value": 99.0}]}
+    R.profit_label_card_json(card, full)
+    assert card["key_numbers"][0]["label"].startswith("PAT (company-reported")

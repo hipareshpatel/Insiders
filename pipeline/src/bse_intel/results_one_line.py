@@ -428,6 +428,14 @@ def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list
     known = _memory_profits(dossier, period)
     if not known:
         return []   # memory holds none of the quarter's profit lines: a figure could be any of them, so nothing is labelled
+    # "company-reported" needs memory complete enough to rule out every reported reading: both the whole and the owners' profit
+    # for the quarter, and the cumulative period the quarter closes (H1 for Q2, 9M for Q3, the year for Q4). Otherwise a figure
+    # that matches nothing could be the missing line, and gets no label (review of #363: the whole 1,609.7 beside owners' 1,585.6
+    # alone; a year's 87.23 on a Q4 card with only the quarter's 23.89 in memory)
+    lines = {m.get("metric") for m in _memory_rows(dossier) if m.get("period") == period}
+    closes = {"2": "H1", "3": "9M", "4": ""}.get((period or "Q1")[1:2] if (period or "").startswith("Q") else "1")
+    cumulative = f"{closes}{period[2:]}" if closes is not None and period else None
+    complete = {"pat", "pat_owners"} <= lines and (cumulative is None or bool(_memory_profits(dossier, cumulative)))
 
     def other(figure: float) -> bool:
         # company-reported only when the figure is none of the table's profit rows and none of memory's profit lines
@@ -450,6 +458,8 @@ def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list
                 key["label"] = f"{label} ({year})"
                 notes.append(f"key_numbers {label}: {_cr(figure)} is memory's {year} profit, labelled {year}")
                 continue
+            if not complete:
+                continue   # memory cannot rule out the missing line: no label
             key["label"] = f"{label} ({tag(key.get('quote'))})"
             notes.append(f"key_numbers {label}: {_cr(figure)} is not the table's reported profit ({_cr(pat)}), labelled company-reported")
     for attr in ("headline", "takeaway"):
@@ -461,7 +471,7 @@ def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list
         bare = _LABELLED.sub("", text)   # another figure's label ("(company-reported; results table ₹2,437.56 Cr)") names no basis here
         for word, figure, stated, at in _headline_figures(bare, _PROFIT_WORD):
             end = re.compile(_FIG, re.I).match(bare, at).end()
-            if stated or _earlier_figure(bare, at, end) or _other_period(bare, period, at, end) or not other(figure):
+            if stated or _earlier_figure(bare, at, end) or _other_period(bare, period, at, end) or not other(figure) or not complete:
                 continue
             where = text.find(bare[at:end], at) + (end - at)   # right after the figure: the labels of others only come later
             card_json[attr] = f"{text[:where]} ({tag()}){text[where:]}"

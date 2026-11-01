@@ -450,11 +450,15 @@ class ShareTranche(_Lenient):
     price_per_share: Num = None   # ₹ per share, as written
 
 
+_BUYBACK = re.compile(r"\bbuy[\s-]?backs?\b", re.I)
+
+
 class DealValue(_Lenient):
     """The size of an order, fundraise, capex or deal, so code can put it in proportion."""
 
     kind: Annotated[str, _enum(DEAL_KINDS, {"CONTRACT": "ORDER", "AWARD": "ORDER", "PREFERENTIAL": "FUNDRAISE",
-                                              "WARRANTS": "FUNDRAISE", "QIP": "FUNDRAISE", "M_A": "ACQUISITION"}, "OTHER")] = "OTHER"
+                                              "WARRANTS": "FUNDRAISE", "QIP": "FUNDRAISE", "M_A": "ACQUISITION",
+                                              "BUYBACK": "OTHER", "BUY_BACK": "OTHER"}, "OTHER")] = "OTHER"
     amount_cr: Num = None
     amount_by: str | None = Field(default=None, exclude=True)   # "file" when the event XBRL set the amount (memory label)
     includes_gst: bool | None = None
@@ -490,6 +494,14 @@ class DealValue(_Lenient):
     updates_deal_id: OptStr = None  # a deal already in memory that this filing moves to a new stage
     # A sale or purchase of shares at stated prices: each buyer's shares and price, so code computes the consideration.
     tranches: Annotated[list[ShareTranche], _drop_invalid(ShareTranche)] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _buyback_is_no_raise(self):
+        # a buyback pays money out: never a fundraise (MEDIASSIST nse-106837158, audit of 1 Nov 2026: "raise" on the scale line
+        # and a second FUNDRAISE deal in memory for its Rs 49.27 Cr buyback)
+        if self.kind == "FUNDRAISE" and _BUYBACK.search(" ".join(filter(None, (self.segment, self.counterparty)))):
+            self.kind = "OTHER"
+        return self
 
     @field_validator("includes_gst", mode="before")
     @classmethod

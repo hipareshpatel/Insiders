@@ -92,7 +92,7 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "adjusted_profit", "words_match_figures",
                           "filer_checks", "figure_matches_file", "guided_not_actual", "event_repeat",
                           "press_release_fold", "unit_fix_scale",
-                          "comparative_memory"}
+                          "comparative_memory", "year_ago_label"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -158,6 +158,17 @@ def test_words_figures_check_softens_a_word_the_figures_contradict():
     note = rc.check_words_figures(card, row, None)
     assert rc.changed_by_diff(note["diff"]) and "HEADLINE Acme Q2FY27 PAT rose to ₹50 Cr" in note["on_lines"]
     assert card["headline"] == "Acme Q2FY27 PAT doubled to ₹50 Cr"
+
+
+def test_year_ago_label_check_puts_a_label_two_years_back_right():
+    """CARD_YEAR_AGO_LABEL: HEGAM's "compared to ₹696.85 Cr in Q2FY25" on a Q2FY27 card."""
+    rc = _script()
+    row = {"news_id": "nse-106837190", "symbol": "HEGAM", "scrip_code": "1", "pdf_url": "u"}
+    card = {"event_type": "RESULTS", "headline": "HEG Limited Q2FY27 revenue at ₹740.40 Cr", "takeaway": "",
+            "what_happened": [{"text": "Revenue reached **₹740.40 Cr**, compared to **₹696.85 Cr** in Q2FY25."}]}
+    note = rc.check_year_ago_label(card, row)
+    assert rc.changed_by_diff(note["diff"]) and any("in Q2FY26." in line for line in note["on_lines"])
+    assert "Q2FY25" in card["what_happened"][0]["text"]   # the stored card is not changed
 
 
 def test_filer_checks_reads_the_cards_own_file_off_and_on(monkeypatch):

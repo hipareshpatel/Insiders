@@ -78,6 +78,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
   words_match_figures CARD_WORDS_MATCH_FIGURES (1 Nov 2026, blind audit "arithmetic in words"): `words_figures.apply_card_json`
                      on a copy of each stored results card with a table, memory for the previous quarter's YoY; the words it
                      softens and the list items it drops. Complete.
+  year_ago_label     CARD_YEAR_AGO_LABEL (1 Nov 2026, GICRE nse-106837460, HEGAM nse-106837190): `year_ago_label.apply_card_json` on a copy of
+                     each stored card, off and on; the year-ago labels two years back it puts right, in a comparison only. Complete.
   event_repeat       CARD_EVENT_REPEAT (S2, 1 Nov 2026): each ORDER_WIN or M_AND_A card against its company's memory timeline
                      (`event_repeats.match`); the cards it would hold as a repeat of an earlier entry, that entry named.
   comparative_memory CARD_COMPARATIVE_MATCHES_MEMORY (1 Nov 2026, MASKINVEST nse-106838206): each PDF-read results card whose figure
@@ -151,7 +153,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
                 "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS", "CARD_FIGURE_MATCHES_FILE", "CARD_GUIDED_NOT_ACTUAL",
                 "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE",
-                "UNIT_FIX_SCALE_GUARD", "CARD_COMPARATIVE_MATCHES_MEMORY")
+                "UNIT_FIX_SCALE_GUARD", "CARD_COMPARATIVE_MATCHES_MEMORY", "CARD_YEAR_AGO_LABEL")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -165,7 +167,7 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("filer_checks", "XBRL_FILER_CHECKS"), ("figure_matches_file", "CARD_FIGURE_MATCHES_FILE"),
           ("guided_not_actual", "CARD_GUIDED_NOT_ACTUAL"), ("event_repeat", "CARD_EVENT_REPEAT"),
           ("press_release_fold", "RESULTS_PRESS_RELEASE"), ("unit_fix_scale", "UNIT_FIX_SCALE_GUARD"),
-          ("comparative_memory", "CARD_COMPARATIVE_MATCHES_MEMORY"))
+          ("comparative_memory", "CARD_COMPARATIVE_MATCHES_MEMORY"), ("year_ago_label", "CARD_YEAR_AGO_LABEL"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -325,6 +327,23 @@ def check_words_figures(card: dict, row: dict, dossier: dict | None) -> dict:
     on_card = copy.deepcopy(card)
     with switches_on("CARD_WORDS_MATCH_FIGURES"):
         words_figures.apply_card_json(on_card, dossier)
+    return _record(row, card, lines(card), lines(on_card))
+
+
+def check_year_ago_label(card: dict, row: dict) -> dict:
+    """year_ago_label: `year_ago_label.apply_card_json` on a copy of a stored card with CARD_YEAR_AGO_LABEL off and on; the
+    headline, takeaway, timeline entry, list items and key numbers whose year-ago label it puts right."""
+    from bse_intel import year_ago_label
+
+    def lines(c: dict) -> list[str]:
+        out = [f"HEADLINE {c.get('headline') or ''}", f"TAKEAWAY {c.get('takeaway') or ''}", f"TIMELINE {c.get('timeline_entry') or ''}"]
+        for name in ("what_happened", "why_it_matters", "notable_changes"):
+            out += [f"FACT {name}: {(i.get('text') if isinstance(i, dict) else i) or ''}" for i in c.get(name) or []]
+        return out + [f"KEY {k.get('label')}: {k.get('change')}" for k in c.get("key_numbers") or [] if isinstance(k, dict)]
+
+    on_card = copy.deepcopy(card)
+    with switches_on("CARD_YEAR_AGO_LABEL"):
+        year_ago_label.apply_card_json(on_card)
     return _record(row, card, lines(card), lines(on_card))
 
 
@@ -1254,6 +1273,10 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         seen[name] += 1
                         keep(name, check_words_figures(card, row, memory() or None))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "year_ago_label":
+                    seen[name] += 1
+                    keep(name, check_year_ago_label(card, row))
+                    row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "figure_matches_file":
                     if not results or not isinstance(card.get("results"), dict) or not (card["results"].get("ebitda") or {}).get("value"):
                         skipped[name]["not a results card with an EBITDA row"] += 1

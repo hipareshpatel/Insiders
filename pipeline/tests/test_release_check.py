@@ -143,11 +143,13 @@ def test_adjusted_profit_check_labels_a_profit_that_is_not_the_tables():
     card = {"event_type": "RESULTS", "headline": "Tilaknagar Q2FY27 PAT up 30% to ₹68 Cr", "takeaway": "",
             "key_numbers": [{"label": "PAT", "value": "₹68 Cr", "quote": "PAT1 increased by 30% to Rs. 68 crore"}],
             "results": {"period": "Q2FY27", "pat": {"value": 22.27}, "lines": [{"key": "pat", "label": "PAT"}]}}
-    note = rc.check_adjusted_profit(card, row)
+    memory = {"financial_metrics": [{"metric": "pat", "period": "Q2FY27", "value": 22.27}]}
+    note = rc.check_adjusted_profit(card, row, memory)
     assert rc.changed_by_diff(note["diff"]) and "KEY PAT (company-reported; reported PAT ₹22.27 Cr): ₹68 Cr" in note["on_lines"]
     assert card["key_numbers"][0]["label"] == "PAT"   # the stored card is not changed
     same = dict(card, headline="Tilaknagar Q2FY27 PAT ₹22.27 Cr", key_numbers=[{"label": "PAT", "value": "₹22.27 Cr"}])
-    assert not rc.changed_by_diff(rc.check_adjusted_profit(same, row)["diff"])
+    assert not rc.changed_by_diff(rc.check_adjusted_profit(same, row, memory)["diff"])
+    assert not rc.changed_by_diff(rc.check_adjusted_profit(card, row)["diff"])   # no memory: nothing labelled
 
 
 def test_words_figures_check_softens_a_word_the_figures_contradict():

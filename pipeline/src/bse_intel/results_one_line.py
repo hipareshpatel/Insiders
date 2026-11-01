@@ -377,12 +377,29 @@ def _year_of(period: str | None) -> list[str]:
     return [m[1], f"9M{m[1]}", f"H1{m[1]}"] if m else []
 
 
+_MEMORY_PROFITS = ("pat", "pat_owners", "pat_continuing", "pat_before_minority")
+
+
+def _memory_rows(dossier: dict | None) -> list[dict]:
+    """Memory's figures on both bases: the main block and the standalone one."""
+    d = dossier or {}
+    return [m for m in [*(d.get("financial_metrics") or []), *((d.get("standalone") or {}).get("metrics") or [])]
+            if isinstance(m, dict) and isinstance(m.get("value"), (int, float)) and m.get("metric") in _MEMORY_PROFITS]
+
+
+def _memory_profits(dossier: dict | None, period: str | None) -> list[float]:
+    """Every profit memory holds for ``period``, whole, owners', continuing or before the minority share, on either basis (blind
+    review of release check 41338082613: 11 cards had the standard whole profit labelled "company-reported" against the owners'
+    row alone, TECHM 1,609.7 against 1,585.6)."""
+    return [abs(m["value"]) for m in _memory_rows(dossier) if m.get("period") == period]
+
+
 def _memory_period(figure: float, period: str | None, dossier: dict | None) -> str | None:
-    """The year-sized period whose profit (whole or owners') in memory equals ``figure`` (within rounding), else None."""
+    """The year-sized period (year, nine months, half) whose profit in memory, any of the four lines on either basis, equals
+    ``figure`` (within rounding), else None (c17 of 41338082613: a nine-month 150 was set against the quarter's 43.05)."""
     wanted = _year_of(period)
-    for m in (dossier or {}).get("financial_metrics") or []:
-        if isinstance(m, dict) and m.get("metric") in ("pat", "pat_owners") and m.get("period") in wanted \
-                and isinstance(m.get("value"), (int, float)) and not _differs(abs(figure), abs(m["value"]), 0.015):
+    for m in _memory_rows(dossier):
+        if m.get("period") in wanted and not _differs(abs(figure), abs(m["value"]), 0.015):
             return m["period"]
     return None
 
@@ -392,7 +409,9 @@ def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list
     table's reported profit rows (total, owners', continuing; a loss by its size) is labelled "company-reported" with the
     table's PAT, in the company's own words for its basis when the key number's quote states them ("before exceptional
     items"). A label that already names a basis, another period, a guided figure or an earlier figure ("vs ₹52 Cr") is left
-    alone. Returns what was changed."""
+    alone. A figure that is any of memory's profit lines for the period (whole, owners', continuing, before the minority share,
+    either basis) is never company-reported; one that is memory's year, nine months or half gets that period; with none of the
+    quarter's profit lines in memory nothing is labelled (blind review of release check 41338082613). Returns what was changed."""
     results = card_json.get("results")
     if not card_adjusted_profit_label() or not isinstance(results, dict):
         return []
@@ -406,9 +425,13 @@ def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list
         return []
     period = results.get("period")
     notes: list[str] = []
+    known = _memory_profits(dossier, period)
+    if not known:
+        return []   # memory holds none of the quarter's profit lines: a figure could be any of them, so nothing is labelled
 
     def other(figure: float) -> bool:
-        return all(_differs(abs(figure), r, 0.015) for r in reported)
+        # company-reported only when the figure is none of the table's profit rows and none of memory's profit lines
+        return all(_differs(abs(figure), r, 0.015) for r in (*reported, *known))
 
     def tag(quote: str | None = None) -> str:
         own = _OWN_BASIS.search(quote or "")

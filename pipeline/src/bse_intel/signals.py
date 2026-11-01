@@ -287,7 +287,8 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
     out: list[Signal] = []
     dated = card_guidance_dated()   # F172: a verdict only from a dated target for this filing's period and metric
     if dated:
-        from .guidance_dated import said_on, why_no_verdict, why_no_watch_verdict
+        from .guidance_dated import discussed_period, said_on, why_no_verdict, why_no_watch_verdict
+        discussed = discussed_period(filing.event_type, after.get("financial_metrics", []), filing.filed_at)
     known = {g["id"]: g for g in (before or {}).get("guidance", []) if g.get("given_on", "") < filing.filed_at}
     for update in output.dossier_delta.promise_updates:
         g = known.get(update.guidance_id)
@@ -295,7 +296,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             continue
         when = g.get("given_on", "")[:10]
         if dated and update.status in ("DELIVERED", "DELAYED", "MISSED"):
-            why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id)
+            why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id, discussed)
             if why:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
                 continue
@@ -328,7 +329,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         if code in ("MET", "MISSED"):
             status = code
         if dated and status in ("MET", "MISSED"):
-            why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id)
+            why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id, discussed)
             if why:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(w, why), w["id"]))
                 continue
@@ -356,7 +357,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > _judged_on(g))
     ]
     for g in sorted(overdue, key=lambda g: g["due_date"])[:MAX_OVERDUE_SIGNALS]:
-        why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id) if dated else None
+        why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id, discussed) if dated else None
         if why:
             out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
             continue

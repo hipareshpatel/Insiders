@@ -882,7 +882,25 @@ def _blank_malformed(text: str) -> str:
     return _MALFORMED_GROUPS.sub(lambda m: " " * len(m.group(0)), text)
 
 
-def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=()) -> list[tuple[str, float, int, float, int]]:
+_ANY_NUMBER = re.compile(r"(?<![\d.])\d[\d,]*(?:\.\d+)?")
+
+
+def _window(filing: str, target: float) -> str:
+    """About 80 characters of the filing around the first figure equal to ``target`` (to its own rounding), or "" (a read-only
+    trace for the release check)."""
+    for m in _ANY_NUMBER.finditer(filing or ""):
+        raw = m.group(0).replace(",", "")
+        try:
+            v = float(raw)
+        except ValueError:
+            continue
+        places = len(raw.split(".")[1]) if "." in raw else 0
+        if abs(v - target) <= 0.5 * 10 ** (-places) + 1e-9 and v:
+            return " ".join(filing[max(0, m.start() - 40):m.end() + 40].split())
+    return ""
+
+
+def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace: list | None = None) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
 
     Three readings, in order: a figure the filing writes with its own unit ("INR 3 (Three) Million" carded "₹3 Cr",
@@ -925,6 +943,8 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=()) -> li
                     and (u >= 1 or _near(well_formed._by_unit.get(u, []), value, tolerance))]
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
+                if trace is not None:
+                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 1, "source": _window(filing, value)})
                 continue
             # a bare table figure counts in the table's declared unit, never as crore when another unit is declared
             if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES):
@@ -937,6 +957,8 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=()) -> li
                            and (c <= value or _near(whole_formed, c, 1e-9))})
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
+                if trace is not None:
+                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 2, "source": _window(filing, fits[0][0] * 1e7)})
                 continue
             if not unit or value < 10:
                 continue   # a small bare figure is ambiguous against a table's unit
@@ -965,6 +987,9 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=()) -> li
                     fits.append((round(right, places), places))
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
+                if trace is not None:
+                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 3, "unit": unit,
+                                  "source": _window(filing, fits[0][0] * unit)})
     return list(slips.values())
 
 

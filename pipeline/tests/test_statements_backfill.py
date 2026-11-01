@@ -336,3 +336,24 @@ def test_a_december_year_is_stored_from_the_files_that_hold_its_twelve_months(mo
     got = {(e["table"], e["period"]) for e in entries}
     assert {("annual", "YE:2025-12"), ("cash_flow", "YE:2025-12")} <= got
     assert not {p for t, p in got if p.startswith("YE:") and p != "YE:2025-12"}   # Jun / Sep quarters held no twelve months
+
+
+def test_a_re_read_results_file_keeps_the_rebuilds_sheet_and_years():
+    """1 Nov 2026: the live run re-read RITES's and VINATIORGA's May results files and put the results file's FY26 cash flow and
+    March sheet over the rebuild's, which reads the annual report first (RITES cash from operations 165.97 over 327.48, screener 327).
+    A stored-facts entry of the balance sheet, the year or its cash flow stays; the quarter is the file's own and is rewritten."""
+    from pathlib import Path
+
+    from bse_intel import statements
+    from bse_intel import xbrl_facts as xf
+
+    name = "nse_hdfcbank_q2fy27_cons.xml"
+    doc = xf.parse_facts((Path(__file__).parent / "fixtures" / name).read_bytes(), "500180", f"https://nsearchives.nseindia.com/{name}")
+    d: dict = {}
+    assert statements.remember(d, doc, "nse-1", "2026-10-20", "2026-10-20T10:00:00Z") == 2   # the quarter and the half-year sheet
+    sheet = next(e for e in d[statements.KEY] if e["table"] == "balance")
+    sheet["rows"] = {"Total Assets": 1.0}
+    sheet["lab"] = {**sheet["lab"], "from": "stored facts"}
+    assert statements.remember(d, doc, "nse-2", "2026-10-21", "2026-10-21T10:00:00Z") == 1
+    got = {e["table"]: e for e in d[statements.KEY]}
+    assert got["balance"]["rows"] == {"Total Assets": 1.0} and got["quarters"]["source_news_id"] == "nse-2"

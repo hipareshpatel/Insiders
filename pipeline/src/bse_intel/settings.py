@@ -334,6 +334,14 @@ def card_guided_not_actual() -> bool:
     return _switch("CARD_GUIDED_NOT_ACTUAL")
 
 
+def card_ratio_columns() -> bool:
+    """CARD_RATIO_COLUMNS (default off; 1 Nov 2026, VIMTALABS nse-106836191): a ratio row with no change cells is laid on the value
+    cells of its amount row, whose own change arithmetic reads the previous-quarter and year-ago columns (ratio_columns); a
+    comparison drawn from the other column is corrected (a structured previous value) or dropped (a line of words). On only after
+    the on/off check over stored cards (release_check.py ratio_columns) and a blind sample. Read at the call."""
+    return _switch("CARD_RATIO_COLUMNS")
+
+
 def card_words_match_figures() -> bool:
     """CARD_WORDS_MATCH_FIGURES (default off; 1 Nov 2026, blind audit "arithmetic in words"): a card's comparison words
     (doubled, halved, accelerated, slowed, outpaced) are checked against its own results table and memory

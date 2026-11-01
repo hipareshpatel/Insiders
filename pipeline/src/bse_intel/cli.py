@@ -1112,6 +1112,13 @@ def _call_memory_pending(args, settings, sink) -> int:
     if not memory_call_v2():
         print("MEMORY_CALL_V2 is off: nothing to read")
         return 0
+    if getattr(args, "backlog", 0):   # only with an empty queue (call_queue.enqueue_backlog), before reading
+        try:
+            added = call_queue.enqueue_backlog(sink, args.backlog)
+            if added:
+                print(f"backlog: {len(added)} old documents queued")
+        except Exception as exc:   # noqa: BLE001 - the backlog is optional; the queue is read as it is
+            log.warning("backlog not queued: %s", exc)
     items = call_queue.pending(sink)
     if args.limit:
         items = items[:args.limit]
@@ -2980,6 +2987,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--pending", action="store_true", help="read the queue the pipeline fills with MEMORY_CALL_V2 on, oldest first; exit 124 when filings are left")
     p.add_argument("--time-budget", type=int, default=1500, help="seconds; with --pending, no new filing starts after it")
     p.add_argument("--limit", type=int, default=0, help="with --pending, at most this many filings (0 = all)")
+    p.add_argument("--backlog", type=int, default=0, help="with --pending and an empty queue, first queue up to this many old transcripts and decks (newest filed first) that memory has not read (0 = off)")
     p.set_defaults(func=cmd_call_memory)
 
     p = sub.add_parser("prediction-units", help="stored targets judged in two different units, and per-share units on other figures (read only, no AI)")

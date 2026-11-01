@@ -1,0 +1,85 @@
+{
+ "c01": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "FACT what_happened: Net profit ... compared to Rs45.94 Cr in Q2FY25 (45.94 Cr is the 30 Sep 2025 column = Q2FY26)"
+  ],
+  "wrong_y": [],
+  "note": "Filing table: quarter ended 30 Sep 2025 net profit 4,593.7 lakh = 45.94 Cr, i.e. Q2FY26."
+ },
+ "c02": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "FACT what_happened: PAT declined ... from 5,404.12 Cr in H1 FY25 (filing: half year ended 30.09.2025 = H1 FY26)",
+   "FACT what_happened: underwriting loss against 1,021.98 Cr in H1 FY25 (is H1 FY26)"
+  ],
+  "wrong_y": [
+   "FACT what_happened: underwriting loss against 1,021.98 Cr in H1 FY25 (is H1 FY26 column, same as the 30.09.2025 PAT)"
+  ],
+  "note": "Press release compares to half year ended 30.09.2025 = H1 FY26; Y fixes PAT line only."
+ },
+ "c03": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "Revenue compared to 598.25 Cr in Q2 FY25 (filing: Q2 FY2025-26)",
+   "PAT compared to 93.97 Cr in Q2 FY25 (filing: Q2 FY2025-26)"
+  ],
+  "wrong_y": [],
+  "note": "Presentation says 'vs Rs. 598.25 Crores in Q2 FY2025-26' and PAT/EBITDA likewise."
+ },
+ "c04": {
+  "verdict": "X BETTER",
+  "wrong_x": [
+   "why_it_matters: PBT before exceptional 151.23 Cr in Q2FY25 (30-09-2025 column = Q2FY26)",
+   "Revenue 696.85 Cr is prior-year total income; revenue from operations was 686.21 Cr (shared with Y)"
+  ],
+  "wrong_y": [
+   "revenue from operations compared to 696.85 Cr in Q2FY25 (is Q2FY26, and is total income)",
+   "why_it_matters: PBT 151.23 Cr in Q2FY25 (is Q2FY26)"
+  ],
+  "note": "Prior-year quarter columns are 30-09-2025 = Q2FY26; X labels the revenue line correctly, Y does not; both keep one Q2FY25 label wrong."
+ },
+ "c05": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "Consolidated revenue ... compared to 461.32 Cr in Q2FY25 (filing: quarter ended 30 Sep 2025 = Q2FY26)"
+  ],
+  "note": "Consolidated 461.32 sits in the 30 Sep 2025 column; 946.77 H1 = 483.81 + 462.96."
+ },
+ "c06": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "PAT 275 Cr up from 251 Cr in Q2 FY25 (presentation: Q2FY25=211, Q2FY26=251, Q2FY27=275)"
+  ],
+  "note": "Presentation PAT chart labels 251 as Q2 FY26."
+ },
+ "c07": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "Net profit H1FY27 up from 23.03 crore in H1FY25 (filing: six months ended 30 Sep 2025 = H1FY26, 2,303 lakh)"
+  ],
+  "note": "Net profit row: H1FY27 11,161; H1FY26 2,303."
+ },
+ "c08": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "Revenue compared to 281.78 Cr in Q2 FY25 (quarter ended 30 Sep 2025 = Q2 FY26)",
+   "PAT compared to 12.56 Cr in Q2 FY25 (is Q2 FY26)"
+  ],
+  "wrong_y": [],
+  "note": "Filing column quarter ended Sep 30, 2025 revenue 2,817.82 million; PAT 125.56 million in Q2 FY26."
+ },
+ "c09": {
+  "verdict": "X BETTER",
+  "wrong_x": [
+   "Consolidated 158.96 Cr is total income (revenue from operations 156.87 Cr), shared with Y"
+  ],
+  "wrong_y": [
+   "Consolidated revenue up from 158.96 Cr in Q2FY25 (is Q2FY26, 30 Sep 2025 column)"
+  ],
+  "note": "Consolidated Sep 30, 2025 column: revenue 15,686.96 + other income 208.95 = 15,895.91 lakh."
+ }
+}

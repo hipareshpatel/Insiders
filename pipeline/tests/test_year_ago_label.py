@@ -49,7 +49,7 @@ def test_gicre_and_hegam_labels_are_corrected(monkeypatch):
 
 
 def test_off_changes_nothing(monkeypatch):
-    monkeypatch.delenv("CARD_YEAR_AGO_LABEL", raising=False)
+    monkeypatch.setenv("CARD_YEAR_AGO_LABEL", "0")
     for card in (GICRE, HEGAM):
         c = copy.deepcopy(card)
         assert Y.apply_card_json(c) == [] and c == card

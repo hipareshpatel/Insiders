@@ -70,6 +70,21 @@ scored on that replay. **All of this is in-sample**: the guards were written aft
 - nemotron-3.5-parse: HTTP 404 "404 page not found" for `nvidia/nemotron-3.5-parse`. The name is not served at this
   endpoint. Assumption, not found by a search on 30 Oct: it may have another id or another URL.
 
+## Mistral OCR and nemotron-parse-2.0: stopped (lead, 1 Nov 2026)
+
+- **Mistral OCR.** HTTP 429 "Rate limit exceeded" (code 1300) on every call in runs 41072420377 (30 Oct), 41076952339
+  (30 Oct, with 2, 5 and 10 s retries) and 41267832784 (1 Nov, after the monthly allowance reset).
+  - A limit that holds on the first calls of a new month, through ~17 s of retries, is not a rate or budget limit.
+  - Assumption, not measured: the Free plan does not allow OCR. The lead is asking the owner what the Mistral admin
+    page shows.
+- **nemotron-parse-2.0.** Each request form was refused:
+  - Without tool_choice: 400 '"auto" tool choice requires --enable-auto-tool-choice'.
+  - Once: 502 Bad Gateway.
+  - With the tool named in tool_choice: 400 "requires --tool-call-parser to be set".
+  - The hosted endpoint takes no tool calls at all, and NVIDIA's catalogue lists the model as downloadable only. A
+    no-tool reader that parses the raw bbox-tagged text would be new code for a model we cannot rely on being hosted.
+- **nemotron-3.5-parse.** 404 for `nvidia/nemotron-3.5-parse`. Waiting on the exact model id from the owner.
+
 ## Out of sample: run 41077643109 (api-reader-oos, 30 Oct 2026)
 
 `docs/bench/oos/key-union.csv`: 552 figures in 67 kept PDFs, no exchange read, 172 nemotron pages. Fully unseen by both

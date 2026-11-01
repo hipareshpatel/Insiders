@@ -102,3 +102,27 @@ def test_a_former_name_in_the_text_does_not_hold():
 def test_a_name_with_the_own_name_nowhere_is_still_held():
     t = "Alpha Graphite Limited" + STMT
     assert other_issuer_results(f("Beta Holdings Limited"), t) == "Alpha Graphite Limited"
+
+
+# --- the three false holds of release check 41318733817 (blind review, 1 Nov 2026) ----------------------------------------------
+
+def test_icici_the_own_companys_rename_with_its_formerly_clause_is_its_own():
+    text = ("The Board of Directors ICICI Life Insurance Limited (formerly ICICI Prudential Life Insurance Company Limited)\n"
+            "Statement of Unaudited Financial Results for the quarter ended September 30, 2026\nPremium income 12,000.00")
+    assert other_issuer_results(f("ICICI Prudential Life Insurance Company Limited"), text, []) is None
+
+
+def test_ompower_its_own_name_read_with_ocr_garble_is_its_own():
+    text = ("x " * 3200 + "Om Power Transrnission Limited\nStatement of Unaudited Financial Results for the quarter ended "
+            "30 September 2026\nRevenue from operations 52.10")   # the name only past the letter's first 6,000 characters
+    assert other_issuer_results(f("Om Power Transmission Limited"), text, []) is None
+
+
+def test_sml_a_letter_from_before_the_rename_with_the_own_scrip_code_is_its_own():
+    text = ("SML ISUZU LIMITED\nScrip Code: 505192 Symbol: SMLISUZU\nStatement of Unaudited Financial Results for the quarter "
+            "ended 31 December 2024\nRevenue from operations 434.10")
+    sml = Filing(news_id="n", scrip_code="505192", company_name="SML Mahindra Ltd", headline="", subject="",
+                 filed_at="2025-01-30", filing_date="2025-01-30")
+    assert other_issuer_results(sml, text, []) is None
+    # without its code the name alone still holds, as before (no former name known)
+    assert other_issuer_results(f("SML Mahindra Ltd"), text.replace("Scrip Code: 505192 ", ""), []) == "SML ISUZU LIMITED"

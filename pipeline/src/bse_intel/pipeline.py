@@ -1476,6 +1476,10 @@ def other_issuer_results(filing: Filing, text: str, former_names: list[str] | No
         name = (tail.group(1) if tail else m.group("name")).strip(" ,.")
         name = re.sub(r"^(?:\S+[.:;]\s+)+(?=[A-Z])", "", name)   # "Board. HEG LIMITED": a sentence's end is no part of it
         bare, former = _bare_company(name), _bare_company(m.group("former"))
+        if former and (former == own or former in formers):
+            return name, True    # the listed company's own rename ("ICICI Life Insurance (formerly ICICI Prudential Life)")
+        if _name_present(filing.company_name, name):
+            return name, True    # its own name, read with OCR garble ("Om Power Transrnission")
         if former and bare != own and not (bare in formers and (former == own or former in formers)):
             formerly.add(name)
         if bare == own or (len(own) >= 4 and own in bare):
@@ -1503,9 +1507,18 @@ def other_issuer_results(filing: Filing, text: str, former_names: list[str] | No
     own_names = [filing.company_name] + [n for n in former_names or [] if _bare_company(n if isinstance(n, str) else (n or {}).get("name")) not in strong]
     if strong:
         return next(n for n, _ in named if _bare_company(n) in strong)
+    if _own_code_in(filing, head):
+        return None   # the letter carries the listed company's own scrip code: a name it had then (SML ISUZU, now SML Mahindra)
     if not any(_name_present(n if isinstance(n, str) else (n or {}).get("name"), head) for n in own_names):
         return named[0][0]
     return None
+
+
+def _own_code_in(filing: Filing, head: str) -> bool:
+    """Whether the covering letter names the listed company's own BSE scrip code (a renamed company's letter from before its
+    rename still carries it)."""
+    code = re.sub(r"\D", "", str(filing.scrip_code or ""))
+    return len(code) >= 5 and re.search(rf"(?<!\d){code}(?!\d)", head) is not None
 
 
 _ESG = re.compile(r"\besg\b|sustainability\s+(?:rating|score)|environmental,?\s+social", re.I)

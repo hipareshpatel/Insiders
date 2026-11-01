@@ -236,6 +236,16 @@ def call_memory_geometry() -> bool:
     return _switch("CALL_MEMORY_GEOMETRY")
 
 
+def call_memory_vision_check() -> bool:
+    """CALL_MEMORY_VISION_CHECK (default off; TODO 101/144, owner decision "option B", 1 Nov 2026): a deck point whose quote is
+    assembled from words across a slide (CallPoint.quote_assembled) is kept only when a vision model, shown the slide as an
+    image, says it shows the point's figure for its label and period (call_memory.vision_confirm). Measured 31 Oct 2026: the v2
+    prompt keeps deck points with 9.2% WRONG (27 of 293) against the owner's 2% bar, and all 27 WRONG points had an assembled
+    quote (40% of the RIGHT ones too, so dropping every assembled point costs too much). On no, or no answer, the point is
+    dropped with the reason "vision". Free vision route only. Read at the call."""
+    return _switch("CALL_MEMORY_VISION_CHECK")
+
+
 def card_ground_all_fields() -> bool:
     """CARD_GROUND_ALL_FIELDS (on in config/switches.toml; TODO 105, F204): the figures in the timeline entry, the core catalyst and the
     track-next lists (milestones, pending approvals, catalysts, risks, KPI targets) go through the same grounding as the

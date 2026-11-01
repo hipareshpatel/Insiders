@@ -1028,6 +1028,7 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
     that can never be read (not in the ledger, an invitation) raises PermanentSkip; any other error is transient. No stored text
     is transient: the pipeline writes the text after it queues the filing, and the write is best effort."""
     from . import call_memory, memory_recall_export as mre
+    from .settings import call_memory_vision_check
     from .dossier import keep_concurrent_writes
     from .extract import Document
 
@@ -1050,6 +1051,9 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
     started = time.monotonic()
     reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid, gap_s, retry_until)
     kept, dropped = call_memory.check_points(reply.points, text, blocks, scope=f"{filing.scrip_code}:{news_id}")
+    if kept and any(p.quote_assembled for p in kept) and call_memory_vision_check():
+        kept, vision_dropped = call_memory.vision_confirm(kept, *_slide_vision(pipeline, filing))
+        dropped = dropped + vision_dropped
     row |= {"symbol": filing.symbol, "company": filing.company_name, "filed_at": filing.filed_at, "kind": kind,
             "model": reply.served_by, "chars": len(text), "prompt_chars": reply.prompt_chars, "pages": doc.page_count,
             "seconds": round(time.monotonic() - started, 1), "asked": len(reply.points), "kept": len(kept),
@@ -1071,6 +1075,30 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
             {**row, "points_kept": [p.model_dump(exclude_none=True) for p in kept], "points_dropped": dropped},
             ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return row
+
+
+def _slide_vision(pipeline, filing):
+    """(render, ask) for call_memory.vision_confirm: the filing's PDF fetched once on the first slide asked for, a page drawn
+    at 110 dpi, the question put to the free `vision` route (providers.toml). Without the route or the PDF nothing is answered."""
+    cache: dict = {}
+
+    def render(page: int) -> bytes | None:
+        import fitz
+
+        if "doc" not in cache:
+            raw = pipeline._attachment(filing.pdf_url, 60 * 1024 * 1024) if filing.pdf_url else None
+            cache["doc"] = fitz.open(stream=raw, filetype="pdf") if raw else None
+        doc = cache["doc"]
+        if doc is None or not 1 <= page <= doc.page_count:
+            return None
+        return doc[page - 1].get_pixmap(dpi=110).tobytes("png")
+
+    def ask(png: bytes, question: str) -> str | None:
+        if not pipeline.gateway.has_route("vision"):
+            return None
+        return pipeline.gateway.ask_image(png, question)
+
+    return render, ask
 
 
 def _call_memory_pending(args, settings, sink) -> int:

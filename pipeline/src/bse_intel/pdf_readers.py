@@ -1248,7 +1248,12 @@ class MistralOcrReader(Reader):
             return self._ocr(sub_pdf, count)
         out = []
         for page in range(1, count + 1):
-            out.extend((page, grid) for _, grid in self._ocr(subset_pdf(sub_pdf, [page]), 1))
+            try:
+                out.extend((page, grid) for _, grid in self._ocr(subset_pdf(sub_pdf, [page]), 1))
+            except RuntimeError:
+                if not out:
+                    raise         # nothing read: the refusal (or the cap) is the answer
+                break             # pages already read and paid for are kept (review of d0a3c41)
         return out
 
     def _ocr(self, pdf: bytes, count: int):
@@ -1274,7 +1279,7 @@ class MistralOcrReader(Reader):
             if reply.status_code != 429 or wait is None:
                 break
             try:
-                wait = min(120.0, float(reply.headers.get("retry-after") or wait))
+                wait = max(0.0, min(120.0, float(reply.headers.get("retry-after") or wait)))
             except ValueError:
                 pass
             time.sleep(wait)
@@ -1437,8 +1442,8 @@ def nemotron_grids(answer: dict) -> list[list[list[str]]]:
                         # a "Notes to ..." heading names the statement the notes belong to, not the table under it
                         # (SMARTWORKS: standalone key figures under "NOTES TO ... CONSOLIDATED RESULTS", run 41077643109)
                         own = [h for h in head if not re.match(r"\s*notes?\b", h[0], re.I)]
-                        text = "\n".join([h[0] for h in own] + [" ".join(r) for r in grid[:2]])
-                        if bool(_CONS_WORD.search(text)) == bool(_ALONE_WORD.search(text)):
+                        named = "\n".join([h[0] for h in own] + [" ".join(r) for r in grid[:2]])
+                        if bool(_CONS_WORD.search(named)) == bool(_ALONE_WORD.search(named)):
                             continue          # no basis named, or both: the table's basis is not its own to tell
                         grids.append(own + grid)
                         continue

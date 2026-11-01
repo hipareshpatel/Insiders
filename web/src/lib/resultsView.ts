@@ -198,10 +198,12 @@ export function spreadHeading(s: Pick<KpiSummary, "pat_of" | "spread">): string 
   return `${fmtCount(s.pat_of)} with a year-ago quarter: ${fmtCount(with_pct)} in the bars, ${fmtCount(loss_to_profit)} loss to profit, ${fmtCount(loss_narrowed)} loss narrowed`;
 }
 
-/** One sentence above the tiles: how many reported and how many can be compared with the same quarter last year. */
-export function tilesIntro(s: Pick<KpiSummary, "n" | "pat_of">): string {
+/** One sentence above the tiles: how many reported and how many can be compared with the same quarter last year. Each tile has its own base,
+ *  so when revenue's differs from profit's it is said here too (owner, 2 Nov 2026: "604 vs only 601?" - life insurers file no revenue line). */
+export function tilesIntro(s: Pick<KpiSummary, "n" | "pat_of"> & Partial<Pick<KpiSummary, "revenue_of">>): string {
   const noun = (n: number) => (n === 1 ? "company has" : "companies have");
-  return `${fmtCount(s.n)} ${noun(s.n)} reported; ${fmtCount(s.pat_of)} can be compared with the same quarter last year.`;
+  const revenue = s.revenue_of != null && s.revenue_of !== s.pat_of ? ` (${fmtCount(s.revenue_of)} on revenue)` : "";
+  return `${fmtCount(s.n)} ${noun(s.n)} reported; ${fmtCount(s.pat_of)} can be compared on profit with the same quarter last year${revenue}.`;
 }
 
 /** What a bank's or NBFC's EBITDA cell holds, said where it is shown so a reader comparing sites is not misled. */

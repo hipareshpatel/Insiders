@@ -246,8 +246,13 @@ test("the spread chart's header gives its base, and one sentence above the tiles
   const s = { n: 611, pat_of: 558, spread: { below_0: 138, from_0_to_10: 54, from_10_to_20: 50, above_20: 273, loss_to_profit: 29, loss_narrowed: 14, with_pct: 515 } };
   assert.equal(spreadHeading(s), "558 with a year-ago quarter: 515 in the bars, 29 loss to profit, 14 loss narrowed");
   assert.equal(515 + 29 + 14, 558);
-  assert.equal(tilesIntro(s), "611 companies have reported; 558 can be compared with the same quarter last year.");
-  assert.equal(tilesIntro({ n: 1, pat_of: 1 }), "1 company has reported; 1 can be compared with the same quarter last year.");
+  assert.equal(tilesIntro(s), "611 companies have reported; 558 can be compared on profit with the same quarter last year.");
+  assert.equal(tilesIntro({ n: 1, pat_of: 1 }), "1 company has reported; 1 can be compared on profit with the same quarter last year.");
+  // live Q2FY27, 2 Nov 2026: life insurers have a year-ago profit but no revenue line, so revenue's base is smaller (owner: "604 vs only 601?")
+  assert.equal(tilesIntro({ n: 662, pat_of: 604, revenue_of: 601 }),
+    "662 companies have reported; 604 can be compared on profit with the same quarter last year (601 on revenue).");
+  assert.equal(tilesIntro({ n: 662, pat_of: 604, revenue_of: 604 }),
+    "662 companies have reported; 604 can be compared on profit with the same quarter last year.");
 });
 
 test("an empty cell says why: insurers show no revenue by design (U4)", () => {

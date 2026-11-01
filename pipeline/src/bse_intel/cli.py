@@ -469,15 +469,20 @@ def cmd_requeue_failed(args, settings, sink) -> int:
         from . import prune
 
         ids = prune.release(sink, dry_run=True)["rerun_ids"] + [i.strip() for i in (args.ids or "").split(",") if i.strip()]
-        if not args.dry_run and not _snapshot_requeue(sink, ids):
+        if not args.dry_run and _snapshot_requeue(sink, ids) is None:
             return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
         return 0
     if args.ids:
         ids = [i.strip() for i in args.ids.replace("\n", ",").split(",")]
-        if not args.dry_run and not _snapshot_requeue(sink, ids):
+        scrips = [] if args.dry_run else _snapshot_requeue(sink, ids)
+        if scrips is None:
             return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
+        if scrips:      # their history is read first, so an older requeued filing runs on the next pipeline run
+            print("requeue-failed: first in the history queue: " + ", ".join(requeue.prioritise(sink, scrips)[:len(scrips)]))
+            # and the named filings get the run's short slot after today's filings (the history pass may not start)
+            requeue.mark_by_id(sink, ids, scrips)
         return 0
     since = args.since or (today_ist() - timedelta(days=args.days)).isoformat()
     print("requeue-failed: no backup taken (no filings named; failed filings have no card to back up)")
@@ -485,10 +490,10 @@ def cmd_requeue_failed(args, settings, sink) -> int:
     return 0
 
 
-def _snapshot_requeue(sink, ids: list[str]) -> bool:
+def _snapshot_requeue(sink, ids: list[str]) -> list[str] | None:
     """Before named filings are set pending (the live run re-reads them later and rewrites their cards and their companies'
     memory): save the named filings' cards and those companies' dossiers (backup.start_scope). False when a copy did not read
-    back: nothing is requeued. The backup has no after-state (the live run rewrites the filings later, and what it or anything
+    back: nothing is requeued (None); else the companies of the named filings. The backup has no after-state (the live run rewrites the filings later, and what it or anything
     else writes meanwhile cannot be told from the job's), so it restores only with ``--force``, the dry run listing every
     difference. Finding the cards of named filings reads every stored card once (export_cards, about 80 pages): acceptable for
     a named re-run, and the reason a re-run by date takes no backup."""
@@ -499,14 +504,14 @@ def _snapshot_requeue(sink, ids: list[str]) -> bool:
         backup = start_scope(sink, "requeue", news_ids=ids)
     except BackupError as exc:
         print(f"requeue-failed: the backup did not read back, nothing requeued: {exc}")
-        return False
+        return None
     summary = backup.summary()
     print("requeue-failed: " + (f"backup of {summary['cards']} stored cards and {summary['dossiers']} dossiers before the re-run: "
                                 f"{summary['prefix']} (no after-state: restore it only with --force; the dry run lists every difference, "
                                 "later live writes included)" if summary else "no backup taken (none of the filings has a stored card)"))
     if backup.missing_ids and summary:
         print(f"requeue-failed: no stored card, not in the backup: {len(backup.missing_ids)} filings")
-    return True
+    return list(getattr(backup, "scrips", []))
 
 
 def cmd_failed_report(args, settings, sink) -> int:
@@ -967,6 +972,9 @@ def cmd_restated_pdf(args, settings, sink) -> int:
         symbols = {s: by_scrip[s] for s in wanted if s in by_scrip}
     else:
         symbols = {s: by_scrip[s] for s in sorted(nse_universe.included) if s in by_scrip}
+    if args.top_mcap:    # the N largest by market cap (of the named companies, else of the universe), still taken in scrip order so a resume works
+        picked = _largest_by_mcap(sink, [(s, v) for s, v in symbols.items()], args.top_mcap)
+        symbols = {s: v for s, v in sorted(picked)}
     from . import pdf_referee as pr
     pr.be_gentle()
     resume_key = "restated_pdf:last_done"   # F213: where a run that hit the file cap stopped; the next run goes on from there
@@ -1276,7 +1284,15 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
     pipeline = _pipeline(settings, quiet)
     # never a call to NSE or BSE: a filing whose text or file is not stored fails here, it is not downloaded twice (owner rule)
     stub = pipeline.nse = pipeline.bse = _NoExchange()
-    was = os.environ.get("CARD_FACT_SHEET")
+    # FACT_SHEET_AB_SWITCH=CARD_FACT_SHEET_LENDERS (TODO 151): flip the lenders' switch instead, the fact sheet itself kept on
+    switch = os.environ.get("FACT_SHEET_AB_SWITCH") or "CARD_FACT_SHEET"
+    if switch not in ("CARD_FACT_SHEET", "CARD_FACT_SHEET_LENDERS"):
+        print(f"FACT_SHEET_AB_SWITCH {switch!r}: only CARD_FACT_SHEET or CARD_FACT_SHEET_LENDERS")
+        return 2
+    kept = {name: os.environ.get(name) for name in ("CARD_FACT_SHEET", "CARD_FACT_SHEET_LENDERS")}
+    if switch == "CARD_FACT_SHEET_LENDERS":
+        os.environ["CARD_FACT_SHEET"] = "1"
+    was = os.environ.get(switch)
     report: list[dict] = []
     try:
         for news_id in ids:
@@ -1295,7 +1311,7 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 made = {}
                 # FACT_SHEET_AB_ON_ONLY=1 (a measured test of one named model, ONLY_MODEL): the switch-on card only, half the AI calls
                 for name, value in (("on", "1"),) if os.environ.get("FACT_SHEET_AB_ON_ONLY") == "1" else (("off", "0"), ("on", "1")):
-                    os.environ["CARD_FACT_SHEET"] = value   # read at the call (settings._switch)
+                    os.environ[switch] = value   # read at the call (settings._switch)
                     with pipeline._lock:   # each card reads memory as stored, never the other run's merge (blind review)
                         pipeline._pending_memory.clear()
                     outcome = pipeline.analyze(filing, bulk=False)   # as the live path reads it
@@ -1309,20 +1325,21 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 missed = getattr(stub, "calls", [])[asked:]
                 if missed:   # a stored copy was missing and its reader went on without it: this filing's A/B is not like for like
                     row["warning"] = "not stored, so read without: " + ", ".join(dict.fromkeys(missed))
-                (out_dir / f"{news_id}.json").write_text(json.dumps({**row, "off": made["off"], "on": made["on"]}, ensure_ascii=False,
+                (out_dir / f"{news_id}.json").write_text(json.dumps({**row, "off": made.get("off"), "on": made["on"]}, ensure_ascii=False,
                                                                     indent=1, default=str) + "\n", encoding="utf-8")
             except Exception as exc:  # noqa: BLE001 - one filing never stops the rest
                 row["error"] = f"{type(exc).__name__}: {exc}"[:300]
             report.append(row)
             print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "off_status", "on_status", "changed_fields", "warning", "error")}, ensure_ascii=False, default=str))
     finally:
-        if was is None:
-            os.environ.pop("CARD_FACT_SHEET", None)
-        else:
-            os.environ["CARD_FACT_SHEET"] = was
+        for name, value in kept.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
     done = [r for r in report if "error" not in r]
     summary = {"filings": len(ids), "made": len(done), "failed": len(report) - len(done),
-               "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "not_like_for_like": sum("warning" in r for r in done),
+               "switch": switch, "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "not_like_for_like": sum("warning" in r for r in done),
                "blocked_writes": quiet.blocked, "rows": report}
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False))
@@ -1639,7 +1656,7 @@ def cmd_keep_annual_pdfs(args, settings, sink) -> int:
     try:
         client = NseClient()
         client.warm_up()
-        out = ap.run(sink, client, symbols, args.year)
+        out = ap.run(sink, client, symbols, args.year, years=args.years)
     except SourceBlockedError as exc:
         logging.getLogger("bse_intel.annual_pdfs").error("NSE refused; stopping: %s", exc)
         return REFUSED
@@ -1649,6 +1666,30 @@ def cmd_keep_annual_pdfs(args, settings, sink) -> int:
     if args.json:
         Path(args.json).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
     return 0
+
+
+def cmd_bank_pdf_read(args, settings, sink) -> int:
+    """TODO 148: banks' annual-report PDFs read for the rows their XBRL lacks (bank_pdf.py): depreciation (a direct cash flow),
+    CWIP and Fixed Assets (CWIP inside the file's FixedAssets). The reports kept in R2 (raw/annual-pdf/<SYMBOL>/) and the BSE ones
+    linked on the stored Screener page (the newest --years), fetched once through the ported BSE adapter as written and kept; each
+    reading kept at raw/bank-pdf/<scrip>/ as it is made, with what the bank's own file says of each figure. Companies that are not
+    banks are skipped. --dry-run keeps the files, not the readings. A refusal stops the run (exit 75); the file cap is a planned
+    stop (0); --time-budget ends it between two reports (exit 124). No AI, no NSE, no memory write: the statements take the
+    readings at their next rebuild."""
+    from . import bank_pdf
+    from .adapters.bse import BSEClient
+
+    companies = _selected_companies(args, sink)
+    if companies is None:
+        return 2
+    out = bank_pdf.run(sink, BSEClient(), companies, years=args.years, time_budget=args.time_budget, dry_run=args.dry_run)
+    print(bank_pdf.render(out))
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if out["blocked"]:
+        logging.getLogger("bse_intel.bank_pdf").error("BSE refused; stopping: %s", out["blocked"])
+        return REFUSED
+    return MORE_LEFT if out["out_of_time"] else 0
 
 
 def cmd_tijori_download(args, settings, sink) -> int:
@@ -1839,7 +1880,8 @@ def cmd_screener_rows(args, settings, sink) -> int:
     companies = _selected_companies(args, sink)
     if companies is None:
         return 2
-    summary = sv.run(sink, companies, args.workers, args.day)
+    # --stored: the statements stored in memory (what the site shows) instead of the recipes over the stored facts
+    summary = (sv.run_stored if args.stored else sv.run)(sink, companies, args.workers, args.day)
     print(sv.render(summary))
     if args.json:
         Path(args.json).write_text(sv.to_json(summary), encoding="utf-8")
@@ -1848,6 +1890,19 @@ def cmd_screener_rows(args, settings, sink) -> int:
     if args.md:
         Path(args.md).write_text(sv.to_markdown(summary, today_ist().isoformat()), encoding="utf-8")
     return 0
+
+
+def cmd_screener_rows_diff(args, settings, sink) -> int:
+    """Two screener-rows runs compared (screener_rows_diff.py, TODO 149): the weekly check's report. Reads two local files."""
+    from . import screener_rows_diff as srd
+
+    result = srd.compare(Path(args.prev).read_text(encoding="utf-8"), Path(args.curr).read_text(encoding="utf-8"))
+    report = srd.render(result)
+    if args.md:
+        Path(args.md).write_text(report, encoding="utf-8")
+    else:
+        print(report)
+    return 1 if args.fail_on_worse and srd.worse_classes(result) else 0
 
 
 def cmd_xbrl_facts(args, settings, sink) -> int:
@@ -1893,6 +1948,14 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
             tmp.write_text(xf.to_json(current), encoding="utf-8")
             os.replace(tmp, summary_path)
 
+    if args.reread_legacy:
+        result = xf.reread_legacy(sink, [scrip for scrip, _ in companies], dry_run=args.dry_run)
+        print(json.dumps({k: v for k, v in result.items() if k != "changed"}))
+        for line in result["changed"]:
+            print("  " + line)
+        if args.json:
+            Path(args.json).write_text(json.dumps(result, indent=1), encoding="utf-8")
+        return 0
     listing = xf.ListingCsv(args.csv) if (args.from_nse and args.csv) else None
     extra = {"from_nse": args.from_nse, "time_budget": args.time_budget, "row_sink": listing, "progress": progress}
     try:
@@ -1923,6 +1986,28 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
     if summary.get("infra_stop"):
         return INFRA_STOP         # R2 or the Worker failing, not NSE: its own code, so nobody reads it as a refusal
     return REFUSED if summary["stopped"] and not summary["capped"] else 0
+
+
+def cmd_facts_dump(args, settings, sink) -> int:
+    """Read only: a company's stored facts documents and the facts whose element matches ``--match`` (xbrl_facts.dump)."""
+    from . import xbrl_facts
+
+    for scrip in [s.strip() for s in args.scrips.split(",") if s.strip()]:
+        print(xbrl_facts.dump(sink, scrip, args.match))
+    return 0
+
+
+def cmd_xbrl_expiry_check(args, settings, sink) -> int:
+    """Read only (TODO 139): every raw results file in R2 (raw/xbrl/, deleted after 180 days) against the facts copies
+    (raw/xbrl-facts/); xbrl_expiry.py. Exit 1 when a raw file that holds results has no facts copy or an object could not be
+    read (an R2 failure is never a pass), else 0."""
+    from . import xbrl_expiry
+
+    summary = xbrl_expiry.check(sink, workers=args.workers)
+    print(xbrl_expiry.render(summary))
+    if args.json:
+        Path(args.json).write_text(xbrl_expiry.to_json(summary), encoding="utf-8")
+    return 1 if summary["facts_missing"] or summary["not_verified"] else 0
 
 
 def cmd_pdf_referee(args, settings, sink) -> int:
@@ -2289,15 +2374,48 @@ def cmd_restore(args, settings, sink) -> int:
     return 0
 
 
+def cmd_sync_indices(args, settings, sink) -> int:
+    """NSE's broad index constituents into index_members (index_members.py): every Sunday. Exit 1 when an index list could not be taken
+    (its old rows are kept); the others are written."""
+    from . import index_members, raw
+    from .nse import NseClient
+    from .timeutil import today_ist
+
+    with NseClient() as client:
+        raw.attach(client, sink, "nse", settings)
+        report = index_members.sync(sink, client, today_ist().isoformat())
+    print(json.dumps(report.as_dict()))
+    return 1 if report.skipped else 0
+
+
 def cmd_results_table(args, settings, sink) -> int:
-    """The results page's figures from the saved statements (the company page's source): one small file per company, raw/results-table/<scrip>.json
-    (results_table.py). By default the live window's companies only; --all rebuilds every company. No card, no AI, no exchange call."""
+    """The results page's figures from the saved statements (the company page's source): the KPI rows of the Results page, one per company and quarter in
+    the results_kpi table (results_table.py). By default the live window's companies only; --all rebuilds every company. No card, no AI, no exchange call."""
     from . import results_table
     from .timeutil import now_ist
 
     scrips = None if args.all else results_table.recent_scrips(sink)
     count = results_table.write(sink, now_ist().isoformat(timespec="seconds"), scrips)
-    print(f"results-table: {'all companies' if scrips is None else f'{len(scrips)} companies'}, {count} quarter tables written under {results_table.PREFIX}")
+    print(f"results-table: {'all companies' if scrips is None else f'{len(scrips)} companies'}, {count} KPI rows sent to the database ({results_table.STATEMENT})")
+    return 0
+
+
+def cmd_reit_results(args, settings, sink) -> int:
+    """REITs and InvITs on the Results page (reit_results.py): NSE's trust results list, each trust's XBRL (stored, else downloaded under FILE_CAP and
+    kept in R2), the trusts into companies and their quarters into results_kpi. No AI. Exit 75 when NSE refused the session; the file cap is a
+    planned stop (exit 0, the counts say capped)."""
+    from . import raw, reit_results
+    from .nse import NseClient, SourceBlockedError
+    from .timeutil import now_ist
+
+    try:
+        with NseClient() as client:
+            raw.attach(client, sink, "nse", settings)
+            out = reit_results.run(client, sink, now_ist().isoformat(timespec="seconds"))
+    except SourceBlockedError as exc:
+        print(f"NSE refused ({exc}): stopped")
+        return REFUSED
+    print("reit-results: " + json.dumps(out, ensure_ascii=False))
     return 0
 
 
@@ -2313,13 +2431,34 @@ def cmd_statements_backfill(args, settings, sink) -> int:
         print(f"rating snapshots in the backups: {sum(len(v) for p in ratings.values() for v in p.values())} in {len(ratings)} companies")
         outcome = sb.run(sink, sorted(ratings), args.apply, args.limit, args.restart, ratings=ratings)
     else:
-        outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
+        outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named),
+                         replace=getattr(args, "replace", False))
     print(sb.render(outcome))
     if args.json:
         Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if outcome["error"]:
         print(f"statements-backfill: stopped, exit 1: {outcome['error']}", file=sys.stderr)
         return 1
+    return 124 if outcome["more"] and args.apply else 0
+
+
+def cmd_statements_correct(args, settings, sink) -> int:
+    """The profit-line rules (screener_view.corrected_pl) over every stored quarters and annual entry (statements_correct.py): a dry
+    run by default, --apply backs each changed dossier up first and saves chunk by chunk, resuming. No NSE, BSE or AI."""
+    from . import statements_correct as sc
+
+    named = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
+    outcome = sc.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
+    print(sc.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(sc.to_csv(outcome), encoding="utf-8")
+    if outcome["error"]:
+        print(f"statements-correct: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each changed dossier up to backup/statements-correct-<time>/, then writes)")
     return 124 if outcome["more"] and args.apply else 0
 
 
@@ -2692,9 +2831,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
     p.add_argument("--json", help="write the report to this file")
     p.set_defaults(func=cmd_memory_drop_known_wrong)
-    p = sub.add_parser("results-table", help="the results page's figures from the saved statements (the company page's Results tab source), a small file per company in R2 (no card, no AI, no NSE)")
+    p = sub.add_parser("sync-indices", help="NSE's broad index constituents (Nifty 50 ... Microcap 250) into index_members: every Sunday; no AI")
+    p.set_defaults(func=cmd_sync_indices)
+    p = sub.add_parser("results-table", help="the results page's figures from the saved statements (the company page's Results tab source), KPI rows in the database, one per company and quarter (no card, no AI, no NSE)")
     p.add_argument("--all", action="store_true", help="every company (the full rebuild); default: the companies with a results card in the live window")
     p.set_defaults(func=cmd_results_table)
+    p = sub.add_parser("reit-results", help="REITs and InvITs on the Results page: NSE's trust results list, each trust's XBRL (stored, else downloaded under FILE_CAP and kept in R2), the trusts into companies and their quarters into the results table (no AI)")
+    p.set_defaults(func=cmd_reit_results)
     p = sub.add_parser("statements-backfill", help="every company's past statements by screener's rules from the stored facts into memory: dry run (default) or --apply (backs each dossier up first; no NSE, no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
@@ -2702,7 +2845,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--restart", action="store_true", help="start again from the first company")
     p.add_argument("--json", help="write the report to this file")
     p.add_argument("--put-back-ratings", action="store_true", help="only the companies whose rating snapshots the empty-snapshot clean-up took out: put them back from the backups")
+    p.add_argument("--replace", action="store_true", help="statements-rebuild: also put back a file-labelled entry the stored facts now build differently (a recipe change), backed up")
     p.set_defaults(func=cmd_statements_backfill)
+    p = sub.add_parser("statements-correct", help="the profit-line rules over every stored quarters and annual entry (stock page, cards and Results then read the same numbers): dry run (default) or --apply (backs each changed dossier up first; no NSE, no AI)")
+    p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--limit", type=int, default=0, help="at most this many companies a run (default 0: all; the run resumes after the last saved chunk)")
+    p.add_argument("--restart", action="store_true", help="start again from the first company")
+    p.add_argument("--json", help="write the report to this file")
+    p.add_argument("--csv", help="write the changes (scrip, period, basis, table, row, old, new) to this file")
+    p.set_defaults(func=cmd_statements_correct)
     p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
@@ -2749,8 +2901,9 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("restated-pdf", help="keep restated comparatives beside the originals, read from later results PDFs' text layer (no OCR, no AI; F202)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
-    p.add_argument("--quarters", type=int, default=6, help="how many of each company's latest quarters to read")
+    p.add_argument("--quarters", type=int, default=4, help="how many of each company's latest quarters to read (4: each file's year-ago and previous-quarter columns cover eight)")
     p.add_argument("--limit", type=int, help="stop after this many companies")
+    p.add_argument("--top-mcap", type=int, help="only the N largest companies by market cap (of --scrips, else of the universe)")
     p.add_argument("--json", help="write the counts and the reasons to this file")
     p.add_argument("--dry-run", action="store_true", help="write nothing; list every restated figure found in --json")
     p.add_argument("--restart", action="store_true", help="ignore where a run that hit the file cap stopped; begin at the first company")
@@ -2859,8 +3012,18 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("keep-annual-pdfs", help="keep named companies' annual-report PDFs in R2, once (NSE, no AI)")
     p.add_argument("--symbols", help="comma-separated NSE symbols")
     p.add_argument("--year", help="the year the report ends, e.g. 2026 for FY26 (default: each company's newest)")
+    p.add_argument("--years", type=int, default=1, help="without --year: the newest N reports a company (default 1)")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_keep_annual_pdfs)
+
+    p = sub.add_parser("bank-pdf-read", help="banks' annual-report PDFs read for the rows their XBRL lacks (R2 and BSE, no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the universe; banks only are read)")
+    p.add_argument("--top-mcap", type=int, help="only the N largest by market cap (of --scrips, else of the universe)")
+    p.add_argument("--years", type=int, default=4, help="the newest N BSE reports a bank on its Screener page (default 4: FY23 on)")
+    p.add_argument("--time-budget", type=int, help="seconds; exit 124 when it ends with reports left")
+    p.add_argument("--dry-run", action="store_true", help="keep the fetched files, not the readings")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_bank_pdf_read)
 
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
@@ -2912,7 +3075,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--csv", help="write every pair (company, basis, period, table, row, screener, ours, diff, status, recipe note)")
     p.add_argument("--md", help="write the markdown report to this file")
+    p.add_argument("--stored", action="store_true", help="compare the statements stored in memory (what the site shows), not the recipes")
     p.set_defaults(func=cmd_screener_rows)
+    p = sub.add_parser("screener-rows-diff", help="read-only: two screener-rows runs' rows.csv compared row by row (broken and mended pairs by class)")
+    p.add_argument("--prev", required=True, help="the earlier run's rows.csv")
+    p.add_argument("--curr", required=True, help="this run's rows.csv")
+    p.add_argument("--md", help="write the markdown report to this file (else print it)")
+    p.add_argument("--fail-on-worse", action="store_true", help="exit 1 when a class lost 5 or more exact pairs net")
+    p.set_defaults(func=cmd_screener_rows_diff)
 
     p = sub.add_parser("xbrl-facts", help="keep every fact of the stored results XBRL files in R2 (raw/xbrl-facts/); lists the filings whose file is not stored; no NSE request unless --download")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
@@ -2922,6 +3092,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--annual", action="store_true", help="also keep the facts of the annual-report XBRL (Ind AS only, never BRSR): one NSE list request a company; a file is fetched only with --download")
     p.add_argument("--annual-years", type=int, default=3, help="the latest N years of annual reports a basis (default 3; a file is about 7 MB)")
     p.add_argument("--force", action="store_true", help="read again the files whose facts are stored")
+    p.add_argument("--reread-legacy", action="store_true", help="only read again the stored results documents whose raw file tags figures to an undeclared OneD context (no NSE request; with --dry-run it counts)")
     p.add_argument("--dry-run", action="store_true", help="parse and count, write no facts")
     p.add_argument("--from-nse", action="store_true", help="list each company's results files from NSE's own list (the seed's latest 12 quarters, both bases) and fetch every file not stored; needs --download; writes no memory (one list request a company, not counted toward FILE_CAP; files are)")
     p.add_argument("--shard", help="I/N: only every N-th company from the I-th (N at most 16), e.g. 0/8")
@@ -2929,6 +3100,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file (with --from-nse also as the run goes)")
     p.add_argument("--csv", help="write the filings whose file is not stored to this file (with --from-nse: one line a listed file, with its status and NSE's timestamps)")
     p.set_defaults(func=cmd_xbrl_facts)
+
+    p = sub.add_parser("xbrl-expiry-check", help="read only: every raw results XBRL file in R2 (deleted after 180 days) has its facts copy in raw/xbrl-facts/ (TODO 139); exit 1 when one does not")
+    p.add_argument("--workers", type=int, default=16, help="R2 reads at once (default 16)")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_xbrl_expiry_check)
+
+    p = sub.add_parser("facts-dump", help="read only: a company's stored facts documents (raw/xbrl-facts/<scrip>/) and the facts whose element matches --match")
+    p.add_argument("--scrips", required=True, help="comma-separated scrip codes as the facts folder names them")
+    p.add_argument("--match", default="Borrow|Lease|Assets$", help="regular expression on the element name (default: borrowings, leases, total assets)")
+    p.set_defaults(func=cmd_facts_dump)
 
     p = sub.add_parser("screener-referee", help="read-only: NSE's results XBRL as the referee of the screener cross-check's disagreeing pairs")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

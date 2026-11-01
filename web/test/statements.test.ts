@@ -1,7 +1,7 @@
 // The company page's screener-style statements (src/components/company/statements.ts). Run: npm test.
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters } from "../src/components/company/statements.ts";
+import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, statementDate, ttmQuarters, withRestated, statementMetrics } from "../src/components/company/statements.ts";
 
 const m = (metric: string, period: string, value: number) => ({ metric, period, value, unit: "INR_CR", as_of: "2026-10-15", source_news_id: "xbrl:res:1:x" });
 const quarter = (q: string, rev: number, pat: number) => [m("revenue", q, rev), m("pbt", q, pat * 1.3), m("finance_cost", q, 10), m("depreciation", q, 20),
@@ -87,6 +87,10 @@ test("the main figures' basis is read from their sources", async () => {
   assert.equal(mainBasis([withBasis("STANDALONE"), withBasis("CONSOLIDATED")]), "CONSOLIDATED");
   assert.equal(mainBasis([withBasis("STANDALONE")]), "STANDALONE");
   assert.equal(mainBasis([m("pat", "Q2FY27", 1)]), null);
+  // ICICIGI (audit 137, A2): one stray consolidated ratio among standalone figures is not a consolidated page
+  const stray = [withBasis("STANDALONE"), { ...withBasis("STANDALONE"), metric: "revenue" }, { ...withBasis("CONSOLIDATED"), metric: "solvency_ratio" }];
+  assert.equal(mainBasis(stray), "STANDALONE");
+  assert.equal(mainBasis([...stray, { ...m("pat", "Q1FY27", 1), basis: "CONSOLIDATED" }, { ...m("revenue", "Q1FY27", 1), basis: "CONSOLIDATED" }]), "CONSOLIDATED");
 });
 
 test("deep audit F-01, F-04, F-05, F-07: a stray revenue row, a missing year, gaps, a missing other income", async () => {
@@ -179,4 +183,73 @@ test("screener's tables come from memory's statements, by basis, latest periods 
   assert.deepEqual(t.rows[0].cells, [46254.8, 44178.7]);
   assert.deepEqual(screenerTable(entries, "STANDALONE", "quarters", 12).columns, ["Q2FY27"]);
   assert.equal(screenerTable(undefined, "CONSOLIDATED", "quarters", 12).columns.length, 0);
+});
+
+test("a consolidated company's many standalone-only KPIs do not make its page Standalone", async () => {
+  const { mainBasis } = await import("../src/components/company/statements.ts");
+  const own = (metric: string, basis: string) => ({ ...m(metric, "Q2FY27", 1), basis });
+  const metrics = [own("revenue", "CONSOLIDATED"), own("pat", "CONSOLIDATED"),
+    ...["plant_utilisation", "stores", "solvency_ratio", "roe", "volume"].map((k) => own(k, "STANDALONE"))];
+  assert.equal(mainBasis(metrics), "CONSOLIDATED");
+  assert.equal(mainBasis([own("revenue", "STANDALONE"), own("pat", "STANDALONE"), own("roe", "CONSOLIDATED")]), "STANDALONE");
+});
+
+test("a quarter a later filing restated shows the restated figure, with the original kept for the marker", () => {
+  const t = { columns: ["Q2FY26", "Q2FY27"], rows: [
+    { label: "Sales", cells: [16241, 18226], strong: true }, { label: "Net Profit", cells: [2700, 2796] }, { label: "Tax %", cells: [25, 25], kind: "pct" as const }] };
+  const fig = (metric: string, original: number, restated: number) => ({ metric, period: "Q2FY26", basis: "CONSOLIDATED", unit: "INR_CR", original, restated, restated_in: "Q2FY27" });
+  const out = withRestated(t, [fig("revenue", 16241, 15919), fig("pat", 2500, 2400)], "CONSOLIDATED");
+  assert.deepEqual(out.rows[0].cells, [15919, 18226]);
+  assert.deepEqual(out.rows[0].restated, [{ original: 16241, restated_in: "Q2FY27" }, null]);
+  assert.deepEqual(out.rows[1].cells, [2700, 2796]);            // the cell is not the original the restatement was made against: left alone
+  assert.equal(out.rows[1].restated, undefined);
+  assert.equal(withRestated(t, [fig("revenue", 16241, 15919)], "STANDALONE"), t);
+  assert.equal(withRestated(t, undefined, "CONSOLIDATED"), t);
+});
+
+test("the page's figures, growth and ratios read the stored statements; no statements keeps the old metrics", async () => {
+  const { statementMetrics, statementSheets, dossierMetrics } = await import("../src/components/company/statements.ts");
+  const e = (table: string, period: string, rows: Record<string, number>, basis = "CONSOLIDATED") => ({ table, period, basis, rows });
+  const entries = [
+    e("annual", "FY24", { Sales: 100, "Profit before tax": 20, Interest: 5, "Net Profit": 15 }),
+    e("annual", "FY25", { Sales: 150, "Profit before tax": 30, Interest: 5, "Net Profit": 22, "Net Profit (owners)": 20 }),
+    e("quarters", "Q1FY26", { Sales: 40, "Operating Profit": 8, "OPM %": 20, "Net Profit": 5 }),
+    e("balance", "FY24", { "Equity Capital": 10, Reserves: 90, Borrowings: 50, "Total Assets": 200 }),
+    e("balance", "FY25", { "Equity Capital": 10, Reserves: 110, Borrowings: 60, "Total Assets": 260 }),
+    e("quarters", "Q1FY26", { Sales: 1 }, "STANDALONE"),
+  ];
+  const m = statementMetrics(entries, "CONSOLIDATED", []);
+  const at = (metric: string, period: string) => m.find((x) => x.metric === metric && x.period === period)?.value;
+  assert.equal(at("revenue", "Q1FY26"), 40);
+  assert.equal(at("ebitda", "Q1FY26"), 8);
+  assert.equal(at("ebitda_margin", "Q1FY26"), 20);
+  assert.equal(at("pat_owners", "FY25"), 20);
+  assert.equal(growth(m, "revenue").length, 0);   // one year only: no 3 or 5 year rate
+  const ratios = ratioTable(m, statementSheets(entries, "CONSOLIDATED", []));
+  assert.equal(ratios.rows.find((r) => r.label === "Debt to equity")?.cells[1]?.toFixed(2), "0.50");
+  assert.equal(ratios.rows.find((r) => r.label === "ROCE %")?.cells[1]?.toFixed(1), (35 / 180 * 100).toFixed(1));
+  const old = [{ metric: "revenue", period: "Q1FY26", value: 7, unit: "INR_CR", as_of: "", source_news_id: "" }];
+  assert.equal(statementMetrics([], "CONSOLIDATED", old), old);
+  assert.equal(dossierMetrics({ statements: [], financial_metrics: old }), old);
+  // a lender's Revenue is also its interest earned
+  const bank = statementMetrics([e("quarters", "Q1FY26", { Revenue: 900, "Financing Profit": 300 })], "CONSOLIDATED", []);
+  assert.equal(bank.find((x) => x.metric === "interest_earned")?.value, 900);
+});
+
+test("statement figures win for the years they cover; an older year keeps the old figure for the long growth boxes", () => {
+  const old = [{ period: "FY20", metric: "revenue", value: 50, unit: "INR_CR", as_of: "", source_news_id: "" },
+    { period: "FY25", metric: "revenue", value: 99, unit: "INR_CR", as_of: "", source_news_id: "" }];
+  const got = statementMetrics([{ period: "FY25", basis: "CONSOLIDATED", table: "annual", rows: { Sales: 100 } }] as never, "CONSOLIDATED", old as never);
+  assert.deepEqual(got.filter((m) => m.metric === "revenue").map((m) => [m.period, m.value]).sort(), [["FY20", 50], ["FY25", 100]]);
+});
+
+test("a year that ends in December is a year column, labelled by its month, and counts in the growth boxes (owner, 1 Nov 2026)", () => {
+  const year = (p: string, rev: number) => [m("revenue", p, rev), m("pat", p, rev / 10), m("pbt", p, rev / 8)];
+  const metrics = [...year("YE:2022-12", 1000), ...year("YE:2023-12", 1100), ...year("YE:2024-12", 1210), ...year("YE:2025-12", 1331)];
+  const t = annualTable(metrics);
+  assert.deepEqual(t.columns, ["YE:2022-12", "YE:2023-12", "YE:2024-12", "YE:2025-12"]);
+  assert.equal(statementDate("YE:2025-12"), "Dec 2025");
+  assert.equal(statementDate("YE:2024-06"), "Jun 2024");
+  const three = growth(metrics, "revenue").find((g) => g.label === "3 years")!;
+  assert.equal(Math.round(three.value! * 10) / 10, 10);   // 1,000 -> 1,331 over three December years
 });

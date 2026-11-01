@@ -6,6 +6,7 @@ import { EVENT_LABELS } from "../../lib/taxonomy";
 import { RichText } from "../RichText";
 import { composeStory, goodAndBad, latestQuarter, trackTiles, type GoodBadItem } from "./companyText";
 import { Panel } from "./Panel";
+import { dossierMetrics } from "./statements";
 
 export type Parsed = { row: CardRow; card: CardBody };
 
@@ -19,7 +20,7 @@ export const sourceOf = ({ row, card }: Parsed) =>
  *  writes a narrative of its own. Falls back to the business summary. */
 export function StorySoFar({ dossier, parsed, count }: { dossier: Dossier | null; parsed: Parsed[]; count: number }) {
   const story = useMemo(() => dossier && composeStory({
-    metrics: dossier.financial_metrics, deals: dossier.deals ?? [], guidance: dossier.guidance, money: cr,
+    metrics: dossierMetrics(dossier), deals: dossier.deals ?? [], guidance: dossier.guidance, money: cr,
     latest: parsed.find((p) => p.card.results)?.card.results,
   }), [dossier, parsed]);
   const updated = dossier?.updated_at ?? parsed[0]?.row.filed_at;
@@ -73,7 +74,7 @@ function GoodBadBox({ title, items, good = false }: { title: string; items: Good
 export function WhatToTrack({ dossier, parsed, onTracker }: { dossier: Dossier | null; parsed: Parsed[]; onTracker: () => void }) {
   const tiles = useMemo(() => trackTiles({
     watchlist: dossier?.watchlist ?? [], guidance: dossier?.guidance ?? [], today: todayIST(), date: dayMonth,
-    latestQuarter: latestQuarter(dossier?.financial_metrics ?? []),
+    latestQuarter: latestQuarter(dossier ? dossierMetrics(dossier) : []),
     risks: parsed.slice(0, 6).flatMap((p) => (p.card.track_next?.risks ?? []).slice(0, 1).map((text) => ({ text, source: sourceOf(p) }))),
   }), [dossier, parsed]);
   return (

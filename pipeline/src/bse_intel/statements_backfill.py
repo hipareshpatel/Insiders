@@ -24,6 +24,8 @@ import json
 import logging
 import re
 
+from .periods import prior_year_period
+from . import bank_pdf
 from . import screener_view as sv
 from . import segments
 from . import xbrl_extras
@@ -37,8 +39,11 @@ log = logging.getLogger(__name__)
 
 LIMIT = 50
 RESUME_KEY = "statements_backfill:done_through"
+REBUILD_RESUME_KEY = "statements_rebuild:done_through"   # statements-rebuild's own (it must not move the fill's)
 RATINGS_RESUME_KEY = "statements_backfill:ratings_done_through"   # the put-back's own (review: it must not move the fill's)
 SLIP_RATIO = 1.5
+UNIT_SLIP = 30      # a quarter's Sales this many times off the median of the company's other quarters (both ways) is a unit slip
+UNIT_SLIP_NOTE = "unit slip against the company's other quarters"
 _QUARTER = re.compile(r"Q[1-4]FY\d{2}")
 
 
@@ -63,8 +68,20 @@ def _memory_profit(dossier: dict, period: str, basis: str) -> float | None:
     return None
 
 
-def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[dict], list[str]]:
-    """The entries the stored facts give for one company, and the ones left out (with why)."""
+def _confirmed(confirm, period: str, basis: str, top: float | None) -> bool:
+    """Screener's stored quarter agrees with the file's Net Profit (within max(1 Cr, 1%), Screener prints whole crore): with memory
+    in doubt, two sources agreeing decide (owner, 31 Oct 2026; memory's AI-read profit was the wrong side for CGPOWER Q2FY26,
+    18.24 against the file's 284.29 and Screener's 284)."""
+    if confirm is None or top is None or not period.startswith(("Q", "FY")):     # a year too: its annual Net Profit (31 Oct 2026)
+        return False
+    theirs = confirm(period, basis)
+    return theirs is not None and abs(theirs - top) <= max(1.0, abs(top) / 100)
+
+
+def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -> tuple[list[dict], list[str]]:
+    """The entries the stored facts give for one company, and the ones left out (with why). ``confirm(period, basis)``: Screener's
+    stored Net Profit for a quarter, or None; a quarter memory doubts (held as unit-slipped, or 1.5x off memory's profit) goes in
+    when Screener confirms the file's figure."""
     entries, left = [], []
     held = {str(h.get("period")) for h in dossier.get("scale_held", []) if isinstance(h, dict)} \
         | {str(h) for h in dossier.get("scale_held", []) if isinstance(h, str)}
@@ -72,30 +89,111 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[d
         fam = cf.family(basis)
         memo: dict = {}
         quarters = sorted({p for p, b in cf.results if b == basis and _QUARTER.fullmatch(p)}, key=lambda p: sv.quarter_index(p) or 0)
-        years = sorted({p[2:] for p in quarters if p.startswith("Q4")} | {fy for fy, b in cf.annual if b == basis})
-        columns = [("quarters", p) for p in quarters] + [("balance", p) for p in quarters if p[:2] in ("Q2", "Q4")] \
+        # every year with a quarter held, but the newest quarter's year only once its Q4 is in (an unfinished year is no year); and a
+        # balance sheet at any quarter a file gives one. A December-year company closes its year and books in Q3 (stored-statements
+        # check of 31 Oct 2026: 4,153 FY25 pairs the recipes got exact were missing on the site, 183 companies, Schaeffler, Rain,
+        # Hexaware, ZF Steering among them, as only Q4 years and Q2/Q4 balance sheets were built). A quarter with no balance sheet in
+        # its file gives none (_ours returns nothing), so a March-year company is unchanged.
+        newest = quarters[-1] if quarters else ""
+        # and the year before each annual report (its comparative column): a company listed recently, or one with no Q4 file for a
+        # year, has that year only there (every-company check after the 1 Nov rebuild: Meesho, Anthem, Adani Enterprises standalone,
+        # TMCV, NMDC, UPL FY25 annual and March balance sheets, which the recipes read from the FY26 report)
+        reports = {fy for fy, b in cf.annual if b == basis}
+        prior = {f"FY{sv._fy_num(fy) - 1:02d}" for fy in reports if sv._fy_num(fy) > 0}
+        years = sorted({p[2:] for p in quarters if p[2:] != newest[2:] or newest.startswith("Q4")} | reports | prior)
+        sheets = list(dict.fromkeys(quarters + [f"Q4{fy}" for fy in years if f"Q4{fy}" not in quarters]))
+        columns = [("quarters", p) for p in quarters] + [("balance", p) for p in sheets] \
             + [("annual", fy) for fy in years] + [("cash_flow", fy) for fy in years]
+        # a year that does not end in March ("YE:2025-12"), where a report or the year-end quarter's file has its twelve months
+        # (owner, 1 Nov 2026: VBL, ABB, Siemens, CRISIL; measured 92.5% annual / 95.9% cash flow exact, run 41244538582): a March
+        # company's December file has nine months, not twelve, so it gives none
+        year_ends = sorted({f"YE:{e.year}-{e.month:02d}" for e in (quarter_end(p) for p in quarters) if e and e.month != 3})
+        columns += [(t, ye) for ye in _earlier_year_ends(year_ends, reports, cf, fam, basis, memo) + year_ends
+                    for t in ("annual", "cash_flow")]
         for table, period in columns:
-            if period in held or f"Q4{period}" in held:
-                left.append(f"{basis} {table} {period}: unit slip held in memory")
-                continue
             rows, why = sv._ours(cf, fam, basis, table, period, memo)
             values = {name: row.value for name, row in (rows or {}).items() if row.value is not None}
             if not values:
                 continue
             if table in ("quarters", "annual"):
-                top = values.get("Net Profit")
+                values = sv.corrected_pl(values, fam)   # the profit-line rules, as at the live write (screener_view.corrected_pl)
+            checked = period if table in ("quarters", "annual") else None
+            top = values.get("Net Profit") if table in ("quarters", "annual") else None
+            sure = _confirmed(confirm, checked, basis, top) if checked else False
+            if (period in held or f"Q4{period}" in held) and not sure:
+                left.append(f"{basis} {table} {period}: unit slip held in memory")
+                continue
+            if table in ("quarters", "annual"):
                 mine = _memory_profit(dossier, period, basis)
                 if top and mine and abs(mine) >= 1 and (top > 0) == (mine > 0) \
-                        and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO):
+                        and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO) and not sure:
                     left.append(f"{basis} {table} {period}: Net Profit {top:g} against memory's profit {mine:g}")
                     continue
+            if table == "quarters" and not sure and _off_by_scale(values, period, basis, cf, fam, memo):
+                left.append(f"{basis} {table} {period}: {UNIT_SLIP_NOTE}")
+                continue
             column = period
             entries.append({"period": column, "basis": basis, "table": table, "family": fam, "rows": values,
                             "source_news_id": f"xbrl-facts:{period}:{basis.lower()}", "as_of": at,
                             "lab": {"by": "file", "doc": "results", "basis": basis, "at": at, "rules": "screener_view",
                                     "from": "stored facts"}})
     return entries, left
+
+
+def _earlier_year_ends(year_ends: list[str], reports: set[str], cf: sv.CompanyFacts, fam: str, basis: str, memo: dict) -> list[str]:
+    """The non-March years before the stored quarters, back to the oldest annual report's comparative: ELANTAS (December) has
+    quarters from Q1FY26 only, so its quarters gave YE:2025-12 alone, while its reports hold 2023 and 2024 (screener 680 and 749,
+    every-company check run 41254893012; KENNAMET June and FOSECOIND likewise). Only for a month that already gives a twelve-month
+    year, so a March company, whose December quarter is nine months, asks nothing more."""
+    months = sorted({ye[-2:] for ye in year_ends if (sv._ours(cf, fam, basis, "annual", ye, memo)[0] or {})})
+    # a report's label names the year it closes: "FY25" ends March 2025, "FY25-12" December 2024 (xbrl_facts.fy_of); ELANTAS's
+    # reports are FY25-12 and FY26-12, so a bare FY number read none of them (the 1 Nov rebuild built nothing older)
+    ends = [2000 + int(m[1]) - (1 if m[2] else 0) for m in (re.fullmatch(r"FY(\d{2})(?:-(\d{2}))?", fy) for fy in reports) if m]
+    if not months or not ends:
+        return []
+    first = min(ends) - 1   # the oldest report's comparative year
+    # up to each month's own first stored year: a June company whose quarters start in September has YE:2025-09 first, and its
+    # YE:2025-06 is still wanted (review of #310)
+    return [f"YE:{y}-{m}" for m in months for y in range(first, min(int(ye[3:7]) for ye in year_ends if ye[-2:] == m) + 1)
+            if f"YE:{y}-{m}" not in year_ends]
+
+
+def _off_by_scale(values: dict, period: str, basis: str, cf: sv.CompanyFacts, fam: str, memo: dict) -> bool:
+    """A quarter whose Sales and Net Profit are both UNIT_SLIP times or more off the medians of the company's other quarters of the
+    same basis, in the same direction: a file tagged in the wrong unit (audit #303 item D: IMPAL Q1FY27 Sales 2.3429 against
+    196.69-230.99 in its other quarters; the live path holds such a file out unless its PDF proves the factor, xbrl.fix_scale, but
+    the backfill from stored facts wrote it). Needs at least three other quarters and the same quarter a year earlier, both as far off;
+    a real step (a demerger) moves Sales alone, a seasonal quarter matches its year-ago one."""
+    sales = values.get("Sales") or values.get("Revenue")
+    profit = values.get("Net Profit")
+    if not sales or not profit:
+        return False
+    others_s, others_p = [], []
+    for p, b in cf.results:
+        if b != basis or p == period or not _QUARTER.fullmatch(p):
+            continue
+        rows, _ = sv._ours(cf, fam, basis, "quarters", p, memo)
+        got = {n: r.value for n, r in (rows or {}).items() if r.value is not None}
+        if got.get("Sales") or got.get("Revenue"):
+            others_s.append(abs(got.get("Sales") or got.get("Revenue")))
+        if got.get("Net Profit"):
+            others_p.append(abs(got["Net Profit"]))
+    if len(others_s) < 3 or len(others_p) < 3:
+        return False
+    med = lambda xs: sorted(xs)[len(xs) // 2]
+
+    def off(ref_s: float, ref_p: float) -> bool:
+        rs, rp = abs(sales) / ref_s, abs(profit) / ref_p
+        return (rs <= 1 / UNIT_SLIP and rp <= 1 / UNIT_SLIP) or (rs >= UNIT_SLIP and rp >= UNIT_SLIP)
+
+    if not off(med(others_s), med(others_p)):
+        return False
+    # and as far off the same quarter a year earlier, where held: a seasonal business is not a slip (dry run 41225623600: Maharashtra
+    # Scooters' Jul-Sep dividend quarter is ~40x its others every year; Raymond standalone, a holding company after its demerger)
+    ago, _ = sv._ours(cf, fam, basis, "quarters", prior_year_period(period), memo) if prior_year_period(period) else (None, "")
+    got = {n: r.value for n, r in (ago or {}).items() if r.value is not None}
+    ago_s, ago_p = got.get("Sales") or got.get("Revenue"), got.get("Net Profit")
+    return bool(ago_s and ago_p) and off(abs(ago_s), abs(ago_p))   # no year-ago quarter held: not called a slip
 
 
 def fill_segments(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
@@ -261,28 +359,80 @@ def put_back(dossier: dict, lost: dict[str, list[dict]]) -> int:
     return added
 
 
-def fill(dossier: dict, entries: list[dict]) -> int:
-    """Add the entries memory does not hold yet (in place); the number added."""
-    have = {(e.get("period"), e.get("basis"), e.get("table")) for e in dossier.get(KEY, []) if isinstance(e, dict)}
+def _rebuildable(e: dict) -> bool:
+    """An entry the stored facts rebuild: the file's own, by screener_view's recipes (never a card's or another source's)."""
+    lab = e.get("lab") or {}
+    return lab.get("by") == "file" and lab.get("rules", "screener_view") == "screener_view"
+
+
+def _screener_confirm(sink):
+    """scrip -> confirm(period, basis): Screener's stored quarterly Net Profit (restated_pdf.ScreenerStore over the stored pages),
+    or None for the whole run when the pages or the symbols cannot be read (the old checks then stand alone)."""
+    try:
+        from .company_master import stored_companies
+        from .restated_pdf import ScreenerStore
+        symbols = {c["scrip_code"]: c.get("symbol") for c in stored_companies(sink) if c.get("symbol")}
+        store = ScreenerStore(sink)
+    except Exception as exc:  # noqa: BLE001 - no confirmation is the old behaviour, never a stop
+        log.warning("statements-backfill: Screener pages not read (%s); memory's checks stand alone", exc)
+        return None
+
+    def confirm_for(scrip):
+        symbol = symbols.get(scrip)
+        if not symbol:
+            return None
+        def confirm(period, basis):
+            try:
+                return store.figure(symbol, basis, "pat", period)
+            except Exception:  # noqa: BLE001
+                return None
+        return confirm
+    return confirm_for
+
+
+def fill(dossier: dict, entries: list[dict], replace: bool = False, slipped: set | None = None) -> int:
+    """Add the entries memory does not hold yet (in place); the number added. ``replace`` (statements-rebuild): an entry the stored
+    facts rebuild is put back with the current recipes when its rows changed (owner, 31 Oct 2026: a recipe rule is site-wide, so
+    the stored statements the stock page reads are rebuilt from the same files; the backfill alone only added), counted too."""
+    held = [e for e in dossier.get(KEY, []) if isinstance(e, dict)]
+    have = {(e.get("period"), e.get("basis"), e.get("table")): e for e in held}
     new = [e for e in entries if (e["period"], e["basis"], e["table"]) not in have]
-    if new:
-        dossier[KEY] = keep_latest([e for e in dossier.get(KEY, []) if isinstance(e, dict)] + new)
-    return len(new)
+    changed = []
+    if replace:
+        changed = [e for e in entries if (old := have.get((e["period"], e["basis"], e["table"]))) is not None
+                   and _rebuildable(old) and (old.get("rows") or {}) != (e.get("rows") or {})]
+    # a file entry the stored facts now leave out as a unit slip is taken out on a rebuild (the old one would stay on the site)
+    dropped = [k for k, e in have.items() if replace and slipped and k in slipped and _rebuildable(e)]
+    if new or changed or dropped:
+        gone = {(e["period"], e["basis"], e["table"]) for e in changed} | set(dropped)
+        dossier[KEY] = keep_latest([e for e in held if (e.get("period"), e.get("basis"), e.get("table")) not in gone] + new + changed)
+    return len(new) + len(changed) + len(dropped)
+
+
+def slipped_keys(left: list[str]) -> set:
+    """(period, basis, table) of the quarters ``company_entries`` left out as a unit slip, from its notes."""
+    out = set()
+    for note in left:
+        m = re.fullmatch(rf"(\S+) (quarters) (\S+): {re.escape(UNIT_SLIP_NOTE)}", note)
+        if m:
+            out.add((m[3], m[1], m[2]))
+    return out
 
 
 WRITE_WORKERS = 8   # companies written at once (each its own dossier and backup objects)
 WORKERS = 24  # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone; run 2 at 8: 8.7 min)
 
 
-def _prepare(sink, scrip: str, at: str, lost: dict | None = None):
+def _prepare(sink, scrip: str, at: str, lost: dict | None = None, confirm_for=None):
     """One company read and worked out (no write): (read, merged, entries, left, segment rows added) or None when it has no dossier or facts."""
     read = sink.get_dossier(scrip)
     keys = sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/")
     if read is None or not keys:
         return None
     cf = sv.CompanyFacts(keys, sink.get_object)
+    bank_pdf.attach(cf, sink, scrip)      # a bank's annual-report rows its file lacks (TODO 148); none stored: no change
     merged = json.loads(json.dumps(read))
-    entries, left = company_entries(cf, merged, at)
+    entries, left = company_entries(cf, merged, at, confirm_for(scrip) if confirm_for else None)
     segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements
     stubs = drop_empty_balance(merged)
     covered, extra = drop_file_covered_balance(merged)
@@ -304,7 +454,7 @@ def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exc
 
 
 def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False, named: bool = False,
-        workers: int = WORKERS, write_workers: int = WRITE_WORKERS, ratings: dict | None = None) -> dict:
+        workers: int = WORKERS, write_workers: int = WRITE_WORKERS, ratings: dict | None = None, replace: bool = False) -> dict:
     """``ratings`` (lost_ratings): the rating snapshots to put back, company by company. ``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review). The companies
     are read ``workers`` at a time and written ``write_workers`` at a time (each company's dossier and backup are its own
     objects; the first write goes alone, as it opens the backup folder). Results are taken in scrip order: the first failure
@@ -315,18 +465,20 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
 
     from .backup import RunBackup
 
-    resume = RATINGS_RESUME_KEY if ratings else RESUME_KEY
+    resume = RATINGS_RESUME_KEY if ratings else REBUILD_RESUME_KEY if replace else RESUME_KEY
     after = "" if (restart or not apply or named) else (sink.kv_get(resume) or "")
     todo = [s for s in sorted(scrips) if s > after][:limit]
-    backup = RunBackup(sink, "statements-backfill") if apply else None
-    out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
+    backup = RunBackup(sink, "statements-rebuild" if replace else "statements-backfill") if apply else None
+    out = {"apply": apply, "replace": replace, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
            "no_facts": 0, "segments": 0, "balance_stubs": 0, "balance_covered": 0, "balance_kept_extra": 0, "ratings_put_back": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
            "backup": None, "error": None}
     at = now_iso()
 
+    confirm_for = _screener_confirm(sink)
+
     def safe(scrip):
         try:
-            return _prepare(sink, scrip, at, ratings), None
+            return _prepare(sink, scrip, at, ratings, confirm_for), None
         except Exception as exc:  # noqa: BLE001 - reported in order below, where it stops the run
             return None, exc
 
@@ -348,11 +500,12 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
         out["balance_covered"] += covered
         out["balance_kept_extra"] += extra
         out["left_out"] += [f"{scrip} {x}" for x in left]
-        have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
+        have = {(e.get("period"), e.get("basis"), e.get("table")): e for e in merged.get(KEY, []) if isinstance(e, dict)}
         for e in entries:
-            if (e["period"], e["basis"], e["table"]) not in have:
+            old = have.get((e["period"], e["basis"], e["table"]))
+            if old is None or (replace and _rebuildable(old) and (old.get("rows") or {}) != (e.get("rows") or {})):
                 out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
-        added = fill(merged, entries)
+        added = fill(merged, entries, replace, slipped_keys(left))
         out["segments"] += segments_added
         # written when anything changed, a clean-up with nothing added too (30 Oct 2026: filler-zero ratios dropped by
         # xbrl_extras.remember were never saved, the run writing only where entries were added)

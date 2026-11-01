@@ -36,6 +36,7 @@ from threading import Lock
 from .ai.gateway import CEILING, TRANSIENT, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, AttachmentTooLarge, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
+from . import requeue
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
                       own_former_name,
                       new_dossier, put_standalone, with_year_hold, repeated_order, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
@@ -45,7 +46,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import call_memory, call_queue, card_support, gate, two_parts
+from . import call_memory, call_queue, release_fold, card_support, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, ground_all_fields, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -56,7 +57,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_slip_xbrl_guard, d20_dropped_file_period
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -69,7 +70,7 @@ from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import eps_adjust, no_eps, restated_pdf
 from . import annual_xbrl, fact_sheet
-from . import xbrl_store
+from . import xbrl_facts, xbrl_store
 from . import statements
 from . import directions
 from . import results_card
@@ -111,6 +112,9 @@ SLICE_S = 180            # older work between two looks for today's new filings 
 BACKFILL_SLICE_S = 600   # the backfill's slices: its filings share Gemini requests (packs wait up to 180 s), and a
                          # slice end sends the open packs part-full; shorter slices would spend more free requests
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
+RESULTS_QUARTER_DAYS = 100   # a results PDF comes at most this long after its quarter ends (SEBI: 45 days, 60 for Q4; slack for revisions)
+REQUEUED_FIRST_S = 180    # the slot after today's filings for filings requeued by id (requeue.mark_by_id, 31 Oct 2026)
+REQUEUED_FIRST_MAX = 6    # filings a run gives that slot
 RESULTS_CATCH_UP_S = 600  # the results XBRL catch-up's own window when the live share is used up (30 Oct 2026)
 PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
 RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings one run looks up again
@@ -439,13 +443,13 @@ def fix_foreign_crore(out: Pass2Output, text: str) -> list[str]:
     return [f"foreign amount set right: {k} -> {v}" for k, v in fixes.items()]
 
 
-def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]:
+def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...], xbrl_crore=()) -> dict[str, str]:
     """Correct, in code, card amounts that are a statement figure read at the wrong unit (grounding.
     unit_slips): in the card's text, its key numbers and changes, the timeline entry, and the reply's
     ₹ crore metrics for memory. Returns {as written: corrected}."""
     if out.card is None or not sources:
         return {}
-    slips = unit_slips(_card_texts(out), sources[0], *sources[1:])
+    slips = unit_slips(_card_texts(out), sources[0], *sources[1:], xbrl_crore=xbrl_crore)
     if not slips:
         return {}
     mapping = {raw: f"{right:,.{places}f}".rstrip("0").rstrip(".") if places else f"{right:,.0f}"
@@ -1105,6 +1109,9 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", 
     return list(dict.fromkeys(issues))
 
 
+# the headline of a company's press, media, investor or earnings release (RESULTS_PRESS_RELEASE)
+_PRESS_RELEASE = re.compile(r"\b(?:press|media|investor|earnings|results)\s+release\b", re.I)
+RELEASE_TEXT_CHARS = 12000   # how much of a release is added to its results card's text
 _RESULTS_STATEMENT = re.compile(r"statement of (?:standalone |consolidated )?(?:un-?)?audited\b.{0,80}?financial results", re.I | re.S)
 # A board outcome whose covering letter submits the results, the statement itself far down the file: Atul's outcome put
 # the buyback's terms first and its statement at character 34,452, with the XBRL filed separately, so it was a
@@ -1169,6 +1176,29 @@ def companion_quarter(filing: Filing, dossier: dict) -> str | None:
         if periods:
             return max(periods, key=lambda p: quarter_index(p) or -1)
     return None
+
+
+def merged_priority(read: list[str], now: list[str], order: list[str]) -> list[str]:
+    """The history queue's priority list written back at the end of a backfill pass: the companies added since it was read (a
+    requeue by id meanwhile) first, then those read at the start that still have history left."""
+    left = set(order)
+    return [s for s in now if s not in set(read)] + [s for s in read if s in left]
+
+
+_RESULTS_FOR = re.compile(r"financial\s+results\s+(?:of\s+the\s+bank\s+|of\s+the\s+company\s+)?for\s+the\s+"
+                          r"(?:quarter|half[\s-]*year|period|nine\s+months|year|financial\s+year)", re.I)
+LACKS_RESULTS_MIN_CHARS = 1500   # a filing with less text than this (a scan OCR did not read) is never retyped
+
+
+def lacks_results(text: str) -> bool:
+    """A filing's text with enough words to judge, and none of what a results filing carries: the statement's heading
+    (`_RESULTS_STATEMENT`), a covering letter submitting the results (`results_cover`), or "financial results for the quarter"
+    (TMB nse-106836238, a note on a ₹304 Cr ECL provision typed RESULTS, took the results path and became a second card)."""
+    t = text or ""
+    if len(t.strip()) < LACKS_RESULTS_MIN_CHARS:
+        return False
+    head = t[:40000]
+    return not (_RESULTS_STATEMENT.search(head) or results_cover(t) or _RESULTS_FOR.search(head))
 
 
 def carries_results(event_type: str, text: str, tagged=None) -> bool:
@@ -2893,6 +2923,16 @@ class Pipeline:
         timely = [link for link in links if -2 <= (date.fromisoformat(link.filed_at[:10]) - day).days <= 45]
         if timely:
             return max(timely, key=lambda link: link.filed_at)
+        # never a quarter that ended more than RESULTS_QUARTER_DAYS before the PDF, nor after it: QUESS's Q2FY27 card of 30 Oct 2026
+        # (nse-106837502) took its Q1FY27 file of 29 Jul (a quarter ended 122 days before), so the whole card, table and headline,
+        # was the earlier quarter's (blind check of the fact-sheet cards, 31 Oct). A same-quarter file filed weeks before a
+        # re-filed or corrected PDF is still taken (review of the first fix).
+        from .memory_gaps import quarter_end
+
+        def plausible(link) -> bool:
+            end = quarter_end(link.period) if link.period else None
+            return end is None or 0 <= (day - end).days <= RESULTS_QUARTER_DAYS
+        links = [link for link in links if plausible(link)]
         return min(links, key=lambda link: link.filed_at) if links else None
 
     @stages.timed("xbrl")
@@ -2971,7 +3011,7 @@ class Pipeline:
         return held
 
     def _same_results_quarter(self, filing: Filing, dossier: dict, quarter: str | None,
-                              basis: str | None = None) -> tuple[str, str] | None:
+                              basis: str | None = None, claim: bool = True) -> tuple[str, str] | None:
         """(news_id, quarter) of the results filing that already has this company's card for the quarter
         (decision D20: one card per company per results quarter; the others are linked to it). Novartis
         filed one quarter's results as three documents, Ahluwalia as a board outcome and a later meeting
@@ -3017,6 +3057,8 @@ class Pipeline:
                 standalone_owners.append(claimed)
             if owners and set(owners) - set(standalone_owners):
                 return owners[0], quarter
+            if not claim:
+                return None   # only looking for an earlier card (D20_DROPPED_FILE_PERIOD): never takes the quarter
             self._results_quarters[key] = filing.news_id
             self._results_quarter_basis[key] = basis
             if standalone_owners:
@@ -3030,6 +3072,20 @@ class Pipeline:
                 # one becomes its duplicate once this card is published (_supersede).
                 self._superseding[filing.news_id] = (later, quarter)
         return None
+
+    def _fold_release(self, filing: Filing, results_id: str, text: str, tagged, doc) -> bool:
+        """RESULTS_PRESS_RELEASE (TODO 135): a press or investor release of a quarter whose results card exists is no second card,
+        but its words are not lost: the text waits here for the card's re-run (event_catchup.release_catch_up adds it to that
+        card's text) and the release is queued for call memory, which reads it like a deck. False (nothing kept, today's
+        duplicate) with the switch off, for a filing that is not a release, or for one that carries a statement or a file."""
+        if not results_press_release() or tagged or not _PRESS_RELEASE.search(f"{filing.headline or ''} {filing.subject or ''}") \
+                or _RESULTS_STATEMENT.search(text[:20000]) or not text.strip():
+            return False
+        release_fold.add(self.sink, results_id, {"news_id": filing.news_id, "date": str(filing.filing_date)[:10],
+                                                 "text": text[:RELEASE_TEXT_CHARS]})
+        log.info("%s is a results press release; its text joins the card of %s (TODO 135)", filing.news_id, results_id)
+        self._call_memory_step(filing, None, {}, text, "")
+        return True
 
     def _supersede(self, filing: Filing, outcome: Outcome) -> list[Outcome]:
         """The later documents of a results quarter that had its card, made duplicates of this earlier filing (D20).
@@ -3504,6 +3560,11 @@ class Pipeline:
             # CORPORATE_ACTION skipped the quarter's claim and its XBRL and became a second results card (O3, 2026-10-20)
             log.info("%s carries a results statement: %s -> RESULTS before pass 2", filing.news_id, event_type)
             event_type = "RESULTS"
+        elif event_type == "RESULTS" and results_needs_statement() and lacks_results(doc.select_text(10_000_000, [])):
+            # a note about the results is no results filing (RESULTS_NEEDS_STATEMENT, off until measured)
+            log.info("%s is typed RESULTS but carries no results statement; read as OTHER", filing.news_id)
+            filing = filing.model_copy(update={"event_type": "OTHER"})
+            event_type = "OTHER"
         subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
         if subsidiary:
             # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory
@@ -3526,6 +3587,7 @@ class Pipeline:
                     what = "its consolidated results XBRL" if standalone_only else "its results XBRL"
                     raise EventXbrlPending(f"waiting for {what} ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
+        dropped_period = None   # the quarter of a results file set aside below (its figures are not in the text): D20 only
         # the same quarter's standalone file beside a consolidated one: its figures are what a mixed card copies
         standalone_file = self._standalone_file(filing, tagged) if tagged and tagged.basis == "CONSOLIDATED" else None
         if xbrl_fast_path.needs_standalone_bank_ratios(tagged):
@@ -3541,6 +3603,7 @@ class Pipeline:
             else:
                 if tagged.kind == "RESULTS":
                     log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
+                    dropped_period = tagged.period
                 tagged = None
         events_table = event_xbrl.table(events)
         if not text.strip() and not tagged and not events:
@@ -3559,17 +3622,27 @@ class Pipeline:
         results_q = None   # the quarter this results filing is the card of (D20), named on its timeline entry (TODO 133)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
             quarter = results_quarter(tagged, text, filing.filed_at)
+            from_dropped = False
+            if quarter is None and dropped_period and d20_dropped_file_period():
+                # TMB nse-106836238: an ECL note typed RESULTS found the bank's Q2FY27 file by quarter, the file's figures were
+                # not in the note so it was set aside, the note had no quarter and published as a second Q2FY27 results card.
+                # The file's quarter still names the quarter it would claim; used only to find an earlier card of it.
+                quarter, from_dropped = dropped_period, True
             if quarter is None and not tagged and not _RESULTS_STATEMENT.search(text[:20000]) and amounts(text) < FIGURE_PAGE_AMOUNTS:
                 # no statement, no file, few figures: a press release or an update, never a new quarter's statement
                 quarter = companion_quarter(filing, dossier)
-            earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None))
+            # a set-aside file's quarter only defers to an earlier card; it never takes the quarter from the real statement
+            earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None),
+                                                 claim=not from_dropped)
             # stamped only when the quarter is the file's or a statement's own, never a text guess (blind review)
             results_q = quarter if (tagged or _RESULTS_STATEMENT.search(text[:20000])) else None
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1
+                folded = self._fold_release(filing, earlier[0], text, tagged, doc)
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": "RESULTS",
-                                "reason": f"duplicate of {earlier[0]} (same results quarter {earlier[1]}, D20)",
+                                "reason": (f"press release folded into the card of {earlier[0]} (same results quarter {earlier[1]}, D20)"
+                                           if folded else f"duplicate of {earlier[0]} (same results quarter {earlier[1]}, D20)"),
                                 "updated_at": now_iso()})
         filed_text = text  # the document alone, before the XBRL table goes in front of it
         if tagged:
@@ -3601,6 +3674,14 @@ class Pipeline:
         # The event's own structured filing: amounts, parties, dates and stage as exact fields (PLAN 18 part 3)
         if events_table:
             text = events_table + "\n\n" + text
+        if event_type == "RESULTS":
+            # kept until the card is re-made (event_catchup.release_catch_up then clears it)
+            releases = release_fold.pending(self.sink).get(filing.news_id, []) if results_press_release() else []
+            if releases:
+                # RESULTS_PRESS_RELEASE: the company's release of this quarter, for its words only; the figures stay the file's
+                text += ("\n\nCompany press release filed with these results (use it only for management commentary, one-offs, "
+                         "segment notes, order wins and guidance; the results figures come from the exchange file above):\n"
+                         + "\n\n".join(r["text"] for r in releases)[:release_fold.MAX_CHARS])
         # Memory as the model sees it: the periods this filing prints withheld (its own columns win, restated or not)
         # and the items that are probably this same event marked. Code reads memory's figures from `full_view`.
         printed = set()
@@ -3709,7 +3790,10 @@ class Pipeline:
                                         results_card.history_from_view(full_view), filed_text, found_facts,
                                         self.settings.results_rich)
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
-            units = fix_unit_slips(candidate, sources)
+            # UNIT_SLIP_XBRL_GUARD: the file's own money facts reach the unit fixer only, never the grounding sources
+            guard = (xbrl_facts.money_crore(getattr(tagged, "raw", None), filing.scrip_code, filing.xbrl_url or "")
+                     if tagged and unit_slip_xbrl_guard() else ())
+            units = fix_unit_slips(candidate, sources, guard)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)
             counts = fix_count_millions(candidate, sources)
             changes = sheet_cuts + built + fix_change_percentages(candidate, sources) + counts + foreign_fixes
@@ -4459,6 +4543,55 @@ class Pipeline:
             if now < end or now >= deadline or self._halted(bulk=False):
                 return   # today's queue is empty for now, the run's time is up or the route is out of quota
 
+    def _requeued_first(self, history_to: date, deadline: float) -> int:
+        """Filings requeued by id (``requeue:by_id``) that are older than the live window, read in a slot of at most
+        REQUEUED_FIRST_S right after today's filings, REQUEUED_FIRST_MAX a run. In results season today's filings used every
+        run's whole time and the history pass, where such a filing waited, never started (31 Oct 2026: Hubtown nse-106629168,
+        a wrong live card, still not re-run six hours after its requeue). Ids no longer pending are dropped from the list;
+        one deferred stays for the next run. Returns how many filings were read."""
+        raw = self.sink.kv_get(requeue.BY_ID_KEY)
+        if not raw or self._blocked or self._halted(bulk=True):
+            return 0
+        try:
+            marked = json.loads(raw)
+        except ValueError:
+            marked = {}
+        ids = list(marked.get("ids") or [])
+        if not ids:
+            return 0
+        start, wanted = self.settings.backfill_start, set(ids)
+
+        def queues() -> dict[str, list[Filing]]:
+            out = {}
+            for scrip in marked.get("scrips") or []:
+                rows = self.sink.pending_for_company(scrip, start, history_to.isoformat(), self.settings.max_attempts, HISTORY_LIMIT)
+                q = [f for f in (Filing.model_validate(r) for r in rows) if f.news_id in wanted]
+                if q:
+                    out[scrip] = q
+            return out
+
+        before, todo, n = queues(), {}, 0
+        for scrip, q in before.items():
+            q = [f for f in q if f.news_id not in self._tried][:max(0, REQUEUED_FIRST_MAX - n)]
+            if q:
+                todo[scrip], n = q, n + len(q)
+        done, after = 0, before
+        if todo:
+            end = min(deadline, time.monotonic() + REQUEUED_FIRST_S)
+            results: dict = {}
+            self._slice(lambda: results.update(self._run_parallel(
+                {s: partial(self._process_group, q, deadline, True, True) for s, q in todo.items()})), end)
+            done = sum(len(v) for v in results.values())
+            log.info("requeued by id, read first: %d of %s", done, ", ".join(f.news_id for q in todo.values() for f in q))
+            after = queues()
+        # an id still pending stays (deferred, or past this run's share); one no longer pending (read, or inside the live
+        # window, which the live pass reads) is dropped
+        pending = {f.news_id for q in after.values() for f in q}
+        left = [i for i in ids if i in pending]
+        if left != ids:
+            self._kv_set(requeue.BY_ID_KEY, json.dumps({"ids": left, "scrips": [s for s in marked.get("scrips") or [] if s in after]}))
+        return done
+
     def _in_slices(self, step, until: float, fresh, slice_s: float | None = None) -> None:
         """Older work in slices (SLICE_S unless given), today's new filings looked for between them. A slice that ends
         before its own deadline had nothing left to do (or the route is out of quota), so the step is finished for this
@@ -4526,6 +4659,8 @@ class Pipeline:
                 if self._on_nse():
                     self.retriage_returning(today, started + time_budget_s * 0.2)
                 fresh()
+                if mode == "all":
+                    self._requeued_first(live_from - timedelta(days=1), deadline)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 # Near the day's share of the plan's writes (D1_DAILY_WRITE_CAP) the window's earlier days, the
                 # catch-ups and the memory syncs wait for the reset (05:30 IST) and the run only turns today's filings
@@ -4548,6 +4683,9 @@ class Pipeline:
                     caught = event_catchup.results_catch_up(
                         self, min(deadline, max(live_deadline, time.monotonic() + RESULTS_CATCH_UP_S)))
                     log.info("results XBRL catch-up: %s", json.dumps(caught))
+                    if results_press_release():   # RESULTS_PRESS_RELEASE (TODO 135)
+                        log.info("press releases joined to their results cards: %s",
+                                 json.dumps(event_catchup.release_catch_up(self, min(deadline, live_deadline + RESULTS_CATCH_UP_S))))
                     fresh()
                 if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
                     caught = event_catchup.catch_up(self, live_deadline)
@@ -4836,8 +4974,11 @@ class Pipeline:
                     unfinished.append(s)  # stopped early, or has more than one page of history
             order = unfinished + order
         self._kv_set("backfill:company_order", json.dumps({**state, "scrips": order}))
-        if priority:
-            self._kv_set("backfill:priority", json.dumps([s for s in priority if s in set(order)]))
+        # read the key again before writing it: a requeue by id during this run put its companies there (requeue.prioritise), and
+        # writing back the list read at the start would lose them (review of #298)
+        kept = merged_priority(priority, json.loads(self.sink.kv_get("backfill:priority") or "[]"), order)
+        if priority or kept:
+            self._kv_set("backfill:priority", json.dumps(kept))
         total = (state.get("total") or 0) + len(state["extra"])
         self._kv_set("backfill:progress", json.dumps({"companies_left": len(order), "companies_total": total,
                                                       "built": state["built"], "through": through}))

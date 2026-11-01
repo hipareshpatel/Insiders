@@ -147,7 +147,8 @@ def test_corporate_balance_sheet_reads_rows_described_on_the_year_with_amounts_a
     assert got["Other Assets"] == 997 - 375 - 20 - 125
 
 
-def test_a_standalone_year_end_total_is_the_filed_assets_with_no_deferred_tax_offset():
+def test_a_standalone_year_end_total_is_the_filed_assets_with_no_deferred_tax_offset(monkeypatch):
+    monkeypatch.setattr(sv, "B4_NET_ANY_BASIS", False)
     got = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END), standalone=True))
     assert got["Total Assets"] == got["Total Liabilities"] == 1000.0         # no min(DTA 8, DTL 3) on a standalone sheet
 
@@ -188,10 +189,12 @@ def test_hdfc_bank_quarter_and_half_year_by_the_bank_recipe():
     assert q["Other Income"].value == pytest.approx(34227.06, abs=0.01)
     assert q["Depreciation"].value is None and q["Expenses"].value is None      # the quarter has no cash flow
     h = sv.bank_pl(sv._Reader(facts, end=date(2026, 9, 30), months=6))
-    assert h["Expenses"].value == pytest.approx(100308.45 + 8011.84 - 2218.68, abs=0.02)
+    assert h["Expenses"].value == pytest.approx(100308.45 + 8011.84 - 2218.68 + 1975.04, abs=0.02)   # its exceptional loss in Expenses
     assert h["Financing Profit"].value == pytest.approx(h["Revenue"].value - h["Interest"].value - h["Expenses"].value)
     bs = sv.bank_bs(sv._Reader(facts, instant=date(2026, 9, 30)))
-    assert set(bs) == {"Equity Capital", "Deposits", "Borrowing"} and bs["Borrowing"].value == pytest.approx(594143.54, abs=0.01)
+    assert {"Equity Capital", "Reserves", "Deposits", "Borrowing", "Other Liabilities", "Total Liabilities", "Total Assets", "Fixed Assets",
+            "Investments", "Other Assets"} <= set(bs) and "CWIP" not in bs
+    assert bs["Borrowing"].value == pytest.approx(594143.54, abs=0.01)
 
 
 def test_a_positive_bank_exceptional_item_goes_to_other_income_and_pbt_stays_as_filed():
@@ -236,6 +239,35 @@ def test_a_year_comes_from_the_newest_annual_report_that_holds_it_else_the_q4_fi
     assert cf.year("FY25", "CONSOLIDATED", sv.BANK)[1] == "results file Q4FY25"     # a lender: always the Q4 file
 
 
+def test_a_report_two_years_later_never_gives_the_year_even_with_a_stray_fact_at_its_date():
+    """UltraTech's FY26 report tags Assets at 31 Mar 2024 in a note (no balance sheet there): FY24 is the FY24 or FY25
+    report's, else the Q4 file's, never FY26's (TODO 129: Borrowings read as 0 on 113 pairs)."""
+    fy26 = doc([("Assets", "I2026", 9.0), ("Assets", "I2024", 5.0), ("RevenueFromOperations", "D2024", 1.0)])
+    fy26["contexts"]["I2024"] = {"i": "2024-03-31"}
+    fy26["contexts"]["D2024"] = {"s": "2023-04-01", "e": "2024-03-31", "m": 12}
+    q4 = doc([("RevenueFromOperations", "D2024", 4.0), ("Assets", "I2024", 7.0)], kind="results", template="INDAS", year=2024)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.key("1", "Q4FY24", "CONSOLIDATED"): q4})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "results file Q4FY24"
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE)[1] == "results file Q4FY24"
+    fy25 = doc([("Assets", "I2025", 8.0), ("Assets", "I2024", 6.0)], year=2025)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.annual_key("1", "FY25", "CONSOLIDATED"): fy25,
+                 xf.key("1", "Q4FY24", "CONSOLIDATED"): q4})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY25"
+    # with no nearer report and no Q4 file, the later report is the last resort (HCL Tech FY20 from its FY22 report), but only
+    # when it holds the year's equity too: a stray Assets fact is no sheet (JSL and Jindal SAW FY22 from FY24: Borrowings 0)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "results file Q4FY24"
+    full = doc([("Assets", "I2026", 9.0), ("Assets", "I2024", 5.0), ("EquityShareCapital", "I2024", 1.0)])
+    full["contexts"]["I2024"] = {"i": "2024-03-31"}
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): full})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
+    # a Q4 file with no balance sheet at the year end gives way to the later report (HAL, NTPC FY22)
+    q4_pl = doc([("RevenueFromOperations", "D2024", 4.0)], kind="results", template="INDAS", year=2024)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): full, xf.key("1", "Q4FY24", "CONSOLIDATED"): q4_pl})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE)[1] == "results file Q4FY24"
+
+
 # --- the page and the comparison ------------------------------------------------------------------------------------------
 
 def section(section_id, rows, columns):
@@ -251,10 +283,10 @@ PAGE = (section("profit-loss", {"Sales&nbsp;+": [900, 50], "Expenses&nbsp;+": [6
         + section("cash-flow", {"Cash from Investing Activity&nbsp;+": [-88, 1]}, ["Mar 2026", "Dec 2024"]))
 
 
-def test_quarters_before_fy26_are_listed_but_never_counted():
-    page = sv.parse_page(section("quarters", {"Sales&nbsp;+": [100, 90]}, ["Jun 2025", "Mar 2025"]))
+def test_quarters_before_fy25_are_listed_but_never_counted():
+    page = sv.parse_page(section("quarters", {"Sales&nbsp;+": [100, 90]}, ["Jun 2024", "Mar 2024"]))
     rows = {r["period"]: r for r in sv.compare(page, _store({}), "1", "DEMO")}
-    assert rows["Q4FY25"]["status"] == "before_cutoff" and rows["Q1FY26"]["status"] == "no_facts"   # owner: quarters from FY26
+    assert rows["Q4FY24"]["status"] == "before_cutoff" and rows["Q1FY25"]["status"] == "no_facts"   # owner 31 Oct: from FY25
     summary = sv.summarise([{"scrip": "1", "symbol": "DEMO", "rows": list(rows.values()), "skipped": None}], "2026-10-29")
     assert summary["by_status"]["before_cutoff"] == 1 and summary["by_row"]["quarters: Sales"]["exact_share"] is None
 
@@ -351,6 +383,8 @@ def test_workflow_runs_screener_rows_read_only_and_always_uploads():
     assert 'screener-rows ${IDS:+--scrips "$IDS"} --top-mcap "${LIMIT:-50}"' in run["run"] and "--apply" not in run["run"]
     upload = next(s for s in steps if s.get("if") == "always() && inputs.command == 'screener-rows'")
     assert upload["with"]["name"] == "screener-rows"
+    stored = next(s for s in steps if s.get("if") == "!cancelled() && inputs.command == 'screener-rows'")
+    assert "screener-rows --stored" in stored["run"] and "--apply" not in stored["run"] and stored.get("continue-on-error")
 
 
 # --- the review's findings (28 Oct 2026) -----------------------------------------------------------------------------------
@@ -546,6 +580,23 @@ def test_current_maturities_of_finance_lease_obligations_are_borrowings_once():
     assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 6
 
 
+def test_current_maturities_of_long_term_debt_are_borrowings_once(monkeypatch):
+    """L&T Q4FY21-FY26, Hyundai, KPR Mill, Dr Reddy's: screener's Borrowings above ours by exactly this element (129 rows).
+    Behind SCREENER_CMLTD, off until measured on/off."""
+    monkeypatch.setenv("SCREENER_CMLTD", "1")
+    base = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Borrowings"]
+    got = values(sv.corporate_bs(sv._Reader(annual_facts([(sv.LT_DEBT_MATURITIES, "I2026", 9.0)]), instant=END)))
+    assert got["Borrowings"] == base + 9
+    assert got["Other Liabilities"] == values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Other Liabilities"] - 9
+    # the same line also described in the breakdown is not counted twice
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")]
+                         + [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Current maturities of long term debt"),
+                            ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 9.0), (sv.LT_DEBT_MATURITIES, "I2026", 9.0)]))
+    assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 9
+    monkeypatch.delenv("SCREENER_CMLTD")            # off by default: today's rule
+    assert values(sv.corporate_bs(sv._Reader(annual_facts([(sv.LT_DEBT_MATURITIES, "I2026", 9.0)]), instant=END)))["Borrowings"] == base
+
+
 def test_tax_percent_is_on_the_size_of_the_pbt():
     """L&T standalone Q2FY26: PBT -2,982 with a tax charge, screener +20.0 (289 quarters of the 500 largest)."""
     assert round(sv._tax_pct(596.4, -2982.0), 1) == 20.0 and sv._tax_pct(1.0, 0.0) is None
@@ -645,3 +696,354 @@ def test_expense_parts_take_the_rest_from_screeners_total_and_round_by_the_place
                                   "Mar 2026", 1000.0, 870.0)
     assert got == pytest.approx({"material": 720.0, "employee": 49.0, "rest": 101.0})
     assert slack["material"] == pytest.approx(5.0) and slack["employee"] == pytest.approx(0.05)
+
+
+# --- the first batch of screener-matching rules (31 Oct 2026; real NSE files trimmed to the facts a test needs) -------------------
+
+RULES1 = json.loads((FIXTURES / "screener_rules1.json").read_text())
+
+
+def rules1(key):
+    return xf.Facts(RULES1[key])
+
+
+Q1 = dict(end=date(2026, 6, 30), months=3)
+
+
+def q1_pl(key, **period):
+    return sv.corporate_pl(sv._Reader(rules1(key), **(period or Q1)))
+
+
+def test_p1_the_share_goes_into_pbt_where_the_segment_pbt_holds_it():
+    """Segment PBT = PBT + share: Hindalco Q1FY27 9,387 + 6 = 9,393; ITC 5,774.94 + 85.91 = 5,860.85 (screener's PBT; Tata Steel, Bharti, NTPC alike)."""
+    for key, pbt in (("HINDALCO_q1fy27", 9393.0), ("ITC_q1fy27", 5860.85)):
+        rows = q1_pl(key)
+        assert rows["Profit before tax"].value == pytest.approx(pbt) and "Associates' share outside PBT" not in rows
+
+
+def test_p1_the_share_stays_out_where_the_segment_pbt_equals_the_filed_pbt():
+    """Segment PBT = PBT: DLF Q1FY27 share 485.83 Cr, screener's Other Income 325 (not 811.05) and PBT 422.76; L&T 6,922.26 (Reliance, Tata Consumer alike)."""
+    dlf, lt = q1_pl("DLF_q1fy27"), q1_pl("LT_q1fy27")
+    assert dlf["Profit before tax"].value == pytest.approx(422.76) and dlf["Other Income"].value == pytest.approx(325.22, abs=0.01)
+    assert dlf["Associates' share"].value == pytest.approx(485.83) and dlf["Associates' share outside PBT"].value == pytest.approx(485.83)
+    assert lt["Profit before tax"].value == pytest.approx(6922.26) and lt["Associates' share outside PBT"].value == pytest.approx(5.18)
+
+
+def test_p1_a_share_kept_out_of_pbt_is_in_no_expense_and_a_loss_is_not_added_to_expenses(monkeypatch):
+    """Tata Consumer Q1FY27: Expenses 4,625 in screener, not 4,642.41 (the loss 17.67 stays out)."""
+    monkeypatch.setattr(sv, "ASSOCIATES_RULE_ON_YEARS", True)   # the mechanism, on yearly synthetic facts
+    seg = [("SegmentProfitBeforeTax", "D2026", 270.0)]
+    base = values(sv.corporate_pl(sv._Reader(annual_facts(seg), end=END, months=12)))
+    loss = values(sv.corporate_pl(sv._Reader(annual_facts(seg + [(sv.ASSOCIATES, "D2026", -8.0)]), end=END, months=12)))
+    assert loss["Expenses"] == base["Expenses"] and loss["Operating Profit"] == base["Operating Profit"]
+    assert loss["Profit before tax"] == base["Profit before tax"] == 270.0 and loss["Other Income"] == base["Other Income"]
+    # and where the segment holds the share the loss is an expense as before
+    inside = values(sv.corporate_pl(sv._Reader(annual_facts([("SegmentProfitBeforeTax", "D2026", 262.0), (sv.ASSOCIATES, "D2026", -8.0)]),
+                                               end=END, months=12)))
+    assert inside["Expenses"] == base["Expenses"] + 8 and inside["Profit before tax"] == 262.0
+
+
+def test_p1_with_no_segment_pbt_the_module_default_decides(monkeypatch):
+    """BEL Q1FY27 files a filler 0 segment PBT beside a share of 10.63 Cr."""
+    on = q1_pl("BEL_q1fy27")["Profit before tax"].value
+    monkeypatch.setattr(sv, "ASSOCIATES_DEFAULT_INCLUDE", False)
+    off = q1_pl("BEL_q1fy27")["Profit before tax"].value
+    assert on == pytest.approx(1396.25 + 10.63) and off == pytest.approx(1396.25)
+
+
+def test_p1_the_split_share_elements_are_read_too():
+    seg = [("SegmentProfitBeforeTax", "D2026", 279.0)]
+    split = [(sv.ASSOCIATES_SPLIT[0], "D2026", 4.0), (sv.ASSOCIATES_SPLIT[1], "D2026", 5.0)]
+    rows = sv.corporate_pl(sv._Reader(annual_facts(seg + split), end=END, months=12))
+    assert rows["Profit before tax"].value == pytest.approx(279.0) and rows["Associates' share"].value == pytest.approx(9.0)
+    only_jv = sv.corporate_pl(sv._Reader(annual_facts([(sv.ASSOCIATES_SPLIT[1], "D2026", 5.0)]), end=END, months=12))
+    assert only_jv["Profit before tax"].value == pytest.approx(275.0)        # the default: include
+
+
+def test_p1_the_profit_line_rule_does_not_count_a_share_kept_below_pbt_twice(monkeypatch):
+    """PBT 10, tax 40, share 100 below PBT: the whole profit is 70 (not PBT - tax = -30), so Net Profit 70 is no slip."""
+    monkeypatch.setattr(sv, "ASSOCIATES_RULE_ON_YEARS", True)
+    facts = [("ProfitBeforeTax", "D2026", 10.0), ("SegmentProfitBeforeTax", "D2026", 10.0), ("TaxExpense", "D2026", 40.0),
+             (sv.ASSOCIATES, "D2026", 100.0), ("ProfitLossForPeriod", "D2026", 70.0), ("RevenueFromOperations", "D2026", 500.0)]
+    rows = sv.corporate_pl(sv._Reader(xf.Facts(doc(facts)), end=END, months=12))
+    stored = {k: r.value for k, r in rows.items() if r.value is not None}
+    assert stored["Profit before tax"] == 10.0 and stored["Associates' share outside PBT"] == 100.0
+    assert sv.corrected_pl(stored, sv.CORPORATE) is stored
+    inside = dict(stored)
+    del inside["Associates' share outside PBT"]
+    assert sv.corrected_pl(inside, sv.CORPORATE)["Net Profit"] == -30.0       # the guard still fires where the share is not added back
+
+
+def test_p2_a_fair_value_loss_on_equity_investments_leaves_expenses():
+    """TMCV Q2FY27 consolidated: Operating Profit 1,940 + the row 708 = 2,648 = screener."""
+    rows = q1_pl("TMCV_q2fy27", end=date(2026, 9, 30), months=3)
+    assert rows["Operating Profit"].value == pytest.approx(2648.0) and "loss on investments 708" in rows["Expenses"].note
+
+
+def test_p2_a_fair_value_line_on_derivatives_commodities_or_exchange_stays_in_expenses():
+    """TMPV Q1FY27 "Foreign exchange loss/(gain) and commodity derivatives fair value adjustments" 150 Cr is in screener's Expenses."""
+    assert "loss on investments" not in q1_pl("TMPV_q1fy27")["Expenses"].note
+    import re
+    for text in ("Foreign exchange loss/(gain) and commodity derivatives fair value adjustments", "Fair value loss on derivative instruments"):
+        assert not re.search(sv.FAIR_VALUE_INVESTMENT, text, re.I)
+    for text in ("Fair value (gain)/loss on equity investments measured at FVTPL", "Loss on investments carried at fair value"):
+        assert re.search(sv.FAIR_VALUE_INVESTMENT, text, re.I)
+
+
+def test_b1_a_right_of_use_row_under_other_non_current_financial_assets_is_fixed_assets():
+    """KIMS consolidated FY26: Fixed Assets 4,581.8 + the row 1,128.3 (screener's gap -1,128.2)."""
+    rows = sv.corporate_bs(sv._Reader(rules1("KIMS_fy26_bs"), instant=date(2026, 3, 31)))
+    assert rows["Fixed Assets"].value == pytest.approx(4581.8 + 1128.3, abs=0.1) and "right-of-use row 1,128.30" in rows["Fixed Assets"].note
+
+
+def test_b2_exploration_and_biological_assets_stay_out_of_fixed_assets():
+    """Measured 31 Oct 2026 (run 41166426469): adding them moved 7 rows right and 29 wrong, so they are not Fixed Assets."""
+    base = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Fixed Assets"]
+    got = sv.corporate_bs(sv._Reader(annual_facts([("AssetsArisingFromExplorationForAndEvaluationOfMineralResources", "I2026", 12.0),
+                                                   ("BiologicalAssetsOtherThanBearerPlants", "I2026", 3.0)]), instant=END))
+    assert got["Fixed Assets"].value == pytest.approx(base)
+
+
+def test_p1_a_year_keeps_the_share_in_pbt():
+    seg = [("SegmentProfitBeforeTax", "D2026", 270.0)]
+    base = values(sv.corporate_pl(sv._Reader(annual_facts(seg), end=END, months=12)))
+    with_share = values(sv.corporate_pl(sv._Reader(annual_facts(seg + [(sv.ASSOCIATES, "D2026", 8.0)]), end=END, months=12)))
+    assert with_share["Profit before tax"] == base["Profit before tax"] + 8
+
+
+def test_b3_a_lease_row_under_a_financial_liability_is_borrowings_whatever_its_spelling():
+    """KPIT/SCI "Lease Laibility", Dixon "Payable for Lease Obiligation", JSL/Granules "LEASE", PGEL "Leases", Maruti "Financial Lease"."""
+    base = [x for x in ANNUAL if not x[1].endswith(("_M1", "_M2", "_M3"))]
+    texts = ["Lease Laibility", "Payable for Lease Obiligation", "LEASE", "Leases", "Financial Lease",
+             "Payable for sale and lease back of an under construction asset"]
+    extra = []
+    for i, text in enumerate(texts, 1):
+        member = f"M{i}" if i < 7 else "M8"
+        if member == "M4":      # M4 holds the right-of-use asset row of ANNUAL
+            member = "M9"
+        extra += [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", f"D2026_{member}", text),
+                  ("OtherCurrentFinancialLiabilitiesOthers", f"I2026_{member}", float(i))]
+    got = sv.corporate_bs(sv._Reader(xf.Facts(doc(base + extra)), instant=END))
+    assert got["Borrowings"].value == pytest.approx(150 + 1 + 2 + 3 + 4 + 5)        # the sale and lease back row (6) stays out
+
+
+def test_b4_both_deferred_tax_lines_are_netted_on_a_standalone_year_end_too(monkeypatch):
+    """Infosys standalone FY25: Assets 124,936 - min(DTA 497, DTL 1,062) = 124,439 = screener; a half-year column stays the filed total."""
+    r = sv._Reader(rules1("INFY_fy25_bs"), instant=date(2025, 3, 31))
+    assert sv.corporate_bs(r, standalone=True)["Total Assets"].value == pytest.approx(124936.0)   # off by default (measured worse)
+    monkeypatch.setattr(sv, "B4_NET_ANY_BASIS", True)
+    assert sv.corporate_bs(r, standalone=True)["Total Assets"].value == pytest.approx(124439.0)
+    assert sv.corporate_bs(r, standalone=True, half_year=True)["Total Assets"].value == pytest.approx(124936.0)
+    monkeypatch.setattr(sv, "B4_NET_ANY_BASIS", False)
+    assert sv.corporate_bs(r, standalone=True)["Total Assets"].value == pytest.approx(124936.0)
+
+
+def test_a_minority_share_as_large_as_the_whole_profit_is_the_slip_and_the_owners_figure_stays():
+    # FINCABLES Q4FY25: owners 191.71 (Screener 192); a minority row equal to the total would have made the owners' profit 0
+    fin = {"Net Profit": 191.71, "Net Profit (owners)": 191.71, "Minority share": 191.71}
+    assert sv.corrected_pl(fin, sv.CORPORATE)["Net Profit (owners)"] == 191.71
+    # BANCOINDIA Q1FY26: owners 164.06 against total 115.0 and minority 5.48 -> 109.52 (Screener 110): the rule still corrects
+    banco = {"Net Profit": 115.0, "Net Profit (owners)": 164.06, "Minority share": 5.48}
+    assert sv.corrected_pl(banco, sv.CORPORATE)["Net Profit (owners)"] == 109.52
+
+
+def trimmed(name):
+    """A results file's balance-sheet facts, trimmed from the real NSE Q4FY26 file (srules2 bs report)."""
+    return xf.Facts(json.loads((FIXTURES / f"screener_bs_{name}_q4fy26.json").read_text()))
+
+
+MARCH26 = date(2026, 3, 31)
+
+
+def test_bank_balance_sheet_icici_paid_up_capital_and_the_capital_premium_move_into_reserves():
+    f = trimmed("icici")
+    assert sv.family(f.doc["template"]) == sv.BANK
+    bs = sv.bank_bs(sv._Reader(f, instant=MARCH26))
+    # Capital 4,114.30 is paid-up plus premium; screener: 1,432.23 and 335,939
+    assert bs["Equity Capital"].value == pytest.approx(1432.23, abs=0.01)
+    assert bs["Reserves"].value == pytest.approx(335939.19, abs=0.01)
+    assert bs["Reserves"].value + bs["Equity Capital"].value == pytest.approx(f.cr("Capital", instant=MARCH26) + f.cr("ReservesAndSurplus", instant=MARCH26))
+    assert bs["Total Liabilities"].value == bs["Total Assets"].value == pytest.approx(f.cr("CapitalAndLiabilities", instant=MARCH26))
+    assert bs["Other Assets"].value == pytest.approx(bs["Total Assets"].value - bs["Fixed Assets"].value - bs["Investments"].value)
+    assert "CWIP" not in bs        # none filed: not made up
+
+
+def test_bank_balance_sheet_idfc_first_and_kotak_stock_options_row():
+    idfc = sv.bank_bs(sv._Reader(trimmed("idfcfirst"), instant=MARCH26))
+    assert idfc["Equity Capital"].value == pytest.approx(8601.70, abs=0.01) and idfc["Reserves"].value == pytest.approx(38750.14, abs=0.01)
+    f = trimmed("kotak")
+    kotak = sv.bank_bs(sv._Reader(f, instant=MARCH26))
+    # the employee stock options outstanding row (113.12) leaves Other Liabilities for Reserves
+    assert kotak["Reserves"].value == pytest.approx(f.cr("ReservesAndSurplus", instant=MARCH26) + 113.12, abs=0.01)
+    assert kotak["Other Liabilities"].value == pytest.approx(f.cr("OtherLiabilitiesAndProvisions", instant=MARCH26) - 113.12, abs=0.01)
+    assert kotak["Equity Capital"].value == pytest.approx(994.65, abs=0.01)
+
+
+def test_bank_balance_sheet_without_the_paid_up_fact_reads_capital():
+    f = xf.Facts(doc([("Capital", "I2026", 100.0), ("ReservesAndSurplus", "I2026", 900.0), ("OtherLiabilitiesAndProvisions", "I2026", 50.0),
+                      ("CapitalAndLiabilities", "I2026", 2000.0), ("FixedAssets", "I2026", 20.0), ("Investments", "I2026", 500.0),
+                      ("CapitalWorkInProgress", "I2026", 5.0), ("Deposits", "I2026", 900.0), ("Borrowings", "I2026", 50.0)], template="BANKING"))
+    bs = sv.bank_bs(sv._Reader(f, instant=END))
+    assert bs["Equity Capital"].value == 100.0 and bs["Reserves"].value == 900.0 and bs["CWIP"].value == 5.0
+    assert bs["Other Assets"].value == pytest.approx(2000 - 20 - 5 - 500)
+    assert sv.bs_rows(sv.BANK, sv._Reader(f, instant=END)).keys() == bs.keys()
+
+
+def test_nbfc_balance_sheet_bajaj_finance_closes_every_row_of_the_recipe():
+    f = trimmed("bajfin")
+    assert sv.family(f.doc["template"]) == sv.NBFC
+    bs = sv.nbfc_bs(sv._Reader(f, instant=MARCH26))
+    assert bs["Borrowing"].value == pytest.approx(435112.49, abs=0.01)      # screener 435,112
+    assert "Borrowings" not in bs
+    assert bs["Total Assets"].value == bs["Total Liabilities"].value
+    assert bs["Other Liabilities"].value == pytest.approx(bs["Total Liabilities"].value - bs["Equity Capital"].value - bs["Reserves"].value
+                                                          - bs["Borrowing"].value)
+    assert bs["Other Assets"].value == pytest.approx(bs["Total Assets"].value - bs["Fixed Assets"].value - bs["CWIP"].value
+                                                     - bs["Investments"].value)
+
+
+def test_nbfc_balance_sheet_total_nets_the_deferred_tax_and_chola_keeps_the_rule():
+    f = trimmed("chola")
+    bs = sv.nbfc_bs(sv._Reader(f, instant=MARCH26))
+    sub = f.cr("SubordinatedLiabilities", instant=MARCH26)
+    assert sub == pytest.approx(1030.27, abs=0.01)
+    # screener's Chola figure is without the subordinated liabilities (211,070): the recipe is the one for the other six, and says so
+    assert bs["Borrowing"].value - 211070 == pytest.approx(sub, abs=1.0)
+    assert "SubordinatedLiabilities" in bs["Borrowing"].note
+    dta, dtl = f.cr("DeferredTaxAssetsNet", instant=MARCH26), f.cr("DeferredTaxLiabilitiesNet", instant=MARCH26)
+    off = min(dta, dtl) if dta is not None and dtl is not None else 0.0
+    assert bs["Total Assets"].value == pytest.approx(f.cr("Assets", instant=MARCH26) - off)
+
+
+def test_corporate_investment_rows_inside_other_assets_go_to_investments():
+    for name, base_inv, rows in (("gail", None, 9360.17), ("fincables", None, 262.76 + 719.55), ("kims", None, 87.5)):
+        f = trimmed(name)
+        r = sv._Reader(f, instant=MARCH26)
+        bs = sv.corporate_bs(r, "", False, name == "fincables")
+        elements = sum(f.cr(n, instant=MARCH26) or 0 for n in ("NoncurrentInvestments", "CurrentInvestments", "InvestmentsAccountedForUsingEquityMethod"))
+        assert bs["Investments"].value == pytest.approx(elements + rows, abs=0.01), name
+        assert "rows" in bs["Investments"].note
+        # out of Other Assets: the total is unchanged
+        assert bs["Other Assets"].value == pytest.approx(bs["Total Assets"].value - bs["Fixed Assets"].value - bs["CWIP"].value
+                                                         - bs["Investments"].value)
+
+
+def test_an_investment_property_loan_or_unrelated_row_is_not_an_investment():
+    extra = [("DescriptionOfOtherNoncurrentFinancialAssets", "D2026_M5", "Investment property"),
+             ("OtherNoncurrentFinancialAssets", "I2026_M5", 11.0),
+             ("DescriptionOfOtherNoncurrentFinancialAssets", "D2026_M6", "Loans and advances"),
+             ("OtherNoncurrentFinancialAssets", "I2026_M6", 13.0),
+             ("DescriptionOfOtherCurrentFinancialAssets", "D2026_M8", "Other investments"),
+             ("OtherCurrentFinancialAssets", "I2026_M8", 17.0)]
+    bs = sv.corporate_bs(sv._Reader(annual_facts(extra), instant=END), "")
+    assert bs["Investments"].value == pytest.approx(60 + 40 + 25 + 17)
+
+
+def test_statements_rows_of_writes_the_bank_and_nbfc_balance_sheet_rows_for_the_stock_page():
+    from bse_intel import statements
+
+    for name, row in (("icici", "Reserves"), ("bajfin", "Borrowing")):
+        d = dict(trimmed(name).doc, period="Q4FY26", basis="STANDALONE")
+        got = {table: rows for table, rows, _ in statements.rows_of(d)}
+        assert got["balance"][row].value is not None and got["balance"]["Total Assets"].value
+
+
+def test_a_negative_bank_exceptional_item_goes_to_expenses_and_pbt_stays_as_filed():
+    """SBI FY24: its 7,100.31 Cr pension charge is in screener's Expenses and Financing Profit, both bases (run 41174640014)."""
+    facts = xf.Facts(doc([("InterestEarned", "D2026", 100.0), ("InterestExpended", "D2026", 50.0), ("OperatingExpenses", "D2026", 20.0),
+                          ("AdjustmentsForDepreciationAndAmortisationExpense", "D2026", 2.0), ("OtherIncome", "D2026", 10.0),
+                          ("ExceptionalItems", "D2026", -7.0), ("ProfitLossFromOrdinaryActivitiesBeforeTax", "D2026", 33.0)],
+                         template="BANKING"))
+    rows = values(sv.bank_pl(sv._Reader(facts, end=END, months=12)))
+    assert rows["Expenses"] == pytest.approx(25.0) and rows["Other Income"] == pytest.approx(10.0)
+    assert rows["Financing Profit"] + rows["Other Income"] - rows["Depreciation"] == pytest.approx(rows["Profit before tax"])
+
+
+def test_a_compared_year_lists_what_each_source_gives_for_the_row():
+    page = sv.parse_page(PAGE.replace('"1,99"', "199"))
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): doc(ANNUAL)})
+    rows = {(r["table"], r["row"], r["period"]): r for r in sv.compare(page, cf, "1", "DEMO")}
+    assert rows[("annual", "Sales", "FY26")]["alts"].startswith("own ")
+    assert "alts" not in rows[("annual", "Sales", "FY24")]          # nothing compared, nothing listed
+
+
+def test_a_bank_states_its_stock_options_in_the_balance_sheet_note_and_screener_moves_them_to_reserves_at_march():
+    """HDFC Bank Q4FY24 standalone: "Employees stock options outstanding as at March 31, 2024 were Rs. 2652.72 crore" (screener
+    Reserves 439,486); the segment note's "Capital, ... stock options outstanding and Reserves" total is never read."""
+    note = ("DisclosureOfNotesOnAssetsAndLiabilitiesExplanatoryTextBlock", "I2026",
+            "Employees stock options outstanding as at March 31, 2026 were Rs. 4,545.11 crore and Other liability is Rs 1")
+    segment = ("DisclosureOfNotesOnSegmentsExplanatoryTextBlock", "I2026",
+               "Capital, Employees stock options outstanding and Reserves for quarter ended March 2026 is Rs. 5,62,900.90 crore")
+    base = [("ReservesAndSurplus", "I2026", 50000.0), ("OtherLiabilitiesAndProvisions", "I2026", 20000.0)]
+    march = sv.bank_bs(sv._Reader(xf.Facts(doc(base + [segment, note], template="BANKING")), instant=END))
+    assert march["Reserves"].value == pytest.approx(54545.11) and march["Other Liabilities"].value == pytest.approx(15454.89)
+    alone = sv.bank_bs(sv._Reader(xf.Facts(doc(base + [segment], template="BANKING")), instant=END))
+    assert alone["Reserves"].value == pytest.approx(50000.0)
+
+
+def test_a_row_apart_names_the_screener_sub_rows_that_equal_its_gap():
+    head = {"Long term Borrowings": {"Mar 2025": "1,200"}, "Short term Borrowings": {"Mar 2025": "300"},
+            "Lease Liabilities": {"Mar 2025": "45.5"}, "Other Borrowings": {"Mar 2025": "0"}}
+    listed, hit = sv.sub_row_hints(head, "Mar 2025", -45.4)
+    assert "Long term Borrowings 1,200.00" in listed and hit == "Lease Liabilities 45.50"
+    assert sv.sub_row_hints(head, "Mar 2025", 1245.5)[1] == "Long term Borrowings 1,200.00 + Lease Liabilities 45.50"
+    assert sv.sub_row_hints({"Material Cost %": {"Mar 2025": "40%"}}, "Mar 2025", 40.0) == ("", "")
+    assert sv.column_for("balance", "Q4FY25") == "Mar 2025" and sv.column_for("cash_flow", "FY25") == "Mar 2025"
+
+
+def test_the_stored_statements_are_compared_with_screener_row_by_row():
+    """Owner, 31 Oct 2026: is our memory updated? The site shows dossier.statements, not the recipes screener-rows measures."""
+    from bse_intel import screener_view as sv
+
+    page = {"basis": "CONSOLIDATED", "tables": {
+        "quarters": {"Sales": {"Q1FY26": 100.0, "Q2FY26": 50.0, "Q3FY26": 70.0, "Q4FY24": 9.0}, "Net Profit": {"Q1FY26": 10.0}},
+        "annual": {"Sales": {"FY24": 400.0}}}}
+    entries = [
+        {"table": "quarters", "period": "Q1FY26", "basis": "CONSOLIDATED", "rows": {"Sales": 100.0}, "as_of": "2026-10-31T09:00",
+         "lab": {"by": "file", "from": "stored facts"}},
+        {"table": "quarters", "period": "Q2FY26", "basis": "CONSOLIDATED", "rows": {"Sales": 57.0}},
+        {"table": "annual", "period": "FY24", "basis": "STANDALONE", "rows": {"Sales": 400.0}},
+    ]
+    got = {(r["table"], r["row"], r["period"]): r for r in sv.compare_stored(page, entries, "1", "ACME")}
+    assert got[("quarters", "Sales", "Q1FY26")]["status"] == "ok" and "stored 2026-10-31 by file" in got[("quarters", "Sales", "Q1FY26")]["note"]
+    assert got[("quarters", "Sales", "Q2FY26")]["status"] == "apart" and got[("quarters", "Sales", "Q2FY26")]["diff"] == 7.0
+    assert got[("quarters", "Sales", "Q3FY26")]["status"] == "no_facts"        # no stored entry
+    assert got[("quarters", "Net Profit", "Q1FY26")]["status"] == "no_recipe"  # the entry lacks the row
+    assert got[("quarters", "Sales", "Q4FY24")]["status"] == "before_cutoff"
+    assert got[("annual", "Sales", "FY24")]["status"] == "no_facts"           # only the other basis is stored
+
+
+def test_a_december_year_comes_from_its_annual_report_else_its_december_quarter_file():
+    """Owner, 1 Nov 2026: 63 companies (VBL, ABB, Siemens, CRISIL) close their year in December; screener shows "YE:2025-12"."""
+    def dec(facts, kind="annual", year=2025):
+        d = doc(facts, kind=kind)
+        d["contexts"][f"DY{year}"] = {"s": f"{year}-01-01", "e": f"{year}-12-31", "m": 12}
+        d["facts"] = [[el, f"DY{year}" if ctx == "DY" else ctx, *rest] for el, ctx, *rest in d["facts"]]
+        return d
+
+    report = dec([("RevenueFromOperations", "DY", 1200.0), ("ProfitLossForPeriod", "DY", 150.0), ("Expenses", "DY", 1000.0)])
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): report})
+    facts, label = cf.year_end("YE:2025-12", "CONSOLIDATED")
+    assert label == "annual report FY26" and facts.cr("RevenueFromOperations", end=date(2025, 12, 31), months=12) == 1200.0
+    rows, _ = sv._ours(cf, sv.CORPORATE, "CONSOLIDATED", "annual", "YE:2025-12", {})
+    assert rows["Sales"].value == 1200.0 and rows["Net Profit"].value == 150.0
+    # no report: the December quarter's results file, which carries the year's column
+    q = dec([("RevenueFromOperations", "DY", 1200.0), ("ProfitLossForPeriod", "DY", 150.0)], kind="results")
+    cf = _store({xf.key("1", "Q3FY26", "CONSOLIDATED"): q})
+    assert cf.year_end("YE:2025-12", "CONSOLIDATED")[1] == "results file Q3FY26"
+    assert cf.year_end("YE:2024-12", "CONSOLIDATED") == (None, "")
+
+
+def test_an_owners_tag_holding_the_comprehensive_income_is_the_whole_profit():
+    """CHOLAFIN Q2FY27 consolidated (NBFC file of 28 Oct 2026): owners 1,763.61 = ComprehensiveIncomeForThePeriod, ProfitLossForPeriod
+    1,630.34, minority 0.0; the Results page showed the owners' profit above the total."""
+    base = [("RevenueFromOperations", "Q2026", 9394.51), ("FinanceCosts", "Q2026", 4334.43), ("ProfitBeforeTax", "Q2026", 2187.05),
+            ("TaxExpense", "Q2026", 558.04), ("ProfitLossForPeriod", "Q2026", 1630.34),
+            ("ProfitOrLossAttributableToNonControllingInterests", "Q2026", 0.0), ("ComprehensiveIncomeForThePeriod", "Q2026", 1763.61)]
+    tagged = base + [("ProfitOrLossAttributableToOwnersOfParent", "Q2026", 1763.61)]
+    got = values(sv.nbfc_pl(sv._Reader(xf.Facts(doc(tagged, kind="results", template="NBFC")), end=END, months=3)))
+    assert got["Net Profit (owners)"] == got["Net Profit"] == 1630.34
+    # an owners' share below the whole profit that is not the comprehensive income stays as filed
+    honest = base + [("ProfitOrLossAttributableToOwnersOfParent", "Q2026", 1600.0)]
+    got = values(sv.nbfc_pl(sv._Reader(xf.Facts(doc(honest, kind="results", template="NBFC")), end=END, months=3)))
+    assert got["Net Profit (owners)"] == 1600.0

@@ -108,10 +108,14 @@ def plan(sink, equities, sme, keep_sme: bool = False, workers: int = READ_WORKER
     sme_isins = {e.isin for e in sme}
     sme_symbols = {e.symbol for e in sme}
     companies = stored_with_counts(sink)
+    # the REITs and InvITs reit_results.py put in: not on NSE's equity list, and kept (their ISINs are in kv)
+    trusts = set(json.loads(sink.kv_get("reit_trust_isins") or "[]"))
     keep, mismatch, bse_kept = 0, [], []
     candidates: list[dict] = []
     for company in companies:
         kind = classify(company, nse_isins, nse_symbols, sme_isins, sme_symbols)
+        if (company.get("isin") or "").strip().upper() in trusts:
+            kind = "nse"
         if kind == "nse":
             keep += 1
         elif kind == "isin_mismatch":

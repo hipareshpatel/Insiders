@@ -526,6 +526,71 @@ def test_unit_slips_need_a_declared_unit_and_a_single_fit():
     assert unit_slips(["Revenue about ₹955 Cr"], LAKH_STATEMENT) == []
 
 
+# Hubtown's Q4FY26 consolidated statement (nse-106629168, live 30 Oct 2026): the OCR read the lakh "1,882" as "1.882", so the
+# card's right "₹18.82 Cr" fitted no figure at the lakh unit and reading 3 "corrected" it to 1.882 lakh = ₹0.02 Cr.
+HUBTOWN_LAKH = """--- Page 26
+Statement of Audited Consolidated Financial Results for the Quarter and Year ended March 31, 2026
+(₹ in Lakhs, except per share data)
+Particulars  31.03.2026  31.12.2025  31.03.2025  31.03.2026  31.03.2025
+a. Revenue from Operations  16,000  8,759  9,675  64.351  40.847
+d. Employee benefits expense  1,252  1.118  689  3,984  2.573
+e. Finance costs  8,483  2,341  1.882  15,066  13.492
+"""
+
+
+LCC_MILLION = """--- Page 3
+Statement of unaudited results (₹ in Mn)
+Particulars 30.09.2026 30.06.2026
+Revenue from operations 8,857.3 7,100.2
+Trade receivables 4,558,21 3,900.10
+"""
+BILLION_TABLE = """--- Page 3
+Business update (Rs billion)
+Particulars Q2FY27 Q2FY26
+Net interest income 156.28 140.1
+Profit after tax 40.21 35.0
+"""
+
+
+def test_unit_slips_never_enlarge_on_a_figure_with_malformed_digit_groups():
+    from bse_intel.grounding import unit_slips
+
+    # LCC, 30 Oct 2026: the OCR's "4,558,21" (4,558.21 million) read as 455,821 supported "₹455.82 Cr" -> ₹45,582 Cr
+    assert unit_slips(["Trade receivables of ₹455.82 Cr"], LCC_MILLION) == []
+    # the same row with well-formed digits is no slip either, it is the right reading: 4,558.21 million = ₹455.82 Cr
+    assert unit_slips(["Trade receivables of ₹455.82 Cr"], LCC_MILLION.replace("4,558,21", "4,558.21")) == []
+    # a shrink on a malformed figure is still made: 8,857.3 million carded "₹8,857.3 Cr"
+    assert unit_slips(["Revenue of ₹8,857.3 Cr"], LCC_MILLION) == [("8,857.3", 8857.3, 1, 885.73, 2)]
+    # and a true enlargement on well-formed figures is still made: 156.28 billion carded "₹156.28 Cr" is ₹15,628 Cr
+    assert [(s[0], s[3]) for s in unit_slips(["NII of ₹156.28 Cr"], BILLION_TABLE)] == [("156.28", 15628.0)]
+
+
+def test_unit_slips_never_enlarge_from_a_whole_rupee_amount_with_malformed_digit_groups():
+    from bse_intel.grounding import unit_slips
+
+    # TODO 147, reading 2: a garbled whole-rupee amount ("1,989,68,00,000": groups of 3 then 2) no longer lifts a card figure
+    assert unit_slips(["Revenue of ₹19.90 Cr"], "The revenue for the quarter was Rs 1,989,68,00,000 as reported.") == []
+    # the same amount in the Indian grouping is a real slip and is corrected, as before
+    assert unit_slips(["Revenue of ₹19.90 Cr"], "The revenue for the quarter was Rs 19,89,68,00,000 as reported.") == \
+        [("19.90", 19.9, 2, 1989.68, 2)]
+
+
+def test_unit_slips_never_shrink_a_figure_under_five_lakh():
+    from bse_intel.grounding import unit_slips
+
+    card = ["Finance costs rose to ₹84.83 Cr from ₹18.82 Cr (Q4FY25)."]
+    assert unit_slips(card, HUBTOWN_LAKH) == []   # 18.82 -> 1.882 lakh = ₹0.01882 Cr, never "₹0.02 Cr"
+    # re-made on 31 Oct 2026, the same comma-as-point class at ₹41 lakh: FY25 revenue 40,847 lakh read "40.847" made the right
+    # ₹408.47 Cr into ₹0.41 Cr, finance cost 13,492 lakh read "13.492" made ₹134.92 Cr into ₹0.135 Cr. A shrink by exactly 1,000 is never made
+    card = ["FY26 revenue ₹643.51 Cr against ₹408.47 Cr in FY25; finance costs ₹150.66 Cr against ₹134.92 Cr."]
+    assert unit_slips(card, HUBTOWN_LAKH) == []
+    # real slips are still corrected: 8,483 lakh carded as ₹8,483 Cr is ₹84.83 Cr
+    assert unit_slips(["Finance costs of ₹8,483 Cr"], HUBTOWN_LAKH) == [("8,483", 8483.0, 0, 84.83, 2)]
+    # and a small one is written with the places it needs: 45.67 lakh carded as ₹4,567 Cr is ₹0.457 Cr
+    small = HUBTOWN_LAKH.replace("1,252  1.118", "45.67  1.118")
+    assert unit_slips(["Employee costs of ₹4,567 Cr"], small) == [("4,567", 4567.0, 0, 0.457, 3)]
+
+
 # Tinna Rubber's Q2FY27 statement (held-card audit, 22 Oct 2026): the lakh header garbled by OCR ("fRl. in lakh"), one
 # note declared in million on another page; EBITDA 3,018.12 lakh is ₹30.18 Cr, carded right and "corrected" to ₹301.8 Cr
 # HDFC AMC's deck: the quarterly table is "(₹ mm)", Revenue from Operations 10,260 (₹1,026 Cr); the QAAUM slide is in

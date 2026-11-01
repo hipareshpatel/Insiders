@@ -54,6 +54,12 @@ MEMORY_FILE_ONLY = true          # dossier merge: a card's reading of a statemen
 # the sheet contradicts is cut. Blind A/B round 2 (9 filings): WRONG 9 on against 14 off, better on 8 of 9, worse on none. A
 # repository variable CARD_FACT_SHEET = 0 turns it off; 20 live cards are blind-scored the next day.
 CARD_FACT_SHEET = true           # pipeline: the results card's figures from the exchange file in memory
+# On 1 Nov 2026, ~00:10 IST (TODO 151, #300; owner: "Yes, NBFC cards show financing profit"): banks', NBFCs' and insurers'
+# results cards get the fact sheet too, on their own statement rows. Blind A/B over 17 recent filings (run 41212857534, every
+# figure checked against the exchange file by an independent reviewer): WRONG 4 off against 0 on; the text check's right-text cuts
+# (about 3 right figures on 12 sheets) fixed in cae2c97c / b3b102f6 and re-run (41220046274: no new WRONG). A repository
+# variable CARD_FACT_SHEET_LENDERS = 0 turns it off.
+CARD_FACT_SHEET_LENDERS = true   # pipeline: lenders' and insurers' results figures from the exchange file in memory
 # On 30 Oct 2026, ~19:20 IST (owner: "Yes, switch on the faster PDF setting"): the numbers-first reader stops reading scanned
 # pages once both bases are stated (docs/bench/stop-early-live.md: 72 stored PDFs, 0 of 341 key figures changed, 11.3 s saved
 # a filing; 5 filings come inside the slip check's 60 s cap only with it on, none of their revenue or total income wrong).
@@ -62,3 +68,10 @@ NUMFIRST_STOP_EARLY = true       # pdf_numbers_first: stop early on scanned page
 # TODO 144 (owner approved the build, 30 Oct 2026): a deck slide's figure tied to its label by the page's word boxes; off until
 # measured on the stored deck PDFs (pipeline/scripts/measure_slide_geometry.py, a maintenance run) and the owner says on.
 CALL_MEMORY_GEOMETRY = false     # slide_geometry.py: a slide point whose figure stands by another label is dropped ("label")
+# TODO 135 (owner approved the build, 30 Oct 2026): a results press release filed beside the statement joins the quarter's one
+# results card (its words only) and is read by call memory like a deck; off until measured on live cards.
+RESULTS_PRESS_RELEASE = false    # pipeline._fold_release, event_catchup.release_catch_up
+# TODO 129: current maturities of long-term debt counted in Borrowings by screener's rules. Measured on/off over the 500
+# largest (screener-rows 41082974431 on, 41082987950 off): Borrowings +34 pairs, Other Liabilities +34, 2 broke each
+# (SHILPAMED Q4FY23-24, 1.31 Cr twice), totals unchanged. On 30 Oct 2026 ~21:30 IST (owner: "Show some guts and continue").
+SCREENER_CMLTD = true            # screener_view.corporate_bs: CurrentMaturitiesOfLongTermDebt in Borrowings

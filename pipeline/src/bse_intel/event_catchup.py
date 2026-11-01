@@ -110,6 +110,43 @@ def results_due(row: dict, links: list) -> bool:
     return any(-2 <= (_date.fromisoformat(l.filed_at[:10]) - day).days <= 45 for l in links if l.url not in seen)
 
 
+def release_catch_up(pipeline, deadline: float) -> dict:
+    """RESULTS_PRESS_RELEASE (TODO 135): read again the results cards whose press release this run folded in (pipeline._fold_release),
+    so the release's words join the quarter's one card. Reuses the results re-run path: the filing goes back to PENDING and
+    is processed alone; the release text waits in release_fold's kv key (cleared once the card is re-made) and is added to the card's text there."""
+    report = {"rerun": {}}
+    from . import release_fold
+
+    waiting = release_fold.pending(pipeline.sink)
+    ids = list(waiting)
+    if not ids or time.monotonic() >= deadline:
+        return report
+    from .pipeline import DEADLINE_GRACE_S
+
+    pipeline._exec("filings_update", [{"news_id": i, "status": "PENDING", "attempts": 0, "updated_at": now_iso()} for i in ids])
+    pipeline.gateway.deadline = deadline + DEADLINE_GRACE_S
+    with pipeline._lock:
+        pipeline._tried.difference_update(ids)
+        pipeline._results_quarters = {k: v for k, v in pipeline._results_quarters.items() if v not in ids}
+    # the results filing is at most COMPANION_DAYS before its release (pipeline.companion_quarter)
+    from datetime import date, timedelta
+    from .pipeline import COMPANION_DAYS
+
+    released = [e["date"] for i in ids for e in waiting[i] if e.get("date")]
+    last = max(released) if released else today_ist().isoformat()
+    first = (date.fromisoformat(min(released)) - timedelta(days=COMPANION_DAYS)).isoformat() if released else last
+    days = [first, last]
+    outcomes = {o.update["news_id"]: o for o in pipeline.process(min(days), max(days), deadline, bulk=False, only=set(ids))}
+    report["rerun"] = {i: (outcomes[i].update.get("status") if i in outcomes else "left in the queue") for i in ids}
+    # a re-made card settles it; a card re-run MAX_TRIES times without ending ANALYZED is given up (review, 30 Oct 2026: else
+    # every 15-minute run would re-run it for ever)
+    given_up = release_fold.tried(pipeline.sink, [i for i in ids if report["rerun"][i] != "ANALYZED"])
+    release_fold.clear(pipeline.sink, [i for i in ids if report["rerun"][i] == "ANALYZED"] + given_up)
+    if given_up:
+        report["given_up"] = given_up
+    return report
+
+
 def results_catch_up(pipeline, deadline: float, max_reruns: int = MAX_RERUNS) -> dict:
     """Read again the NSE results cards whose XBRL has landed, or been revised, since they were made."""
     report = {"cards": 0, "rerun": {}, "stopped": None}

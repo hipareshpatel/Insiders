@@ -35,6 +35,17 @@ What is kept, so a stage can be re-run without asking the exchange again:
 A saved answer is gzip of one JSON line (url, params, status, fetched_at), a newline, then the body
 exactly as received; `raw.decode()` returns both and `raw.saved()` lists one endpoint's day.
 
+### The profit-line rules (31 Oct 2026)
+
+One function, `screener_view.corrected_pl`, makes a quarter's or year's profit lines consistent, in this order: (1) the owners' profit must
+add up with the minority's share to the whole profit within max(0.01 Cr, 0.5%), else it is the whole less the minority's (measured: ATUL Q2FY26,
+NSE's file has owners 87.95 beside 182.37 and a minority of 3.13); (2) with no minority row, an owners' profit of exactly 0 beside a non-zero
+net profit is a filler and the net profit stands (204 live quarters); (3) a corporate quarter whose profit is on the other side of zero from
+PBT - Tax and further from it than max(5 Cr, half of it) takes PBT - Tax (APARINDS Q1FY27 -138.56 against 467.45). It runs when an entry is
+written (`statements.remember`, `statements-backfill`) and on read (fact sheet, Results). Entries stored before it are rewritten by
+`statements-correct` (Maintenance: a dry run lists scrip, period, basis, row, old and new; `apply` backs each changed dossier up first and saves
+chunk by chunk; `statements-backfill` only adds missing entries, so it never fixes a stored one). After it: `results-table`.
+
 ## 2. When data is wrong
 
 **Never edit the database or a dossier by hand.** A hand fix is lost at the next rebuild, and the same

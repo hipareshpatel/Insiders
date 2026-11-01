@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from datetime import timedelta
 
 from test_pipeline import RESULT_TEXT, _filing, _pdf, build, rows
@@ -116,3 +117,72 @@ def test_failed_report_counts_the_last_days_filings_still_to_read(settings):
     out = requeue.waiting(sink, start, now.date().isoformat(), 3)
     assert out["waiting"] == 2 and out["results_like"] >= 1 and sum(sum(d.values()) for d in out["by_day"].values()) == 2
     assert any(x.startswith("f0 ") for x in out["results_examples"])
+
+
+def test_a_requeue_by_id_puts_its_companies_first_in_the_history_queue():
+    class Kv:
+        def __init__(self):
+            self.kv = {"backfill:priority": '["B"]'}
+
+        def kv_get(self, key):
+            return self.kv.get(key)
+
+        def kv_set(self, key, value, at):
+            self.kv[key] = value
+
+    sink = Kv()
+    assert requeue.prioritise(sink, ["A", "B", ""]) == ["A", "B"]
+    assert requeue.prioritise(sink, ["C"]) == ["C", "A", "B"]
+
+
+def test_a_backfill_pass_keeps_a_company_requeued_while_it_ran():
+    from bse_intel.pipeline import merged_priority
+
+    # read ["B", "C"] at the start; a requeue by id meanwhile put "A" first; "C" has no history left
+    assert merged_priority(["B", "C"], ["A", "B", "C"], ["B", "X"]) == ["A", "B"]
+    assert merged_priority([], [], ["X"]) == []
+
+
+def test_a_filing_requeued_by_id_is_read_in_the_slot_after_todays_filings(settings, monkeypatch):
+    """31 Oct 2026: Hubtown nse-106629168 (filed in May, a wrong live card) waited six hours after its requeue, because
+    today's filings used each run's whole time and the history pass never started. It now gets a short slot of its own."""
+    import time as _time
+
+    from bse_intel import pipeline as mod
+
+    pipeline, sink, now = _failed_filings(settings)
+    import dataclasses
+    pipeline.settings = dataclasses.replace(pipeline.settings, backfill_start=(now - timedelta(days=60)).date().isoformat())
+    requeue.requeue_ids(sink, ["f2", "f0"], 3)
+    requeue.mark_by_id(sink, ["f2", "f0"], ["999102", "999100"])
+    read = []
+
+    def fake_group(filings, deadline, bulk, memory_complete):
+        for f in filings:
+            read.append(f.news_id)
+            sink._db.execute("UPDATE filings SET status = 'DONE' WHERE news_id = ?", (f.news_id,))
+        sink._db.commit()
+        return [mod.Outcome(update={"news_id": f.news_id, "status": "DONE"}) for f in filings]
+
+    monkeypatch.setattr(pipeline, "_process_group", fake_group)
+    history_to = now.date() - timedelta(days=8)
+    assert pipeline._requeued_first(history_to, _time.monotonic() + 600) == 1
+    assert read == ["f2"]   # f0 is inside the live window: the live pass reads it, so it is only dropped from the list
+    assert json.loads(sink.kv_get(requeue.BY_ID_KEY)) == {"ids": [], "scrips": []}
+    assert pipeline._requeued_first(history_to, _time.monotonic() + 600) == 0 and read == ["f2"]
+
+
+def test_a_requeued_filing_still_pending_stays_on_the_list(settings, monkeypatch):
+    import time as _time
+
+    from bse_intel import pipeline as mod
+
+    pipeline, sink, now = _failed_filings(settings)
+    import dataclasses
+    pipeline.settings = dataclasses.replace(pipeline.settings, backfill_start=(now - timedelta(days=60)).date().isoformat())
+    requeue.requeue_ids(sink, ["f2"], 3)
+    requeue.mark_by_id(sink, ["f2"], ["999102"])
+    monkeypatch.setattr(pipeline, "_process_group",   # deferred: the providers were busy
+                        lambda filings, *a: [mod.Outcome(update={"news_id": f.news_id, "status": "PENDING"}) for f in filings])
+    assert pipeline._requeued_first(now.date() - timedelta(days=8), _time.monotonic() + 600) == 1
+    assert json.loads(sink.kv_get(requeue.BY_ID_KEY)) == {"ids": ["f2"], "scrips": ["999102"]}

@@ -1,3 +1,4 @@
+import type { ClassificationResponse, CompanyKpiResponse, Cut, GroupBy, GroupsResponse, KpiResponse } from "../../shared/resultsTypes";
 import type { BriefResponse, CardRow, Catalyst, CompaniesResponse, CompanyDetail, FeedResponse, NoiseRow, OverduePromise, RadarCompany, ReviewCard, PublicSystemResponse, SearchResponse } from "../../shared/types";
 
 export class ApiError extends Error {
@@ -42,6 +43,12 @@ export const api = {
     get<FeedResponse>("/api/feed", { ...filters, cursor, limit }),
   feedPage: (filters: FeedFilters, page: number, limit = 50) =>
     get<FeedResponse>("/api/feed", { ...filters, page, limit }),
+  /** The Results KPI report (shared/resultsTypes.ts): one quarter's rows, filtered and sorted, with the summary of the filtered set. */
+  resultsKpi: (params: Record<string, string | number | null | undefined>) => get<KpiResponse>("/api/results-kpi", params),
+  resultsClassification: (quarter: string | null) => get<ClassificationResponse>("/api/results-classification", { quarter }),
+  resultsGroups: (params: { quarter: string | null; by: GroupBy; cut: Cut; within_index?: string | null; within_mcap?: number | null }) =>
+    get<GroupsResponse>("/api/results-groups", params),
+  resultsCompany: (key: string) => get<CompanyKpiResponse>(`/api/results-company/${encodeURIComponent(key)}`),
   signals: (params: { from?: string; from_at?: string }) => get<{ cards: CardRow[] }>("/api/signals", params),
   brief: (fromAt: string) => get<BriefResponse>("/api/brief", { from_at: fromAt }),
   card: (id: string) => get<CardRow>(`/api/cards/${encodeURIComponent(id)}`),

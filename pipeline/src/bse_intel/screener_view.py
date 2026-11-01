@@ -11,9 +11,10 @@ after the fact with alternatives; this module does not extend that approach.
 Sources (screener's own docs, read by the lead 28 Oct 2026: "annual data is imported from the annual extract in the quarterly (Q4)
 filings until the annual report is published ... we revise old numbers when the company revises them in new annual reports"):
 
-- a year (FYxx, March year end): the NEWEST stored annual-report facts doc that holds that year (its prior-year comparative counts:
-  FY25 from the FY26 report when stored), else the Q4 results file's 12-month context. Lenders file no annual-report XBRL on NSE:
-  always the Q4 file. A balance sheet at a March year end is read the same way (the instant at the year end);
+- a year (FYxx, March year end): the next year's annual-report facts doc (its prior-year comparative: FY25 from the FY26 report)
+  or the year's own, whichever holds the year, then the Q4 results file when it holds it, then the nearest later report (a report
+  two years later can carry stray facts at that date; CompanyFacts.year), else the Q4 file as it is. A Q4 file is read in its
+  12-month context. Lenders file no annual-report XBRL on NSE: always the Q4 file. A balance sheet at a March year end is read the same way (the instant at the year end);
 - a quarter: that quarter's own results file, its 3-month context; a half-year balance sheet (Sep): that quarter's file's instant.
 
 Every row carries a note naming the elements used and the source ("annual report FY26", "results file Q4FY26").
@@ -31,7 +32,8 @@ Corporate (Ind AS) profit and loss, crore (evidence: docs/audit/screener-rows-20
   "profit from associates is always other ordinary income") are in the note, and the note says when the two differ;
 - Interest = FinanceCosts + the financial-services finance-cost row ("Finance cost of financial services business..."; an annual
   report files that breakdown only as a text block, so for a year read from it the row is read from the Q4 results file);
-- Depreciation, Profit before tax = ProfitBeforeTax + associates' share + regulatory deferral movement, Tax % = TaxExpense / PBT, Net Profit = ProfitLossForPeriod (the website's Net
+- Depreciation, Profit before tax = ProfitBeforeTax + associates' share (only where the company's own layout puts it inside PBT:
+  SegmentProfitBeforeTax, else ASSOCIATES_DEFAULT_INCLUDE) + regulatory deferral movement, Tax % = TaxExpense / PBT, Net Profit = ProfitLossForPeriod (the website's Net
   Profit is the whole profit). Named rows not on the page: Tax, Net Profit (owners) (= profit for EPS), Minority share, Associates'
   share, Exceptional items, Exceptional items AT (= exceptional - tax x exceptional / PBT; the exceptional itself when that tax is
   larger than it), Profit for PE (= owners' profit - exceptional AT).
@@ -39,9 +41,9 @@ Corporate (Ind AS) profit and loss, crore (evidence: docs/audit/screener-rows-20
 Corporate balance sheet (instant): Equity Capital = EquityShareCapital; Reserves = OtherEquity; Borrowings = BorrowingsNoncurrent +
 BorrowingsCurrent + lease liabilities (elements, else described rows "lease" of the other financial liabilities) + described rows
 "current maturities" (not of a lease when lease elements are used); Fixed Assets = PPE + Goodwill + OtherIntangibleAssets +
-InvestmentProperty + right-of-use (element RightOfUseAssets, else the described row "Right-of-use assets" of Other non-current
-assets); CWIP = CapitalWorkInProgress + IntangibleAssetsUnderDevelopment; Investments = NoncurrentInvestments + CurrentInvestments +
-InvestmentsAccountedForUsingEquityMethod; Total (Liabilities and Assets) = Assets - min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet);
+InvestmentProperty + exploration and evaluation assets + biological assets + right-of-use (element RightOfUseAssets, else the described
+row "Right-of-use assets" of the other non-current (financial) assets); CWIP = CapitalWorkInProgress + IntangibleAssetsUnderDevelopment; Investments = NoncurrentInvestments + CurrentInvestments +
+InvestmentsAccountedForUsingEquityMethod; Total (Liabilities and Assets) = Assets - min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet) (a year-end column, B4_NET_ANY_BASIS);
 Other Liabilities and Other Assets are the remainders.
 
 Cash flow (every template): Operating, Investing + EffectOfExchangeRateChangesOnCashAndCashEquivalents, Financing, Net Cash Flow =
@@ -54,7 +56,9 @@ ProfitLossFromOrdinaryActivitiesBeforeTax - a negative ExceptionalItems (HDFC FY
 ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates (a standalone file: ProfitLossForThePeriod). Balance sheet: Equity
 Capital = Capital, Deposits = Deposits, Borrowing = Borrowings (screener 2025: deposits a line apart; the Excel Data Sheet still adds
 them); the rest has no recipe yet (Reserves: ReservesAndSurplus is 4,545 Cr under the Excel's for HDFC Bank FY26, 18,768 over for
-SBI). Measured on the FY26 Q4 files against the Excel: HDFC Bank and SBI profit and loss (8 rows) and cash flow (4) all exact. NBFC and insurers: what maps cleanly (below); every other row is ``no_recipe``.
+SBI). Measured on the FY26 Q4 files against the Excel: HDFC Bank and SBI profit and loss (8 rows) and cash flow (4) all exact. NBFC: ``nbfc_bs`` (Borrowing = debt securities + borrowings + deposits + subordinated + lease rows, Fixed Assets, CWIP, Investments, Total net of
+deferred tax, the remainders). Insurers: what maps cleanly (below); every other row is ``no_recipe``. Corporate Investments also take a
+described row naming an investment inside the "Others" of another asset line (GAIL, Finolex Cables, KIMS).
 
 Not implemented on purpose: the L&T segment element InterestExpenseReportableSegment (Wipro FY26 files it equal to its FinanceCosts,
 1,457.7 Cr: adding it would count Wipro's interest twice); PDF-only lines (Reliance's sales tax, L&T's bank charges); director
@@ -66,12 +70,13 @@ import bisect
 import csv
 import io
 import json
+import os
 import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
-from . import xbrl_facts
+from . import bank_pdf, xbrl_facts
 from .memory_gaps import quarter_end
 from .periods import quarter_index
 from .metrics import CONSOLIDATED, STANDALONE
@@ -85,6 +90,9 @@ STATUSES = ("ok", "apart", "no_facts", "no_recipe", "before_cutoff", "before_lis
 # older ones carry screener's merger restatements and the older file format; a quarter before it is listed as before_cutoff, never
 # counted in the exact share. Years and balance sheets are compared as before.
 FIRST_QUARTER = "Q1FY26"
+# the quarters measured against screener (owner, 31 Oct 2026 ~21:30 IST: "Yes, measure FY25 quarters"; the cut-off is FY25 onward).
+# FIRST_QUARTER stays the start of the BSE results fetch (bse_results_xbrl): measuring more never downloads more.
+MEASURE_FROM = "Q1FY25"
 LISTING_FROM = "Q1FY24"       # before_listing is decided only from here: the years and quarters screener shows for a recent listing
 # a period screener shows from before the company's first results on any exchange (its prospectus, or the year-ago column of its first
 # results) is before_listing, never counted (owner, 29 Oct 2026: "we don't need it at all"): no facts for it, earlier than the first
@@ -105,11 +113,24 @@ TABLES = (("quarters", "quarters", PL_ROWS), ("profit-loss", "annual", PL_ROWS),
 EXPENSE_PARENTS = ("OtherExpenses", "Expenses")
 LIABILITY_PARENTS = ("OtherNoncurrentFinancialLiabilitiesOthers", "OtherCurrentFinancialLiabilitiesOthers",
                      "OtherNoncurrentFinancialLiabilities", "OtherCurrentFinancialLiabilities")
-ASSET_PARENTS = ("OtherNoncurrentAssetsOthers", "OtherNoncurrentAssets")
+# a right-of-use asset row sits under any of these in Fixed Assets for screener: 66 company-periods of 34 companies closed by the
+# three added parents (KIMS cons Q4FY26 gap -1,128.2 = row 1,128.3 under OtherNoncurrentFinancialAssets; JSW Steel Sep-26 4,689; Eternal
+# Sep-26 5,360; run 41164053629, srules/bscf report rule 1)
+ASSET_PARENTS = ("OtherNoncurrentAssetsOthers", "OtherNoncurrentAssets", "OtherNoncurrentFinancialAssets",
+                 "OtherNoncurrentFinancialAssetsOthers")
+# exploration and evaluation assets and biological assets (other than bearer plants, which are PPE) are Fixed Assets for screener: Coal
+# India cons Q4FY23 -4,924.4 = 4,924.9, Oil India FY25/FY26 -2,482.7 / -3,894.6, Atul, Godrej Industries (10 company-periods; srules/bscf
+# report rule 2)
+FIXED_ASSET_EXTRAS: tuple[str, ...] = ()   # exploration and biological assets: +7 / -29 rows when added (run 41166426469), so Screener does not
+# add them as a rule; the names: AssetsArisingFromExplorationForAndEvaluationOfMineralResources, BiologicalAssetsOtherThanBearerPlants
 LEASE_ELEMENTS = ("LeaseLiabilitiesNoncurrent", "LeaseLiabilitiesCurrent", "NoncurrentLeaseLiabilities", "CurrentLeaseLiabilities")
 # a line of the other current financial liabilities, tagged by its own element: in screener's Borrowings in 58 rows of 23
 # companies (the 500 largest, run 40759776253: the gap = the element, screener above ours, every one an annual report)
 FINANCE_LEASE_MATURITIES = "CurrentMaturitiesOfFinanceLeaseObligations"
+# the current maturities of long-term debt tagged by their own element (help article 11: they are debt): in screener's
+# Borrowings and not in ours in 129 rows of about 40 companies (L&T Q4FY21-FY26 22,719 / 31,373 / 26,399 Cr, Hyundai, KPR Mill,
+# Dr Reddy's, Arvind, Titan: run 40874998205, screener above ours, the gap = the element). Behind the switch SCREENER_CMLTD (off until measured on/off: screener-rows on main and on a branch that turns it on).
+LT_DEBT_MATURITIES = "CurrentMaturitiesOfLongTermDebt"
 # the levies and discounts out of Sales (and Expenses): (elements, described row of the Other expenses breakdown)
 LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
           "sales tax": (("SalesTax", "ValueAddedTax", "GoodsAndServicesTax", "SalesTaxAndValueAddedTax"),
@@ -121,6 +142,21 @@ LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
 from .screener_parts import FINANCE_MEMBER as FIN_SERVICES_ROW  # noqa: E402 - one pattern for both (L&T's and Grasim's wording)
 LOSS_ON_DISPOSAL = "LossOnDisposalDiscardDemolishmentAndDestructionOfDepreciablePropertyPlantAndEquipment"
 ASSOCIATES = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
+# the same share under its two split names (the apart pairs of 10 company-years where the recipe added nothing carry them; srules/annual
+# report rule 2): read the joint element, else the sum of these
+ASSOCIATES_SPLIT = ("ShareOfProfitLossOfAssociatesAccountedForUsingEquityMethod",
+                    "ShareOfProfitLossOfJointVenturesAccountedForUsingEquityMethod")
+SEGMENT_PBT = "SegmentProfitBeforeTax"
+# the associates' share is in PBT (and in Other Income, or Expenses for a loss) when the company's own layout puts it there, as screener
+# does: the undimensioned SegmentProfitBeforeTax says which (_share_in_pbt). With no segment figure this default decides. Measured
+# 31 Oct 2026 (run 41164053629): a share added to PBT is right for 195 company-bases (870 PBT quarters), wrong for 28 (+27 mixed), so the
+# default stays "include" until the owner's on/off measurement
+ASSOCIATES_DEFAULT_INCLUDE = True   # measured 31 Oct 2026: False made quarterly PBT 95.0% -> 90.4% exact (run 41172104462)
+ASSOCIATES_RULE_ON_YEARS = False   # the presentation rule on a year's P&L (off: measured worse there)
+# a standalone sheet nets min(DTA, DTL) from the total like a consolidated one when both are filed (not a half-year column). Infosys
+# standalone FY25: Assets 124,936 - min(497, 1,062) = 124,439 = screener; consolidated netted 754 ok / 64 apart, standalone filers matched
+# both ways (1,371 without, 30 with), so the switch is measured on/off (srules/bscf report rule 7)
+B4_NET_ANY_BASIS = False   # measured 31 Oct 2026 (screener-rows run 41166426469): +50 / -78 rows on; standalone filers net both ways
 EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # a row of other financial liabilities that is bank debt by its own words: Titan standalone "Secured and Unsecured Payable to Banks"
 # 7,043 Cr FY25 and 14,314 Cr FY26 = screener's Borrowings less ours, exactly (its gold on loan; measured 28 Oct 2026)
@@ -132,6 +168,12 @@ EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # and in other ways (Persistent "CurrentbLease Liability", MTAR "lease libaility", Belrise "Lease libilities", Avalon "Lease
 # Obligations", Asahi India "Liability for Leased ...": 16 rows of 8 companies in the 500 largest, screener above ours)
 LEASE_ROW = r"lease\w*\s*(lia|lib|obl)|liab\w*\s+for\s+leas"
+# under a FINANCIAL-liability parent a row named "lease" (or "leases", followed by any word) is a lease liability: "Lease Laibility" (KPIT,
+# SCI), "Payable for Lease Obiligation" (Dixon -252.7 / -312.0 / -417.8), "Lease" / "LEASE" (JSL, Granules), "Leases" (PGEL), "Financial
+# Lease" (Maruti): 22 rows apart, ours below screener's (srules/bscf report rule 4c). A sale and lease back is not (JSW Steel)
+# a lease liability however it is spelt (KPIT, SCI "Laibility", Dixon "Lease Obiligation", JSL/Granules "Lease", PGEL "Leases", Maruti
+# "Financial Lease"); never a rent, a deposit or a receivable that only mentions a lease, nor a sale and lease back
+LEASE_ROW_FINANCIAL = LEASE_ROW + r"|^(?!.*(sale\s+and\s+lease|lease\s*back|rent|deposit|receivable|advance)).*\bleases?\b"
 # a lease liability filed under the NON-financial other liabilities (Ambuja FY25 "CURRENT LEASE LIABILITY" 304.14, Concor FY24
 # "Lease liability-Ind AS 116" 746.11, Delhivery FY25 243.88: 18 rows of 12 companies, the gap exactly) is still debt
 LEASE_PARENTS = ("OtherNoncurrentLiabilitiesOthers", "OtherCurrentLiabilitiesOthers", "OtherNoncurrentLiabilities",
@@ -140,6 +182,11 @@ BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(
 # a loss on investments only: an impairment of investments stays in Expenses (Tech Mahindra standalone Q4FY24-Q4FY26, Cipla
 # Q4FY26, Purvankara, Kolte-Patil, Jagran: about 11 rows apart by exactly the impairment row, none exact by it; run 40793194881)
 INVESTMENT_LOSS = r"^\s*(net\s+)?loss\b.{0,25}\binvestments?\b"
+# a fair value (gain) / loss ON INVESTMENTS in the Other expenses breakdown is not an operating cost for screener (TMCV Q2FY27 consolidated
+# "Fair value (gain)/loss on equity investments measured at FVTPL" 708 Cr: Operating Profit 1,940 + 708 = 2,648 = screener, 5 of 5 quarters;
+# srules/quarters report rule 2). It needs "investment" and never a derivative, commodity or foreign exchange line: TMPV Q1FY27 "Foreign
+# exchange loss/(gain) and commodity derivatives fair value adjustments" 150 Cr stays in screener's Expenses
+FAIR_VALUE_INVESTMENT = r"^(?!.*(derivative|commodit|foreign|exchange|forex|hedg)).*(fair.value.*\binvestments?\b|\binvestments?\b.*fair.value)"
 DISCONTINUED = "ProfitLossFromDiscontinuedOperationsAfterTax"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
@@ -151,6 +198,12 @@ class Row:
     value: float | None        # None: an element the recipe needs is not in the facts
     note: str
 
+
+
+def _cmltd() -> bool:
+    from .settings import _switch
+
+    return _switch("SCREENER_CMLTD")
 
 def family(template: str | None) -> str:
     """The recipe set, by the results file's template alone (xbrl.taxonomy: INDAS, NBFC, BANKING, GI, LI; LEGACY_* alike)."""
@@ -331,6 +384,50 @@ def lines_making(cand: list[tuple[str, float]], gap: float, most: int = 3, limit
     return out
 
 
+SECTION_OF = {"quarters": "quarters", "annual": "profit-loss", "balance": "balance-sheet", "cash_flow": "cash-flow"}
+
+
+def _amount_text(raw) -> float | None:
+    """A sub-row cell in crore ("1,234", "-56.7"); None for a percent cell or anything else."""
+    text = str(raw or "").replace(",", "").strip()
+    if not text or text.endswith("%"):
+        return None
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def sub_row_hints(answer: dict | None, column: str | None, gap: float, limit: int = 3) -> tuple[str, str]:
+    """(screener's sub-rows of the head in that column, compact; the sub-rows, alone or two together, that equal the gap) for a row
+    apart: which part of screener's head we leave out or add (owner, 31 Oct 2026: "screener's stock page has sub rows for most
+    items"). Amount cells only; a percent sub-row (the Expenses heads of a quarter) is left out."""
+    if not answer or not column:
+        return "", ""
+    cells = [(name, v) for name, row in answer.items() if isinstance(row, dict) and (v := _amount_text(row.get(column))) is not None]
+    listed = "; ".join(f"{name} {_fmt(v)}" for name, v in cells[:10])
+    tol = max(ABS_TOL, abs(gap) * 0.005)
+    hits = [f"{name} {_fmt(v)}" for name, v in cells if v and abs(abs(v) - abs(gap)) <= tol]
+    if not hits:
+        for i, (a, va) in enumerate(cells):
+            for b, vb in cells[i + 1:]:
+                if not (va and vb):
+                    continue
+                for sign in (1, -1):
+                    if abs(abs(va + sign * vb) - abs(gap)) <= tol:
+                        hits.append(f"{a} {_fmt(va)} {'+' if sign > 0 else '-'} {b} {_fmt(vb)}")
+                        break
+    return listed, "; ".join(hits[:limit])
+
+
+def column_for(table: str, period: str) -> str | None:
+    """Screener's column heading for a compared period of any table: a balance sheet's Q4FY25 and a cash flow's FY25 are "Mar 2025"."""
+    if table == "balance":
+        m = re.fullmatch(r"Q([1-4])FY(\d\d)", period)
+        return column_of("quarters", period) if m else None
+    return column_of("annual" if table == "cash_flow" else table, period)
+
+
 def part_gaps(r: _Reader, ours_expenses: float, answer: dict, column: str, sales: float, gap: float) -> tuple[str, str]:
     """(which part holds the gap, the lines inside that part that make it) for an Expenses row apart."""
     parts = expense_parts(answer, column, sales, ours_expenses + gap)     # screener's Expenses: ours + its gap
@@ -416,6 +513,33 @@ def _exceptional_rows(out: dict[str, Row], exceptional: float | None, tax: float
         out["Profit for PE"] = Row(owners - at, "owners' profit - exceptional items AT")
 
 
+def _associates(r: _Reader) -> float | None:
+    """The share of profit of associates and joint ventures: the joint element, else the two split elements added."""
+    v = r.cr(ASSOCIATES)
+    if v is not None:
+        return v
+    parts = [x for n in ASSOCIATES_SPLIT if (x := r.cr(n)) is not None]
+    return sum(parts) if parts else None
+
+
+def _share_in_pbt(r: _Reader, filed_pbt: float | None, share: float | None) -> tuple[bool, str]:
+    """Whether the associates' share goes into PBT, Other Income and Expenses: follow the company's own presentation. The undimensioned
+    SegmentProfitBeforeTax equal to PBT + share (within 1 Cr) means the company presents the share inside its PBT: include (TATASTEEL,
+    HINDALCO, ITC, BHARTIARTL, NTPC); equal to the filed ProfitBeforeTax: leave it out (RELIANCE, DLF, LT, TATACONSUM). No usable segment
+    figure (absent, a filler 0, or neither): ASSOCIATES_DEFAULT_INCLUDE. Measured 31 Oct 2026 on 9 of 13 consolidated Q1/Q2FY27 files."""
+    if not share:
+        return True, ""
+    if r.at.get("months") != 3 and not ASSOCIATES_RULE_ON_YEARS:   # a year: included as before (on years the rule moved 13 rows
+        return True, ""                                                # right and 38 wrong, run 41166426469)
+    seg = r.cr(SEGMENT_PBT)
+    if seg and filed_pbt is not None:
+        if abs(seg - filed_pbt) <= ABS_TOL:
+            return False, "the segment PBT equals the filed PBT"
+        if abs(seg - (filed_pbt + share)) <= ABS_TOL:
+            return True, "the segment PBT holds the share"
+    return ASSOCIATES_DEFAULT_INCLUDE, "default"
+
+
 def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") -> dict[str, Row]:
     """The corporate (Ind AS) profit and loss rows of one period. ``fallback`` is where the financial-services finance-cost row is
     read when this doc has none (a year read from the annual report: its Q4 results file)."""
@@ -431,15 +555,23 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # Expenses (docs: profit from the sale of investments / associates is exceptional). M&M Q4FY26 "Loss from investments
     # related to subsidiaries, associates and joint ventures" 410.2 Cr = the 410.47 Cr Expenses gap (run 40726456306)
     inv_rows = r.rows(EXPENSE_ROW_PARENTS, INVESTMENT_LOSS)
+    # and a fair value (gain)/loss on investments, signed as filed (TMCV Q2FY27 708 Cr), once when a row matches both patterns
+    if r.at.get("months") == 3:   # a results file's quarter only: in the annual reports the rule moved 0 rows right and 31 wrong (Grasim FY23
+        # 8,736.95, Zydus, Lloyds Metals, OFSS; run 41166426469); proven on TMCV's quarters
+        inv_rows += [x for x in r.rows(EXPENSE_ROW_PARENTS, FAIR_VALUE_INVESTMENT) if x not in inv_rows]
     inv_loss = _sum_rows(inv_rows) if inv_rows else 0.0
     loss += inv_loss
     # bank charges are a finance cost for screener: HAL, IndiGo and IOC, every year FY24-FY26 and both bases, the yearly
     # Interest gap = the annual report's BankCharges (run 40735344929); the quarters' files carry no such element
     bank = r.cr("BankCharges") or 0.0
-    share = r.cr(ASSOCIATES)
+    share_filed = share = _associates(r)
     # a loss from associates is an expense for screener, a profit other income: 43 of 43 quarters where Expenses and Other
     # Income were both apart by the share, PBT exact, had a loss (JSW Steel 8, Power Grid 7, Nestle 7, TVS 7, Adani Ports 5,
     # Bajaj Auto 3: Q2FY25 580 Cr, KTM; run 40735344929)
+    pbt_filed = pbt
+    in_pbt, in_pbt_why = _share_in_pbt(r, pbt_filed, share)
+    if not in_pbt:      # the company's own layout keeps the share below PBT: out of PBT, Other Income, Expenses and Operating Profit
+        share = 0.0
     assoc_loss = -share if share is not None and share < 0 else 0.0
     regulatory = r.cr(REGULATORY_DEFERRAL)
     # a net regulatory EXPENSE (a negative movement in the regulatory deferral balances) is an expense for screener, a net
@@ -479,7 +611,7 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # net movement in regulatory deferral balances, both of which SEBI's results format puts below the filed PBT (measured
     # 28 Oct 2026 on the owner's screener Excel files: 39 of 55 quarters with associates, e.g. Coal India Q4FY26 14,510.7 +
     # 116.1 = 14,626.75; NTPC Q1FY26 5,281.2 + 2,007.3 + 476.6 = 7,765.06; Power Grid Q1FY26 4,330.2 + 212.8 - 44.4 = 4,498.57).
-    # Reliance is the one company seen the other way (screener follows its own layout, associates after tax): it stays apart.
+    # Reliance, DLF, L&T and Tata Consumer are the other way (their layout keeps the share below PBT): _share_in_pbt follows it.
     filed_pbt = pbt
     if pbt is not None:
         pbt = pbt + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0)
@@ -496,6 +628,7 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     else:
         out["Other Income"] = Row(None, "missing a line of the identity (PBT, Depreciation, Interest, Operating Profit)" + src)
     out["Profit before tax"] = Row(pbt, ("ProfitBeforeTax" + (" + associates' share" if share else "")
+                                         + (" (share left out: " + in_pbt_why + ")" if share_filed and not in_pbt else "")
                                          + (" + regulatory deferral movement" if regulatory else "")
                                          + (" + discontinued operations after tax" if discontinued else "") if pbt is not None
                                          else "missing ProfitBeforeTax") + src)
@@ -506,6 +639,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     whole, owners = r.cr("ProfitLossForPeriod"), r.cr("ProfitOrLossAttributableToOwnersOfParent")
     if not owners and whole and not r.cr("ProfitOrLossAttributableToNonControllingInterests"):
         owners = whole      # a filler zero (Paradeep Q2FY26-Q1FY27: owners 0 and minority 0): the owners' share is the whole profit
+    elif _owners_is_comprehensive(r, owners, whole):
+        owners = whole
     out["Net Profit"] = Row(whole, ("ProfitLossForPeriod (whole profit)" if whole is not None else "missing ProfitLossForPeriod") + src
                             + (f"; owners' share {_fmt(owners)}" if owners is not None else ""))
     if owners is not None:
@@ -513,13 +648,25 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     minority = r.cr("ProfitOrLossAttributableToNonControllingInterests")
     if minority is not None:
         out["Minority share"] = Row(minority, "ProfitOrLossAttributableToNonControllingInterests" + src)
-    if share is not None:
-        out["Associates' share"] = Row(share, ASSOCIATES + src)
+    if share_filed is not None:
+        out["Associates' share"] = Row(share_filed, ASSOCIATES + src)
+        if share_filed and not in_pbt:      # so the profit-line rules know the whole profit is PBT - Tax + this (corrected_pl)
+            out["Associates' share outside PBT"] = Row(share_filed, "share kept below PBT: " + in_pbt_why + src)
     _exceptional_rows(out, exc, tax, pbt, owners)
     return out
 
 
-def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
+def _bank_pdf_depreciation(r: _Reader, pdf: dict | None, opex: float | None) -> tuple[float | None, str]:
+    """A year's depreciation from the bank's annual report (TODO 148, ``bank_pdf``) when its file has none: only for a 12-month
+    column, and only when the report's Schedule 16 adds up to the file's OperatingExpenses (``bank_pdf.pl_figure``)."""
+    if pdf is None or r.at.get("months") != 12:
+        return None, ""
+    return bank_pdf.pl_figure(pdf, opex)
+
+
+def bank_pl(r: _Reader, source: str = "", pdf: dict | None = None) -> dict[str, Row]:
+    """``pdf``: what the bank's annual report prints for this year and basis (``bank_pdf.read``), or None; used only for a row the
+    file lacks and only when the bank's own figures agree with it."""
     src = f" [{source}]" if source else ""
     out: dict[str, Row] = {}
     earned, expended = r.cr("InterestEarned"), r.cr("InterestExpended")
@@ -529,10 +676,29 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     pbt_filed, tax = r.cr("ProfitLossFromOrdinaryActivitiesBeforeTax"), r.cr("TaxExpense")
     out["Revenue"] = Row(earned, ("InterestEarned" if earned is not None else "missing InterestEarned") + src)
     out["Interest"] = Row(expended, ("InterestExpended" if expended is not None else "missing InterestExpended") + src)
-    out["Depreciation"] = Row(dep, ("AdjustmentsForDepreciationAndAmortisationExpense (cash flow)" if dep is not None
-                                    else "missing AdjustmentsForDepreciationAndAmortisationExpense (no cash flow in this period)") + src)
-    expenses = None if None in (opex, dep) else opex + (prov or 0.0) - dep
-    out["Expenses"] = Row(expenses, ("OperatingExpenses + ProvisionsOtherThanTaxAndContingencies - Depreciation" if expenses is not None
+    dep_note = "AdjustmentsForDepreciationAndAmortisationExpense (cash flow)" + src
+    if dep is None:
+        # a bank filing a direct cash flow has no depreciation in its file (Bank of Maharashtra, F228): its annual report's
+        # Schedule 16, when that schedule's total is the file's OperatingExpenses
+        dep, why = _bank_pdf_depreciation(r, pdf, opex)
+        if dep is not None:
+            # and the bank's identity holds with it: Financing Profit + Other Income - Depreciation = the filed PBT. Depreciation
+            # cancels out of this sum, so it proves the file's own lines reach its PBT (the rows built around the figure), not the
+            # figure: that is pl_figure's check (Schedule 16's items add up to its total, and the total is the file's
+            # OperatingExpenses; independent review of #299)
+            loss_, gain_ = -min(exc or 0.0, 0.0), max(exc or 0.0, 0.0)
+            if None in (earned, expended, opex, other, pbt_filed) or abs(earned - expended - (opex + (prov or 0.0) - dep + loss_) + other + gain_ - dep - pbt_filed) > ABS_TOL:
+                dep, why = None, "Financing Profit + Other Income - Depreciation is not the filed PBT"
+        dep_note = (why if dep is not None else "missing AdjustmentsForDepreciationAndAmortisationExpense (no cash flow in this"
+                    " period)" + (f"; annual report not used: {why}" if why else "")) + src
+    out["Depreciation"] = Row(dep, dep_note)
+    # a loss filed as an exceptional item is in screener's Expenses (a gain is in its Other Income, below), so Financing Profit +
+    # Other Income - Depreciation stays the filed PBT (SBI FY24: its 7,100.31 Cr pension charge, Expenses and Financing Profit
+    # apart by exactly that, both bases, screener-rows run 41174640014)
+    loss = -min(exc or 0.0, 0.0)
+    expenses = None if None in (opex, dep) else opex + (prov or 0.0) - dep + loss
+    out["Expenses"] = Row(expenses, ("OperatingExpenses + ProvisionsOtherThanTaxAndContingencies - Depreciation"
+                                     + (" + exceptional loss" if loss else "") if expenses is not None
                                      else "missing OperatingExpenses or Depreciation") + src)
     fp = None if None in (earned, expended, expenses) else earned - expended - expenses
     out["Financing Profit"] = Row(fp, "Revenue - Interest - Expenses" + src)
@@ -569,6 +735,14 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     return out
 
 
+def _owners_is_comprehensive(r: _Reader, owners: float | None, whole: float | None) -> bool:
+    """The owners' tag holding the period's comprehensive income, with no minority share: the owners' profit is then the whole profit
+    (CHOLAFIN Q2FY27 consolidated: ProfitOrLossAttributableToOwnersOfParent 1,763.61 = ComprehensiveIncomeForThePeriod, profit
+    1,630.34, minority 0.0; the Results page showed the owners' profit above the total)."""
+    return (owners is not None and whole is not None and owners != whole
+            and not r.cr("ProfitOrLossAttributableToNonControllingInterests") and owners == r.cr("ComprehensiveIncomeForThePeriod"))
+
+
 def nbfc_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     """An NBFC (Ind AS NBFC template): every row of a lender's page (Revenue, Financing Profit) and a holding company's
     (Sales, Operating Profit) from the template's elements."""
@@ -580,6 +754,9 @@ def nbfc_pl(r: _Reader, source: str = "") -> dict[str, Row]:
                       ("Net Profit (owners)", "ProfitOrLossAttributableToOwnersOfParent")):
         v = r.cr(name)
         out[row] = Row(v, (name if v is not None else "missing " + name) + src)
+    if _owners_is_comprehensive(r, out["Net Profit (owners)"].value, out["Net Profit"].value):
+        out["Net Profit (owners)"] = Row(out["Net Profit"].value,
+                                         "ProfitLossForPeriod (the owners' tag held the comprehensive income)" + src)
     # the associates' share is in PBT as for every company (policy): the holding companies and NBFCs of the 500 largest were
     # short by it in 93 quarters (Bajaj Holdings Q2FY24 1,464.08; Jio Financial Q3FY24 66.11; M&M Finance Q3FY24 12.75)
     share, pbt = r.cr(ASSOCIATES), out["Profit before tax"].value
@@ -613,9 +790,67 @@ def insurer_pl(r: _Reader, source: str = "") -> dict[str, Row]:
                                   else "missing ProfitLossAfterTaxAndExtraordinaryItems") + (f" [{source}]" if source else ""))}
 
 
-def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str = "") -> dict[str, Row]:
+# ---- the profit-line rules, applied where the statements are written and again where they are read ----
+
+SLIP_MIN = 5.0     # Cr: a profit this far from PBT - tax, and on the other side of zero, is a slip
+SLIP_SHARE = 0.5
+
+
+def corrected_pl(rows: dict[str, float], fam: str) -> dict[str, float]:
+    """A quarter's or year's P&L values (row name -> number, as stored) with the profit lines made consistent; the same dict when nothing
+    changes. Three rules, each from a measured case (31 Oct 2026), in this order:
+    1. owners' profit against the whole profit and the minority's share: owners + minority must add up to Net Profit within
+       max(0.01 Cr, 0.5%) (the rule reit_results.read applies), else the owners' profit is the whole less the minority's. ATUL Q2FY26
+       consolidated, NSE's own file: profit 182.37, owners 87.95, minority 3.13 (Screener 182, Tijori 179.24 = 182.37 - 3.13), so
+       Q2FY27 showed +77.1% where the truth is about -13%.
+    2. with no minority row, an owners' profit of exactly 0 beside a non-zero net profit is a filler and the net profit is the owners'
+       (204 live quarters at 0: PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; nbfc_pl lacks corporate_pl's guard).
+    3. a corporate quarter whose profit is on the other side of zero from Profit before tax - Tax, and further from it than
+       max(5 Cr, half of it), has PBT - Tax as its profit (APARINDS Q1FY27: PAT -138.56 beside EBITDA 757.57; four other sites 467.45).
+       The corporate PBT already holds the associates' share (unless the company's layout keeps it below PBT: the row "Associates' share
+       outside PBT" is then added back), the regulatory deferral movement and the discontinued operations after tax
+       (corporate_pl) and Tax is the continuing tax, so PBT - Tax is the whole profit; the owners' is that less the minority's share
+       (without a minority row it is guarded only when it equals the whole). A genuine loss (same side of zero) stays. Other families
+       are not guarded: their PBT is not built the same way."""
+    owners, net, minority = rows.get("Net Profit (owners)"), rows.get("Net Profit"), rows.get("Minority share")
+    out = dict(rows)
+    if owners is not None and net is not None:
+        if minority is not None:
+            # a minority share as large as the whole profit is itself the slip, not the owners' (measured 31 Oct 2026, the dry run of
+            # statements-correct against Screener: FINCABLES Q4FY25 191.71 would have become 0, ABREL Q4FY26 10.84 -104.86; Screener
+            # 192 and 5), so the owners' figure stays as filed; below it the rule held (CGPOWER Q2FY26 18.24 -> 284.29, Screener 284;
+            # BANCOINDIA Q1FY26 164.06 -> 109.52, Screener 110; SUNFLAG Q1FY25 717.31 -> 27.89, Screener 28)
+            if abs(owners + minority - net) > max(0.01, abs(net) / 200) and abs(minority) < abs(net):
+                out["Net Profit (owners)"] = round(net - minority, 2)
+        elif owners == 0 and net != 0:
+            out["Net Profit (owners)"] = net
+    pbt, tax = rows.get("Profit before tax"), rows.get("Tax")
+    if fam == CORPORATE and pbt is not None and tax is not None:
+        # PBT - Tax is the whole profit only when the associates' share is in PBT; a share kept below PBT (corporate_pl: its layout) is added
+        whole = round(pbt - tax + (rows.get("Associates' share outside PBT") or 0.0), 2)
+        for row in ("Net Profit", "Net Profit (owners)"):
+            value = out.get(row)
+            if value is None:
+                continue
+            if row == "Net Profit":
+                expected = whole
+            else:
+                share = out.get("Minority share")
+                if share is None:
+                    share = 0.0 if value == out.get("Net Profit") else None
+                if share is None:
+                    continue
+                expected = round(whole - share, 2)
+            if value * expected < 0 and abs(value - expected) > max(SLIP_MIN, SLIP_SHARE * abs(expected)):
+                out[row] = expected
+    return out if out != rows else rows
+
+
+
+def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str = "", pdf: dict | None = None) -> dict[str, Row]:
+    """``pdf``: a bank's annual-report reading for the column (``bank_pdf``); other families ignore it."""
     if fam == BANK:
-        return bank_pl(r, source)
+        return bank_pl(r, source, pdf)
     if fam == NBFC:
         return nbfc_pl(r, source)
     if fam == INSURER:
@@ -624,6 +859,28 @@ def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str =
 
 
 # --- balance sheet ------------------------------------------------------------------------------------------------
+
+# a described row naming an investment inside the "Others" of another asset line is screener's Investments (srules2 bs report, 4: GAIL
+# cons FY26 "Other Investments" 9,360.17; Finolex Cables FY26 262.76 + 719.55; KIMS FY26 87.5; all 3 files that carry one close, 0 broken).
+# Not a lease receivable ("net investment in (sub)lease": Infosys, Tata Technologies, Nykaa, Welspun, Black Box), plan money with
+# an insurer (Nestle's "Investment in Insurance plan", Eternal's gratuity plan, GRSE's leave encashment with LIC), application
+# money or shares pending allotment (Ashok Leyland, ZF, GAIL FY23), a forward contract (Zydus) or a bank balance (Molbio):
+# screener keeps those in Other Assets (screener-rows run 41173800391: 43 rows broken, 21 mended before this list)
+INVESTMENT_PARENTS = ("OtherNoncurrentFinancialAssets", "OtherNoncurrentFinancialAssetsOthers", "OtherNoncurrentAssets",
+                      "OtherNoncurrentAssetsOthers", "OtherCurrentFinancialAssets", "OtherCurrentFinancialAssetsOthers")
+INVESTMENT_ROW = (r"^(?!.*(investment\s+propert|loans?\b|advances?\b|receivable|accrued|interest|income|dividend|deposit|"
+                  r"right.of.use|lease|insurance|gratuity|\blic\b|encashment|pending\s+allotment|application\s+money|forward|bank\s+balance))"
+                  r".*\binvest")
+
+
+def _investment_rows(r: _Reader) -> list[tuple[str, str, float]]:
+    out, seen = [], set()
+    for x in r.rows(INVESTMENT_PARENTS, INVESTMENT_ROW):     # a parent and its "Others" member can carry the same line
+        if (x[1], round(x[2], 2)) not in seen:
+            seen.add((x[1], round(x[2], 2)))
+            out.append(x)
+    return out
+
 
 def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False) -> dict[str, Row]:
     """``half_year``: a September balance sheet, read from its results file, where screener puts intangibles under development in
@@ -648,7 +905,7 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
         rows = [x for x in r.rows(LIABILITY_PARENTS, rf"current maturit|{BANK_DEBT_ROW}") if not re.search("lease", x[1], re.I)]
         lease_note = f"lease {_fmt(lease)} ({', '.join(lease_names)})"
     else:
-        rows = r.rows(LIABILITY_PARENTS, rf"{LEASE_ROW}|current maturit|{BANK_DEBT_ROW}")
+        rows = r.rows(LIABILITY_PARENTS, rf"{LEASE_ROW_FINANCIAL}|current maturit|{BANK_DEBT_ROW}")
         seen = {(t, round(v, 2)) for _, t, v in rows}
         for x in r.rows(LEASE_PARENTS, LEASE_ROW):      # a parent and its "Others" member can carry the same line
             if (x[1], round(x[2], 2)) not in seen:
@@ -660,16 +917,25 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
         rows = [x for x in rows if not re.search(r"finance lease", x[1], re.I)]
         lease += fl
         lease_note = " + ".join(x for x in (lease_note, f"{FINANCE_LEASE_MATURITIES} {_fmt(fl)}") if x)
+    ltm = r.cr(LT_DEBT_MATURITIES) if _cmltd() else None
+    if ltm:     # the element, not the same line again as a described row
+        rows = [x for x in rows if not (re.search(r"current maturit", x[1], re.I) and abs(abs(x[2]) - abs(ltm)) <= 0.5)]
+        lease += ltm
+        lease_note = " + ".join(x for x in (lease_note, f"{LT_DEBT_MATURITIES} {_fmt(ltm)}") if x)
     extra = _sum_rows(rows)
     row_note = ("rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in rows)) if rows else ""
     borrowings = debt + lease + extra
     # a balance sheet with no debt line, no lease and no maturity row is a company with no borrowings (0), not missing facts
     has_sheet = r.cr("Assets") is not None
-    out["Borrowings"] = Row(borrowings if debt_names or lease_names or fl or rows or has_sheet else None,
+    out["Borrowings"] = Row(borrowings if debt_names or lease_names or fl or ltm or rows or has_sheet else None,
                             " + ".join(x for x in (" + ".join(debt_names), lease_note, row_note) if x) + src
-                            if debt_names or lease_names or fl or rows else ("no borrowings, lease or maturity line: 0" if has_sheet
+                            if debt_names or lease_names or fl or ltm or rows else ("no borrowings, lease or maturity line: 0" if has_sheet
                                                                          else "missing BorrowingsNoncurrent and BorrowingsCurrent") + src)
     fixed, fixed_names = total("PropertyPlantAndEquipment", "Goodwill", "OtherIntangibleAssets", "InvestmentProperty")
+    extras, extra_names = total(*FIXED_ASSET_EXTRAS)
+    if extras:      # a filler 0 is no line
+        fixed += extras
+        fixed_names += extra_names
     rou = r.cr("RightOfUseAssets")
     rou_note = "RightOfUseAssets" if rou is not None else ""
     if rou is None:
@@ -689,12 +955,16 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
                       (" + ".join(cwip_names) or ("neither CapitalWorkInProgress nor IntangibleAssetsUnderDevelopment: 0" if has_sheet
                                                   else "no balance sheet in the file")) + src)
     inv, inv_names = total("NoncurrentInvestments", "CurrentInvestments", "InvestmentsAccountedForUsingEquityMethod")
+    inv_rows = _investment_rows(r)
+    if inv_rows:    # an investment the filer keeps inside "Others" of another asset line: Investments for screener, out of Other Assets
+        inv += _sum_rows(inv_rows)
+        inv_names = inv_names + ["rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in inv_rows)]
     out["Investments"] = Row(inv if inv_names or has_sheet else None,
                              (" + ".join(inv_names) or ("no investments element: 0" if has_sheet else "no balance sheet in the file")) + src)
     assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
     # the half-year column is the filed total: HCL Tech, Adani Power, Adani Green, Wipro, Torrent Pharma Q2FY27 apart by exactly
     # min(DTA, DTL), while HCL Tech's year columns FY23-FY26 are exact with it (run 40735344929)
-    offset = min(dta, dtl) if dta is not None and dtl is not None and not half_year and not standalone else 0.0
+    offset = min(dta, dtl) if dta is not None and dtl is not None and not half_year and (B4_NET_ANY_BASIS or not standalone) else 0.0
     tot = None if assets is None else assets - offset
     tot_note = ("Assets" + (f" - min(DTA, DTL) {_fmt(offset)}" if offset else "") if assets is not None else "missing Assets") + src
     out["Total Liabilities"] = Row(tot, tot_note)
@@ -707,28 +977,175 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
     return out
 
 
-def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
+def _paid_up(r: _Reader) -> tuple[float | None, str]:
+    """The paid-up equity capital: the 12-month duration fact PaidUpValueOfEquityShareCapital ending on the balance-sheet date (a
+    half-year file: its own 6- or 3-month one; the value is a stock, the same in each)."""
+    inst = r.at.get("instant")
+    if inst is None:
+        return None, ""
+    for months in (12, 6, 9, 3):
+        v = r.facts.cr("PaidUpValueOfEquityShareCapital", end=inst, months=months)
+        if v is not None:
+            return v, f"PaidUpValueOfEquityShareCapital ({months} months)"
+    return None, ""
+
+
+ESOP_ROW = r"stock option|esop"
+
+
+ESOP_NOTE = re.compile(r"employees?\W+stock\s+options?(?:\s*/\s*units)?\s+outstanding\b[^.]{0,60}?\bRs\.?\s*([\d,]+(?:\.\d+)?)", re.I)
+
+
+def _esop_note(r: _Reader, olp: float | None) -> float:
+    """The stock options outstanding a bank states in its balance-sheet note (crore), 0 when none; never the segment note's
+    "Capital, Employees stock options outstanding and Reserves ... Rs. 501424" (another total), never above the other liabilities."""
+    for name, _ctx, _unit, value, _dec in r.facts.doc.get("facts") or []:
+        if name != "DisclosureOfNotesOnAssetsAndLiabilitiesExplanatoryTextBlock" or not isinstance(value, str):
+            continue
+        m = ESOP_NOTE.search(value)
+        if m:
+            try:
+                v = float(m[1].replace(",", ""))
+            except ValueError:
+                continue
+            if v > 0 and (olp is None or v < olp):
+                return v
+    return 0.0
+
+
+def bank_bs(r: _Reader, source: str = "", pdf: dict | None = None) -> dict[str, Row]:
+    """A bank's balance sheet (srules2 bs report, 1; 10 of 10 standalone Q4FY26 files: HDFC, SBI, ICICI, Union, Canara, IDFC First,
+    Axis, Kotak, BoB, PNB, all within tolerance except the two named residues below).
+
+    Equity Capital = the paid-up capital (ICICI files Capital 4,114.30 = screener's Reserves-side double, screener 1,432.23), else Capital;
+    Reserves = ReservesAndSurplus + Capital - paid-up, plus the employee stock options outstanding row of the other liabilities (Kotak
+    113.12), which leaves Other Liabilities; Other Liabilities = OtherLiabilitiesAndProvisions less that row; Total = CapitalAndLiabilities;
+    Fixed Assets = FixedAssets; CWIP only where the file carries CapitalWorkInProgress (a bank's file has none: screener's CWIP, SBI 627,
+    Union 62, IDFC 113, Axis 260, is not in it, so the row is not made up and Other Assets still takes it); Investments = Investments;
+    Other Assets = Total - Fixed Assets - CWIP - Investments (advances, cash and balances with RBI all sit there).
+    Not closed: HDFC Reserves +4,546 and Axis +1,342, each opposite in Other Liabilities (no element or row of that size in the file)."""
     src = f" [{source}]" if source else ""
-    out = {}
-    # Reserves: no recipe yet (ReservesAndSurplus is 4,545 Cr under screener's Excel for HDFC Bank FY26, 18,768 over for SBI)
-    for row, name in (("Equity Capital", "Capital"), ("Deposits", "Deposits"), ("Borrowing", "Borrowings")):
+    out: dict[str, Row] = {}
+    cap, rs, paid = r.cr("Capital"), r.cr("ReservesAndSurplus"), _paid_up(r)
+    if paid[0] is not None:
+        out["Equity Capital"] = Row(paid[0], paid[1] + src)
+    else:
+        out["Equity Capital"] = Row(cap, ("Capital" if cap is not None else "missing Capital") + src)
+    # screener moves the stock options outstanding and the Capital - paid-up difference into Reserves at March only: at September
+    # both stay in Other Liabilities (Q2FY27: HDFC both bases, Axis, Kotak, ICICI standalone; every row the move mends is a March
+    # one; bank balance-sheet review, 31 Oct 2026)
+    instant = r.at.get("instant")
+    march = instant is not None and instant.month == 3
+    esop = r.rows(("OtherLiabilitiesAndProvisions",), ESOP_ROW) if march else []
+    esop_v, esop_name = _sum_rows(esop), "ESOP row"
+    if march and not esop:
+        # HDFC Bank states it only in its balance-sheet note ("Employees stock options outstanding as at March 31, 2024 were
+        # Rs. 2652.72 crore"): Reserves FY24-FY26 both bases equal screener's with it
+        esop_v = _esop_note(r, olp=r.cr("OtherLiabilitiesAndProvisions"))
+        esop_name = "ESOP (balance-sheet note)"
+    shift = (cap - paid[0]) if cap is not None and paid[0] is not None else 0.0
+    to_reserves = shift if march else 0.0
+    res_note = "ReservesAndSurplus" + (f" + Capital - paid-up {_fmt(shift)}" if to_reserves else "") \
+        + (f" + {esop_name} {_fmt(esop_v)}" if esop_v else "")
+    out["Reserves"] = Row(None if rs is None else rs + to_reserves + esop_v, (res_note if rs is not None else "missing ReservesAndSurplus") + src)
+    for row, name in (("Deposits", "Deposits"), ("Borrowing", "Borrowings")):
         v = r.cr(name)
         out[row] = Row(v, (name if v is not None else "missing " + name) + src)
+    olp = r.cr("OtherLiabilitiesAndProvisions")
+    to_other = shift - to_reserves      # a September sheet: the Capital - paid-up difference stays among the other liabilities
+    out["Other Liabilities"] = Row(None if olp is None else olp - esop_v + to_other,
+                                   ("OtherLiabilitiesAndProvisions" + (f" - {esop_name} {_fmt(esop_v)}" if esop_v else "")
+                                    + (f" + Capital - paid-up {_fmt(to_other)}" if to_other else "")
+                                    if olp is not None else "missing OtherLiabilitiesAndProvisions") + src)
+    tot, tot_name = r.cr("CapitalAndLiabilities"), "CapitalAndLiabilities"
+    if tot is None:
+        tot, tot_name = r.cr("Assets"), "Assets"
+    out["Total Liabilities"] = Row(tot, (tot_name if tot is not None else "missing CapitalAndLiabilities") + src)
+    out["Total Assets"] = Row(tot, out["Total Liabilities"].note)
+    fa, inv, cwip = r.cr("FixedAssets"), r.cr("Investments"), r.cr("CapitalWorkInProgress")
+    fa_note = "FixedAssets"
+    if cwip is None and pdf is not None and march and fa is not None:
+        # TODO 148: the file keeps CWIP inside FixedAssets (F228); the annual report's Schedule 10 splits it, taken only when that
+        # schedule's total is the file's FixedAssets (Fixed Assets + CWIP = FixedAssets)
+        split, why = bank_pdf.bs_figures(pdf, fa)
+        if split is not None:
+            (fa, cwip), fa_note = split, f"FixedAssets - CWIP ({why})"
+            out["CWIP"] = Row(cwip, why + src)
+    out["Fixed Assets"] = Row(fa, (fa_note if fa is not None else "missing FixedAssets") + src)
+    if cwip is not None and "CWIP" not in out:
+        out["CWIP"] = Row(cwip, "CapitalWorkInProgress" + src)
+    out["Investments"] = Row(inv, ("Investments" if inv is not None else "missing Investments") + src)
+    out["Other Assets"] = Row(None if None in (tot, fa, inv) else tot - fa - (cwip or 0.0) - inv,
+                              "Total - Fixed Assets - CWIP - Investments" + src)
     return out
 
 
 def nbfc_bs(r: _Reader, source: str = "") -> dict[str, Row]:
+    """An NBFC's balance sheet, screener's rows "Borrowing" etc. (srules2 bs report, 2; 7 consolidated Q4FY26 files: Bajaj Finance,
+    Shriram, Muthoot, Chola, LTF, REC, PFC). Borrowing = DebtSecurities + Borrowings + Deposits + SubordinatedLiabilities + the lease
+    liability rows of the other financial liabilities (closed 6 of 7 with the subordinated; Chola's figure is without its 1,030.27: a
+    broken case kept as the rule holds for the other six; REC is 558.8 under, the pair with its Reserves); Fixed Assets = PPE + Goodwill +
+    OtherIntangibleAssets + InvestmentProperty + right-of-use (element, else the row); CWIP = CapitalWorkInProgress +
+    IntangibleAssetsUnderDevelopment; Investments = Investments; Equity Capital = EquityShareCapital; Reserves = OtherEquity; Total = Assets
+    - min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet) (Muthoot 33.48); Other Liabilities (the minority interest inside) and Other
+    Assets the remainders."""
     src = f" [{source}]" if source else ""
-    out = {}
-    for row, name in (("Equity Capital", "EquityShareCapital"), ("Reserves", "OtherEquity")):
-        v = r.cr(name)
-        out[row] = Row(v, (name if v is not None else "missing " + name) + src)
+    out: dict[str, Row] = {}
+
+    def total(*names: str) -> tuple[float, list[str]]:
+        found = [(n, v) for n, v in ((n, r.cr(n)) for n in names) if v is not None]
+        return sum(v for _, v in found), [n for n, _ in found]
+
+    cap, res = r.cr("EquityShareCapital"), r.cr("OtherEquity")
+    out["Equity Capital"] = Row(cap, ("EquityShareCapital" if cap is not None else "missing EquityShareCapital") + src)
+    out["Reserves"] = Row(res, ("OtherEquity" if res is not None else "missing OtherEquity") + src)
+    has_sheet = r.cr("Assets") is not None
+    debt, debt_names = total("DebtSecurities", "Borrowings", "Deposits", "SubordinatedLiabilities")
+    lease_rows = r.rows(NBFC_LIABILITY_PARENTS, LEASE_ROW)
+    b = debt + _sum_rows(lease_rows)
+    b_note = " + ".join(debt_names + (["lease rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in lease_rows)] if lease_rows else []))
+    out["Borrowing"] = Row(b if debt_names or lease_rows or has_sheet else None,
+                           (b_note or ("no borrowing line: 0" if has_sheet else "no balance sheet in the file")) + src)
+    fixed, fixed_names = total("PropertyPlantAndEquipment", "Goodwill", "OtherIntangibleAssets", "InvestmentProperty")
+    rou = r.cr("RightOfUseAssets")
+    rou_note = "RightOfUseAssets" if rou is not None else ""
+    if rou is None:
+        rou_rows = r.rows(NBFC_ASSET_PARENTS, r"right.of.use")
+        rou = _sum_rows(rou_rows) if rou_rows else None
+        rou_note = ("right-of-use row " + _fmt(rou)) if rou_rows else ""
+    fa = fixed + (rou or 0.0)
+    out["Fixed Assets"] = Row(fa if fixed_names or rou else None,
+                              (" + ".join(fixed_names + ([rou_note] if rou_note else [])) or "missing PropertyPlantAndEquipment") + src)
+    cwip, cwip_names = total("CapitalWorkInProgress", "IntangibleAssetsUnderDevelopment")
+    out["CWIP"] = Row(cwip if cwip_names or has_sheet else None,
+                      (" + ".join(cwip_names) or ("neither CapitalWorkInProgress nor IntangibleAssetsUnderDevelopment: 0" if has_sheet
+                                                  else "no balance sheet in the file")) + src)
+    inv = r.cr("Investments")
+    out["Investments"] = Row(inv if inv is not None or has_sheet else None,
+                             ("Investments" if inv is not None else ("no Investments element: 0" if has_sheet else "no balance sheet in the file")) + src)
+    assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
+    offset = min(dta, dtl) if dta is not None and dtl is not None else 0.0
+    tot = None if assets is None else assets - offset
+    tot_note = ("Assets" + (f" - min(DTA, DTL) {_fmt(offset)}" if offset else "") if assets is not None else "missing Assets") + src
+    out["Total Liabilities"] = Row(tot, tot_note)
+    out["Total Assets"] = Row(tot, tot_note)
+    bv = out["Borrowing"].value
+    out["Other Liabilities"] = Row(None if None in (tot, cap, res, bv) else tot - cap - res - bv,
+                                   "Total - Equity Capital - Reserves - Borrowing" + src)
+    out["Other Assets"] = Row(None if None in (tot, out["Fixed Assets"].value, out["CWIP"].value, out["Investments"].value)
+                              else tot - fa - cwip - (inv or 0.0), "Total - Fixed Assets - CWIP - Investments" + src)
     return out
 
 
-def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False) -> dict[str, Row]:
+NBFC_LIABILITY_PARENTS = ("OtherFinancialLiabilities", "OtherFinancialLiabilitiesOthers", "OtherNoncurrentFinancialLiabilities",
+                          "OtherCurrentFinancialLiabilities")
+NBFC_ASSET_PARENTS = ("OtherNonFinancialAssets", "OtherNonFinancialAssetsOthers", "OtherFinancialAssets", "OtherFinancialAssetsOthers")
+
+
+def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False,
+            pdf: dict | None = None) -> dict[str, Row]:
     if fam == BANK:
-        return bank_bs(r, source)
+        return bank_bs(r, source, pdf)
     if fam == NBFC:
         return nbfc_bs(r, source)
     if fam == INSURER:
@@ -773,6 +1190,8 @@ class CompanyFacts:
                 (self.annual if m[1] else self.results)[(m[2], m[3].upper())] = key
         self._cache: dict[str, xbrl_facts.Facts | None] = {}
         self.bse_periods: set[str] | None = None     # the quarters BSE's results list holds; None: BSE not asked yet
+        # a bank's annual-report readings by (year, basis) (``bank_pdf.load``, TODO 148); {}: none stored, nothing changes
+        self.bank_pdf: dict[tuple[str, str], dict] = {}
 
     def before_listing(self, period: str) -> bool:
         """Whether ``period`` (a quarter, or a year "FY25": its March quarter) is before the company's first results on either
@@ -798,6 +1217,30 @@ class CompanyFacts:
                 self._cache[key] = None
         return self._cache[key]
 
+    def year_end(self, period: str, basis: str) -> tuple[xbrl_facts.Facts | None, str]:
+        """(facts, label) of twelve months to a year end that is not March ("YE:2025-12"): the nearest annual report that holds them
+        (its own year first, then the next one's comparative), else the results file of the quarter ending that day (a December
+        company's Dec-quarter results carry the year's column)."""
+        end = _ye_end(period)
+        if end is None:
+            return None, ""
+
+        def holds(f) -> bool:
+            return any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
+
+        reports = sorted(((afy, key) for (afy, b), key in self.annual.items() if b == basis),
+                         key=lambda r: (abs(_fy_num(r[0]) - (end.year % 100 + (end.month > 3))), _fy_num(r[0])))
+        for afy, key in reports:
+            f = self._load(key)
+            if f is not None and holds(f):
+                return f, f"annual report {afy}"
+        for (p, b), key in self.results.items():
+            if b == basis and quarter_end(p) == end:
+                f = self._load(key)
+                if f is not None and holds(f):
+                    return f, f"results file {p}"
+        return None, ""
+
     def result(self, period: str, basis: str) -> xbrl_facts.Facts | None:
         return self._load(self.results.get((period, basis)))
 
@@ -808,27 +1251,58 @@ class CompanyFacts:
         return CORPORATE
 
     def year(self, fy: str, basis: str, fam: str, instant: bool = False):
-        """(facts, label, Q4 facts) of a March year: the newest annual-report doc holding the year (a later report's comparative
-        counts), else the Q4 results file. A lender: always the Q4 file."""
+        """(facts, label, Q4 facts) of a March year, in this order: the newest of the year's own annual report and the next
+        year's (whose comparative it is) that holds the year; else the Q4 results file when it holds it; else the nearest later
+        report that holds it; else the Q4 file as it is. A lender: always the Q4 file. A report two or more years later is the last resort because it can carry a stray fact
+        at that date (UltraTech's FY26 report tags Assets at 31 Mar 2024 in a note, with no balance sheet there, which made FY24's
+        Borrowings 0: TODO 129, 113 pairs), yet for a year with no nearer source it often holds the full sheet (HCL Tech FY20
+        from its FY22 report, 16 rows equal to screener's)."""
         end = _fy_end(fy)
         q4 = self.result(f"Q4{fy}", basis)
-        if fam == CORPORATE and end is not None:
-            for (afy, b), key in sorted(self.annual.items(), key=lambda kv: _fy_num(kv[0][0]), reverse=True):
-                if b != basis or _fy_num(afy) < _fy_num(fy):
-                    continue
+        if fam != CORPORATE or end is None:
+            return q4, f"results file Q4{fy}", None
+
+        def holds(f) -> bool:
+            return f.cr("Assets", instant=end) is not None if instant else \
+                any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
+
+        def holding(offsets) -> tuple | None:
+            reports = [(afy, key) for (afy, b), key in self.annual.items() if b == basis and _fy_num(afy) - _fy_num(fy) in offsets]
+            for afy, key in sorted(reports, key=lambda r: offsets.index(_fy_num(r[0]) - _fy_num(fy))):
                 f = self._load(key)
                 if f is None:
                     continue
-                holds = f.cr("Assets", instant=end) is not None if instant else \
-                    any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
-                if holds:
+                if holds(f):
                     return f, f"annual report {afy}", q4
-        return q4, f"results file Q4{fy}", None
+            return None
+
+        near = holding([1, 0])                              # the newest first, as before: the next year's report, then the year's own
+        if near is not None:
+            return near
+        if q4 is not None and holds(q4):           # a Q4 file without the year's balance sheet (HAL, NTPC FY22) is no source for it
+            return q4, f"results file Q4{fy}", None
+        # a report two or more years later counts for a balance sheet only with the year's equity in it: a stray Assets fact in a
+        # note is no sheet (JSL and Jindal SAW FY22 from their FY24 reports, UltraTech FY20 from FY22: Borrowings 0 against
+        # screener's 4,007 / 6,031 / 23,019, run 41182762968)
+        late = holding(list(range(2, 100)))
+        if late is not None and instant and late[0].cr("EquityShareCapital", instant=end) is None and \
+                late[0].cr("Equity", instant=end) is None:
+            late = None
+        return late or (q4, f"results file Q4{fy}", None)   # the nearest later report first
 
 
 def _fy_num(fy: str) -> int:
     m = re.fullmatch(r"FY(\d{2})", fy)
     return int(m[1]) if m else -1
+
+
+def _ye_end(period: str) -> date | None:
+    """"YE:2025-12" -> 2025-12-31 (the last day of the month the year ends in)."""
+    m = re.fullmatch(r"YE:(\d{4})-(\d{2})", period or "")
+    if not m:
+        return None
+    y, mo = int(m[1]), int(m[2])
+    return date(y + (mo == 12), mo % 12 + 1, 1) - timedelta(days=1)
 
 
 def _fy_end(fy: str) -> date | None:
@@ -878,7 +1352,19 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
     result: tuple[dict[str, Row] | None, str]
     reader = None
     if period.startswith("YE:"):
-        result = None, "year end not March: no recipe source yet"
+        # a year that does not end in March ("YE:2025-12": VBL, ABB, Siemens, CRISIL, Hexaware; 63 of the 2,000 stored pages, owner
+        # 1 Nov 2026): twelve months to that day from an annual report, else from the results file of the quarter that ends it
+        f, label = cf.year_end(period, basis)
+        end = _ye_end(period)
+        reader = _Reader(f, end=end, months=12) if f is not None and end is not None else None
+        if reader is None:
+            result = None, f"no annual-report or year-end results facts for {period}"
+        elif table == "annual":
+            result = pl_rows(fam, reader, None, label), ""
+        elif table == "cash_flow":
+            result = cf_rows(reader, label), ""
+        else:
+            result = None, "a balance sheet is read by its quarter"
     elif table == "quarters":
         end, f = quarter_end(period), cf.result(period, basis)
         reader = _Reader(f, end=end, months=3) if f is not None and end else None
@@ -891,7 +1377,7 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
             result = None, f"no annual-report or Q4 results facts for {period}"
         elif table == "annual":
             fallback = _Reader(q4, end=end, months=12) if q4 is not None else None
-            result = pl_rows(fam, reader, fallback, label), ""
+            result = pl_rows(fam, reader, fallback, label, pdf=cf.bank_pdf.get((period, basis))), ""
         else:
             result = cf_rows(reader, label), ""
     else:   # balance
@@ -901,12 +1387,48 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
         else:
             f, label = cf.result(period, basis), f"results file {period}"
         reader = _Reader(f, instant=end) if f is not None and end else None
-        sheet = bs_rows(fam, reader, label, half_year=not period.startswith("Q4"), standalone=basis == STANDALONE) if reader else None
+        pdf = cf.bank_pdf.get((period[2:], basis)) if period.startswith("Q4") else None
+        sheet = bs_rows(fam, reader, label, half_year=not period.startswith("Q4"), standalone=basis == STANDALONE, pdf=pdf) \
+            if reader else None
         result = (sheet, "") if reader \
             else (None, f"no facts for {period}")
     memo[k] = result
     memo[("reader", k)] = reader
     return result
+
+
+def _year_alternatives(cf: "CompanyFacts", fam: str, basis: str, fy: str, memo: dict) -> dict[str, dict[str, float]]:
+    """A year's P&L rows by each source the year could be read from (a measurement aid for which source screener uses; never the
+    stored figure): ``own`` the year's own annual report, ``next`` the next year's (its comparative), ``q4`` the Q4 results file's
+    twelve months, ``sumq`` our four quarters added up. A source that does not hold the year is left out."""
+    k = ("alts", fy)
+    if k in memo:
+        return memo[k]
+    end, out = _fy_end(fy), {}
+    q4 = cf.result(f"Q4{fy}", basis)
+    if end is not None:
+        q4r = _Reader(q4, end=end, months=12) if q4 is not None else None
+        for label, off in (("own", 0), ("next", 1)):
+            key = cf.annual.get((f"FY{_fy_num(fy) + off:02d}", basis))
+            f = cf._load(key) if key else None
+            if f is not None and any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod")):
+                out[label] = {n: r.value for n, r in pl_rows(fam, _Reader(f, end=end, months=12), q4r).items() if r.value is not None}
+        if q4r is not None and any(q4.cr(n, end=end, months=12) is not None
+                                   for n in ("ProfitLossForPeriod", "ProfitLossForThePeriod", "InterestEarned")):
+            out["q4"] = {n: r.value for n, r in pl_rows(fam, q4r).items() if r.value is not None}
+        quarters = []
+        for i in (1, 2, 3, 4):
+            rows, _ = _ours(cf, fam, basis, "quarters", f"Q{i}{fy}", memo)
+            quarters.append(rows)
+        if all(quarters):
+            sums: dict[str, float] = {}
+            for name in quarters[0]:
+                vals = [q[name].value if name in q else None for q in quarters]
+                if name not in PCT_ROWS and all(v is not None for v in vals):
+                    sums[name] = sum(vals)
+            out["sumq"] = sums
+    memo[k] = out
+    return out
 
 
 def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", basis: str | None = None,
@@ -921,8 +1443,8 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
             for period, theirs in by_period.items():
                 rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": fam, "period": period, "table": table,
                        "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "", "hints": ""}
-                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(FIRST_QUARTER):
-                    rec.update(status="before_cutoff", note=f"before {FIRST_QUARTER}: not compared")
+                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(MEASURE_FROM):
+                    rec.update(status="before_cutoff", note=f"before {MEASURE_FROM}: not compared")
                     out.append(rec)
                     continue
                 ours_rows, why = _ours(cf, fam, basis, table, period, memo)
@@ -939,11 +1461,16 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                     else:
                         rec.update(ours=round(got.value, 2), diff=round(got.value - theirs, 2),
                                    status="ok" if exact(got.value, theirs, row) else "apart", note=got.note)
+                        if table == "annual" and row not in PCT_ROWS:
+                            alts = _year_alternatives(cf, fam, basis, period, memo)
+                            rec["alts"] = "; ".join(f"{label} {_fmt(v[row])}" for label, v in alts.items() if row in v)
                         reader = memo.get(("reader", (table, period)))
                         if rec["status"] == "apart" and row not in PCT_ROWS and reader is not None:
                             rec["hints"] = "; ".join(gap_hints(reader, theirs - got.value))
                             rec["pairs"] = "; ".join(gap_pairs(reader, theirs - got.value))
                             sales = ((page.get("tables") or {}).get(table, {}).get("Sales") or {}).get(period)
+                            head = (sub_rows or {}).get(f"{SECTION_OF[table]}|{row}")
+                            rec["sub rows"], rec["sub match"] = sub_row_hints(head, column_for(table, period), theirs - got.value)
                             answer = (sub_rows or {}).get(("quarters" if table == "quarters" else "profit-loss") + "|Expenses")
                             col = column_of(table, period)
                             if row == "Expenses" and answer and col and sales:
@@ -1011,6 +1538,7 @@ def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | Non
             return entry
         facts = CompanyFacts(sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/"), sink.get_object)
         facts.bse_periods = _bse_periods(sink, scrip)
+        bank_pdf.attach(facts, sink, scrip)       # a bank's annual-report rows its file lacks (TODO 148); none stored: no change
         if not facts.results and not facts.annual:
             entry["skipped"] = "no stored facts"
         bundle = {}
@@ -1098,7 +1626,8 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
 
 
 CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note",
-              "gap matches", "gap pairs", "expense parts apart", "lines in that part")
+              "gap matches", "gap pairs", "expense parts apart", "lines in that part", "year by source",
+              "screener sub-rows", "sub-rows equal to the gap")
 
 
 def to_csv(summary: dict) -> str:
@@ -1108,7 +1637,8 @@ def to_csv(summary: dict) -> str:
     for r in summary["rows"]:
         w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
                     "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"],
-                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", "")])
+                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", ""), r.get("alts", ""),
+                    r.get("sub rows", ""), r.get("sub match", "")])
     return buf.getvalue()
 
 
@@ -1160,3 +1690,71 @@ def render(summary: dict) -> str:
         share = "-" if c["exact_share"] is None else f"{c['exact_share'] * 100:.1f}%"
         out.append(f"  {key:45s} exact {c['ok']:>4} apart {c['apart']:>4} ({share})")
     return "\n".join(out)
+
+
+# --- the stored statements against screener (owner, 31 Oct 2026: "is our memory finally updated?") ---------------------
+# screener-rows above measures the recipes over the stored facts. The site shows dossier.statements, written by the live path,
+# the backfill and the rebuild: an entry left out, written before a rule, or put back by another source would not show there.
+
+def compare_stored(page: dict, entries: list[dict], scrip: str = "", symbol: str = "", basis: str | None = None) -> list[dict]:
+    """Every (table, row, period) the page shows against the dossier's stored statements entry of that table, basis and period:
+    ok, apart, no_facts (no stored entry) or no_recipe (the entry has no such row); quarters before MEASURE_FROM are not
+    compared, as in ``compare``."""
+    basis = basis or page.get("basis") or CONSOLIDATED
+    stored = {(e.get("table"), e.get("period"), e.get("basis")): e for e in entries or []}
+    out = []
+    for _, table, _ in TABLES:
+        for row, by_period in (page.get("tables") or {}).get(table, {}).items():
+            for period, theirs in by_period.items():
+                e = stored.get((table, period, basis))
+                rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": (e or {}).get("family") or "", "period": period,
+                       "table": table, "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "",
+                       "hints": ""}
+                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(MEASURE_FROM):
+                    rec.update(status="before_cutoff", note=f"before {MEASURE_FROM}: not compared")
+                elif e is None:
+                    rec.update(status="no_facts", note="no stored statements entry")
+                elif (e.get("rows") or {}).get(row) is None:
+                    rec.update(status="no_recipe", note=f"the stored entry has no {row}")
+                else:
+                    got = float(e["rows"][row])
+                    lab = e.get("lab") or {}
+                    rec.update(ours=round(got, 2), diff=round(got - theirs, 2), status="ok" if exact(got, theirs, row) else "apart",
+                               note=f"stored {str(e.get('as_of') or '')[:10]} by {lab.get('by') or '?'} from {lab.get('from') or lab.get('doc') or '?'}")
+                out.append(rec)
+    return out
+
+
+def run_stored(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | None = None) -> dict:
+    """Read only: the stored screener pages against each company's stored statements (its dossier). No request to NSE, BSE or
+    screener; summarised like ``run``, so ``to_csv`` and screener-rows-diff read it the same way."""
+    from .screener_crosscheck import stored_pages
+    from .screener_download import unpack
+
+    pages_by_symbol, newest = stored_pages(sink, day)
+
+    def one(item: tuple[str, str]) -> dict:
+        scrip, symbol = item
+        entry = {"scrip": scrip, "symbol": symbol, "rows": [], "skipped": None}
+        try:
+            entry["sector"], entry["industry"] = _sector(sink, scrip)
+            stored = pages_by_symbol.get(symbol) or {}
+            if not stored:
+                entry["skipped"] = "no stored page"
+                return entry
+            dossier = sink.get_dossier(scrip) or {}
+            entries = dossier.get("statements") or []
+            if not entries:
+                entry["skipped"] = "no stored statements"
+            for basis, key in sorted(stored.items()):
+                blob = sink.get_object(key)
+                if blob:
+                    page = parse_page(unpack(blob))
+                    entry["rows"] += compare_stored(page, entries, scrip, symbol, page.get("basis") or basis)
+        except Exception as exc:  # noqa: BLE001 - one company's bad page or dossier is that company's skip
+            entry["skipped"] = f"error: {type(exc).__name__}: {exc}"[:200]
+        return entry
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        results = list(pool.map(one, companies))
+    return summarise(results, newest)

@@ -56,6 +56,23 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
   eps_whole         CARD_EPS_WHOLE (F188): a results table's EPS line, `results_snapshot` off and on over memory (the whole
                      company's EPS with the continuing one beside it when they differ). Needs a RESULTS card with a table and
                      memory; memory read again since F188 for the periods it shows, else the line is unchanged.
+  text_support      CARD_TEXT_SUPPORT (TODO 142): `card_support.apply` (names, words, small counts, dates and profit labels the sources do
+                     not print) on a deep copy of each stored card; every item it drops is listed (news_id, company, field,
+                     text, the missing words, a 300-character window of the filing near the best-matching place). Out of sample:
+                     the 34 in-sample cards of scripts/measure_card_support.py (its MARKS) are left out and counted. `sources`
+                     are built as pipeline.ground builds them, (text, headline, subject, memory view, scale block), EXCEPT:
+                     (1) text is the filing's own pages without the XBRL table the pipeline puts in front, so the card's stored
+                     `results` block (code-built from that table) is appended to it; (2) memory is `view_as_of(dossier,
+                     filed_at)` as it stands now, without the `printed` periods and `filing_text` the live call also passes;
+                     (3) the scale block (market cap, revenue, net worth, debt) is empty. Each can only make a drop that live
+                     would not make, so the drop list is an upper bound. The blind sample (up to 60 dropped items, seeded, no
+                     verdict hints) is for a reviewer to judge TRUE (supported, the drop loses true content) or FALSE.
+  unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
+                     correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
+                     bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
+                     (`xbrl_facts.money_crore`), and each correction whose as-written figure equals a fact (within its own
+                     rounding) is listed: the guard on would leave that figure as written (Hubtown's ₹408.47 Cr). A card with
+                     no unit correction, no exchange file on it, or a file R2 no longer holds is counted as skipped, not replayed.
 A card or part that cannot be replayed is never faked: it is counted as "not_replayable", written to NAME-unreplayable.json
 and NAME-unreplayable.md (the stored lines and the pdf link, for the blind sample: judge the stored card as it is).
 
@@ -76,6 +93,7 @@ import json
 import os
 import pathlib
 import random
+import re
 import signal
 import sys
 import time
@@ -89,23 +107,28 @@ sys.path.insert(0, str(HERE / "daily_audit"))
 import audit_card_v2 as v2  # noqa: E402
 import audit_precision as prec  # noqa: E402
 import audit_two_parts as two  # noqa: E402
-from bse_intel import event_xbrl, gate, one_basis, signals  # noqa: E402
+from bse_intel import card_support, event_xbrl, gate, one_basis, signals, xbrl_facts, xbrl_store  # noqa: E402
 from bse_intel import pipeline as P  # noqa: E402
-from bse_intel.dossier import dossier_as_of, latest_fundamentals, results_snapshot, with_year_hold  # noqa: E402
+from bse_intel.dossier import dossier_as_of, latest_fundamentals, results_snapshot, view_as_of, with_year_hold  # noqa: E402
 from bse_intel.extract import Document  # noqa: E402
 from bse_intel.grounding import declared_unit  # noqa: E402
 from bse_intel.models import Card, DealValue, Filing, Pass2Output  # noqa: E402
 from bse_intel.sinks.base import SinkUnavailable  # noqa: E402
+from measure_card_support import MARKS as IN_SAMPLE_MARKS  # noqa: E402
 from onoff_facts import tagged_from_memory  # noqa: E402
 
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
                 "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK",
-                "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE")
+                "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
+                "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
           ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
-          ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"))
+          ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"),
+          ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"),
+          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"))
+TEXT_SUPPORT_SAMPLE = 60
 
 
 # ---------------------------------------------------------------- pure helpers (tested)
@@ -212,6 +235,33 @@ def switches_on(*names: str):
 
 
 # ---------------------------------------------------------------- the five checks
+def check_results_statement(card: dict, row: dict, text: str) -> dict:
+    """results_statement: a RESULTS card whose stored text carries no results statement (pipeline.lacks_results) would be read
+    as OTHER with RESULTS_NEEDS_STATEMENT on: no results table, no quarter claim, the event's own card instead."""
+    retyped = P.lacks_results(text)
+    off = [f"TYPE: {card.get('event_type') or 'RESULTS'}", f"HEADLINE: {card.get('headline') or ''}"]
+    on = ["TYPE: OTHER (no results statement in the text)", f"HEADLINE: {card.get('headline') or ''}"] if retyped else list(off)
+    return _record(row, card, off, on)
+
+
+def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
+    """unit_slip_guard: each unit correction the stored card records (`grounding.unit_fixes`, {as written: corrected}) whose
+    as-written figure equals a money fact of the filing's XBRL file (within its own rounding) is one the guard leaves alone: the
+    card would keep the figure as written (off: the corrected text, on: the figure the file states)."""
+    facts = xbrl_facts.money_crore(xbrl_bytes, str(row.get("scrip_code")), ((card.get("xbrl") or {}).get("url")) or "")
+    off, on = [], []
+    for raw, right in ((card.get("grounding") or {}).get("unit_fixes") or {}).items():
+        try:
+            value = float(str(raw).replace(",", ""))
+        except ValueError:
+            continue
+        decimals = len(str(raw).split(".")[1]) if "." in str(raw) else 0
+        off.append(f"UNIT FIX {raw} Cr -> {right} Cr")
+        hit = [c for c in facts if abs(value - c) <= 0.5 * 10 ** (-decimals) + 1e-9]
+        on.append(f"UNIT FIX {raw} Cr kept (XBRL fact {hit[0]:,.4f} Cr)" if hit else f"UNIT FIX {raw} Cr -> {right} Cr")
+    return _record(row, card, off, on, facts=len(facts))
+
+
 def _record(row: dict, card: dict, off: list[str], on: list[str], **extra) -> dict:
     return {"news_id": row["news_id"], "symbol": row.get("symbol"), "scrip_code": str(row.get("scrip_code")),
             "pdf_url": row.get("pdf_url"), "period": (card.get("results") or {}).get("period"),
@@ -587,6 +637,121 @@ def check_eps(card: dict, dossier: dict | None, row: dict, text: str | None, per
     return rec
 
 
+# ---------------------------------------------------------------- text_support (TODO 142)
+IN_SAMPLE_IDS = frozenset(m[0] for m in IN_SAMPLE_MARKS)
+IN_SAMPLE_REASON = "in-sample card (measure_card_support MARKS)"
+
+
+def support_items(card: Card):
+    """(field, text) of every item card_support may drop (the same reading as scripts/measure_card_support.py)."""
+    t = card.track_next
+    for name in ("pending_approvals", "catalysts", "risks"):
+        for x in getattr(t, name):
+            yield "track_next", x
+    for m in t.milestones:
+        yield "track_next", f"{m.what} {m.when or ''}".strip()
+    if card.core_catalyst:
+        yield "core_catalyst", card.core_catalyst
+    for c in card.notable_changes:
+        if c.why:
+            yield "notable_changes", c.why
+    for i in card.why_it_matters:
+        yield "why_it_matters", i.text
+    for f in card.what_happened:
+        yield "what_happened", f.text
+    for k in card.key_numbers:
+        yield "key_numbers", f"{k.label} {k.value} {k.change or ''}".strip()
+
+
+def text_window(item: str, text: str, missing: list[str], width: int = 300) -> str | None:
+    """`width` characters of the filing around the best-matching place for the item: the item's own words the filing does
+    print (the rarest of them, at its first print); None when none of them is there."""
+    low = text.lower()
+    gone = {w.lower() for w in missing}
+    best = None
+    for word in {w.lower() for w in re.findall(r"[A-Za-z][A-Za-z-]{4,}", item)} - gone:
+        n = low.count(word)
+        if n and (best is None or n < best[0] or (n == best[0] and len(word) > len(best[1]))):
+            best = (n, word)
+    if best is None:
+        return None
+    at = low.find(best[1])
+    start = max(0, at - (width - len(best[1])) // 2)
+    return " ".join(text[start:start + width].split())
+
+
+TEXT_SUPPORT_SOURCES: dict[str, tuple[str, str]] = {}   # news_id -> (filing text, memory view) of the cards with a drop
+
+
+def check_text_support(card: dict, dossier: dict | None, row: dict, text: str) -> dict:
+    """text_support: `card_support.apply` over a deep copy of the stored card; every dropped item with its reason."""
+    shown = {k: card[k] for k in Card.model_fields if k in card and card[k] is not None}
+    out = Pass2Output.model_validate({"is_material": True, "event_type": card.get("event_type") or "OTHER",
+                                      "timeline_entry": card.get("timeline_entry") or "x", "card": shown})
+    before = list(support_items(out.card))
+    view = view_as_of(dossier, row["filed_at"]) if dossier else None
+    results = json.dumps(card.get("results") or {}, ensure_ascii=False)   # stands in for the XBRL table ahead of the text
+    sources = (f"{text}\n{results}", row.get("headline") or "", row.get("subject") or "",
+               json.dumps(view or {}, ensure_ascii=False), "")
+    work = copy.deepcopy(out)
+    notes = card_support.apply(work, sources, text)
+    left = Counter(support_items(work.card))
+    src = card_support._Sources(sources)
+    label_notes = [n for n in notes if "label '" in n]
+    drops = []
+    for field, item in before:
+        if left[(field, item)] > 0:
+            left[(field, item)] -= 1
+            continue
+        why = card_support._rejected(item, src) if field not in ("what_happened", "key_numbers") else []
+        missing = list(why)
+        if not why:
+            why = [n for n in label_notes if n.startswith(field)][:1] or ["(profit label not on the figure's line)"]
+        drops.append({"news_id": row["news_id"], "company": row.get("symbol") or row.get("company_name"), "field": field,
+                      "item": item, "note": why, "filing_window": text_window(item, text, missing)})
+    if drops:   # kept for the blind sample's judges: the filing text and memory as the check read them
+        TEXT_SUPPORT_SOURCES[row["news_id"]] = (text, json.dumps(view or {}, ensure_ascii=False, indent=1))
+    kept = [f"{f}: {t}" for (f, t), n in left.items() for _ in range(n)]
+    rec = _record(row, card, [f"{f}: {t}" for f, t in before], kept, drops=drops)
+    rec["diff"] = {"added": [], "removed": [f"{d['field']}: {d['item']}" for d in drops], "changed": []}
+    rec["info"], rec["unreplayable"] = {"items_checked": len(before), "items_dropped": len(drops),
+                                        "cards_without_memory": int(not dossier)}, []
+    return rec
+
+
+def text_support_markdown(switch: str, drops: list[dict], stamp: str) -> str:
+    md = [f"# {switch}: every dropped item by field, {stamp}", ""]
+    for field in sorted({d["field"] for d in drops}):
+        group = [d for d in drops if d["field"] == field]
+        md += [f"## {field} ({len(group)})", ""]
+        for d in group:
+            md += [f"- {d['company']} {d['news_id']}: {d['item']}", f"  - note: {'; '.join(d['note'])}",
+                   f"  - filing near it: {d['filing_window'] or '(none of its words found)'}"]
+        md.append("")
+    return "\n".join(md)
+
+
+def text_support_blind(drops: list[dict], rows: dict, seed: int, n: int) -> tuple[list[dict], dict, str]:
+    """Up to n dropped items in a seeded random order. No note, no check field, no verdict hint: only the company, the item
+    as the card said it, the card's headline and the filing link. The key (field and note) is kept apart."""
+    pool = sorted(drops, key=lambda d: (d["news_id"], d["field"], d["item"]))
+    random.Random(seed).shuffle(pool)
+    items, key = [], {}
+    for i, d in enumerate(pool[:n], 1):
+        r = rows.get(d["news_id"]) or {}
+        items.append({"id": f"t{i:02d}", "news_id": d["news_id"], "company": d["company"], "headline": r.get("headline"),
+                      "pdf_url": r.get("pdf_url"), "item": d["item"]})
+        key[f"t{i:02d}"] = {"news_id": d["news_id"], "field": d["field"], "note": d["note"]}
+    md = [f"# CARD_TEXT_SUPPORT: blind sample of {len(items)} items", "",
+          "Each item is a sentence from a published card. From the filing (the pdf link) judge: TRUE (the filing, or what it "
+          "reports of the company's own earlier disclosures, supports it, so removing it loses true content) or FALSE (nothing "
+          "supports it: invented, from outside knowledge, or wrong). One verdict and a one-line reason each.", ""]
+    for it in items:
+        md += [f"## {it['id']}  {it['company']} {it['news_id']}", "", f"filing: {it['pdf_url'] or 'n/a'}",
+               f"card headline: {it['headline']}", "", f"- {it['item']}", ""]
+    return items, key, "\n".join(md)
+
+
 # ---------------------------------------------------------------- reading the stored cards, texts and memory
 class PlatformSource:
     def __init__(self, limit: int | None):
@@ -613,6 +778,9 @@ class PlatformSource:
 
     def text_body(self, news_id: str):
         return self.sink.get_object(P.text_key(news_id))
+
+    def xbrl_body(self, url: str):
+        return xbrl_store.get(self.sink, url)
 
     def dossier(self, scrip: str) -> dict:
         if scrip not in self._memory:
@@ -667,6 +835,7 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
     cards = 0
     stopped = None
     dead = 0
+    row_index: dict[str, dict] = {}
     sink_file = open(out / "records.jsonl", "a", encoding="utf-8") if out else None
 
     def keep(name: str, rec: dict) -> None:
@@ -785,6 +954,38 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_eps(card, memory() or None, row, text, period, switch))
+                elif name == "text_support":
+                    if row["news_id"] in IN_SAMPLE_IDS:
+                        skipped[name][IN_SAMPLE_REASON] += 1
+                    elif text is None:
+                        skipped[name]["no text"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_text_support(card, memory() or None, row, text))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "results_statement":
+                    if not results:
+                        skipped[name]["not a results card"] += 1
+                    elif text is None:
+                        skipped[name]["no text"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_results_statement(card, row, text))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "unit_slip_guard":
+                    url = (card.get("xbrl") or {}).get("url")
+                    if not (card.get("grounding") or {}).get("unit_fixes"):
+                        skipped[name]["no unit correction recorded"] += 1
+                    elif not url:
+                        skipped[name]["no exchange file on the card"] += 1
+                    else:
+                        body = getattr(source, "xbrl_body", lambda _u: None)(url)
+                        if not body:
+                            skipped[name]["exchange file not stored (R2 keeps it 180 days) or no source for it"] += 1
+                        else:
+                            seen[name] += 1
+                            keep(name, check_unit_slip_guard(card, body, row))
+                            row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "one_basis":
                     seen[name] += 1
                     keep(name, check_one_basis(card, memory() or None, row, period if results else None))
@@ -802,7 +1003,8 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
             sink_file.flush()   # this card's records are on disk before the next one is read
     if sink_file:
         sink_file.close()
-    return {"cards": cards, "records": records, "seen": seen, "skipped": skipped, "errors": errors, "stopped": stopped}
+    return {"cards": cards, "records": records, "seen": seen, "skipped": skipped, "errors": errors, "stopped": stopped,
+            "row_index": row_index}
 
 
 def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n: int, stamp: str) -> dict:
@@ -881,6 +1083,29 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
         counts["lines_newly_failing"] = sum(len(r["lines"]) for r in changed)
         notes.append("Upper bound: the XBRL table, memory and the second reading are not available here, so a line that passes "
                      "on those today can show as failing in both runs alike; only the lines the switch adds are counted.")
+    if name == "text_support":
+        drops = [d for r in recs for d in r["drops"]]
+        counts["in_sample_cards_excluded"] = result["skipped"][name][IN_SAMPLE_REASON]
+        counts["items_by_field"] = dict(Counter(d["field"] for d in drops))
+        notes.append("Out of sample: the in-sample cards are left out. `sources` differ from the live call: the filing text without "
+                     "the XBRL table (the card's stored `results` block stands in), memory as it stands now through `view_as_of` "
+                     "without the printed-period and filing-text arguments, and an empty scale block; a drop here can be one live "
+                     "would not make, so the counts are an upper bound.")
+        items, key, md = text_support_blind(drops, result.get("row_index") or {}, seed, TEXT_SUPPORT_SAMPLE)
+        (out / "text_support.md").write_text(text_support_markdown(switch, drops, stamp), encoding="utf-8")
+        (out / f"{name}-blind.json").write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
+        (out / f"{name}-blind.md").write_text(md, encoding="utf-8")
+        (out / f"{name}-key.json").write_text(json.dumps(key, ensure_ascii=False, indent=1), encoding="utf-8")
+        sources_dir = out / f"{name}-sources"   # what the judges read: each sampled card's filing text and its memory
+        for it in items:
+            text, memory = TEXT_SUPPORT_SOURCES.get(it["news_id"], ("", "{}"))
+            sources_dir.mkdir(exist_ok=True)
+            (sources_dir / f"{it['news_id']}.filing.txt").write_text(text, encoding="utf-8")
+            (sources_dir / f"{it['news_id']}.memory.json").write_text(memory, encoding="utf-8")
+        (out / f"{name}.json").write_text(json.dumps({"switch": switch, "counts": counts, "errors": result["errors"][name][:50],
+                                                      "dropped": drops}, ensure_ascii=False, indent=1), encoding="utf-8")
+        (out / f"{name}.txt").write_text(summary_text(name, switch, counts, changed, notes), encoding="utf-8")
+        return {"switch": switch, **counts, "sample": len(items)}
     # the blind sample
     if name == "quote_exact":
         picked = draw_sample(changed, seed, n)

@@ -62,7 +62,7 @@ export function App() {
         </ErrorBoundary>
       </main>
       <footer className="border-t border-line">
-        <p className="mx-auto max-w-[1240px] px-4 py-5 text-xs leading-relaxed text-ink-3 sm:px-6">
+        <p className="mx-auto max-w-[1240px] px-4 py-5 text-xs leading-relaxed text-ink-2 sm:px-6">
           Built from NSE corporate filings and AI analysis. Information only, not investment advice; always read the original filing before acting.
         </p>
       </footer>

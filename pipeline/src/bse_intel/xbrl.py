@@ -349,7 +349,41 @@ def _contexts(root) -> dict[str, dict]:
             elif name == "typedMember":   # its value is a child element's text ("MutualFundsOrUTI_Context15")
                 info["dims"][_local(el.get("dimension", ""))] = "".join(el.itertext()).strip().rsplit(":", 1)[-1]
         out[ctx.get("id")] = info
+    _undeclared_legacy(root, out)
     return out
+
+
+_LEGACY_IDS = ("OneD", "FourD", "OneI")
+
+
+def _undeclared_legacy(root, contexts: dict[str, dict]) -> None:
+    """Some of NSE's banking files before the integrated filing tag their figures to "OneD", "FourD" and "OneI" and never
+    declare those contexts (Bank of Maharashtra's Q4FY23, BANKING_90815: only the segment contexts are declared, so 64
+    of 234 facts were read and the year's interest earned, profit and cash flow were lost; 25 banks' March 2023 files,
+    31 Oct 2026). Their dates come from the file's own: the quarter of three months to the reporting date, the year to
+    date from the financial year's start, the balance at the reporting date."""
+    refs = {el.get("contextRef") for el in root.iter() if el.get("contextRef") in _LEGACY_IDS}
+    missing = [ctx for ctx in _LEGACY_IDS if ctx in refs and ctx not in contexts]
+    if not missing:
+        return
+    dates = {}
+    for el in root.iter():
+        name = _local(el.tag)
+        if name in ("DateOfEndOfReportingPeriod", "DateOfStartOfFinancialYear") and el.text and name not in dates:
+            try:
+                dates[name] = date.fromisoformat(el.text.strip()[:10])
+            except ValueError:
+                pass
+    end = dates.get("DateOfEndOfReportingPeriod")
+    if end is None:
+        return
+    month = end.month - 2 if end.month > 2 else end.month + 10
+    quarter_start = date(end.year if end.month > 2 else end.year - 1, month, 1)
+    fy_start = dates.get("DateOfStartOfFinancialYear") or date(end.year if end.month >= 4 else end.year - 1, 4, 1)
+    made = {"OneD": {"startDate": quarter_start, "endDate": end}, "FourD": {"startDate": fy_start, "endDate": end},
+            "OneI": {"instant": end}}
+    for ctx in missing:
+        contexts[ctx] = {"dims": {}, **made[ctx]}
 
 
 def _units(root) -> dict[str, str]:
@@ -434,12 +468,19 @@ BANK_RATIOS = ("gnpa_pct", "nnpa_pct", "roa_pct")
 def _bank_ratio_fillers(values: dict) -> None:
     """A bank's consolidated file carries 0 for gross NPA, net NPA and RoA alike (SBI Q1FY27, HDFC Bank Q2FY27, IDFC
     First Q1FY27; measured 2026-10-20, docs/SOURCES.md): a filler, not a value, so a period whose bank ratios are all
-    0 keeps none of them ("gross NPA 0%" on a card otherwise). A single 0 beside real ratios (a net NPA of nil) stays."""
+    0 keeps none of them ("gross NPA 0%" on a card otherwise). A gross NPA of 0 is a filler even beside a real RoA, and takes the
+    net NPA with it. A net NPA of nil beside a real gross NPA stays."""
     for label in {p for m, p in values if m in BANK_RATIOS}:
         present = [values[(m, label)] for m in BANK_RATIOS if (m, label) in values]
         if present and all(v == 0 for v in present):
             for m in BANK_RATIOS:
                 values.pop((m, label), None)
+        elif values.get(("gnpa_pct", label)) == 0:
+            # a gross NPA of 0 beside a real RoA is the template's filler too: a bank that lends has bad loans, and net NPA cannot
+            # exceed gross, so neither is kept (BANKBARODA Q2FY27 consolidated: "net NPA 0.00%, gross 0.00%" in a live headline,
+            # 31 Oct 2026, while its own text said 1.78% / 0.37%)
+            values.pop(("gnpa_pct", label), None)
+            values.pop(("nnpa_pct", label), None)
 
 
 _YTD_MONTHS = {"H1": 6, "H2": 6, "9M": 9, "FY": 12}
@@ -716,6 +757,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     tagged_minority = {label for (m, label), v in values.items() if m == "pat_minority" and v}
     if filer_checks:
         filer_profit(values)
+    continuing_before_share(values)
     owners_share(values, minority)
     eps_fillers(values)
     eps_signs(values, tagged_minority, filer_checks)
@@ -845,6 +887,25 @@ def filer_profit(values: dict) -> int:
         values.pop(("pat_continuing", label), None)
         changed += 1
     return changed
+
+
+def continuing_before_share(values: dict) -> int:
+    """The taxonomy's "profit from continuing operations" is before the associates' and joint ventures' share (profit =
+    continuing + discontinued + share). With no discontinued operation it only restates the profit without the share, and the
+    model read the gap as one: 5 of 20 live cards of 30 Oct 2026 said "net profit includes ₹X Cr from discontinued operations"
+    with X the associates' share (Gabriel, IGL, GMR P&UI, Nahar Poly, NTPC Green; blind check of the fact-sheet cards). Such a
+    continuing profit is taken out; one with a real discontinued figure stays. The number taken out."""
+    taken = 0
+    for (metric, label) in [k for k in values if k[0] == "pat_continuing"]:
+        pat, share = values.get(("pat", label)), values.get(("share_associates", label))
+        discontinued = values.get(("pat_discontinued", label)) or 0.0
+        continuing = values[(metric, label)]
+        if pat is None or not share or abs(discontinued) > 0.005 * max(1.0, abs(pat)):
+            continue
+        if abs(pat - continuing - share) <= 0.02 + 0.001 * abs(pat):
+            values.pop((metric, label))
+            taken += 1
+    return taken
 
 
 def owners_share(values: dict, kept: dict | None = None) -> int:

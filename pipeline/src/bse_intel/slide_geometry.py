@@ -100,7 +100,15 @@ _PERIOD = re.compile(r"^(?:(?:Q[1-4]|H[12]|9M)[-]?)?(?:FY|CY)['’]?(?:20)?\d{2}
 _FILLER = frozenset("""the and for with from that this its per was were has have had are been will not but all any also
     over under into than then their there which while where when what who how can may more most less one two three
     cent percent pct crore crores cr lakh lakhs lac mn mln million bn billion tonnes tonne mt kmt units rs inr usd
-    year years yoy qoq growth increase increased decrease decreased fiscal quarter half period total""".split())
+    year years yoy qoq growth increase increased decrease decreased fiscal quarter half period total
+    at by in of to on as is it up or an a be so if no we our us out off new than across about around after before during
+    reach reached grew grown rose risen fell stood stands raised crossed touched ended end vs versus over more less""".split())
+_UNITS = frozenset("""rs inr usd eur cr crs crore crores lakh lakhs lac lacs mn mln million bn bln billion tn tonnes tonne
+    tons ton mt mmt kmt tpa mtpa kt mw gw kw mwh gwh kwh kg kgs units unit nos no bps bp pct pp yoy qoq yoy% x mm sqft
+    sqm sq ft lakhs/crs per""".split())
+_LINKS = frozenset("""at by of to in from over than was is are with and for on about around between under above nearly
+    approximately upto up reach reached crossed""".split())   # a word that leads into a figure in a sentence, not in a table
+_SENTENCE_WORDS = 5  # a row run with this many label words is a sentence, not a table row
 _ROW_TOL = 0.6       # boxes are on one row when their centres are within this many text heights
 _STACK_GAP = 0.9     # a label line belongs to the one it stacks on when the gap is within this many heights
 _REACH = 9           # a column label is looked for within this many text heights above or below
@@ -119,8 +127,42 @@ def _value(text: str) -> float | None:
     return -v if neg else v
 
 
+def _is_unit(text: str) -> bool:
+    """A unit or scale word ("Cr", "Units", "Mn", "KMT", "bps", "x", "YoY", "(Rs"): it says how a figure is counted, not
+    what it counts, so it is never a label."""
+    t = re.sub(r"[^a-z%₹$]", "", text.lower())
+    return t in _UNITS or t in ("%", "₹", "$", "yoy%", "qoq%") or not t
+
+
 def _is_text(w: Word) -> bool:
-    return _value(w.text) is None and not _PERIOD.match(w.text.strip(" ,;:")) and bool(re.search(r"[A-Za-z]{2}", w.text))
+    return (_value(w.text) is None and not _PERIOD.match(w.text.strip(" ,;:")) and bool(re.search(r"[A-Za-z]{2}", w.text))
+            and not _is_unit(w.text))
+
+
+def _in_sentence(fig: Word, words: list[Word]) -> bool:
+    """Does the figure stand inside running prose? Its row run (boxes chained with gaps under one and a half text heights)
+    has label words on both sides of it, or holds a sentence's worth of them. A table or chart cell has a column gap."""
+    run = [fig]
+    for step in (-1, 1):
+        cur = fig
+        while True:
+            nxt = None
+            for w in words:
+                if w is cur or w in run or abs(w.cy - cur.cy) > _ROW_TOL * max(w.h, cur.h):
+                    continue
+                gap = (cur.x0 - w.x1) if step < 0 else (w.x0 - cur.x1)
+                if -0.3 * cur.h <= gap <= 1.5 * cur.h and (nxt is None or gap < nxt[0]):
+                    nxt = (gap, w)
+            if nxt is None:
+                break
+            run.append(nxt[1])
+            cur = nxt[1]
+    words_in = [w for w in run if w is not fig and _is_text(w)]
+    left = any(w.x1 <= fig.x0 + 0.3 * fig.h for w in words_in)
+    right = any(w.x0 >= fig.x1 - 0.3 * fig.h for w in words_in)
+    before = [w for w in run if w is not fig and w.x1 <= fig.x0 + 0.3 * fig.h]
+    led_in = bool(before) and re.sub(r"[^a-z]", "", max(before, key=lambda w: w.x1).text.lower()) in _LINKS
+    return (left and right) or len(words_in) >= _SENTENCE_WORDS or led_in
 
 
 def _stem(word: str) -> str:
@@ -135,7 +177,7 @@ def label_words(quote: str, statement: str = "") -> set[str]:
         found = set()
         for tok in re.findall(r"[A-Za-z][A-Za-z0-9&'’.-]*", text or ""):
             tok = tok.strip(".-'’")
-            if len(tok) < 2 or tok.lower() in _FILLER or _PERIOD.match(tok):
+            if len(tok) < 2 or tok.lower() in _FILLER or tok.lower() in _UNITS or _PERIOD.match(tok):
                 continue
             if tok.lower() in ("fy", "cy", "ltm"):
                 continue
@@ -238,6 +280,12 @@ def figure_label_verdict(value: float, quote: str, words: list[Word], statement:
     ours = [n for n in numeric if abs(abs(_value(n.text)) - abs(value)) < 1e-9]
     if not ours:
         return Verdict("unknown", f"the figure {value:g} is not among the page's boxes")
+    # a figure written inside a sentence is judged by the text layer's checks, not by place: only table and chart cells are
+    prose = {id(n) for n in numeric if _in_sentence(n, words)}
+    ours = [n for n in ours if id(n) not in prose]
+    if not ours:
+        return Verdict("unknown", f"the figure {value:g} stands in a sentence")
+    numeric = [n for n in numeric if id(n) not in prose or n in ours]
     scores: dict[int, set[str]] = {}
     labelled: dict[int, list[str]] = {}
     for n in numeric:
@@ -247,6 +295,10 @@ def figure_label_verdict(value: float, quote: str, words: list[Word], statement:
     best = max((len(s) for s in scores.values()), default=0)
     mine = max(len(scores[id(n)]) for n in ours)
     names = ", ".join(sorted(want))
+    vocabulary = {_stem(t) for p in texts for t in re.findall(r"[A-Za-z][A-Za-z0-9&'’]*", p.text)}
+    if not (want & vocabulary):
+        # none of the quote's label words is written on the page at all (the quote's words are not this page's labels)
+        return Verdict("unknown", f"none of the quote's label words ({names}) is on the page")
     if best == 0:
         if any(labelled[id(n)] for n in ours):
             return Verdict("unproven", f"none of the quote's label words ({names}) stands by any figure on the page")

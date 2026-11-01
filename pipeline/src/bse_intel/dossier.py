@@ -724,13 +724,15 @@ MEMORY_ONLY_METRICS = frozenset({"pat_minority", "eps_total", "eps_continuing"})
 
 
 # Lists another writer may add entries to while the pipeline holds a dossier, and how an entry is told apart
+_EXTRAS_KEYS = ("audit", "cash_flow_detail", "related_parties", "fin_ratios", "oci", "discontinued", "segment_balance", "dividends",
+                "kmp_pay", "contingent_liabilities")      # = xbrl_extras.KEYS (a test holds them equal)
 _KEYED_LISTS = {
     "financial_metrics": lambda e: (e.get("metric"), e.get("period")),
     "ownership": lambda e: e.get("period"),
     "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
     "statements": lambda e: (e.get("period"), e.get("basis"), e.get("table")),   # statements.py: one entry a period, basis, table
-    # xbrl_extras.py: one entry a period, basis and kind in each of its four keys
-    **{key: (lambda e: (e.get("period"), e.get("basis"), e.get("kind"))) for key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios")},
+    # xbrl_extras.py: one entry a period, basis and kind in each of its keys
+    **{key: (lambda e: (e.get("period"), e.get("basis"), e.get("kind"))) for key in _EXTRAS_KEYS},
 }
 
 
@@ -774,7 +776,7 @@ def keep_concurrent_writes(merged: dict, read: dict | None, fresh: dict | None) 
                 elif key == "statements":
                     from .statements import keep_latest
                     rows = keep_latest(rows)
-                elif key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios"):
+                elif key in _EXTRAS_KEYS:
                     from .xbrl_extras import MAX_ENTRIES, _order
                     rows = sorted(rows, key=lambda e: _order(e.get("period")))[-MAX_ENTRIES[key]:]
                 elif key == "ownership":
@@ -1310,7 +1312,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         gid = "g_" + _hash(filing.scrip_code, _norm(item.statement))
         if gid in guidance or third_party_view(f"{item.statement} {item.target or ''}"):
             continue
-        deadline = due_date(item.due)
+        deadline = due_date(item.due, d.get("fy_end_month"))
+        if deadline and judged_on(item.due, deadline.isoformat(), d.get("fy_end_month")) < as_of[:10]:
+            deadline = None   # judged before the day it was said: a misread period, not a date (audit 137, B3). H1FY27
+            # said on 16 Oct ended on 30 Sep but is judged on 14 Nov, so it stays
         # the same target said again in other words (Heritage's ₹6,000 Cr FY27 revenue, May 2025 and May 2026): one
         # commitment, said twice, not two (T5, 2026-10-20)
         same = next((g for g in guidance.values() if item.metric and item.target and deadline
@@ -1330,7 +1335,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         g = guidance.get(update.guidance_id)
         if g is None or g.get("given_on", "") >= as_of:
             continue  # unknown id (hallucinated) or guidance newer than this filing
-        if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < as_of[:10]:
+        if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"], d.get("fy_end_month")) < as_of[:10]:
             continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27);
             # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
         if card_guidance_dated() and update.status in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED"):
@@ -1531,11 +1536,11 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     return d
 
 
-def judged_on(due: str | None, stored: str | None) -> str:
+def judged_on(due: str | None, stored: str | None, fy_end_month: int | None = None) -> str:
     """The first day a deadline counts as passed: for a reporting period ("H1FY27") its end plus the results window
     (``periods.results_due``), else the stored day. Jindal Stainless's H1FY27 guidance was overdue on 16 Oct, a month
     before its results were due (O12, owner 2026-10-20)."""
-    judged = results_due(due)
+    judged = results_due(due, fy_end_month)
     return judged.isoformat() if judged else stored or ""
 
 
@@ -1941,14 +1946,24 @@ def deal_state(deal: dict, cutoff: str) -> dict | None:
             "progress": next((h["progress"] for h in reversed(history) if h.get("progress")), None)}
 
 
+_STOCK_KPIS = ("order_book",)
+
+
 def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = ()) -> dict:
     """Latest revenue (quarter preferred), debt and net worth, and the sector's footer KPIs
     (GNPA for a bank, EBITDA/t for cement, ARPU for telecom...), for the card's financial footer."""
     out: dict = {}
     metrics = (with_year_hold(with_screener(dossier)) or {}).get("financial_metrics", [])   # MEMORY_YEAR_CHECK: a held year is not 'latest'
+    # a period that ends after the newest thing memory knows is a plan or a target, not a figure (audit of 1 Nov 2026: BEL's
+    # "order book FY27 1,251 Cr" was one May order; SWARAJ's debt and net worth "Mar-2027" its projection after the expansion)
+    known = max((str(x.get("as_of") or "")[:10] for x in (*metrics, *dossier.get("balance_sheet", [])) if x.get("as_of")), default="")
+
+    def ended(period) -> bool:
+        end = due_date(period)
+        return bool(end) and (not known or str(end) <= known)
 
     def latest(names: tuple[str, ...], prefer_quarter: bool = False):
-        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])]
+        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and ended(m["period"])]
         if prefer_quarter and any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
         return max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
@@ -1961,7 +1976,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
                               ("net_worth", ("net_worth", "total_equity"), "net_worth_cr")):
         # the latest period's balance sheet, not the latest filed: a later filing restating FY25 hid Kellton's FY26
         # (live review 2, 2026-10-20)
-        snap = max((b for b in balance if b.get(field) is not None),
+        snap = max((b for b in balance if b.get(field) is not None and (not b.get("period") or ended(b.get("period")) or not due_date(b.get("period")))),
                    key=lambda b: (str(due_date(b.get("period")) or ""), b.get("as_of") or ""), default=None)
         metric = latest(names)
         snap_end, metric_end = (str(due_date(x.get("period")) or "") if x else "" for x in (snap, metric))
@@ -1975,9 +1990,11 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
     for spec in footer:
         fmt = spec.get("format", "num")
         names = (spec["metric"], *spec.get("aliases", ()))
-        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])
+        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and ended(m["period"])
                 and _unit_fits(fmt, m)]
-        if any(m["period"].startswith("Q") for m in rows):
+        # a stock (an order book) is as at a date, whatever the label: the newest date wins ("JUN-2026" 20,900 over "Q4FY26";
+        # GVT&D, audit of 1 Nov 2026); a flow keeps quarters over years
+        if spec["metric"] not in _STOCK_KPIS and any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
         metric = max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
         if metric and card_footer_plausible() and (why := footer_plausible.hide_reason(metrics, names, metric, fmt, dossier.get("industry"))):

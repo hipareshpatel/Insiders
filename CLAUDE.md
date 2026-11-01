@@ -87,6 +87,7 @@ Read before changing anything:
 - The first test of a fetch from NSE or BSE (a new or changed download path) runs on 100 files: Maintenance input
   `file_cap` = 100 (owner, 27 Oct 2026). Every file it downloads is kept in our store, a dry run's too ("Don't discard
   those 100 files"); the full run follows only once the test is read.
+- Financial statements are one source for the whole site (owner, 31 Oct 2026: "Whatever changes would be for financial statements, it will be site wide not only for results page, we have stock page and other pages like cards etc"). A rule about how a figure is read or corrected goes where the statements are written (`screener_view` / `statements.py`, rebuilt with `statements-correct` or the backfill), never only in one page's reader; the goal is to match Screener on every row of all three statements (owner, same day).
 - No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
   and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked

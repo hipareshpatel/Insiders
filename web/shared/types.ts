@@ -151,8 +151,6 @@ export interface CallRead {
 export type Fact = string | { text: string; quote?: string | null };
 
 export interface CardBody {
-  /** Set by the Worker on the results page: this row's card carried its own results table before the statements replaced it. */
-  had_table?: boolean;
   category_tag: string;
   event_type: string;
   impact_level: Impact;
@@ -462,6 +460,10 @@ export interface Dossier {
    *  period, basis and table ("quarters" | "annual" | "balance" | "cash_flow"); rows by screener's own row names */
   statements?: { period: string; basis: string | null; table: string; family?: string; rows: Record<string, number>;
     source_news_id?: string; as_of?: string }[];
+  /** A later filing's restated year-ago or previous-quarter figure, read from its PDF text layer (restated_pdf.py, F202); the history
+   *  keeps the original. `confirmed: "screener"`: a restatement beyond 25% that Screener's stored page shows too. */
+  restated_figures?: { metric: string; period: string; basis: string; unit: string; original: number; restated: number; restated_in: string;
+    confirmed?: string; derived?: boolean }[];
   capital_actions?: { instrument: string; new_shares?: number | null; issue_price?: number | null; amount_cr?: number | null; as_of: string }[];
   guidance: Guidance[];
   watchlist?: WatchItem[];

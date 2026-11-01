@@ -64,7 +64,7 @@ def test_no_sheet_when_memory_lacks_the_quarter_or_the_rows_are_not_a_corporate_
     pdf_read = {"statements": [_entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 150.0), by="pdf")]}
     assert fs.fact_sheet(pdf_read, "Q2FY27") is None                          # only file-labelled rows count
     bank = {"statements": [_entry("Q2FY27", {"Revenue": 9.0, "Financing Profit": 3.0, "Net Profit": 2.0}, family="bank")]}
-    assert fs.fact_sheet(bank, "Q2FY27") is None
+    assert fs.fact_sheet(bank, "Q2FY27", lenders=False) is None             # a bank is the lenders switch's (test_fact_sheet_lenders)
 
 
 def test_a_missing_comparative_gives_no_change_and_a_loss_gives_a_turn_not_a_percent():
@@ -198,6 +198,31 @@ def test_the_ab_makes_each_card_twice_writes_nothing_and_leaves_the_switch_as_it
     assert "CARD_FACT_SHEET" not in os.environ
 
 
+def test_the_ab_with_one_named_model_makes_only_the_switch_on_card_and_saves_it(settings, monkeypatch, tmp_path):
+    """FACT_SHEET_AB_ON_ONLY (the model grid, 30 Oct 2026): the first grid run lost every card to a KeyError on the missing
+    switch-off card, so nothing could be scored."""
+    import argparse
+
+    from bse_intel import call_memory, cli
+
+    monkeypatch.setenv("FACT_SHEET_AB_ON_ONLY", "1")
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-on", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    filing = filing.model_copy(update={"xbrl_url": "https://bse.invalid/co.xml", "route": "FAST_TRACK", "event_type": "RESULTS"})
+    text = ("Statement of unaudited consolidated financial results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+            "Revenue from operations 12,000.00 9,091.00. Net profit 1,500.00.")
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml()},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    monkeypatch.setattr(call_memory, "find_filing", lambda s, news_id: filing)
+    monkeypatch.setattr(cli, "_pipeline", lambda s, quiet: (setattr(pipeline, "sink", quiet), pipeline)[1])
+    fakes = pipeline.bse
+    monkeypatch.setattr(cli, "_NoExchange", lambda: fakes)
+    assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-on", out=str(tmp_path)), settings, sink) == 0
+    saved = json.loads((tmp_path / "n-on.json").read_text(encoding="utf-8"))
+    assert saved["on_status"] == "ANALYZED" and saved["off"] is None and saved["on"]["card"]
+    assert len(fake.calls) == 1
+
+
 def test_the_ab_sink_reads_our_stored_copies_and_never_downloads_again():
     """Owner rule: never download a file twice. The A/B's read-only sink must still be seen as the platform store, so the
     pipeline reads stored texts (F147) and XBRL files (F191) instead of fetching them from NSE again."""
@@ -257,3 +282,56 @@ def test_a_comparative_without_the_shareholders_line_gives_no_change_on_another_
     memory["statements"][1]["rows"].pop("Net Profit (owners)")     # the year-ago quarter states only the total
     pat = fs.fact_sheet(memory, "Q2FY27")["lines"]["pat"]
     assert pat["value"] == 148.0 and "prev_year" not in pat and "yoy_pct" not in pat and pat["qoq_pct"] == 50.0
+
+
+def test_a_card_gets_the_corrected_profit_of_a_quarter_whose_filed_profit_does_not_add_up():
+    # the shared profit-line rules (screener_view.corrected_pl) reach the card: ATUL Q2FY26 (owners 87.95 beside 182.37 and a minority of 3.13),
+    # APARINDS Q1FY27 (-138.56 beside PBT 625 and tax 157.55), PNB Housing-like filler 0 owners (the card's PAT line reads the owners' row first)
+    def entry(period, net, owners, minority=None, pbt=None, tax=None, family="corporate"):
+        rows = _rows(1500.0, 300.0, pbt if pbt is not None else net * 1.3, net, owners=owners)
+        if minority is not None:
+            rows["Minority share"] = minority
+        if tax is not None:
+            rows["Tax"] = tax
+        return _entry(period, rows, family=family)
+    atul = {"statements": [entry("Q2FY27", 158.8, 155.67, 3.13), entry("Q2FY26", 182.37, 87.95, 3.13)]}
+    pat = fs.fact_sheet(atul, "Q2FY27")["lines"]["pat"]
+    assert (pat["prev_year"], pat["yoy_pct"]) == (179.24, -13.1)
+    apar = {"statements": [entry("Q1FY27", -138.56, -138.56, 0.0, pbt=625.0, tax=157.55), entry("Q1FY26", 225.0, 225.0, 0.0, pbt=300.0, tax=75.0)]}
+    pat = fs.fact_sheet(apar, "Q1FY27")["lines"]["pat"]
+    assert (pat["value"], pat["yoy_pct"]) == (467.45, 107.8)
+    pnb = {"statements": [entry("Q2FY27", 560.0, 0.0), entry("Q2FY26", 500.0, 0.0)]}
+    pat = fs.fact_sheet(pnb, "Q2FY27")["lines"]["pat"]
+    assert (pat["value"], pat["yoy_pct"]) == (560.0, 12.0)
+
+
+def test_the_ab_can_flip_the_lenders_switch_with_the_fact_sheet_kept_on(settings, monkeypatch, tmp_path):
+    """FACT_SHEET_AB_SWITCH=CARD_FACT_SHEET_LENDERS (TODO 151): CARD_FACT_SHEET is held on for both cards (a corporate filer's card
+    therefore has its sheet both times), only the lenders' switch is flipped, and both switches are as they were afterwards."""
+    import argparse
+    import os
+
+    from bse_intel import call_memory, cli
+
+    monkeypatch.delenv("CARD_FACT_SHEET", raising=False)
+    monkeypatch.delenv("CARD_FACT_SHEET_LENDERS", raising=False)
+    monkeypatch.setenv("FACT_SHEET_AB_SWITCH", "CARD_FACT_SHEET_LENDERS")
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-len", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    filing = filing.model_copy(update={"xbrl_url": "https://bse.invalid/co.xml", "route": "FAST_TRACK", "event_type": "RESULTS"})
+    text = ("Statement of unaudited consolidated financial results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+            "Revenue from operations 12,000.00 9,091.00. Net profit 1,500.00.")
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml()},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    monkeypatch.setattr(call_memory, "find_filing", lambda s, news_id: filing)
+    monkeypatch.setattr(cli, "_pipeline", lambda s, quiet: (setattr(pipeline, "sink", quiet), pipeline)[1])
+    fakes = pipeline.bse
+    monkeypatch.setattr(cli, "_NoExchange", lambda: fakes)
+    assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-len", out=str(tmp_path)), settings, sink) == 0
+    prompts = [c["messages"][1]["content"] for c in fake.calls]
+    assert len(prompts) == 2 and all("RESULTS FIGURES" in p for p in prompts)      # the fact sheet on for both
+    summary = json.loads((tmp_path / "summary.json").read_text(encoding="utf-8"))
+    assert summary["switch"] == "CARD_FACT_SHEET_LENDERS"
+    assert "CARD_FACT_SHEET" not in os.environ and "CARD_FACT_SHEET_LENDERS" not in os.environ
+    monkeypatch.setenv("FACT_SHEET_AB_SWITCH", "CRITIC")
+    assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-len", out=str(tmp_path)), settings, sink) == 2

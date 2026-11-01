@@ -44,16 +44,23 @@ def _day(ts: str | None) -> str | None:
 
 def open_promises(dossier: dict) -> list[dict]:
     out = []
-    from .dossier import third_party_view
+    from .dossier import judged_on, third_party_view
     from .periods import due_date
 
     for g in dossier.get("guidance", []):
         if _status(g) not in OPEN or third_party_view(f"{g.get('statement', '')} {g.get('target') or ''}"):
             continue
         # the deadline is read again from its words: memory written before ranges were read holds the early end
-        deadline = due_date(g.get("due"))
+        fy_end = dossier.get("fy_end_month")
+        deadline = due_date(g.get("due"), fy_end)
+        due_iso = deadline.isoformat() if deadline else g.get("due_date")
+        given = _day(g.get("given_on"))
+        # overdue only once the period's results are due, not at its end (audit 137, B1; periods.results_due, O12)
+        judged = judged_on(g.get("due"), due_iso, fy_end) if due_iso else None
+        if judged and given and judged < given:
+            due_iso = judged = None   # judged before the day it was said: a misread period (audit 137, B3)
         out.append({"id": g["id"], "statement": g["statement"][:200], "due": g.get("due"),
-                    "due_date": deadline.isoformat() if deadline else g.get("due_date"), "given_on": _day(g.get("given_on")),
+                    "due_date": due_iso, "overdue_from": judged, "given_on": given,
                     "status": _status(g), "source_news_id": g.get("source_news_id")})
     out.sort(key=lambda p: (p["due_date"] or "9999", p["given_on"] or ""))
     return out[:MAX_PROMISES]
@@ -149,6 +156,18 @@ def _latest(dossier: dict, names: tuple[str, ...]) -> dict | None:
     return {"period": m["period"], "value": m["value"]}
 
 
+def _statement_latest(dossier: dict, names: tuple[str, ...]) -> dict | None:
+    """The latest quarter's screener row from the stored statements (one source for the site, owner 31 Oct 2026), on the main
+    basis: consolidated when present, else standalone. None when there are no statements quarters entries."""
+    rows = [e for e in dossier.get("statements") or [] if e.get("table") == "quarters" and e.get("rows") and due_date(e.get("period"))]
+    for basis in ("CONSOLIDATED", "STANDALONE"):
+        mine = [e for e in rows if e.get("basis") == basis and any(isinstance(e["rows"].get(n), (int, float)) for n in names)]
+        if mine:
+            e = max(mine, key=lambda r: due_date(r["period"]))
+            return {"period": e["period"], "value": next(e["rows"][n] for n in names if isinstance(e["rows"].get(n), (int, float)))}
+    return None
+
+
 def summarize(dossier: dict) -> dict:
     promises = open_promises(dossier)
     found = triggers(dossier)
@@ -159,8 +178,9 @@ def summarize(dossier: dict) -> dict:
         "open_promises": promises,
         "triggers": found,
         "active_capex": active_capex,
-        "revenue": _latest(dossier, ("revenue", "revenue_from_operations", "total_revenue", "net_sales")),
-        "ebitda": _latest(dossier, ("ebitda", "operating_profit")),
+        "revenue": _statement_latest(dossier, ("Sales", "Revenue"))
+        or _latest(dossier, ("revenue", "revenue_from_operations", "total_revenue", "net_sales")),
+        "ebitda": _statement_latest(dossier, ("Operating Profit", "Financing Profit")) or _latest(dossier, ("ebitda", "operating_profit")),
         "gross_debt_cr": sheets[-1]["gross_debt_cr"] if sheets else None,
         "calibration": (calibration(dossier) or {}).get("rule"),
         "roiic": roiic(dossier),
@@ -168,6 +188,6 @@ def summarize(dossier: dict) -> dict:
     }
     return {
         "memory_summary_json": summary,
-        "earliest_open_due": min((p["due_date"] for p in promises if p["due_date"]), default=None),
+        "earliest_open_due": min((p["overdue_from"] for p in promises if p["overdue_from"]), default=None),
         "inflection_last_at": found[0]["date"] if found else None,
     }

@@ -137,10 +137,10 @@ def test_select_files_is_the_seeds_selection_with_both_bases():
                                       period_end=end))
     chosen = xbrl_facts.select_files(rows)
     ends = {r.period_end for _, _, r in chosen}
-    assert len(ends) == 13 and "2022-03-31" in ends                      # the 12 latest quarters, and the March quarter before them
+    assert len(ends) == 14 and "2022-03-31" in ends                      # the 13 latest quarters (screener's), and the March quarter before them
     assert sum(1 for _, b, _ in chosen if b == "CONSOLIDATED") == sum(1 for _, b, _ in chosen if b == "STANDALONE") == len(ends)
     assert max(ends) == "2025-12-31" and ("Q3FY26", "CONSOLIDATED") in {(p, b) for p, b, _ in chosen}
-    assert "2022-12-31" not in ends and "2022-09-30" not in ends         # older than the 12 latest quarters and not a March quarter
+    assert "2022-12-31" in ends and "2022-09-30" not in ends             # the 13th latest is in; older and not a March quarter is not
 
 
 # --- a run, a dry run, the skips -----------------------------------------------------------------------------------------

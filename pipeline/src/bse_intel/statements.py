@@ -40,6 +40,17 @@ def keep_latest(entries: list[dict]) -> list[dict]:
     return sorted(entries, key=lambda e: _order(e.get("period")))[-MAX_ENTRIES:]
 
 
+def corrected_entry(e: dict) -> dict:
+    """A quarters or annual entry with its profit lines made consistent (``screener_view.corrected_pl``); the same entry when nothing
+    changes. Applied when an entry is written (``remember``, the backfill) and where it is read (fact sheet, Results), so a dossier not
+    yet rebuilt reads right too."""
+    if e.get("table") not in ("quarters", "annual"):
+        return e
+    rows = e.get("rows") or {}
+    fixed = sv.corrected_pl(rows, e.get("family") or "")
+    return e if fixed is rows else {**e, "rows": fixed}
+
+
 def rows_of(doc: dict, source: str = "") -> list[tuple[str, dict[str, sv.Row], str]]:
     """The (table, rows, column) the file gives for its own period: always the quarter's P&L; the balance sheet when the period ends
     a half or a full year (Q2, Q4); the 12-month cash flow when it ends the year (Q4)."""
@@ -60,6 +71,17 @@ def rows_of(doc: dict, source: str = "") -> list[tuple[str, dict[str, sv.Row], s
     return out
 
 
+# Tables a live file never overwrites once the stored-facts rebuild (statements_backfill) has written them: the rebuild reads the
+# year's annual report before its results file, as screener does, and a re-read of an old results file put the results file's
+# figures back (1 Nov 2026: RITES FY26 cash from operations 165.97 over the report's 327.48, screener 327; VINATIORGA Q4FY26
+# total liabilities 3,589.53 over 3,579.04; pipeline run 41252490055 re-reading their May filings).
+REBUILT_KEPT = ("annual", "cash_flow", "balance")
+
+
+def _from_stored_facts(e: dict) -> bool:
+    return (e.get("lab") or {}).get("from") == "stored facts"
+
+
 def remember(dossier: dict, doc: dict, news_id: str, as_of: str, at: str) -> int:
     """Put the file's screener-rule rows into ``dossier[KEY]`` (in place); the number of entries written."""
     period, basis = doc.get("period"), doc.get("basis")
@@ -71,6 +93,10 @@ def remember(dossier: dict, doc: dict, news_id: str, as_of: str, at: str) -> int
         values = {name: row.value for name, row in rows.items() if row.value is not None}
         if not values:
             continue
+        if table in REBUILT_KEPT and any(_from_stored_facts(e) for e in entries
+                                         if (e.get("period"), e.get("basis"), e.get("table")) == (column, basis, table)):
+            continue   # the rebuild already read this file with every other one and took the year's annual report first
+        values = sv.corrected_pl(values, sv.family(doc.get("template"))) if table in ("quarters", "annual") else values
         entries = [e for e in entries if (e.get("period"), e.get("basis"), e.get("table")) != (column, basis, table)]
         entries.append({"period": column, "basis": basis, "table": table, "family": sv.family(doc.get("template")),
                         "rows": values,   # the recipe behind each row is screener_view's, by family; not stored a row

@@ -731,14 +731,15 @@ limits = { rpm = 30 }
 
 # Listed on our keys on 30 Oct 2026 (providers check 41059917128), owner: "which can we use?". Kimi K2.6 answered 404 on
 # NVIDIA on 19 Oct; MiniMax M3.1 Flash gave 16 empty answers through OpenRouter in round 6; Qwen 3.8 27B is a Groq preview.
-# Trial only: one tiny request each first, then the TODO 142 card grid on stored filings, blind-scored. Tiny requests
+# Trial only: one tiny request each first, then the TODO 142 card grid on stored filings, blind-scored (first grid, 30 Oct:
+# NVIDIA timed out at 150 s a card, so 300 s; Groq's free 6-8k tokens a minute cannot take a card prompt at all). Tiny requests
 # (run 41062958287): MiniMax M3.1 Flash OK on both NVIDIA keys, Qwen 3.8 27B and gpt-oss-120b OK on both Groq keys; Kimi K2.6
 # 404 "model name not found" on both NVIDIA keys though listed, so it is not here.
 [[routes.trial_new]]
 provider = "nvidia"
 model = "minimaxai/minimax-m3.1-flash"
 spare = true
-timeout_s = 150
+timeout_s = 300
 json_mode = true
 max_tokens = 400
 context_tokens = 120000
@@ -751,7 +752,7 @@ limits = { rpm = 30 }
 provider = "nvidia"
 model = "mistralai/mistral-large-4-1t-a52b"
 spare = true
-timeout_s = 150
+timeout_s = 300
 json_mode = true
 max_tokens = 400
 context_tokens = 120000
@@ -783,10 +784,11 @@ limits = { rpm = 30 }
 provider = "nvidia"
 model = "nvidia/nemotron-3.5-super-vl-120b-a12b"
 spare = true
-timeout_s = 150
+timeout_s = 300
 json_mode = true
 max_tokens = 400
 context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
 
 [[routes.trial_new]]

@@ -1,192 +1,340 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { ArrowUpRight, FileText, Search } from "lucide-react";
-import { Fragment, useEffect, useMemo, useState } from "react";
-import { useLocation } from "wouter";
-import type { CardBody, CardRow } from "../../shared/types";
-import { Avatar } from "../components/Avatar";
-import { AnnouncementCard } from "../components/AnnouncementCard";
-import { parseCard } from "../components/FilingCard";
-import { Badge, Select } from "../components/ui/badge";
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { ArrowDownUp, ChevronDown, Download, SlidersHorizontal } from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import type { Cut, GroupBy, GroupRow, KpiRow, View } from "../../shared/resultsTypes";
+import { CompanyTable, PhoneList, rowKey, TableSkeleton } from "../components/results/CompanyTable";
+import { Chips, FilterBar, SearchBox, VIEWS } from "../components/results/FilterBar";
+import { FilterSheet } from "../components/results/FilterSheet";
+import { GroupsView } from "../components/results/GroupsView";
+import { PeekPanel } from "../components/results/PeekPanel";
+import { SeasonPanel } from "../components/results/SeasonPanel";
+import { SegControl, useDismiss } from "../components/results/bits";
 import { Button } from "../components/ui/button";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { HISTORY_START } from "../lib/config";
-import { cr, istDate, todayIST, companyPath } from "../lib/format";
-import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxonomy";
-import { periodEnd } from "../lib/periods";
-import { useQueryState } from "../lib/url";
 import { TURN, turnOf } from "../lib/results";
-import { Empty, Loading } from "./FeedView";
+import {
+  activeChips, csvName, firstDir, NBFC_EBITDA_NOTE, VIEW_SORT, viewOf, fmtCount, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
+  toCsv, type Sort, type SpreadKey,
+} from "../lib/resultsView";
+import { useQueryState } from "../lib/url";
 
 export { turnOf };
 
-export function Change({ value, unit = "%", turn }: { value?: number; unit?: "%" | "bp"; turn?: string }) {
+/** A change against a year ago in a company page's line (the company page's Results tab uses it). */
+export function Change({ value, unit = "%", turn }: { value?: number | null; unit?: "%" | "bp"; turn?: string }) {
   if (turn && TURN[turn]) return <span className={cn("whitespace-nowrap font-semibold", TURN[turn][1])}>{TURN[turn][0]}</span>;
   if (value == null) return <span className="text-ink-3">—</span>;
   const text = unit === "bp" ? `${value > 0 ? "+" : ""}${Math.round(value)}bp` : `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
   return <span className={cn("font-semibold", value > 0 ? "text-pos" : value < 0 ? "text-neg" : "text-ink-2")}>{text}</span>;
 }
 
+const SORT_LABEL: Record<Sort, string> = {
+  company: "name", mcap: "market cap", revenue_yoy: "revenue growth", ebitda_yoy: "EBITDA growth", opm_yoy_bps: "margin change", pat_yoy: "profit growth",
+  revenue_qoq: "revenue vs last quarter", ebitda_qoq: "EBITDA vs last quarter", opm_qoq_bps: "margin vs last quarter", pat_qoq: "profit vs last quarter",
+  pat_momentum: "profit pace", revenue_momentum: "revenue pace", ebitda_momentum: "EBITDA pace", filed: "filing date",
+};
+/** The direction in words: a name runs A to Z, every figure highest first (it was "reversed", which said nothing). */
+const dirWords = (sort: Sort, dir: "asc" | "desc") => (sort === "company" ? (dir === "asc" ? "A to Z" : "Z to A") : dir === "desc" ? "highest first" : "lowest first");
+const PHONE_SORTS: Sort[] = ["pat_yoy", "revenue_yoy", "ebitda_yoy", "opm_yoy_bps", "pat_momentum", "mcap", "filed", "company"];
+const MAX_EXPORT_PAGES = 40;
+
+/** The Results page as a KPI report (Direction C, docs/design/results-kpi.md): one quarter's growth from each company's saved statements
+ *  (never a card's), the season in a few plain sentences, filters and sorts over every company of the quarter, and the same numbers by
+ *  index, sector or industry. Every filter lives in the URL, so a view is a link. */
 export function ResultsView() {
   const [params, setParams] = useQueryState();
-  const [, navigate] = useLocation();
-  const [open, setOpen] = useState<string | null>(null);
-  const q = params.get("q") ?? "";
-  const [text, setText] = useState(q);
-  useEffect(() => setText(q), [q]);
-  useEffect(() => {
-    const id = setTimeout(() => { if (q !== text) setParams({ q: text || null }); }, 300);
-    return () => clearTimeout(id);
-  }, [text, q, setParams]);
-  const size = params.get("size");
-  const quarter = params.get("quarter");
-  const tone = params.get("verdict");
+  const query = useMemo(() => readQuery(params), [params]);
+  const tab = params.get("tab") === "groups" ? "groups" : "companies";
+  const view: View = viewOf(params);
+  const by: GroupBy = params.get("by") === "sector" ? "sector" : params.get("by") === "industry" ? "industry" : "index";
+  const cut: Cut = params.get("cut") === "ex_financials" ? "ex_financials" : params.get("cut") === "financials" ? "financials" : "all";
+  const peekKey = params.get("peek");
+  const set = useCallback((c: Record<string, string | null | undefined>) => setParams(c), [setParams]);
 
-  const query = useInfiniteQuery({
-    queryKey: ["results", size, params.get("q")],
-    queryFn: ({ pageParam }) => api.feed({ from: HISTORY_START, to: todayIST(), category: "RESULTS", size: size ?? undefined, q: params.get("q") ?? undefined }, pageParam, 50),
-    initialPageParam: null as string | null,
-    getNextPageParam: (last) => last.next_cursor,
+  const apiParams = toApiParams(query, 1);
+  const kpi = useInfiniteQuery({
+    queryKey: ["results-kpi", apiParams],
+    queryFn: ({ pageParam }) => api.resultsKpi(toApiParams(query, pageParam)),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.page < last.pages ? last.page + 1 : undefined),
+    placeholderData: keepPreviousData,
   });
-  const rows = useMemo(() => {
-    const all = (query.data?.pages.flatMap((p) => p.cards) ?? [])
-      .map((row) => ({ row, card: parseCard(row) }))
-      .filter((r): r is { row: CardRow; card: CardBody } => !!r.card);
-    // one row for a company and quarter (owner, 30 Oct 2026: "no company will get repeated"): of two filings for it, the one
-    // that was a results card, else the newest (the list is newest first)
-    const best = new Map<string, { row: CardRow; card: CardBody }>();
-    for (const r of all) {
-      const period = r.card.results?.period;
-      if (!period) continue;
-      const key = `${r.row.scrip_code}|${period}`;
-      const kept = best.get(key);
-      if (!kept || (r.card.had_table && !kept.card.had_table)) best.set(key, r);
-    }
-    return all.filter((r) => { const period = r.card.results?.period; return !period || best.get(`${r.row.scrip_code}|${period}`) === r; });
-  }, [query.data]);
-  const quarters = [...new Set(rows.map((r) => r.card.results?.period).filter(Boolean) as string[])]
-    .sort((a, b) => periodEnd(b).localeCompare(periodEnd(a)));
-  const visible = rows.filter((r) => (!quarter || r.card.results?.period === quarter) && (!tone || (r.card.tone ?? "NEUTRAL") === tone));
+  const first = kpi.data?.pages[0];
+  const rows = useMemo(() => kpi.data?.pages.flatMap((p) => p.rows) ?? [], [kpi.data]);
+  const quarter = first?.quarter ?? query.quarter;
+  const quarters = first?.quarters ?? [];
+
+  // the indices' medians and trends, for the season's lines and mini charts (the same request as By group, by index, all companies)
+  const groups = useQuery({
+    queryKey: ["results-groups", quarter, "index", "all"],
+    queryFn: () => api.resultsGroups({ quarter, by: "index", cut: "all" }),
+    enabled: tab === "companies" && !!first,
+    staleTime: 5 * 60_000,
+  });
+  const indexRows: GroupRow[] | undefined = groups.data?.rows ?? (groups.isError ? [] : undefined);
+
+  // the side panel: a row already loaded, else the company's own rows (a shared link to a row on a later page)
+  const loaded = peekKey ? rows.find((r) => rowKey(r) === peekKey) : undefined;
+  const company = useQuery({
+    queryKey: ["results-company", peekKey],
+    queryFn: () => api.resultsCompany(peekKey!),
+    enabled: !!peekKey && !loaded && !!first,
+  });
+  const peekRow: KpiRow | undefined = loaded ?? (company.data?.rows.find((r) => r.period === quarter) ?? company.data?.rows[company.data.rows.length - 1]);
+  const select = useCallback((r: KpiRow | null) => setParams({ peek: r ? rowKey(r) : null }), [setParams]);
+
+  const onSort = (s: Sort) => {
+    const dir = s === query.sort ? (query.dir === "desc" ? "asc" : "desc") : firstDir(s);
+    setParams({ sort: s === VIEW_SORT[view] ? null : s, dir: dir === firstDir(s) ? null : dir });
+  };
+  const onView = (v: View) => setParams({ view: v === "yoy" ? null : v, sort: null, dir: null });
+  const onPickGroup = (r: GroupRow, groupBy: GroupBy) =>
+    setParams(groupBy === "index" ? { tab: null, index: r.id, class: null, spread: null } : { tab: null, class: r.id, index: null, spread: null });
+
+  const [sheet, setSheet] = useState(false);
+  const filtered = activeChips(query).length > 0;
+  const summary = first?.summary;
+  const total = summary?.n ?? 0;
+  const noMatch = filtered && !!first && !kpi.isPlaceholderData && summary?.n === 0;
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
-      <header className="mb-4">
-        <h1 className="font-display text-[30px] leading-tight text-ink">Results</h1>
-        <p className="mt-1 text-sm text-ink-2">Quarterly results with year-on-year changes, from each company's saved statements (the same ones as its Results tab). Click a row for the full card.</p>
-      </header>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <Select aria-label="Quarter" value={quarter ?? ""} onChange={(e) => setParams({ quarter: e.target.value || null })}>
-          <option value="">All quarters</option>
-          {quarters.map((q) => <option key={q} value={q}>{q}</option>)}
-        </Select>
-        <Select aria-label="Verdict" value={tone ?? ""} onChange={(e) => setParams({ verdict: e.target.value || null })}>
-          <option value="">Any verdict</option>
-          <option value="POSITIVE">Strong / Good</option>
-          <option value="MIXED">Mixed</option>
-          <option value="NEGATIVE">Weak</option>
-          <option value="NEUTRAL">Neutral</option>
-        </Select>
-        <Select aria-label="Market cap" value={size ?? ""} onChange={(e) => setParams({ size: e.target.value || null })}>
-          <option value="">All sizes</option>
-          {SIZES.map((s) => <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()} cap</option>)}
-        </Select>
-        <label className="relative min-w-0 flex-1 basis-56">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />
-          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Search company"
-            className="h-9 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none" />
-        </label>
-      </div>
-
-      <div className="mt-4">
-        {query.isPending ? <Loading /> : !query.data ? <Empty title="Couldn't load results" body={String(query.error)} /> : visible.length === 0 ? (
-          <div className="space-y-3">
-            <Empty title="No results match" body={query.hasNextPage
-              ? "None in the results loaded so far. Load older results to keep looking."
-              : "Results appear here as companies report and the pipeline analyses them."} />
-            {query.hasNextPage && (
-              <div className="text-center"><Button size="sm" onClick={() => query.fetchNextPage()} disabled={query.isFetchingNextPage}>Load older results</Button></div>
-            )}
+    <div className="results-c min-h-full">
+      <div className="mx-auto w-full max-w-[1360px] px-4 pb-16 sm:px-10">
+        <a href="#company-list" onClick={(e) => { e.preventDefault(); document.getElementById("company-list")?.focus(); document.getElementById("company-list")?.scrollIntoView(); }}
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2 focus:text-[14px] focus:font-semibold focus:text-ink focus:shadow-[0_0_0_2px_var(--accent)]">
+          Skip to the company list
+        </a>
+        <header className="pt-[18px] sm:flex sm:items-end sm:justify-between sm:gap-6 sm:pt-[34px]">
+          <div>
+            <h1 className="text-[30px] font-bold leading-[1.05] tracking-[-0.025em] text-ink sm:text-[40px]">
+              Results{quarter && <span className="font-medium text-ink-2"> {quarterLabel(quarter)}</span>}
+            </h1>
+            <p className="mt-2 text-[14px] text-ink-2">{quarter ? `${quarterMonths(quarter)} · ` : ""}growth is against the same quarter a year ago</p>
           </div>
+          <div className="mt-3.5 flex flex-wrap items-center gap-2.5 sm:mt-0">
+            <QuarterSwitch quarters={quarters} value={quarter} onChange={(p) => setParams({ quarter: p === quarters[0]?.period ? null : p, peek: null, spread: null })} />
+            <ExportButton rows={rows} total={total} quarter={quarter} pages={first?.pages ?? 1} loadedPages={kpi.data?.pages.length ?? 0}
+              fetchPage={(p) => api.resultsKpi(toApiParams(query, p))} />
+          </div>
+        </header>
+        <Fresh rows={rows} className="mt-2.5 sm:hidden" />
+
+        <nav className="mt-4 flex items-end gap-[22px] border-b border-line sm:mt-[26px] sm:gap-7" role="tablist" aria-label="Results views">
+          {(["companies", "groups"] as const).map((t) => (
+            <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setParams({ tab: t === "companies" ? null : t, peek: null })}
+              className={cn("-mb-px min-h-11 border-b-2 pb-3 pt-2.5 text-[15px] font-semibold", tab === t ? "border-accent text-ink" : "border-transparent text-ink-2 hover:text-ink")}>
+              {t === "companies" ? "Companies" : "By group"}
+            </button>
+          ))}
+          <Fresh rows={rows} className="mb-3 ml-auto hidden sm:block" />
+        </nav>
+
+        {kpi.isError && !first ? (
+          <div className="mt-7 rounded-2xl bg-surface-2 px-6 py-16 text-center" role="alert">
+            <p className="text-[17px] font-semibold text-ink">Couldn't load the results</p>
+            <p className="mx-auto mt-1 max-w-md text-[14px] text-ink-2">The server did not answer ({kpi.error?.message}). Your filters are kept in the address; try again in a moment.</p>
+            <Button className="mt-4" onClick={() => kpi.refetch()}>Try again</Button>
+          </div>
+        ) : tab === "groups" ? (
+          <GroupsView quarter={quarter} by={by} cut={cut} setParams={set} onPick={onPickGroup} />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-line bg-surface">
-            <table className="w-full min-w-[920px] text-[13.5px]">
-              <thead className="eyebrow border-b border-line text-left text-ink-3">
-                <tr>
-                  <th className="py-3 pl-5 pr-3 font-semibold">Date</th>
-                  <th className="px-3 py-3 font-semibold">Company</th>
-                  <th className="px-3 py-3 font-semibold">Verdict</th>
-                  <th className="px-3 py-3 text-right font-semibold">MCap</th>
-                  <th className="px-3 py-3 font-semibold">Qtr</th>
-                  <th className="px-3 py-3 text-right font-semibold">Rev YoY</th>
-                  <th className="px-3 py-3 text-right font-semibold">EBITDA YoY</th>
-                  <th className="px-3 py-3 text-right font-semibold">OPM YoY</th>
-                  <th className="px-3 py-3 text-right font-semibold">PAT YoY</th>
-                  <th className="px-3 py-3 font-semibold">Signals</th>
-                  <th className="px-3 py-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map(({ row, card }) => {
-                  const t = (card.tone ?? "NEUTRAL") as Tone;
-                  const v = verdict(t, row.impact_level);
-                  const r = card.results;
-                  const isOpen = open === row.news_id;
-                  return (
-                    <Fragment key={row.news_id}>
-                      <tr onClick={() => setOpen(isOpen ? null : row.news_id)} tabIndex={0} aria-expanded={isOpen}
-                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(isOpen ? null : row.news_id); } }}
-                        className={cn("num cursor-pointer border-b border-line border-l-[3px] hover:bg-surface-2/60", TONE_BORDER[t], isOpen && "bg-surface-2/60")}>
-                        <td className="whitespace-nowrap py-3 pl-[17px] pr-3 text-ink-3">{istDate(row.filed_at).replace(/ \d{4}$/, "")}</td>
-                        <td className="px-3 py-3">
-                          <span className="flex items-center gap-2">
-                            <Avatar name={row.company_name} symbol={row.symbol} size={20} />
-                            <span className="font-sans font-semibold text-ink">{row.symbol ?? row.scrip_code}</span>
-                          </span>
-                        </td>
-                        <td className="px-3 py-3"><Badge className={TONE_CHIP[v.tone]}>{v.label}</Badge></td>
-                        <td className="whitespace-nowrap px-3 py-3 text-right text-ink-2">{cr(row.market_cap_cr)}</td>
-                        <td className="num whitespace-nowrap px-3 py-3 font-medium text-ink">{r?.period ?? "—"}</td>
-                        <td className="px-3 py-3 text-right"><Change value={(r?.revenue ?? r?.interest_earned ?? r?.gross_premium)?.yoy_pct} /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.ebitda?.yoy_pct} turn={turnOf(r?.ebitda)} /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.ebitda_margin?.yoy_bps} unit="bp" /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.pat?.yoy_pct} turn={turnOf(r?.pat)} /></td>
-                        <td className="px-3 py-3 font-sans text-xs">
-                          {card.signals.filter((s) => s.severity === "WARNING").length > 0 && <span className="mr-2 text-warn">⚠ {card.signals.filter((s) => s.severity === "WARNING").length}</span>}
-                          {card.signals.filter((s) => s.severity === "POSITIVE").length > 0 && <span className="text-pos">✓ {card.signals.filter((s) => s.severity === "POSITIVE").length}</span>}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-3 text-right">
-                          {row.pdf_url && (
-                            <a href={row.pdf_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} aria-label="Official PDF"
-                              className="mr-2 inline-grid h-7 w-7 place-items-center rounded-md text-ink-3 hover:bg-surface-2 hover:text-ink"><FileText className="h-4 w-4" /></a>
-                          )}
-                          <button type="button" aria-label="Open company" onClick={(e) => { e.stopPropagation(); navigate(`${companyPath(row)}`); }}
-                            className="inline-grid h-7 w-7 place-items-center rounded-md text-ink-3 hover:bg-surface-2 hover:text-ink"><ArrowUpRight className="h-4 w-4" /></button>
-                        </td>
-                      </tr>
-                      {isOpen && (
-                        <tr className="border-b border-line">
-                          <td colSpan={11} className="p-0">
-                            {/* the card itself, held to the visible width while the table scrolls sideways on a phone */}
-                            <div className="sticky left-0 w-[min(820px,calc(100vw_-_2rem_-_2px))] p-2 sm:p-3"><AnnouncementCard row={row} /></div>
-                          </td>
-                        </tr>
-                      )}
-                    </Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
-            {(query.hasNextPage || query.isFetchNextPageError) && (
-              <div className="border-t border-line p-3 text-center">
-                <Button size="sm" onClick={() => query.fetchNextPage()} disabled={query.isFetchingNextPage}>
-                  {query.isFetchNextPageError ? "Couldn't load more · retry" : "Load more"}
-                </Button>
-              </div>
+          <>
+            {/* nothing matches: one card below says so, not tiles of "0 of 0" */}
+            {!noMatch && (
+              <SeasonPanel summary={summary} indexRows={indexRows} filtered={filtered}
+                spread={query.spread} turnaround={query.turnaround}
+                onSpread={(k: SpreadKey | null) => setParams({ spread: k, turnaround: null })} onTurnaround={(on) => setParams({ turnaround: on ? "1" : null, spread: null })} />
             )}
-          </div>
+
+            <FilterBar query={query} view={view} indices={first?.indices ?? []} setParams={set} onView={onView} />
+
+            {/* phone: title, filters, sort, search and the view */}
+            <div className="sticky top-[var(--nav-h,62px)] z-20 -mx-4 mt-6 bg-surface px-4 pb-2 pt-2.5 sm:hidden">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-[19px] font-bold text-ink">Companies</h2>
+                <div className="flex gap-2">
+                  <Button className="h-11 rounded-[11px] border-0 bg-surface-2 px-3.5 text-[14px] font-semibold" onClick={() => setSheet(true)}>
+                    <SlidersHorizontal aria-hidden className="h-4 w-4" />Filters
+                    {growthCount(growthOf(query)) + (query.index ? 1 : 0) + (query.mcap_min != null ? 1 : 0) + (query.class ? 1 : 0) > 0 && (
+                      <span className="num rounded-full bg-accent px-[7px] text-[12px] leading-5 text-accent-ink">
+                        {growthCount(growthOf(query)) + (query.index ? 1 : 0) + (query.mcap_min != null ? 1 : 0) + (query.class ? 1 : 0)}
+                      </span>
+                    )}
+                  </Button>
+                  <PhoneSort sort={query.sort} dir={query.dir} onSort={onSort} />
+                </div>
+              </div>
+            </div>
+            <div className="sm:hidden">
+              <SearchBox q={query.q} setParams={set} className="h-11" />
+              <SegControl className="mt-2.5 flex w-full" itemClass="min-h-11 flex-1 px-2" label="View" items={VIEWS.map((v) => ({ ...v, label: v.key === "qoq" ? "QoQ" : v.label }))}
+                value={view} onChange={onView} />
+              <Chips query={query} setParams={set} />
+            </div>
+
+            <div className="mb-2 mt-[26px] hidden items-end justify-between gap-5 sm:flex">
+              <div>
+                <h2 className="text-[20px] font-bold tracking-[-0.01em] text-ink">{view === "momentum" ? "Momentum" : view === "qoq" ? "Quarter-on-quarter" : "Companies"}</h2>
+                <p className="text-[13.5px] text-ink-2">
+                  {view === "momentum" && summary
+                    ? `Is profit growth speeding up or slowing? ${fmtCount(summary.momentum.speeding_up)} speeding up · ${fmtCount(summary.momentum.slowing)} slowing · ${fmtCount(summary.momentum.steady + summary.momentum.not_comparable)} steady or not comparable`
+                    : view === "qoq" ? `${quarterLabel(quarter)} against the quarter just before it · sorted by ${SORT_LABEL[query.sort]}, ${dirWords(query.sort, query.dir)}`
+                    : `Growth vs the same quarter a year ago · sorted by ${SORT_LABEL[query.sort]}, ${dirWords(query.sort, query.dir)}`}
+                </p>
+              </div>
+              <p className="num text-right text-[13.5px] text-ink-2">{summary ? `${fmtCount(total)} ${total === 1 ? "company" : "companies"} · ${query.index ? indexLabel(query.index) : "all indices"}` : ""}</p>
+            </div>
+            <p className="mb-1 mt-3 text-[13px] text-ink-3 sm:hidden">
+              {summary ? `${fmtCount(rows.length)} of ${fmtCount(total)} · ${SORT_LABEL[query.sort]}, ${dirWords(query.sort, query.dir)}` : ""}
+            </p>
+
+            <div id="company-list" tabIndex={-1} className={cn("scroll-mt-24 outline-none transition-opacity", kpi.isPlaceholderData && "opacity-60")} aria-busy={kpi.isFetching}>
+              {!first ? <TableSkeleton /> : rows.length === 0 ? (
+                <div className="rounded-2xl bg-surface-2 px-6 py-14 text-center">
+                  <p className="text-[17px] font-semibold text-ink">{filtered ? "No companies match these filters" : `No results saved for ${quarterLabel(quarter)} yet`}</p>
+                  <p className="mx-auto mt-1 max-w-md text-[14px] text-ink-2">
+                    {filtered ? "Loosen or remove a filter to see more companies." : "Companies appear here once their statements for the quarter are saved."}
+                  </p>
+                  {filtered && <Button className="mt-4 h-11" onClick={() => setParams(Object.fromEntries(activeChips(query).flatMap((c) => c.clear).map((k) => [k, null])))}>Clear all</Button>}
+                </div>
+              ) : (
+                <>
+                  <div className="hidden sm:block">
+                    <CompanyTable rows={rows} view={view} sort={query.sort} dir={query.dir} onSort={onSort} selected={peekKey} onSelect={select} />
+                  </div>
+                  <div className="sm:hidden"><PhoneList rows={rows} onSelect={select} /></div>
+                  <p className="hidden px-3 pt-2 text-[12.5px] text-ink-3 sm:block">
+                    NM: not meaningful, a change above +999% on a small base (the exact figure is in the row's quick look).
+                    {rows.some((r) => r.kind === "nbfc" || r.kind === "bank") && <> * {NBFC_EBITDA_NOTE}</>}
+                  </p>
+                  <div className="flex flex-col items-stretch gap-3 py-4 text-[13px] text-ink-3 sm:flex-row sm:items-center sm:justify-between sm:px-3">
+                    <span className="hidden sm:inline">
+                      Showing {fmtCount(rows.length)} of {fmtCount(total)}
+                      {view === "momentum" ? " · points = this quarter's growth vs a year ago minus last quarter's" : " · small grey line: amount this quarter · “was” = last quarter's growth vs a year ago"}
+                    </span>
+                    {(kpi.hasNextPage || kpi.isFetchNextPageError) && (
+                      <Button className="h-12 justify-center rounded-[11px] border-0 bg-surface-2 font-semibold text-ink sm:h-[38px]" onClick={() => kpi.fetchNextPage()} disabled={kpi.isFetchingNextPage}>
+                        {kpi.isFetchNextPageError ? "Couldn't load more · retry" : kpi.isFetchingNextPage ? "Loading…" : `Show more (${fmtCount(total - rows.length)} left)`}
+                      </Button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            <FilterSheet open={sheet} onOpenChange={setSheet} query={query} indices={first?.indices ?? []} setParams={set} />
+          </>
         )}
+        <p className="mt-6 text-[12.5px] text-ink-3">
+          ₹ crore. Figures are worked out from each company's saved statements (consolidated where filed, else standalone), reported profit as filed,
+          not adjusted. Information only, not investment advice.
+        </p>
       </div>
+      {tab === "companies" && peekRow && <PeekPanel row={peekRow} onClose={() => select(null)} />}
+    </div>
+  );
+}
+
+function Fresh({ rows, className }: { rows: KpiRow[]; className?: string }) {
+  const at = newestFiled(rows);
+  return <p className={cn("text-[13px] text-ink-3", className)}>{at ? `Latest filing shown: ${at}` : " "}</p>;
+}
+
+/** The last four quarters as a switch, and the rest in an "Older" menu. */
+function QuarterSwitch({ quarters, value, onChange }: { quarters: { period: string; n: number }[]; value: string | null; onChange: (p: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  const refs = useMemo(() => [box], []);
+  const toggle = useRef<HTMLButtonElement>(null);
+  useDismiss(open, () => setOpen(false), refs, toggle);
+  if (!quarters.length) return <span className="inline-block h-[46px] w-[380px] max-w-full rounded-xl bg-surface-2" aria-hidden />;
+  const recent = quarters.slice(0, 4), older = quarters.slice(4);
+  const olderOn = older.some((q) => q.period === value);
+  return (
+    <div ref={box} className="relative inline-flex max-w-full flex-wrap gap-0.5 rounded-xl bg-surface-2 p-1 max-sm:w-full" role="group" aria-label="Quarter">
+      {recent.map((q) => (
+        <button key={q.period} type="button" aria-pressed={q.period === value} onClick={() => onChange(q.period)} title={`${q.n} companies`}
+          className={cn("min-h-[38px] whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-semibold max-sm:min-h-11 max-sm:flex-1 max-sm:px-2",
+            q.period === value ? "bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]" : "text-ink-2 hover:text-ink")}>
+          {q.period}
+        </button>
+      ))}
+      {older.length > 0 && (
+        <button ref={toggle} type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
+          className={cn("inline-flex min-h-[38px] items-center gap-1 whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-semibold max-sm:min-h-11 max-sm:flex-1 max-sm:justify-center max-sm:px-2",
+            olderOn ? "bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]" : "text-ink-2 hover:text-ink")}>
+          {olderOn ? value : "Older"}<ChevronDown aria-hidden className="h-3.5 w-3.5" />
+        </button>
+      )}
+      {open && (
+        <div className="absolute right-0 top-full z-30 mt-2 max-h-[320px] w-[200px] overflow-y-auto rounded-2xl bg-surface p-2 shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]">
+          {older.map((q) => (
+            <button key={q.period} type="button" aria-pressed={q.period === value} onClick={() => { onChange(q.period); setOpen(false); }}
+              className={cn("flex w-full justify-between rounded-[9px] px-2.5 py-2 text-[13.5px]", q.period === value ? "bg-accent-soft font-semibold text-ink" : "text-ink-2 hover:bg-surface-2")}>
+              <span>{q.period}</span><span className="num text-ink-3">{q.n}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** "Export CSV": every company of the filtered list, not only the rows on screen; pages not yet loaded are asked for one by one. */
+function ExportButton({ rows, total, quarter, pages, loadedPages, fetchPage }: {
+  rows: KpiRow[]; total: number; quarter: string | null; pages: number; loadedPages: number; fetchPage: (p: number) => Promise<{ rows: KpiRow[] }>;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(0);
+  const [failed, setFailed] = useState(false);
+  const run = async () => {
+    setBusy(true); setFailed(false);
+    try {
+      const all = [...rows];
+      const last = Math.min(pages, MAX_EXPORT_PAGES);
+      setDone(Math.min(loadedPages, last));
+      for (let p = loadedPages + 1; p <= last; p++) { all.push(...(await fetchPage(p)).rows); setDone(p); }
+      const url = URL.createObjectURL(new Blob([toCsv(all)], { type: "text/csv;charset=utf-8" }));
+      const a = Object.assign(document.createElement("a"), { href: url, download: csvName(quarter) });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      setFailed(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Button onClick={run} disabled={busy || !total} title={`Download the filtered list (all ${total} companies, every column) as a CSV file`}
+      className="h-11 rounded-[11px] border-0 bg-surface-2 px-3.5 text-[13.5px] font-semibold text-ink sm:h-[38px]">
+      <Download aria-hidden className="h-4 w-4" />{busy ? `Preparing… (${done} of ${Math.min(pages, MAX_EXPORT_PAGES)})` : failed ? "Export failed · retry" : "Export CSV"}
+    </Button>
+  );
+}
+
+/** The phone's sort menu. */
+function PhoneSort({ sort, dir, onSort }: { sort: Sort; dir: "asc" | "desc"; onSort: (s: Sort) => void }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  const refs = useMemo(() => [box], []);
+  const toggle = useRef<HTMLButtonElement>(null);
+  useDismiss(open, () => setOpen(false), refs, toggle);
+  return (
+    <div ref={box} className="relative">
+      <Button ref={toggle} aria-expanded={open} className="h-11 rounded-[11px] border-0 bg-surface-2 px-3.5 text-[14px] font-semibold" onClick={() => setOpen((o) => !o)}>
+        Sort <ArrowDownUp aria-hidden className="h-4 w-4" />
+      </Button>
+      {open && (
+        <div className="absolute right-0 top-full z-30 mt-2 w-[240px] rounded-2xl bg-surface p-2 shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]">
+          {PHONE_SORTS.map((s) => (
+            <button key={s} type="button" aria-pressed={s === sort} onClick={() => { onSort(s); setOpen(false); }}
+              className={cn("flex min-h-11 w-full items-center justify-between rounded-[9px] px-3 text-left text-[14px]", s === sort ? "bg-accent-soft font-semibold text-ink" : "text-ink-2")}>
+              <span className="first-letter:uppercase">{SORT_LABEL[s]}</span>
+              {s === sort && <span className="text-[12.5px] text-ink-3">{dir === "desc" ? "highest first" : "lowest first"}</span>}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

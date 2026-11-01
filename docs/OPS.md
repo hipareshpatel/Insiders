@@ -116,3 +116,19 @@ no card, memory or site change, no AI. **To switch it on (owner):** set the repo
 to anything else. A manual dispatch (`limit`, `since_hours`) runs whatever the variable says. The first run measures seconds a PDF
 on the runner (column `pdf_seconds`); the disagreements are set beside the daily audit after a few days. Assumption: a card that
 does not store its basis is read on CONSOLIDATED first, then STANDALONE (the reason says so).
+
+## 30-31 Oct 2026 night: the lead session on branch `ccr-244dd8fc-rq75sb` (owner, ~23:00 IST: "continue all pending task one by one")
+
+| Run | Command | Result | Next |
+|---|---|---|---|
+| 41062020974, 41067234416, 41076247799, 41083598145, 41091107349 | statements-backfill put-back-ratings, apply, 50 (runs 1-5, 18:47-22:04 IST) | 401 rating snapshots put back (63, 82, 97, 75, 84); 114 file-covered AI balance snapshots dropped; each "more left" | Run 6 |
+| 41099900518 | statements-backfill put-back-ratings, apply, 50 (run 6, 23:03 IST) | 6 put back, 1 file-covered snapshot dropped, more left: False; 407 of 409 in all; backup backup/statements-backfill-20261030T181741Z/ | Done; 570004's rating checked on the live API |
+| 41078384472 ... 41095065726 (8 runs) | fact-sheet-ab, one trial model on every route | 0 cards on all: NVIDIA MiniMax M3.1 Flash and Mistral Large 4 300 s timeouts, Nemotron 3.5 Super VL token cut-off, Groq Qwen 3.8 27B and gpt-oss-120b per-minute token limit | Item 5 closed for these models |
+| 41099857249 | facts-dump 532538,532508 (branch, read only) | running | Why Borrowings reads 0 from annual reports (TODO 129) |
+| 41100186401 | xbrl-facts apply from_nse shards 1 file_cap 100 (23:05 IST; PR #271's 100-file test of the 13th quarter) | 116 companies listed, 94 downloaded, 24 from our store, 109 facts saved, 9 not results, 6 NSE 404, no refusal; capped at 100 as planned | Full run dispatched 31 Oct ~05:05 IST (shards 8, file_cap 1000000) |
+| 41099857249, 41100677046, 41103575628, 41105318205 | facts-dump; screener-rows 500 (branch) x3 | facts-dump found the stray Assets fact (UltraTech FY26 report at 31 Mar 2024); the year-source fix measured 187 fixed / 100 broken, then 187 / 77, then **187 / 0** | Merged with PR #273 |
+| 41100996875 | release-check text_support (branch) | 4,922 items on 3,341 of 9,249 cards would drop (36%) | Stays off; blind sample to judge |
+| 41103785967 | call-memory, 9 decks, prompt v3, Flash-Lite (branch) | 282 points kept; judged blind 27 WRONG (9.6%), v2 27 of 293 | No gain; owner's A/B/D |
+| 41145127712 (31 Oct ~05:05 IST) | xbrl-facts apply from_nse shards 8 file_cap 1000000 (main) | running | Then statements-backfill dry run over every company (the file-covered count, Q1FY24 and the Borrowings fix in one count), then apply in runs of 50 |
+| 41145772223 | xbrl-expiry-check (main, first run) | 47,079 raw files: 45,152 covered, 293 superseded, 220 nothing to keep, 1,414 results with no facts copy (exit 1, as designed) | Run again after 41145127712 |
+| 41145380818 | release-check text_support (branch, with the blind sample's filing texts and memory) | running | Blind-judge the 60 items |

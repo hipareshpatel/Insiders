@@ -85,7 +85,7 @@ test("what to track shows current items only, and overdue lists promises past du
   assert.equal(tiles[0].text, "margin");
   assert.equal(tiles[2].text, null);
   const g = { id: "g", statement: "2 MLPD by FY26", due: "FY26", due_date: "2026-03-31", source_type: "CONCALL", given_on: "2025-05-01", source_news_id: "x", status: "OPEN", status_history: [] };
-  assert.equal(overdue([g, { ...g, status: "DELIVERED" }], "2026-10-20")[0].days, 203);
+  assert.equal(overdue([g, { ...g, status: "DELIVERED" }], "2026-10-20")[0].days, 143);
 });
 
 test("earnings-call quarters: cleaned, each point once, empty headings and quarters dropped", () => {

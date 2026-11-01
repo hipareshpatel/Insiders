@@ -220,6 +220,14 @@ def memory_call_v2() -> bool:
     return _switch("MEMORY_CALL_V2")
 
 
+def results_press_release() -> bool:
+    """RESULTS_PRESS_RELEASE (default off; TODO 135, owner Yes 30 Oct 2026): a results press release or investor release filed
+    beside a quarter's statement is not simply dropped as a D20 duplicate. Its text is added to the quarter's one results card
+    when that card is read again (words only: management lines, one-offs, segment notes, order wins, guidance; the table stays
+    the exchange file's), and call memory reads the release like a deck. Still no second card. Read at the call."""
+    return _switch("RESULTS_PRESS_RELEASE")
+
+
 def call_memory_geometry() -> bool:
     """CALL_MEMORY_GEOMETRY (default off; TODO 144): a call-memory point on a deck slide is kept only when the word boxes of
     its page tie its figure to the label its quote names (slide_geometry.py): same row, same column, or a list in order. A
@@ -303,6 +311,37 @@ def card_fact_sheet() -> bool:
     figures, and a revenue / EBITDA / PBT / profit amount or change the model writes that disagrees with it is taken out of the text
     (fact_sheet.py). With no sheet, nothing changes. Read at the call."""
     return _switch("CARD_FACT_SHEET")
+
+
+def card_fact_sheet_lenders() -> bool:
+    """CARD_FACT_SHEET_LENDERS (default off; TODO 151, owner 31 Oct 2026 ~13:45 IST): with CARD_FACT_SHEET, banks', NBFCs' and
+    insurers' results cards get the fact sheet too, on their own statement rows (fact_sheet.FAMILY_LINES). Off: only corporate filers'
+    cards, as before. Read at the call."""
+    return _switch("CARD_FACT_SHEET_LENDERS")
+
+
+def d20_dropped_file_period() -> bool:
+    """D20_DROPPED_FILE_PERIOD (default off; 1 Nov 2026, TMB nse-106836238): a RESULTS filing whose results file is set aside
+    (its figures are not in the text) still claims that file's quarter for the one-card-per-quarter check, so a note typed
+    RESULTS defers to the quarter's earlier results card instead of publishing a second one. It holds more cards back: on only
+    after counting the stored RESULTS cards it would have held and a blind read of them. Read at the call."""
+    return _switch("D20_DROPPED_FILE_PERIOD")
+
+
+def unit_slip_xbrl_guard() -> bool:
+    """UNIT_SLIP_XBRL_GUARD (default off; owner, 1 Nov 2026: "a figure in the exchange's XBRL file must never be overruled by the
+    PDF"): the unit fixer (grounding.unit_slips) leaves alone a card amount equal to any money fact of the filing's XBRL file
+    (Hubtown's ₹408.47 Cr was made 0.41 from the PDF's lakh "40,847"). It lets fewer corrections through, so a check accepts more:
+    on only after the on/off check over stored cards (release_check.py unit_slip_guard) and a blind sample. Read at the call."""
+    return _switch("UNIT_SLIP_XBRL_GUARD")
+
+
+def results_needs_statement() -> bool:
+    """RESULTS_NEEDS_STATEMENT (default off; 31 Oct 2026, TMB nse-106836238): a filing typed RESULTS whose text holds no results
+    statement, no covering letter submitting results and no "financial results for the quarter/half/year" is read as OTHER
+    (pipeline.lacks_results), so a note about the results (a provision, a clarification) does not take the quarter's results path.
+    On only after the on/off check over stored cards (release_check.py results_statement) and a blind sample. Read at the call."""
+    return _switch("RESULTS_NEEDS_STATEMENT")
 
 
 def memory_file_only() -> bool:

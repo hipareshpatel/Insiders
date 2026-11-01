@@ -1,5 +1,5 @@
 import { Menu, Monitor, Moon, Search, Sun, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "../lib/cn";
 import { useOwnerToken } from "../lib/owner";
@@ -60,10 +60,21 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
   const next: Record<Theme, Theme> = { system: "light", light: "dark", dark: "system" };
   const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
   useEffect(() => setOpen(false), [location]);
+  // the header's height as --nav-h, so a sticky bar under it (the Results phone bar) can sit just below it, whatever the header holds
+  const bar = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = bar.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const set = () => document.documentElement.style.setProperty("--nav-h", `${el.getBoundingClientRect().height}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const isActive = (href: string) => (href === "/" ? location === "/" : location.startsWith(href) || (href === "/companies" && location.startsWith("/company/")));
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-surface/[.88] backdrop-blur-[14px] backdrop-saturate-[1.4]">
+    <header ref={bar} className="sticky top-0 z-30 border-b border-line bg-surface/[.88] backdrop-blur-[14px] backdrop-saturate-[1.4]">
       <div className="mx-auto flex h-[62px] max-w-[1240px] items-center gap-5 px-4">
         <Logo />
         <nav className="hidden items-center gap-1 md:flex">
@@ -76,9 +87,9 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
           ))}
         </nav>
         <button type="button" onClick={onSearch}
-          className="ml-auto hidden h-10 min-w-0 flex-[0_1_340px] items-center gap-2.5 rounded-xl bg-surface-2 px-3.5 text-[13.5px] text-ink-3 hover:text-ink-2 lg:flex">
+          className="ml-auto hidden h-10 min-w-0 flex-[0_1_340px] items-center gap-2.5 rounded-xl bg-surface-2 px-3.5 text-[13.5px] text-ink-2 hover:text-ink lg:flex">
           <Search className="h-4 w-4 shrink-0" /><span className="truncate">Search company, symbol or event</span>
-          <kbd className="num ml-auto rounded-md border border-line-strong px-1.5 text-[11px] font-semibold">Ctrl K</kbd>
+          <kbd className="num ml-auto whitespace-nowrap rounded-md border border-line-strong px-1.5 text-[11px] font-semibold">Ctrl K</kbd>
         </button>
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
           <button type="button" onClick={onSearch} aria-label="Search" className="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-ink-2 lg:hidden">

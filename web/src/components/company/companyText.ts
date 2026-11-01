@@ -1,6 +1,7 @@
 /** The company page's derived figures and short texts: what memory and the cards hold, cleaned and condensed for
  * the Overview (design audit 2026-10-20, fixes 4-9). No React and no imports beyond types, so `node --test` runs the
  * cases in test/company.test.ts. Every figure here comes from the data passed in; nothing is estimated. */
+import { daysPastDue, isPastDue } from "../../../shared/promiseDue.ts";
 import type { CallQuarter, CardBody, DealRecord, Dossier, Guidance, PriceReaction, ResultsSnapshot, WatchItem } from "../../../shared/types";
 
 type Series = { d: string[]; c: number[] };
@@ -351,8 +352,8 @@ export function trackTiles(input: {
 
 /** Commitments past their due date with no result on record, oldest due first. */
 export function overdue(guidance: Guidance[], today: string): (Guidance & { days: number })[] {
-  return guidance.filter((g) => !!g.due_date && g.due_date < today && ["OPEN", "ON_TRACK"].includes(g.status))
-    .map((g) => ({ ...g, days: Math.round((Date.parse(today) - Date.parse(g.due_date!)) / 86400_000) }))
+  return guidance.filter((g) => isPastDue(g, today) && ["OPEN", "ON_TRACK"].includes(g.status))
+    .map((g) => ({ ...g, days: daysPastDue(g, today) }))
     .sort((a, b) => a.due_date!.localeCompare(b.due_date!));
 }
 

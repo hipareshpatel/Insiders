@@ -1,0 +1,784 @@
+{
+ "_about": "SAMPLE DATA for a design exercise. Every number is made up except: the growth figures for DELHIVERY/IOC/GAIL/NTPCGREEN (from the owner's screenshot) and the industry paths of those four (as stored). Show a 'design preview, sample data' note. Do not invent other numbers; derive anything else from these.",
+ "page": {
+  "title": "Results",
+  "quarter": "Q2FY27",
+  "quarters": [
+   "Q2FY27",
+   "Q1FY27",
+   "Q4FY26",
+   "Q3FY26"
+  ],
+  "statements_saved_up_to": "30 Oct 2026, 3:35 pm IST",
+  "index_members_tracked_since": "30 Oct 2026 (weekly, Sundays 9 am IST)",
+  "companies_reported": 236,
+  "nifty500_reported": 185,
+  "nifty500_of": 497,
+  "still_to_come": {
+   "next": "Tue 3 Nov",
+   "companies": 14
+  }
+ },
+ "summary": {
+  "revenue_up": 196,
+  "ebitda_up": 182,
+  "pat_up": 175,
+  "loss_to_profit": 11,
+  "of": 236,
+  "median_revenue_growth": 11.8,
+  "median_ebitda_growth": 14.6,
+  "median_pat_growth": 13.9,
+  "spread_pat_growth": {
+   "below_0": 61,
+   "0_to_10": 38,
+   "10_to_20": 41,
+   "above_20": 85,
+   "loss_to_profit_outside_bars": 11
+  },
+  "pat_growth_speeding_up": 118,
+  "slowing": 98,
+  "steady_or_not_comparable": 20
+ },
+ "companies_sorted_by_pat_growth_desc": [
+  {
+   "symbol": "DELHIVERY",
+   "name": "Delhivery Limited",
+   "industry_path": "Services › Logistics Solution Provider",
+   "kind": "company",
+   "market_cap": "₹28,857 Cr",
+   "market_cap_cr": 28857,
+   "filed": "30 Oct",
+   "avatar_letter": "D",
+   "avatar_color": "#c2417f",
+   "revenue": {
+    "growth_yoy": "+19.8%",
+    "amount": "₹2,900 Cr",
+    "growth_yoy_prev_quarter": "+17.1%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+199.1%",
+    "amount": "₹193 Cr",
+    "growth_yoy_prev_quarter": "+120.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+399bp",
+    "level": "6.7%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "turn": "LOSS_TO_PROFIT",
+    "amount": "₹95 Cr",
+    "prev_quarter": "loss narrowed"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "LP"
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    12.0,
+    13.5,
+    14.8,
+    15.9,
+    16.2,
+    17.0,
+    17.1,
+    19.8
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "IOC",
+   "name": "Indian Oil Corporation",
+   "industry_path": "Energy › Refineries & Marketing",
+   "kind": "company",
+   "market_cap": "₹1.84 lakh Cr",
+   "market_cap_cr": 184000,
+   "filed": "30 Oct",
+   "avatar_letter": "I",
+   "avatar_color": "#d46a14",
+   "revenue": {
+    "growth_yoy": "+42.2%",
+    "amount": "₹2,41,300 Cr",
+    "growth_yoy_prev_quarter": "+31.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+108.0%",
+    "amount": "₹32,100 Cr",
+    "growth_yoy_prev_quarter": "+64.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+421bp",
+    "level": "13.3%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+173.8%",
+    "amount": "₹9,100 Cr",
+    "growth_yoy_prev_quarter": "+92.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    -60.0,
+    -35.0,
+    -10.0,
+    12.0,
+    30.0,
+    55.0,
+    92.0,
+    173.8
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    -4.0,
+    2.0,
+    8.0,
+    14.0,
+    20.0,
+    26.0,
+    31.0,
+    42.2
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "GAIL",
+   "name": "GAIL (India) Limited",
+   "industry_path": "Energy › Gas Transmission/Marketing",
+   "kind": "company",
+   "market_cap": "₹1.08 lakh Cr",
+   "market_cap_cr": 108000,
+   "filed": "30 Oct",
+   "avatar_letter": "G",
+   "avatar_color": "#0a8a5a",
+   "revenue": {
+    "growth_yoy": "+32.6%",
+    "amount": "₹35,400 Cr",
+    "growth_yoy_prev_quarter": "+35.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+102.0%",
+    "amount": "₹5,240 Cr",
+    "growth_yoy_prev_quarter": "+88.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+509bp",
+    "level": "14.8%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+139.3%",
+    "amount": "₹3,300 Cr",
+    "growth_yoy_prev_quarter": "+120.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    20.0,
+    28.0,
+    44.0,
+    62.0,
+    80.0,
+    101.0,
+    120.0,
+    139.3
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    10.0,
+    14.0,
+    19.0,
+    24.0,
+    28.0,
+    31.0,
+    35.0,
+    32.6
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "NORTHGATE",
+   "name": "Northgate Bank",
+   "industry_path": "Financial Services › Private Sector Bank",
+   "kind": "bank",
+   "market_cap": "₹62,400 Cr",
+   "market_cap_cr": 62400,
+   "filed": "29 Oct",
+   "avatar_letter": "N",
+   "avatar_color": "#3a5fd0",
+   "revenue": {
+    "growth_yoy": "+16.4%",
+    "amount": "₹11,800 Cr",
+    "growth_yoy_prev_quarter": "+18.2%",
+    "label": "Interest income"
+   },
+   "ebitda": null,
+   "margin": null,
+   "pat": {
+    "growth_yoy": "+61.0%",
+    "amount": "₹2,150 Cr",
+    "growth_yoy_prev_quarter": "+72.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    24.0,
+    30.0,
+    38.0,
+    45.0,
+    55.0,
+    64.0,
+    72.0,
+    61.0
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    15.0,
+    16.0,
+    17.5,
+    18.0,
+    18.4,
+    18.0,
+    18.2,
+    16.4
+   ],
+   "is_financial": true,
+   "note": "Banks: no operating-expense line is saved, so no EBITDA or margin; revenue is interest income."
+  },
+  {
+   "symbol": "NTPCGREEN",
+   "name": "NTPC Green Energy",
+   "industry_path": "Utilities › Power Generation",
+   "kind": "company",
+   "market_cap": "₹70,124 Cr",
+   "market_cap_cr": 70124,
+   "filed": "30 Oct",
+   "avatar_letter": "N",
+   "avatar_color": "#2f6fb3",
+   "revenue": {
+    "growth_yoy": "+53.2%",
+    "amount": "₹1,150 Cr",
+    "growth_yoy_prev_quarter": "+48.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+56.7%",
+    "amount": "₹998 Cr",
+    "growth_yoy_prev_quarter": "+52.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+194bp",
+    "level": "86.8%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+57.0%",
+    "amount": "₹310 Cr",
+    "growth_yoy_prev_quarter": "+60.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    30.0,
+    36.0,
+    41.0,
+    47.0,
+    52.0,
+    56.0,
+    60.0,
+    57.0
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    38.0,
+    40.0,
+    43.0,
+    45.0,
+    46.0,
+    47.0,
+    48.0,
+    53.2
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "KESTREL",
+   "name": "Kestrel Industries",
+   "industry_path": "Industrials › Industrial Machinery",
+   "kind": "company",
+   "market_cap": "₹6,310 Cr",
+   "market_cap_cr": 6310,
+   "filed": "30 Oct",
+   "avatar_letter": "K",
+   "avatar_color": "#7a4fd6",
+   "revenue": {
+    "growth_yoy": "+6.1%",
+    "amount": "₹980 Cr",
+    "growth_yoy_prev_quarter": "+7.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "−5.2%",
+    "amount": "₹120 Cr",
+    "growth_yoy_prev_quarter": "+4.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "−145bp",
+    "level": "12.2%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+48.0%",
+    "amount": "₹96 Cr",
+    "growth_yoy_prev_quarter": "+9.0%"
+   },
+   "flag_profit_not_from_operations": true,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    6.0,
+    4.0,
+    2.0,
+    -3.0,
+    1.0,
+    5.0,
+    9.0,
+    48.0
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    9.0,
+    8.0,
+    8.5,
+    7.5,
+    7.0,
+    7.2,
+    7.0,
+    6.1
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "SUNRISE",
+   "name": "Sunrise Finance",
+   "industry_path": "Financial Services › NBFC",
+   "kind": "nbfc",
+   "market_cap": "₹21,900 Cr",
+   "market_cap_cr": 21900,
+   "filed": "28 Oct",
+   "avatar_letter": "S",
+   "avatar_color": "#1a8aa6",
+   "revenue": {
+    "growth_yoy": "+22.8%",
+    "amount": "₹3,200 Cr",
+    "growth_yoy_prev_quarter": "+20.1%",
+    "label": "Income"
+   },
+   "ebitda": {
+    "growth_yoy": "+30.4%",
+    "amount": "₹2,050 Cr",
+    "growth_yoy_prev_quarter": "+33.0%",
+    "label": "Financing profit"
+   },
+   "margin": {
+    "change_bp": "+370bp",
+    "level": "64.1%",
+    "label": "Financing margin"
+   },
+   "pat": {
+    "growth_yoy": "+41.5%",
+    "amount": "₹880 Cr",
+    "growth_yoy_prev_quarter": "+36.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    28.0,
+    30.0,
+    31.0,
+    33.0,
+    34.0,
+    35.0,
+    36.0,
+    41.5
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    17.0,
+    18.0,
+    19.0,
+    19.5,
+    20.0,
+    20.0,
+    20.1,
+    22.8
+   ],
+   "is_financial": true,
+   "note": "NBFCs: financing profit and financing margin stand in for EBITDA and margin; left out of EBITDA medians/totals."
+  },
+  {
+   "symbol": "EVERGREEN",
+   "name": "Evergreen Life",
+   "industry_path": "Financial Services › Life Insurance",
+   "kind": "insurer",
+   "market_cap": "₹48,200 Cr",
+   "market_cap_cr": 48200,
+   "filed": "29 Oct",
+   "avatar_letter": "E",
+   "avatar_color": "#0c8f5a",
+   "revenue": null,
+   "ebitda": null,
+   "margin": null,
+   "pat": {
+    "growth_yoy": "+36.8%",
+    "amount": "₹740 Cr",
+    "growth_yoy_prev_quarter": "+30.2%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    18.0,
+    20.0,
+    22.0,
+    24.0,
+    26.0,
+    28.0,
+    30.2,
+    36.8
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "is_financial": true,
+   "note": "Insurers: only profit is saved (no revenue, no EBITDA)."
+  }
+ ],
+ "showing": "8 of 236",
+ "groups_index_table": [
+  {
+   "group": "Nifty 50",
+   "reported": 31,
+   "of": 50,
+   "pat_median": 12.1,
+   "pat_total_all": 9.3,
+   "pat_total_ex_financials": 9.9,
+   "pat_total_financials": 8.4,
+   "financials_share_of_profit_pct": 38,
+   "revenue_total_all": 8.7,
+   "revenue_total_ex_financials": 8.5,
+   "revenue_total_financials": 9.4,
+   "ebitda_total_ex_financials": 12.4,
+   "spread_pct_below0_0to10_10to20_above20": [
+    14,
+    28,
+    38,
+    20
+   ],
+   "share_speeding_up_pct": 52,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    8.4,
+    9.8,
+    7.1,
+    10.9,
+    9.2,
+    11.0,
+    10.4,
+    12.1
+   ]
+  },
+  {
+   "group": "Nifty Next 50",
+   "reported": 22,
+   "of": 50,
+   "pat_median": 11.0,
+   "pat_total_all": 11.6,
+   "pat_total_ex_financials": 12.5,
+   "pat_total_financials": 9.1,
+   "financials_share_of_profit_pct": 27,
+   "revenue_total_all": 9.9,
+   "revenue_total_ex_financials": 9.8,
+   "revenue_total_financials": 10.2,
+   "ebitda_total_ex_financials": 14.1,
+   "spread_pct_below0_0to10_10to20_above20": [
+    16,
+    30,
+    40,
+    14
+   ],
+   "share_speeding_up_pct": 49,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    14.0,
+    12.2,
+    9.5,
+    11.8,
+    13.1,
+    10.2,
+    9.8,
+    11.0
+   ]
+  },
+  {
+   "group": "Nifty 100",
+   "reported": 53,
+   "of": 100,
+   "pat_median": 11.8,
+   "pat_total_all": 10.0,
+   "pat_total_ex_financials": 10.7,
+   "pat_total_financials": 8.6,
+   "financials_share_of_profit_pct": 34,
+   "revenue_total_all": 9.1,
+   "revenue_total_ex_financials": 9.0,
+   "revenue_total_financials": 9.7,
+   "ebitda_total_ex_financials": 12.9,
+   "spread_pct_below0_0to10_10to20_above20": [
+    15,
+    29,
+    33,
+    23
+   ],
+   "share_speeding_up_pct": 51,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    9.9,
+    10.8,
+    8.2,
+    11.3,
+    10.4,
+    10.9,
+    10.2,
+    11.8
+   ]
+  },
+  {
+   "group": "Nifty 200",
+   "reported": 91,
+   "of": 200,
+   "pat_median": 13.6,
+   "pat_total_all": 11.6,
+   "pat_total_ex_financials": 12.4,
+   "pat_total_financials": 9.8,
+   "financials_share_of_profit_pct": 31,
+   "revenue_total_all": 10.5,
+   "revenue_total_ex_financials": 10.4,
+   "revenue_total_financials": 11.1,
+   "ebitda_total_ex_financials": 15.0,
+   "spread_pct_below0_0to10_10to20_above20": [
+    13,
+    24,
+    36,
+    27
+   ],
+   "share_speeding_up_pct": 53,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    11.2,
+    12.0,
+    10.1,
+    12.7,
+    12.9,
+    13.8,
+    12.5,
+    13.6
+   ]
+  },
+  {
+   "group": "Nifty 500",
+   "reported": 185,
+   "of": 497,
+   "pat_median": 14.6,
+   "pat_total_all": 12.4,
+   "pat_total_ex_financials": 12.9,
+   "pat_total_financials": 11.2,
+   "financials_share_of_profit_pct": 28,
+   "revenue_total_all": 10.5,
+   "revenue_total_ex_financials": 10.3,
+   "revenue_total_financials": 11.4,
+   "ebitda_total_ex_financials": 14.5,
+   "spread_pct_below0_0to10_10to20_above20": [
+    14,
+    20,
+    35,
+    31
+   ],
+   "share_speeding_up_pct": 54,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    12.0,
+    13.1,
+    11.4,
+    13.9,
+    13.5,
+    14.0,
+    13.2,
+    14.6
+   ]
+  },
+  {
+   "group": "Nifty Midcap 150",
+   "reported": 62,
+   "of": 149,
+   "pat_median": 19.4,
+   "pat_total_all": 17.4,
+   "pat_total_ex_financials": 18.2,
+   "pat_total_financials": 14.9,
+   "financials_share_of_profit_pct": 24,
+   "revenue_total_all": 14.0,
+   "revenue_total_ex_financials": 13.9,
+   "revenue_total_financials": 14.8,
+   "ebitda_total_ex_financials": 20.1,
+   "spread_pct_below0_0to10_10to20_above20": [
+    10,
+    12,
+    30,
+    48
+   ],
+   "share_speeding_up_pct": 58,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    15.0,
+    16.8,
+    14.2,
+    17.9,
+    18.4,
+    17.1,
+    18.8,
+    19.4
+   ]
+  },
+  {
+   "group": "Nifty Smallcap 250",
+   "reported": 70,
+   "of": 248,
+   "pat_median": 16.8,
+   "pat_total_all": 18.0,
+   "pat_total_ex_financials": 17.5,
+   "pat_total_financials": 21.0,
+   "financials_share_of_profit_pct": 14,
+   "revenue_total_all": 13.0,
+   "revenue_total_ex_financials": 12.8,
+   "revenue_total_financials": 15.9,
+   "ebitda_total_ex_financials": 15.3,
+   "spread_pct_below0_0to10_10to20_above20": [
+    14,
+    17,
+    28,
+    41
+   ],
+   "share_speeding_up_pct": 55,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    10.5,
+    12.8,
+    13.9,
+    15.1,
+    14.2,
+    16.0,
+    15.4,
+    16.8
+   ]
+  },
+  {
+   "group": "Nifty Microcap 250",
+   "reported": 51,
+   "of": 250,
+   "pat_median": 10.5,
+   "pat_total_all": 9.5,
+   "pat_total_ex_financials": 9.2,
+   "pat_total_financials": 12.4,
+   "financials_share_of_profit_pct": 9,
+   "revenue_total_all": 8.2,
+   "revenue_total_ex_financials": 7.9,
+   "revenue_total_financials": 13.0,
+   "ebitda_total_ex_financials": 9.8,
+   "spread_pct_below0_0to10_10to20_above20": [
+    22,
+    26,
+    40,
+    12
+   ],
+   "share_speeding_up_pct": 47,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    6.1,
+    7.9,
+    9.0,
+    8.2,
+    9.8,
+    9.1,
+    10.0,
+    10.5
+   ]
+  }
+ ],
+ "filters": {
+  "quarter": "tabs",
+  "index": [
+   "All indices",
+   "Nifty 50",
+   "Nifty Next 50",
+   "Nifty 100",
+   "Nifty 200",
+   "Nifty 500",
+   "Nifty Midcap 150",
+   "Nifty Smallcap 250",
+   "Nifty Microcap 250",
+   "Nifty LargeMidcap 250",
+   "Nifty MidSmallcap 400",
+   "Nifty Total Market"
+  ],
+  "market_cap": [
+   "any",
+   ">= ₹500 Cr",
+   ">= ₹1,000 Cr",
+   ">= ₹5,000 Cr",
+   ">= ₹10,000 Cr",
+   ">= ₹50,000 Cr",
+   ">= ₹1 lakh Cr"
+  ],
+  "classification": "stored NSE path, up to 4 levels: Sector (20) > Industry group (39) > Industry (117) > Basic industry; e.g. Healthcare > Pharmaceuticals & Biotechnology > Pharmaceuticals; 142 companies are 'Unclassified'",
+  "growth": [
+   "Revenue growth >= 0/10/20/30/50/100%",
+   "EBITDA growth >= ...",
+   "PAT growth >= ...",
+   "Margin change >= 0/100/200/300/500bp",
+   "Momentum: speeding up / slowing",
+   "Loss to profit",
+   "Profit not from operations (PAT up while EBITDA down)"
+  ],
+  "views": [
+   "Year-on-year",
+   "Momentum (this quarter's yoy growth vs last quarter's)",
+   "Quarter-on-quarter"
+  ],
+  "group_by": [
+   "Index",
+   "Sector",
+   "Industry"
+  ],
+  "group_tabs": [
+   "Totals",
+   "Trend & spread"
+  ],
+  "cuts": [
+   "All",
+   "Ex-financials",
+   "Financials"
+  ]
+ },
+ "rules": [
+  "Consolidated over standalone.",
+  "Totals include loss-making companies, as NSE counts index earnings; medians leave out companies that moved from loss to profit (no % exists).",
+  "EBITDA medians/totals exclude banks, NBFCs and insurers.",
+  "Reported PAT as filed, not adjusted.",
+  "Growth is against the same quarter a year ago.",
+  "Row opens to the company's Results tab; each row links to the NSE filing.",
+  "Export CSV of the filtered list."
+ ]
+}

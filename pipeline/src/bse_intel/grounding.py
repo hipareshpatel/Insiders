@@ -866,18 +866,42 @@ class _ReadAtUnit:
         return False
 
 
-def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
+def _places(crore: float) -> int:
+    """Decimal places that write a corrected crore figure within 0.5%: 45.67 lakh is ₹0.457 Cr, not ₹0.46 Cr; Rs 1,23,456
+    is ₹0.0123 Cr, not ₹0.01 Cr."""
+    return next((p for p in (2, 3, 4) if abs(round(crore, p) - crore) <= 0.005 * abs(crore)), 4)
+
+
+# A figure whose digit groups fit neither the Indian (12,34,567) nor the western (1,234,567) grouping: the OCR lost or moved
+# a separator or a digit ("4,558,21" for 4,558.21, "19,89,68"). Read as a number it is a different, much larger figure.
+_MALFORMED_GROUPS = re.compile(
+    r"(?<![\d.,])(?!(?:\d{1,3}(?:,\d{3})+|\d{1,2}(?:,\d{2})+,\d{3})(?![\d,]))\d{1,3}(?:,\d+)+(?:\.\d+)?(?![\d,])")
+
+
+def _blank_malformed(text: str) -> str:
+    return _MALFORMED_GROUPS.sub(lambda m: " " * len(m.group(0)), text)
+
+
+def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=()) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
 
     Three readings, in order: a figure the filing writes with its own unit ("INR 3 (Three) Million" carded "₹3 Cr",
     Excelsoft), whatever unit the tables declare; an amount written out in whole rupees ("Rs 11,10,59,061" carded "₹1.11
     Cr", Nestle; "Rs. 1,165,179,600" as "₹1,165 Cr", Anlon); and a table figure in the declared unit read a power of
-    ten off ("(Rs billion) 1,562.8" carded "₹15,628 Cr", RBL). A card figure the filing states in crore is never touched."""
+    ten off ("(Rs billion) 1,562.8" carded "₹15,628 Cr", RBL). A card figure the filing states in crore is never touched.
+
+    `xbrl_crore` (UNIT_SLIP_XBRL_GUARD): every money fact of the exchange's XBRL file in crore; a card figure equal to one
+    (within its own rounding) is never corrected, whatever the PDF's tables say (Hubtown's ₹408.47 Cr, 1 Nov 2026).
+
+    An enlargement (the correction is the larger figure) needs a figure with well-formed digit groups: LCC's "4,558,21"
+    (the OCR's 4,558.21 in ₹ million) read as 455,821 "corrected" a right ₹455.82 Cr to ₹45,582 Cr (30 Oct 2026)."""
     unit = declared_unit(filing)
     # a foreign-currency amount is no rupee figure at any unit: it is held, never "corrected" (foreign_as_rupees)
     filing = _FOREIGN.sub(" ", filing or "")
     filing_index, other_index = SourceIndex(filing), SourceIndex(*others)
+    well_formed = SourceIndex(_blank_malformed(filing))   # what may support an enlargement
     whole = whole_rupee_crores(filing)
+    whole_formed = whole_rupee_crores(_blank_malformed(filing))   # what may support an enlargement by reading 2
     if not unit and not whole and not any(u != 1 for u in filing_index._by_unit):
         return []
     slips: dict[str, tuple[str, float, int, float, int]] = {}
@@ -891,11 +915,14 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
             if other_index.stated_crore(value, decimals, (1,)) or _near_amount(other_index, value) \
                     or _near(filing_index._by_unit.get(1, []), value, tolerance):
                 continue   # memory, the scale block or the filing itself writes this many crore
+            if xbrl_crore and any(abs(value - c) <= tolerance for c in xbrl_crore):
+                continue   # the exchange's own file states this figure in crore: the PDF never overrules it
             if read_right(value, decimals):
                 continue   # already the right reading of a figure at its own page's unit: never "corrected"
             # 1. a figure with its own unit, whatever unit the tables declare
-            fits = [(round(value / u, 2), 2) for u, values in filing_index._by_unit.items()
-                    if u != 1 and _near(values, value, tolerance)]
+            fits = [(round(value / u, _places(value / u)), _places(value / u)) for u, values in filing_index._by_unit.items()
+                    if u != 1 and _near(values, value, tolerance)
+                    and (u >= 1 or _near(well_formed._by_unit.get(u, []), value, tolerance))]
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
                 continue
@@ -904,8 +931,10 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 continue
             # 2. a whole-rupee amount, a power of ten off
             tolerance = 0.5 * 10 ** (-decimals) + 1e-9
-            fits = sorted({(round(c, 2), 2) for c in whole for k in (-3, -2, -1, 1, 2, 3)
-                           if abs(value - c * 10 ** k) <= max(tolerance, 0.002 * c * 10 ** k)})
+            # an enlargement (c above the card's figure) only from a whole-rupee amount with well-formed digit groups (TODO 147)
+            fits = sorted({(round(c, _places(c)), _places(c)) for c in whole for k in (-3, -2, -1, 1, 2, 3)
+                           if abs(value - c * 10 ** k) <= max(tolerance, 0.002 * c * 10 ** k)
+                           and (c <= value or _near(whole_formed, c, 1e-9))})
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
                 continue
@@ -920,11 +949,20 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 continue
             # 3. the declared unit read a power of ten off: the table figure is value * 10**k in that unit's terms
             fits = []
-            for k in (-4, -3, -2, -1, 1, 2, 3, 4):
+            for k in (-4, -2, -1, 1, 2, 3, 4):
+                # never a shrink by exactly 1,000: that is a lakh table's thousands comma read as a point ("40,847" as "40.847"), the
+                # card's right figure seen a thousand times too large. Hubtown nse-106629168 had its right ₹18.82 Cr made ₹0.02 Cr
+                # (30 Oct 2026), and once re-made, its FY25 revenue ₹408.47 Cr made ₹0.41 Cr and finance cost ₹134.92 Cr made ₹0.135 Cr
+                # (31 Oct 2026). A real slip is a unit read as another: lakh as crore (100), million as crore (10), thousand as lakh (100)
                 right = value * 10 ** k
                 right_decimals = max(0, decimals - k)
-                if filing_index.stated_crore(right, right_decimals, (unit,)):
-                    fits.append((round(right, min(right_decimals, 2)), min(right_decimals, 2)))
+                if right < 0.05:
+                    # never under ₹5 lakh: Hubtown's right ₹18.82 Cr fitted the OCR's "1.882" lakh (its 1,882 with the
+                    # comma read as a point) and went live as ₹0.02 Cr (30 Oct 2026)
+                    continue
+                if (filing_index if right <= value else well_formed).stated_crore(right, right_decimals, (unit,)):
+                    places = min(right_decimals, _places(right))
+                    fits.append((round(right, places), places))
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
     return list(slips.values())

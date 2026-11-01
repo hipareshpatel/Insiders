@@ -274,6 +274,12 @@ class Facts:
                 return value
         return None
 
+    def money_crore(self) -> list[float]:
+        """Every money fact in crore, dimensioned or not (the unit fixer's guard: a card figure the exchange's file states is never
+        rescaled from the PDF)."""
+        return [value / CRORE for _, _, unit, value, _ in self.rows
+                if self._is_money(unit) and isinstance(value, (int, float)) and not isinstance(value, bool)]
+
     def cr(self, name: str, **period) -> float | None:
         """A money fact in crore."""
         for el, ctx_id, unit, value, _ in self.rows:
@@ -356,6 +362,15 @@ class Facts:
         return {row[0] for row in self.rows}
 
 
+def money_crore(raw: bytes | None, scrip: str = "", url: str = "") -> list[float]:
+    """Every money fact of a raw XBRL results file in crore; [] when there is no file or it cannot be read. Never raises."""
+    try:
+        doc = parse_facts(raw, scrip, url) if raw else None
+        return Facts(doc).money_crore() if doc else []
+    except Exception:   # noqa: BLE001 - a guard must never stop a card
+        return []
+
+
 def load(sink, scrip: str, period: str, basis: str | None) -> Facts | None:
     """The stored facts of one company-period-basis, or None when none are stored (or the object is unreadable)."""
     try:
@@ -379,6 +394,48 @@ def save(sink, scrip: str, period: str, basis: str | None, doc: dict) -> int:
     body = dumps(doc)
     sink.put_object(key(scrip, period, basis), body, content_type="application/gzip")
     return len(body)
+
+
+def reread_legacy(sink, scrips: list[str], *, dry_run: bool = False) -> dict:
+    """Every stored results document of ``scrips`` whose raw file (raw/xbrl/, xbrl_store) tags figures to an undeclared "OneD"
+    context, read again with the reader that dates it (xbrl._undeclared_legacy, 31 Oct 2026: 25 banks' March 2023 files kept
+    64 of 234 facts). A document is replaced only when the new read keeps more facts; its period label stays memory's. No NSE
+    request. ``dry_run`` counts and writes nothing."""
+    from . import xbrl_store
+
+    out = {"companies": 0, "docs": 0, "candidates": 0, "no_raw": 0, "reread": 0, "facts_before": 0, "facts_after": 0, "changed": []}
+    for scrip in scrips:
+        out["companies"] += 1
+        for k in sorted(sink.list_objects(f"{PREFIX}{scrip}/")):
+            name = k.rsplit("/", 1)[-1]
+            if name.startswith(("annual-", "_")) or not name.endswith(".json.gz"):
+                continue
+            out["docs"] += 1
+            try:
+                doc = loads(sink.get_object(k))
+            except Exception:  # noqa: BLE001 - an unreadable document is left as it is
+                continue
+            if "OneD" in (doc.get("contexts") or {}) or not doc.get("url"):
+                continue
+            raw = xbrl_store.get(sink, doc["url"])
+            if raw is None:
+                out["no_raw"] += 1
+                continue
+            if b'contextRef="OneD"' not in raw:
+                continue
+            out["candidates"] += 1
+            new = parse_facts(raw, scrip, doc["url"])
+            if new is None or new["n_facts"] <= (doc.get("n_facts") or 0):
+                continue
+            new["period"] = doc.get("period") or new["period"]
+            out["reread"] += 1
+            out["facts_before"] += doc.get("n_facts") or 0
+            out["facts_after"] += new["n_facts"]
+            if len(out["changed"]) < 200:
+                out["changed"].append(f"{k}: {doc.get('n_facts')} -> {new['n_facts']}")
+            if not dry_run:
+                sink.put_object(k, dumps(new), content_type="application/gzip")
+    return out
 
 
 # --- the files of a company --------------------------------------------------------------------------------------
@@ -459,9 +516,10 @@ def interesting(facts: Facts) -> set[str]:
 
 MAX_SHARDS = 16           # owner, 28 Oct 2026: 8 parallel downloads, then "Can we take it to 16" (the same day)
 SINCE = "2020-04-01"      # the seed's own --since default: the selection below is the seed's (latest SEED_QUARTERS, older March quarters)
-FACTS_QUARTERS = 12       # the seed's 12. Screener shows 13, but the comparison starts at FY26 (screener_view.FIRST_QUARTER, owner,
-                          # 29 Oct 2026), which 12 cover; with 13 the test run 40837101219 fetched 90 files of Q1FY24 and Q2FY24
-MARKER_V = 1              # the marker's version: one written under another selection is no marker, its company is listed again
+FACTS_QUARTERS = 13       # screener's 13 (stock-page audit, 30 Oct 2026: with the seed's 12, 1,159 of 1,229 companies on the site had no
+                          # Q1FY24 and 821 a hole in their quarters; the test run 40837101219 with 13 fetched 90 files of Q1FY24 and Q2FY24)
+MARKER_V = 3              # the marker's version: one written under another selection is no marker, its company is listed again
+                          # (3: 13 quarters, 30 Oct 2026; 2 was the 13-quarter test run of 29 Oct)
 LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
 FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason
 GONE_STATUSES = ("http_404", "http_410")     # a file NSE lists and does not serve: remembered in the marker, tried again after LIST_REFRESH_DAYS
@@ -1204,3 +1262,40 @@ def render(summary: dict) -> str:
     elif n:
         lines.append("no element or breakdown row on levies, leases, treasury shares or discounts in the files read")
     return "\n".join(lines)
+
+
+# --- a look at what is stored (read only) ---------------------------------------------------------------------------
+
+def dump(sink, scrip: str, pattern: str, *, max_rows: int = 400) -> str:
+    """Every stored facts document of one company, and in each the facts whose element matches ``pattern`` (a regular
+    expression, case-insensitive) with their period, dimensions and value: to see why a recipe finds a line or not, without a
+    download. Read only."""
+    rx = re.compile(pattern, re.I)
+    out = []
+    for k in sorted(sink.list_objects(f"{PREFIX}{scrip}/")):
+        if not k.endswith(".json.gz"):
+            continue
+        try:
+            doc = loads(sink.get_object(k))
+        except Exception as exc:  # noqa: BLE001
+            out.append(f"{k}: unreadable ({type(exc).__name__})")
+            continue
+        ctxs = doc.get("contexts") or {}
+        instants = sorted({c["i"] for c in ctxs.values() if c.get("i")})
+        out.append(f"{k}: kind={doc.get('kind') or 'results'} period={doc.get('period')} file_period={doc.get('file_period')} "
+                   f"fy={doc.get('fy')} year_end={doc.get('year_end')} basis={doc.get('basis')} n_facts={doc.get('n_facts')} "
+                   f"instants={instants} url={doc.get('url')}")
+        n = 0
+        for element, ctx, unit, value, _dec in doc.get("facts") or []:
+            if not rx.search(element):
+                continue
+            c = ctxs.get(ctx) or {}
+            when = c.get("i") or f"{c.get('s')}..{c.get('e')} ({c.get('m')}m)"
+            dims = ",".join(f"{a}={m}" for a, m in (c.get("d") or {}).items())
+            text = value if isinstance(value, (int, float)) else str(value)[:80]
+            out.append(f"    {element} @ {when}{' [' + dims + ']' if dims else ''} = {text}")
+            n += 1
+            if n >= max_rows:
+                out.append("    ...")
+                break
+    return "\n".join(out) or f"no facts stored for {scrip}"

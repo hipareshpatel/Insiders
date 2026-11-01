@@ -3,8 +3,10 @@
 // (dates, the cursor) instead of walking a table, and hot responses are kept
 // briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
 import { dedupeEvents } from "../shared/events";
+import { daysPastDue, isPastDue } from "../shared/promiseDue.ts";
 import { isCompanyKey } from "../shared/companyKey";
 import type { CallQuarter, PublicSystemResponse } from "../shared/types";
+import { registerResultsRoutes } from "./results";
 import { Hono } from "hono";
 import type { Context } from "hono";
 import type { AppEnv } from "./env";
@@ -128,38 +130,6 @@ async function snapshot(c: Context<AppEnv>): Promise<Snapshot | null> {
   });
 }
 
-const RESULTS_TABLE_PREFIX = "raw/results-table/";
-
-/** The results page's figures come from the saved statements (the company page's Results tab source), never from a card: the
- * pipeline's `results-table` job writes a small file per company to R2 (results_table.py), and a page reads only the companies of its
- * rows. A row's table is the one for its company and quarter; a quarter the statements do not hold keeps its quarter and no
- * figures; a company with no file yet (the job has not reached it) is left as it is. */
-async function withStatementTables<T extends { scrip_code: string; card_json: string }>(c: Context<AppEnv>, cards: T[]): Promise<T[]> {
-  const scrips = [...new Set(cards.map((card) => card.scrip_code))];
-  const files = new Map(await Promise.all(scrips.map(async (scrip) => {
-    const rows = await memoised(`results-table:${scrip}`, 60_000, async () => {
-      const object = await c.env.VAULT.get(`${RESULTS_TABLE_PREFIX}${scrip}.json`);
-      return object ? ((await object.json()) as { rows: Record<string, unknown> }).rows : null;
-    });
-    return [scrip, rows] as const;
-  })));
-  return cards.map((card) => {
-    const rows = files.get(card.scrip_code);
-    if (!rows) return card;
-    try {
-      const body = JSON.parse(card.card_json) as { results?: { period?: string; revenue?: unknown } | null; xbrl?: { period?: string } | null;
-        had_table?: boolean };
-      const period = body.results?.period ?? body.xbrl?.period;
-      if (!period) return card;
-      body.had_table = !!body.results?.revenue;   // the page keeps, of two rows for one company and quarter, the one that was a results card
-      body.results = (rows[period] as { period?: string } | undefined) ?? ({ lens: "company", period } as never);
-      return { ...card, card_json: JSON.stringify(body) };
-    } catch {
-      return card;
-    }
-  });
-}
-
 // withHeld: the owner's private view (/api/owner/feed, behind OWNER_TOKEN and outside the edge cache) also
 // lists the cards held back from the public feed, so the owner can review them (owner, 2026-10-19).
 export async function feed(c: Context<AppEnv>, withHeld = false) {
@@ -230,8 +200,7 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
   // The first page of an unfiltered view is what most visitors load.
   const result = !cursorAt && !fts && (page ?? 1) === 1 ? await memoised(`feed:${sql}:${page}:${JSON.stringify(params)}`, 20_000, run) : await run();
   const more = result.rows.length > limit;
-  const rows = result.rows.slice(0, limit) as { filed_at: string; news_id: string; scrip_code: string; card_json: string }[];
-  const cards = q.category === "RESULTS" ? await withStatementTables(c, rows) : rows;
+  const cards = result.rows.slice(0, limit) as { filed_at: string; news_id: string }[];
   const last = cards[cards.length - 1];
   return c.json({
     cards,
@@ -242,6 +211,9 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
 }
 
 api.get("/feed", (c) => feed(c));
+
+// The Results page as a KPI report (worker/results.ts): /results-kpi, /results-classification, /results-groups, /results-company/:key.
+registerResultsRoutes(api, memoised);
 
 const todayIst = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
 
@@ -506,7 +478,7 @@ async function callLinks(c: Context<AppEnv>, calls: CallQuarter[], cards: { news
 }
 
 type MemorySummary = {
-  open_promises: { id: string; statement: string; due: string | null; due_date: string | null; given_on: string | null; status: string; source_news_id: string | null }[];
+  open_promises: { id: string; statement: string; due: string | null; due_date: string | null; given_on: string | null; status: string; source_news_id: string | null; overdue_from?: string | null }[];
   triggers: { kind: string; date: string; text: string }[];
   active_capex: number;
   revenue: { period: string; value: number } | null;
@@ -556,10 +528,10 @@ api.get("/promises/overdue", async (c) => {
         FROM companies WHERE earliest_open_due < ?1 ORDER BY earliest_open_due LIMIT 500`).bind(today).all();
     const promises = (results as Record<string, unknown>[]).flatMap((r) =>
       (parseSummary(r.memory_summary_json)?.open_promises ?? [])
-        .filter((p) => p.due_date && p.due_date < today)
+        .filter((p) => isPastDue(p, today))
         .map((p) => ({ ...p, scrip_code: r.scrip_code, symbol: r.symbol, company_name: r.company_name,
                        credibility_score: r.credibility_score,
-                       days_overdue: Math.round((Date.parse(today) - Date.parse(p.due_date!)) / 86400_000) })));
+                       days_overdue: daysPastDue(p, today) })));
     promises.sort((a, b) => b.days_overdue - a.days_overdue);
     return { today, promises: promises.slice(0, 500) };
   });

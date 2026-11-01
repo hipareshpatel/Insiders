@@ -129,3 +129,25 @@ def test_page_words_reads_a_text_layer_pages_boxes():
     words = sg.page_words(doc.tobytes(), 1)
     assert sg.figure_label_verdict(90, "TMT 90", words).state == "tied"
     assert sg.figure_label_verdict(15, "TMT 15", words).state == "other"
+
+
+def test_a_unit_word_beside_a_figure_is_not_its_label():
+    # "Cr" / "Units" / "%" sit between the label and the figure: the label is still the word before them
+    words = (row(100, 20, "Order", "book") + row(100, 200, "Cr") + row(100, 230, "788")
+             + row(120, 20, "Revenue") + row(120, 200, "Rs", "Cr") + row(120, 250, "500"))
+    assert verdict(788, "Order book 788", words) == "tied"
+    assert verdict(500, "Revenue 500 Cr", words) == "tied"
+    assert sg.label_words("Sales 5,000 Units YoY bps") == {"sales"}
+
+
+def test_a_figure_inside_a_sentence_is_left_alone():
+    words = row(100, 20, "EBITDA", "grew", "by") + row(100, 160, "25%") + row(100, 200, "on", "strong", "demand")
+    assert sg.figure_label_verdict(25, "Revenue 25%", words).state == "unknown"
+    # the same figure as a table cell is judged
+    table = row(100, 20, "EBITDA") + row(100, 200, "25%") + row(120, 20, "Revenue") + row(120, 200, "9%")
+    assert verdict(25, "Revenue 25%", table) == "other"
+
+
+def test_quote_words_that_are_not_on_the_page_cannot_be_judged():
+    words = row(100, 20, "Revenue") + row(100, 200, "500") + row(120, 20, "Profit") + row(120, 200, "50")
+    assert verdict(500, "Gizmo 500", words) == "unknown"

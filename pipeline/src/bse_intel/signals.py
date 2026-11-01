@@ -340,6 +340,15 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             if why:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
                 continue
+        if dated and discussed and update.status == "DELIVERED":   # DECK_DISCUSSED_PERIOD: code checks the figures it can read
+            from .guidance_dated import numeric_contradiction, smaller_count
+            small = smaller_count(g.get("target") or g.get("statement"), update.evidence)
+            if small:
+                out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, small), g["id"]))
+                continue
+            wrong = numeric_contradiction(g.get("target"), update.evidence)
+            if wrong:
+                update = update.model_copy(update={"status": "MISSED", "evidence": f"{update.evidence or ''} (code check: {wrong})".strip()})
         if card_watch_verdict() and update.status in ("DELIVERED", "DELAYED", "MISSED"):   # F205: two periods of one metric
             from .watch_code import relative_guidance_verdict
             if relative_guidance_verdict(g, after.get("financial_metrics", [])) == "MET":
@@ -368,6 +377,12 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             continue  # no news, another item's news, or an earlier quarter's figure
         if code in ("MET", "MISSED"):
             status = code
+        if dated and discussed and status == "MET" and code != "MET":   # DECK_DISCUSSED_PERIOD: "36 bps" is not within "33-35 bps"
+            from .guidance_dated import numeric_contradiction
+            wrong = numeric_contradiction(w.get("target"), update.evidence)
+            if wrong:
+                status = "MISSED"
+                update = update.model_copy(update={"evidence": f"{update.evidence or ''} (code check: {wrong})".strip()})
         if dated and status in ("MET", "MISSED"):
             why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id, discussed)
             if why:

@@ -90,6 +90,9 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      release text is not replayed; the pairs are for the owner's count and a blind look.
   filer_checks       XBRL_FILER_CHECKS (S3, TODO 111, F219): each results card's own exchange file (R2, 180 days) read twice by
                      `xbrl.parse`, off and on; the figures it changes or holds. Read only; over stored memory's source files.
+  figure_matches_file CARD_FIGURE_MATCHES_FILE (1 Nov 2026 (b), AJANTPHARM nse-106836128): `printed_figures.printed_ebitda` on each
+                     stored results card's text with the card's file EBITDA, off and on; the company's EBITDA the table shows
+                     (a deck row whose first figure is the base of its own printed change is no longer taken). Complete.
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
                      correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
                      bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
@@ -146,7 +149,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
-                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS",
+                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS", "CARD_FIGURE_MATCHES_FILE", "CARD_GUIDED_NOT_ACTUAL",
                 "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE",
                 "UNIT_FIX_SCALE_GUARD", "CARD_COMPARATIVE_MATCHES_MEMORY")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
@@ -159,7 +162,8 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"),
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
           ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
-          ("filer_checks", "XBRL_FILER_CHECKS"), ("event_repeat", "CARD_EVENT_REPEAT"),
+          ("filer_checks", "XBRL_FILER_CHECKS"), ("figure_matches_file", "CARD_FIGURE_MATCHES_FILE"),
+          ("guided_not_actual", "CARD_GUIDED_NOT_ACTUAL"), ("event_repeat", "CARD_EVENT_REPEAT"),
           ("press_release_fold", "RESULTS_PRESS_RELEASE"), ("unit_fix_scale", "UNIT_FIX_SCALE_GUARD"),
           ("comparative_memory", "CARD_COMPARATIVE_MATCHES_MEMORY"))
 TEXT_SUPPORT_SAMPLE = 60
@@ -343,6 +347,48 @@ def check_filer_checks(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
     with switches_on("XBRL_FILER_CHECKS"):
         on = filer_lines(xbrl.parse(xbrl.as_utf8(xbrl_bytes)))
     return _record(row, card, off, on)
+
+
+def check_figure_matches_file(card: dict, row: dict, text: str) -> dict:
+    """figure_matches_file: `printed_figures.printed_ebitda` over the stored filing text with CARD_FIGURE_MATCHES_FILE off and on, the
+    card's own EBITDA from the exchange file (the results block's `ebitda`) and basis; the company's EBITDA the table would show.
+    A deck row whose first figure is the base of its own printed change (AJANTPHARM nse-106836128: 679 is H1FY26) is not taken."""
+    from bse_intel import printed_figures
+
+    results = card.get("results") or {}
+    ours = (results.get("ebitda") or {}).get("value")
+    basis = card.get("basis") or (card.get("xbrl") or {}).get("basis")
+
+    def line() -> list[str]:
+        got = printed_figures.printed_ebitda(text, results.get("period"), ours, basis)
+        shown = f"{got.name} {got.value_cr} (quote: {got.quote})" if got else "(none shown)"
+        return [f"TABLE EBITDA (Filing): {shown}", f"TABLE stored: {(results.get('ebitda_filing') or {}).get('value')}"]
+
+    with switches_on():
+        off = line()
+    with switches_on("CARD_FIGURE_MATCHES_FILE"):
+        on = line()
+    rec = _record(row, card, off, on)
+    rec["info"], rec["unreplayable"] = {}, []
+    return rec
+
+
+def check_guided_not_actual(card: dict, row: dict, dossier: dict | None) -> dict:
+    """guided_not_actual: `guided_actual.apply_card_json` on a copy of a stored card with CARD_GUIDED_NOT_ACTUAL off and on, over
+    memory as it stands (the dossier file); the list items it drops and the headline or takeaway it notes (BIRLACORPN)."""
+    from bse_intel import guided_actual
+
+    def lines(c: dict) -> list[str]:
+        out = [f"HEADLINE {c.get('headline') or ''}", f"TAKEAWAY {c.get('takeaway') or ''}"]
+        for name in ("what_happened", "why_it_matters", "notable_changes"):
+            out += [f"FACT {name}: {(i.get('text') if isinstance(i, dict) else i) or ''}" for i in c.get(name) or []]
+        return out
+
+    current = dossier_as_of(dossier, row["filed_at"]) if dossier else {}
+    on_card = copy.deepcopy(card)
+    with switches_on("CARD_GUIDED_NOT_ACTUAL"):
+        notes = guided_actual.apply_card_json(on_card, current)
+    return _record(row, card, lines(card), lines(on_card), extra=notes)
 
 
 def check_event_repeat(card: dict, row: dict, dossier: dict | None) -> dict:
@@ -1207,6 +1253,23 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_words_figures(card, row, memory() or None))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "figure_matches_file":
+                    if not results or not isinstance(card.get("results"), dict) or not (card["results"].get("ebitda") or {}).get("value"):
+                        skipped[name]["not a results card with an EBITDA row"] += 1
+                    elif text is None:
+                        skipped[name]["no text"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_figure_matches_file(card, row, text))
+
+
+                elif name == "guided_not_actual":
+                    if not memory():
+                        skipped[name]["no memory file for the company"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_guided_not_actual(card, row, memory()))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "unit_slip_guard":
                     url = (card.get("xbrl") or {}).get("url")

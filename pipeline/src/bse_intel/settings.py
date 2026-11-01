@@ -323,6 +323,17 @@ def card_adjusted_profit_label() -> bool:
     return _switch("CARD_ADJUSTED_PROFIT_LABEL")
 
 
+def card_guided_not_actual() -> bool:
+    """CARD_GUIDED_NOT_ACTUAL (default off; blind audit of 1 Nov 2026, BIRLACORPN nse-106838226 "Net debt was ₹4,000 Cr at the end
+    of FY26": 4,000 was management's expected peak net debt for FY27, said on the May call, and memory held it as a balance
+    sheet). On: a call's balance figure the same reading words as guided is not stored as one; a call's figure with no period is
+    shown to the AI and on the call summary as "stated on a call, may be guided, not an actual"; guidance lines say "guided
+    (expected, not an actual)"; a card point that states a guided figure as an actual is dropped (guided_actual.apply_card_json).
+    It changes card text and what the AI is shown: on only after the on/off check over stored cards (release_check.py
+    guided_not_actual) and a blind sample. Read at the call."""
+    return _switch("CARD_GUIDED_NOT_ACTUAL")
+
+
 def card_words_match_figures() -> bool:
     """CARD_WORDS_MATCH_FIGURES (default off; 1 Nov 2026, blind audit "arithmetic in words"): a card's comparison words
     (doubled, halved, accelerated, slowed, outpaced) are checked against its own results table and memory
@@ -392,6 +403,17 @@ def unit_slip_xbrl_guard() -> bool:
     (Hubtown's ₹408.47 Cr was made 0.41 from the PDF's lakh "40,847"). It lets fewer corrections through, so a check accepts more:
     on only after the on/off check over stored cards (release_check.py unit_slip_guard) and a blind sample. Read at the call."""
     return _switch("UNIT_SLIP_XBRL_GUARD")
+
+
+def card_figure_matches_file() -> bool:
+    """CARD_FIGURE_MATCHES_FILE (default off; blind audit of 1 Nov 2026 (b), AJANTPHARM nse-106836128): the company's own EBITDA the
+    results table shows ("EBITDA (Filing)", printed_figures.printed_ebitda) is read from the deck's row only when the row's
+    first figure is the quarter. A row that prints its own change from the first figure to a later one ("EBITDA 679 26% 971 28% 43%":
+    971 / 679 = +43%) has the first figure as the BASE, an earlier period (679 was H1FY26; Q2FY27 is 543, the file's 547.56
+    before other income): that figure is not taken, and among the figures left the one within 3% of the exchange file's EBITDA
+    comes first (XBRL is never overruled by the PDF, owner 1 Nov 2026). It shows fewer printed figures, so a check accepts more
+    only through the next candidate: on after release_check figure_matches_file. Read at the call."""
+    return _switch("CARD_FIGURE_MATCHES_FILE")
 
 
 def discontinued_needs_figure() -> bool:

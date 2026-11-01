@@ -206,6 +206,12 @@
 #   (actions/download-artifact, the job's token with actions: read); no exchange is read. A key the store holds is skipped; the
 #   counts (stored, already held, failed, skipped) go up as the artifact `store-kept-pdfs`. Its own group `maint-pdf-store`.
 #   Writes nothing else.
+# - call-vision-bench (lead, 1 Nov 2026; TODO 101/144, owner's option B): replays the blind-judged call-memory deck points
+#   (docs/bench/geometry/judged-2026-10-31) through the slide vision check (CALL_MEMORY_VISION_CHECK=1, call_memory.vision_confirm)
+#   and counts the WRONG points it keeps and the RIGHT points it drops. The 9 deck PDFs come from the artifact `deck-pdfs` of run
+#   41069401462 (GitHub only, no exchange is read); `ids` = another run's id whose deck-pdfs holds them. The free `vision` route
+#   only (zai, mistral, gemini, openrouter :free); `backup` = max vision calls a deck (default as live). Artifact `call-vision-bench`
+#   (report.json and the printed summary in summary.txt). Writes nothing else; own job, read only.
 # - api-reader-oos (lead, 30 Oct 2026): the out-of-sample check before any live use of an API reader. numbers-first and
 #   nemotron-parse (`backup` = the readers, default numfirst,nemotron) scored on docs/bench/oos/key-union.csv (552 figures in
 #   67 PDFs, both out-of-sample runs' keys), from the PDFs runs 40933340958 and 40991728993 kept (artifacts pdf-oos-pdfs);
@@ -311,7 +317,7 @@
 #   maint-pdf-store    store-kept-pdfs (reads a GitHub artifact; writes only raw/results-pdf/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-rows (R2 only; writes nothing), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2; a run with `apply` downloads NSE files and is in the NSE memory group), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), xbrl-key (R2, memory and NSE; writes only raw/results-pdf/, each PDF it downloads), pdf-oos (R2, memory and NSE; writes only raw/results-pdf/), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing), fact-sheet-ab (the card path's free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-rows (R2 only; writes nothing), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2; a run with `apply` downloads NSE files and is in the NSE memory group), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), xbrl-key (R2, memory and NSE; writes only raw/results-pdf/, each PDF it downloads), pdf-oos (R2, memory and NSE; writes only raw/results-pdf/), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing), fact-sheet-ab (the card path's free AI providers; writes nothing), call-vision-bench (a GitHub artifact and the free vision providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -332,10 +338,10 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, memory-split-lines, statements-backfill, statements-rebuild, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, bank-pdf-read, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, restated-pdf, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, memory-split-lines, statements-backfill, statements-rebuild, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, bank-pdf-read, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, restated-pdf, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, call-vision-bench, restore]
         default: both
       backup:
-        description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
+        description: call-vision-bench - the most vision calls a deck (empty = as live); store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
         type: string
         default: ''
       scrips:
@@ -348,7 +354,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: release-check - only these checks (names, comma separated, e.g. text_support; empty = all); screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank, memory-split-lines, statements-backfill and statements-correct - only these companies (scrip codes), statements-backfill `put-back-ratings` the rating snapshots taken out on 30 Oct, from the backups; pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial and restated-pdf - only these companies (scrip codes or NSE symbols)
+        description: release-check - only these checks (names, comma separated, e.g. text_support; empty = all); screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); call-vision-bench - the run id whose deck-pdfs artifact holds the decks (default 41069401462); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank, memory-split-lines, statements-backfill and statements-correct - only these companies (scrip codes), statements-backfill `put-back-ratings` the rating snapshots taken out on 30 Oct, from the backups; pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial and restated-pdf - only these companies (scrip codes or NSE symbols)
         type: string
         default: ''
       since:
@@ -446,7 +452,7 @@ concurrency:
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || inputs.command == 'store-kept-pdfs' && 'maint-pdf-store'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","api-reader-hardset","deck-pdfs","xbrl-expiry-check","facts-dump"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","call-vision-bench","api-reader-hardset","deck-pdfs","xbrl-expiry-check","facts-dump"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -461,7 +467,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'api-reader-oos' && inputs.command != 'deck-pdfs' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'api-reader-oos' && inputs.command != 'deck-pdfs' && inputs.command != 'call-vision-bench' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -2642,9 +2648,59 @@ jobs:
           path: ${{ runner.temp }}/out/
           if-no-files-found: ignore
 
+  call-vision-bench:
+    # Option B measurement (owner, 1 Nov 2026): the judged deck points through the slide vision check. Reads a GitHub artifact and
+    # the free vision providers; writes nothing but its artifact.
+    permissions:
+      contents: read
+      actions: read   # download another run's artifact
+    if: inputs.command == 'call-vision-bench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e .   # PyMuPDF is a base dependency
+      - name: Download the deck PDFs (GitHub only, no exchange)
+        uses: actions/download-artifact@v4
+        with:
+          name: deck-pdfs
+          run-id: ${{ inputs.ids || '41069401462' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/decks
+      - name: Vision check over the judged points (free vision route only)
+        timeout-minutes: 50   # a step that overruns ends here, so the upload step below still runs
+        env:
+          MAX_CALLS: ${{ inputs.backup }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          set -o pipefail   # the script's own exit (no PDFs, no vision key) must fail the step, not tee's (review of #331)
+          mkdir -p "$RUNNER_TEMP/vbench"
+          ls "$RUNNER_TEMP/decks" | wc -l
+          ARGS=()
+          if [ -n "$MAX_CALLS" ]; then ARGS+=(--max-calls "$MAX_CALLS"); fi
+          "$RUNNER_TEMP/venv/bin/python" scripts/bench_call_vision.py --pdf-dir "$RUNNER_TEMP/decks" --fetch-missing --out "$RUNNER_TEMP/vbench/report.json" "${ARGS[@]}" | tee "$RUNNER_TEMP/vbench/summary.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: call-vision-bench
+          path: ${{ runner.temp }}/vbench/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs, api-reader-hardset, deck-pdfs]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs, api-reader-hardset, deck-pdfs, call-vision-bench]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:

@@ -16,11 +16,13 @@ from dataclasses import dataclass
 
 from . import gate
 from .grounding import unit_before
+from .settings import card_figure_matches_file
 
 # the filing's EBITDA may be this far from ours (printed / ours) before it is taken for a unit slip or another
 # measure altogether: a company's own EBITDA with other income in it is within a few per cent of ours, and a "Adjusted
 # EBITDA" within a third; 10x and 100x slips and a segment's figure are far outside
 BAND = (0.4, 2.5)
+FILE_TOLERANCE = 0.03   # CARD_FIGURE_MATCHES_FILE: a printed figure this close to the exchange file's is the file's
 
 _AMOUNT = r"(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d+)?)\s*(crores?|crs?|million|mn|lakhs?|lacs?)(?![a-z])"
 _NAME = (r"((?:adjusted\s+|operating\s+|consolidated\s+|reported\s+|underlying\s+|normali[sz]ed\s+|core\s+)*"
@@ -164,6 +166,17 @@ _YEAR_WORDS = re.compile(r"year[- ]ago|\byoy\b|y-o-y|y/y|corresponding|(?:previo
 _SEQUENTIAL = re.compile(r"previous\s+quarter|preceding\s+quarter|sequential|\bqoq\b|q-o-q|last\s+quarter", re.I)
 
 
+def _row_base_of_change(cells: list[str]) -> bool:
+    """Whether the row's first figure is the BASE of the change the row itself prints: a percentage equal to the growth from the
+    first figure to a later one ("679 26% 971 28% 43%": 971 / 679 = +43%), and none equal to the first figure's own change on a
+    later one (what a quarter-first row prints). Such a first figure is an earlier period (CARD_FIGURE_MATCHES_FILE)."""
+    pcts = [_num(c) for c in cells if c.strip().endswith("%")]
+    figures = [_num(c) for c in cells if not c.strip().endswith("%")]
+    if len(figures) < 2 or figures[0] <= 0 or _prior_from_row(cells, figures[0]) is not None:
+        return False
+    return any(n > 0 and abs((n / figures[0] - 1) * 100 - pct) <= 0.15 and abs(pct) >= 1 for pct in pcts for n in figures[1:])
+
+
 def _year_ago(words: str) -> bool:
     return bool(_YEAR_WORDS.search(words)) and not _SEQUENTIAL.search(words)
 
@@ -201,6 +214,8 @@ def printed_ebitda(text: str | None, period: str | None = None, ours: float | No
         # the first cell is the quarter only when the row is a plain list of figures; a bare "EBITDA 12" is no row
         if len(figures) < 2 and not any(c.endswith("%") for c in cells):
             continue
+        if card_figure_matches_file() and _row_base_of_change(cells):
+            continue   # the row's own change runs from this figure to a later one: it is an earlier period's, not the quarter's
         prev = _prior_from_row(cells, current)
         candidates.append(PrintedEbitda(_name(m.group(1)), round(current, 2), prev[0] if prev else None, line.strip(),
                                         prev[1] if prev else None, basis_at(text, offsets[i], offsets[i] + len(line))))
@@ -229,6 +244,8 @@ def printed_ebitda(text: str | None, period: str | None = None, ours: float | No
     usable = [c for c in candidates
               if not (ours is not None and ours > 0 and not BAND[0] <= c.value_cr / ours <= BAND[1])
               and c.value_cr != 0 and gate.quote_found(c.quote, text)]
+    if card_figure_matches_file() and ours is not None and ours > 0:
+        usable.sort(key=lambda c: abs(c.value_cr / ours - 1) > FILE_TOLERANCE)   # stable: the figure that is the file's, to 3%, first
     if basis:
         # the card's basis: a figure on it first; a figure with no basis told only when the release prints one value
         # (the group's and the company's own EBITDA differ, so two values with no label say nothing); never the other basis

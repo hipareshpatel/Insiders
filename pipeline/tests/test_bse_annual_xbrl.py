@@ -98,3 +98,16 @@ def test_a_run_stopped_by_the_file_cap_finishes_the_year_next_time():
 def test_a_refusal_stops_the_run():
     with pytest.raises(Blocked):
         ba.run(Sink(), [("500279", "ONIDA")], Client(refuse=True), today=TODAY)
+
+
+def test_a_december_company_s_fy24_is_wanted_by_its_label():
+    """SCHAEFFLER (505790, 1 Nov 2026): BSE lists its year ended 31 Dec 2023, labelled FY24-12, which the date cut (31 Mar 2024) left out;
+    the cut is the year's label, so it is FY24 like a March company's. A December 2022 year (FY23-12) is still too old."""
+    files = [{"name": "AR_Dec23.xml", "year_end": "2023-12-31", "xbrl_date": "2024-05-10"},
+             {"name": "AR_Dec22.xml", "year_end": "2022-12-31", "xbrl_date": "2023-05-10"},
+             {"name": "AR_Jun23.xml", "year_end": "2023-06-30", "xbrl_date": "2023-10-10"}]
+    assert [f["name"] for f in ba.wanted(files, set(), "505790")] == ["AR_Dec23.xml", "AR_Jun23.xml"]
+    assert [f["fy"] for f in ba.wanted(files, set(), "505790")] == ["FY24-12", "FY24-06"]
+    # a March list is cut as before: FY24 (31 Mar 2024) in, FY23 out
+    march = [{"name": "A.xml", "year_end": "2024-03-31", "xbrl_date": ""}, {"name": "B.xml", "year_end": "2023-03-31", "xbrl_date": ""}]
+    assert [f["name"] for f in ba.wanted(march, set(), "500279")] == ["A.xml"]

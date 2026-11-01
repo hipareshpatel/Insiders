@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import re
 import time
 from datetime import date
 
@@ -68,6 +69,12 @@ def _fy(year_end: str) -> str | None:
         return None
 
 
+def _fy_number(fy: str) -> int:
+    """"FY24" and "FY24-12" -> 24: the number of the year a label names, whatever month it ends in."""
+    m = re.fullmatch(r"FY(\d{2})(?:-\d{2})?", fy or "")
+    return int(m[1]) if m else -1
+
+
 def wanted(files: list[dict], stored: set[str], scrip: str) -> list[dict]:
     """The files, from FY24 on, of a year no annual document is stored for (either basis), judged once for the company's files
     together, so a year's standalone and consolidated files both come in the run that fills it."""
@@ -76,8 +83,8 @@ def wanted(files: list[dict], stored: set[str], scrip: str) -> list[dict]:
     out = []
     for f in files:
         fy = _fy(f["year_end"])
-        if not fy or f["year_end"] < FIRST_YEAR_END.isoformat():
-            continue
+        if not fy or _fy_number(fy) < _fy_number(xf.fy_of(FIRST_YEAR_END)):
+            continue   # by the year's label, not its end date: a December company's FY24 ends 31 Dec 2023 (SCHAEFFLER, 1 Nov 2026)
         if fy in begun:
             if file_key(scrip, f["name"]) not in stored:
                 out.append(dict(f, fy=fy))

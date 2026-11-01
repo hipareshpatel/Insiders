@@ -70,3 +70,17 @@ def test_off_by_default_nothing_changes(monkeypatch):
     monkeypatch.setenv("BSE_INTEL_SWITCHES", "/no/such/file.toml")
     card = copy.deepcopy(TI)
     assert R.profit_label_card_json(card) == [] and card == TI
+
+
+def test_another_profit_line_in_the_headline_is_not_pat(monkeypatch):
+    """Lead's review of #323: a bare "profit" bound "operating profit ₹412 Cr", "profit before tax" and segment profit."""
+    on(monkeypatch)
+    for headline in ("Acme Q2FY27 operating profit rises to ₹412 Cr", "Acme Q2FY27 profit before tax at ₹412 Cr",
+                     "Acme Q2FY27 gross profit ₹412 Cr", "Acme Q2FY27 segment profit of ₹412 Cr",
+                     "Acme Q2FY27 profit from operations ₹412 Cr"):
+        card = copy.deepcopy(TI)
+        card["headline"], card["key_numbers"] = headline, []
+        assert R.profit_label_card_json(card) == [], headline
+    card = copy.deepcopy(TI)
+    card["headline"], card["key_numbers"] = "Acme Q2FY27 profit jumps to ₹68 Cr", []
+    assert len(R.profit_label_card_json(card)) == 1   # a bare profit that is the headline's PAT is still compared

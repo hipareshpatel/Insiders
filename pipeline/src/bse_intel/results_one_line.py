@@ -333,7 +333,10 @@ def apply_card_json(card_json: dict) -> list[str]:
 # PAT before exceptional items and acquisition amortisation (its footnote), and the card showed it bare as "PAT" above its own
 # results table's reported ₹22.27 Cr (-57.7% YoY). A profit figure in the headline, takeaway or key numbers that is not the
 # table's reported profit is labelled with the table's figure, in the company's own words for its basis when its quote has them.
-_PROFIT_WORD = re.compile(r"\b(PAT|net profit|profit after tax|profit|net income)\b", re.I)
+# a bare "profit" is PAT only when no other profit is meant: "operating profit ₹412 Cr", "profit before tax", "gross / segment
+# profit" are other lines (lead's review of #323)
+_PROFIT_WORD = re.compile(r"\b(PAT|net profit|profit after tax|net income|(?<!operating )(?<!gross )(?<!segment )(?<!segmental )"
+                          r"(?<!pre-tax )(?<!pretax )(?<!pre tax )(?<!trading )(?<!EBIT )profit(?!\s+before)(?!\s+from))\b", re.I)
 _KEY_PROFIT = re.compile(r"(?:q[1-4]\s*(?:fy\d{2})?\s*)?(?:consolidated\s+|standalone\s+)?(?:PAT|net profit|profit after tax|profit|"
                          r"net income)(?:\s+to\s+shareholders)?", re.I)
 _EARLIER = re.compile(r"\b(?:vs\.?|versus|against|compared\s+(?:to|with)|over)\s*$", re.I)

@@ -2679,7 +2679,6 @@ jobs:
       - name: Vision check over the judged points (free vision route only)
         timeout-minutes: 50   # a step that overruns ends here, so the upload step below still runs
         env:
-          CALL_MEMORY_VISION_CHECK: "1"
           MAX_CALLS: ${{ inputs.backup }}
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}

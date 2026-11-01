@@ -60,6 +60,7 @@ def test_off_nothing_changes(monkeypatch):
 
 
 def test_ltts_total_profit_is_labelled_with_the_discontinued_gain_and_the_eps_change_is_out(monkeypatch):
+    monkeypatch.setenv("DISCONTINUED_NEEDS_FIGURE", "0")   # the gap rule; with the switch on the file's own figure (tests below)
     monkeypatch.setenv("CARD_ONE_BASIS", "1")
     out = _ltts()
     notes = one_basis.apply(out, LTTS_TAGGED, LTTS_ROWS)
@@ -83,6 +84,7 @@ def test_a_line_that_already_names_its_basis_is_not_labelled_twice(monkeypatch):
 
 
 def test_aurum_qoq_change_names_the_discontinued_gain_in_its_base(monkeypatch):
+    monkeypatch.setenv("DISCONTINUED_NEEDS_FIGURE", "0")   # the gap rule; with the switch on the file's own figure (tests below)
     """Aurum PropTech Q2FY27: profit 4.29 (continuing 4.07) against Q1FY27's 45.18, of which 44.51 was a sale gain: "-90.5% QoQ"."""
     monkeypatch.setenv("CARD_ONE_BASIS", "1")
     rows = _rows(pat={"Q2FY27": 4.29, "Q1FY27": 45.18}, pat_owners={"Q2FY27": 4.51, "Q1FY27": 45.57},
@@ -151,6 +153,7 @@ def test_a_table_on_the_cards_own_basis_stays(monkeypatch):
 
 
 def test_the_results_pat_line_names_the_discontinued_part_of_a_comparison_period(monkeypatch):
+    monkeypatch.setenv("DISCONTINUED_NEEDS_FIGURE", "0")   # the gap rule; with the switch on the file's own figure (tests below)
     monkeypatch.setenv("CARD_ONE_BASIS", "1")
     dossier = {"financial_metrics": _rows(pat={"Q2FY27": 4.29, "Q1FY27": 45.18}, pat_continuing={"Q2FY27": 4.07, "Q1FY27": 0.67})}
     card = {"basis": "CONSOLIDATED", "event_type": "RESULTS", "key_numbers": [],

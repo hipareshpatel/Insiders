@@ -87,3 +87,8 @@ UNIT_SLIP_XBRL_GUARD = true      # grounding.unit_slips: a card figure equal to 
 # route, 36 calls): WRONG kept 27 of 293 (9.2%) -> 12 of 264 (4.5%), RIGHT dropped 14 of 266 (5.3%). The 2% bar is not met; the
 # owner chose it for halving the errors.
 CALL_MEMORY_VISION_CHECK = true  # call_memory.vision_confirm: a deck point assembled across a slide is kept only on a vision yes
+# Turned on 1 Nov 2026 ~18:00 IST (lead, measured): release-check discontinued_figure (run 41291966087) over 10,036 stored cards: 92 cards
+# name a discontinued part that changes; a blind read of 10 against their PDFs found all 10 an associates' or JV share wrongly called
+# discontinued (COALINDIA 534.33 Cr, GAIL 271.68, AMBUJACEM, JSWCEMENT, IEX ...), and 78 of the 92 PDFs never mention a discontinued
+# operation; real ones (JUBLFOOD, TITAGARH, SIEMENS, UNITDSPR) keep the file's own figure. Residual: ABREL Q4FY26 (no figure in memory).
+DISCONTINUED_NEEDS_FIGURE = true # one_basis.discontinued_part: the label needs the period's own discontinued figure

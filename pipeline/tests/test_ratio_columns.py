@@ -48,3 +48,30 @@ def test_off_by_default(monkeypatch):
     monkeypatch.setenv("BSE_INTEL_SWITCHES", "/no/such/file.toml")
     card = copy.deepcopy(CARD)
     assert R.apply_card_json(card) == [] and card == CARD
+
+
+def test_an_unreadable_amount_row_keeps_the_line(monkeypatch):
+    """Lead's review of #341: one change cell cannot place the columns; the right line must stay."""
+    on(monkeypatch)
+    card = {"headline": "Acme Q2FY27 results",
+            "what_happened": [{"text": "EBITDA ₹40.8 Cr.", "quote": "EBIDTA 408 411 -0.8% 369 819 723"}],
+            "why_it_matters": [{"text": "EBITDA margin 35.5% vs 36.4% in Q1FY27.", "quote": "EBIDTA (%) 35.5% 36.4% 35.3% 36.0% 35.5%"}]}
+    assert R.apply_card_json(card) == [] and len(card["why_it_matters"]) == 1
+
+
+def test_the_comparison_word_nearest_the_figure_decides(monkeypatch):
+    """Lead's review of #341: "35.5% vs 35.3% YoY; QoQ margin eased" is a year-ago comparison, and right."""
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    card["why_it_matters"] = [{"text": "EBITDA margin 35.5% vs 35.3% YoY; QoQ margin eased.", "quote": RATIO}]
+    card["notable_changes"] = []
+    assert R.apply_card_json(card) == [] and len(card["why_it_matters"]) == 1
+
+
+def test_bps_and_nm_rows_are_left_alone(monkeypatch):
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    card["why_it_matters"] = [{"text": "Margin up 20 bps vs Q1FY27.", "quote": "EBIDTA margin 35.5% 36.4% (90)bps 35.3% 20bps"},
+                              {"text": "Margin vs Q1FY27 not meaningful.", "quote": "EBIDTA (%) 35.5% NM 35.3%"}]
+    card["notable_changes"] = []
+    assert R.apply_card_json(card) == [] and len(card["why_it_matters"]) == 2

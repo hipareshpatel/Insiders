@@ -11,8 +11,8 @@ reads its header: a value cell followed by a change cell is a comparison column 
 A card line comparing the ratio with the previous quarter or the year-ago quarter is checked against that column. When its figure
 is the ratio of the other comparison column (the shift), a structured "previous" value is corrected to the right cell, and a line
 of words is dropped: its claim (higher, expansion) was drawn from the wrong figure, so the figure alone cannot be put right. When
-the amount row's columns cannot be read, a comparison resting on a shifted-looking ratio row is dropped. Every change is
-returned as a note."""
+the amount row's columns cannot be placed by its own arithmetic, or the line's comparison is unclear, the line stays. Every change
+is returned as a note."""
 
 from __future__ import annotations
 
@@ -95,16 +95,28 @@ def _amount_row_for(ratio_row: str, rows: list[str]) -> str | None:
     return None
 
 
-def _claim(text: str, card_period: str | None) -> str | None:
-    """'prev' or 'yoy': which comparison a line of words or a structured field makes."""
+def _claim(text: str, card_period: str | None, at: int | None = None) -> str | None:
+    """'prev' or 'yoy': which comparison a line of words or a structured field makes, by the comparison word or period label
+    nearest the stated figure at ``at``; None when there is none, or both lie equally near (lead's review of #341: "35.5% vs 35.3%
+    YoY; QoQ margin eased" is a year-ago comparison)."""
+    text = text or ""
     prev_label = prior_quarter_period(card_period or "") if card_period else None
     year_label = prior_year_period(card_period or "") if card_period else None
-    named = {re.sub(r"[\s']", "", m.group(0)).upper() for m in _PERIOD.finditer(text or "")}
-    if prev_label and prev_label in named or _PREV_WORDS.search(text or ""):
-        return "prev"
-    if year_label and year_label in named or _YOY_WORDS.search(text or ""):
-        return "yoy"
-    return None
+    marks: list[tuple[int, str]] = []
+    for m in _PERIOD.finditer(text):
+        label = re.sub(r"[\s']", "", m.group(0)).upper()
+        kind = "prev" if label == prev_label else "yoy" if label == year_label else None
+        if kind:
+            marks.append((m.start(), kind))
+    marks += [(m.start(), "prev") for m in _PREV_WORDS.finditer(text)] + [(m.start(), "yoy") for m in _YOY_WORDS.finditer(text)]
+    kinds = {k for _, k in marks}
+    if len(kinds) <= 1:
+        return next(iter(kinds), None)
+    if at is None:
+        return None
+    ranked = sorted((abs(pos - at), kind) for pos, kind in marks)
+    nearest = [kind for dist, kind in ranked if dist == ranked[0][0]]
+    return nearest[0] if len(set(nearest)) == 1 else None
 
 
 def _card_period(card_json: dict) -> str | None:
@@ -147,15 +159,13 @@ def apply_card_json(card_json: dict) -> list[str]:
             ratios = [_num(c) for c in ratio_cells]
             columns = comparison_columns(amount_row)
             words = " ".join(str(item.get(k) or "") for k in ("text", "previous", "why"))
-            claim = _claim(words, period)
-            stated = [v for v in _pct_values(str(item.get("previous") or "") or str(item.get("text") or "")) if v != ratios[0]]
-            if claim is None or not stated:
+            figure = next((m for m in re.finditer(r"(-?\d+(?:\.\d+)?)\s?%", words) if float(m.group(1)) != ratios[0]), None)
+            claim = _claim(words, period, figure.start() if figure else None)
+            stated = [float(figure.group(1))] if figure else []
+            if claim is None or not stated or columns is None:
+                # no clear comparison, or the amount row's columns are not placed by its arithmetic: the line stays (a true
+                # line dropped costs more than a shifted one kept; lead's review of #341)
                 kept.append(item)
-                continue
-            if columns is None:
-                # the amount row's columns cannot be read: a comparison resting on a ratio row that lacks its change cells
-                notes.append(f"{name}: dropped '{(item.get('text') or item.get('previous') or '')[:80]}', its ratio row cannot be "
-                             f"aligned with '{amount_row[:40]}' (CARD_RATIO_COLUMNS)")
                 continue
             right = ratios[columns[0] if claim == "prev" else columns[1]]
             other = ratios[columns[1] if claim == "prev" else columns[0]]

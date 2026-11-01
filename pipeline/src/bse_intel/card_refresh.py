@@ -30,7 +30,7 @@ from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, 
 from .models import Card, Filing, Pass2Output
 from .prices import point_in_time
 from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
-from .settings import card_footer_plausible, card_one_basis, card_results_one_line
+from .settings import card_adjusted_profit_label, card_footer_plausible, card_one_basis, card_results_one_line
 
 log = logging.getLogger(__name__)
 
@@ -114,8 +114,14 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
             new["results"] = dict(new["results"])
         if notes := results_one_line.apply_card_json(new):
             new["grounding"] = {**(new.get("grounding") or {}), "one_line": notes}
+    if card_adjusted_profit_label() and new.get("results"):
+        # a profit figure that is not the table's reported profit is labelled, as at card time (off: nothing)
+        new = {**new, "key_numbers": [dict(k) for k in new.get("key_numbers") or []]}
+        if notes := results_one_line.profit_label_card_json(new):
+            new["grounding"] = {**(new.get("grounding") or {}), "profit_label": notes}
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
-    changed += [k for k in ("headline", "key_numbers", "grounding") if (card_results_one_line() or card_one_basis()) and k not in changed
+    changed += [k for k in ("headline", "takeaway", "key_numbers", "grounding")
+                if (card_results_one_line() or card_one_basis() or card_adjusted_profit_label()) and k not in changed
                 and json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
     hidden = footer_plausible.card_notes(new) if card_footer_plausible() else []
     if (new.get("grounding") or {}).get("footer_hidden", []) != hidden:   # F182: for the owner's Issues page; a stale note goes

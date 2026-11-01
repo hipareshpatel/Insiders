@@ -72,6 +72,9 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
   other_issuer       CARD_OTHER_ISSUER (1 Nov 2026, HEGAM nse-106837190): `pipeline.other_issuer_results` on each RESULTS card's
                      stored text with the company's former names from memory; a card whose statement is another company's
                      is read as OTHER and marked unverified. Complete (the type and the hold are code's, not the model's).
+  adjusted_profit    CARD_ADJUSTED_PROFIT_LABEL (1 Nov 2026, TI nse-106837308): `results_one_line.profit_label_card_json` on a copy
+                     of each stored results card with a table, off and on; a profit figure in the headline, takeaway or key
+                     numbers that is none of the table's reported profit rows gets the table's PAT beside it. Complete.
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
                      correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
                      bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
@@ -127,7 +130,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK",
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
-                "CARD_OTHER_ISSUER")
+                "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -135,7 +138,8 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"),
           ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"),
           ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"), ("discontinued_figure", "DISCONTINUED_NEEDS_FIGURE"),
-          ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"))
+          ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"),
+          ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -264,6 +268,21 @@ def check_other_issuer(card: dict, row: dict, text: str, dossier: dict | None) -
     on = ([f"TYPE: OTHER ({other}'s results, not {filing.company_name}'s)", f"HEADLINE: {card.get('headline') or ''}",
            f"HELD: the results in this filing are {other}'s"] if other else list(off))
     return _record(row, card, off, on)
+
+
+def check_adjusted_profit(card: dict, row: dict) -> dict:
+    """adjusted_profit: `results_one_line.profit_label_card_json` on a copy of a stored results card with CARD_ADJUSTED_PROFIT_LABEL
+    off and on; the headline, takeaway and key-number lines it labels (TI nse-106837308)."""
+    from bse_intel import results_one_line
+
+    def lines(c: dict) -> list[str]:
+        return ([f"HEADLINE {c.get('headline') or ''}", f"TAKEAWAY {c.get('takeaway') or ''}"]
+                + [f"KEY {k.get('label')}: {k.get('value')}" for k in c.get("key_numbers") or [] if isinstance(k, dict)])
+
+    on_card = copy.deepcopy(card)
+    with switches_on("CARD_ADJUSTED_PROFIT_LABEL"):
+        results_one_line.profit_label_card_json(on_card)
+    return _record(row, card, lines(card), lines(on_card))
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
@@ -1037,6 +1056,13 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_other_issuer(card, row, text, memory() or None))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "adjusted_profit":
+                    if not results or not isinstance(card.get("results"), dict):
+                        skipped[name]["not a results card with a table"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_adjusted_profit(card, row))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "unit_slip_guard":
                     url = (card.get("xbrl") or {}).get("url")

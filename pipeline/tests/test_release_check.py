@@ -88,7 +88,8 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
     total = json.loads((out / "release-check.json").read_text(encoding="utf-8"))
     assert set(total) == {"ebitda_v2", "same_definition", "consolidated_only", "two_parts", "quote_exact",
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
-                          "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer"}
+                          "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
+                          "adjusted_profit"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -129,3 +130,17 @@ def test_other_issuer_check_marks_a_results_card_on_another_companys_statement()
     own = rc.check_other_issuer(card, row, "HEG ADVANCED MATERIALS LIMITED\nStatement of Unaudited Financial Results for the "
                                            "quarter ended 30th September, 2026", memory)
     assert not rc.changed_by_diff(own["diff"])
+
+
+def test_adjusted_profit_check_labels_a_profit_that_is_not_the_tables():
+    """CARD_ADJUSTED_PROFIT_LABEL (TI nse-106837308): the release's adjusted PAT ₹68 Cr beside the table's reported ₹22.27 Cr."""
+    rc = _script()
+    row = {"news_id": "nse-106837308", "symbol": "TI", "scrip_code": "507205", "pdf_url": "u"}
+    card = {"event_type": "RESULTS", "headline": "Tilaknagar Q2FY27 PAT up 30% to ₹68 Cr", "takeaway": "",
+            "key_numbers": [{"label": "PAT", "value": "₹68 Cr", "quote": "PAT1 increased by 30% to Rs. 68 crore"}],
+            "results": {"period": "Q2FY27", "pat": {"value": 22.27}, "lines": [{"key": "pat", "label": "PAT"}]}}
+    note = rc.check_adjusted_profit(card, row)
+    assert rc.changed_by_diff(note["diff"]) and "KEY PAT (company-reported; reported PAT ₹22.27 Cr): ₹68 Cr" in note["on_lines"]
+    assert card["key_numbers"][0]["label"] == "PAT"   # the stored card is not changed
+    same = dict(card, headline="Tilaknagar Q2FY27 PAT ₹22.27 Cr", key_numbers=[{"label": "PAT", "value": "₹22.27 Cr"}])
+    assert not rc.changed_by_diff(rc.check_adjusted_profit(same, row)["diff"])

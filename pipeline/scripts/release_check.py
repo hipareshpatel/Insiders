@@ -492,7 +492,34 @@ def check_comparative_memory(card: dict, row: dict, dossier: dict | None) -> dic
     return _record(row, card, off, off + [f"HELD: {w}" for w in wrong])
 
 
-def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None) -> dict:
+def unit_fix_trace(card: dict, text: str | None) -> list[str]:
+    """Which reading of `grounding.unit_slips` makes each recorded correction, and the filing's words around the source figure it
+    matched: the card's texts with each correction put back as written, read again against the stored filing text (memory and
+    the scale block are not passed, so a correction they would stop may show here; read only, for the root cause)."""
+    from bse_intel import grounding
+
+    fixes = (card.get("grounding") or {}).get("unit_fixes") or {}
+    if not text or not fixes:
+        return []
+    texts = []
+    for t in [card.get("headline"), card.get("takeaway"), card.get("timeline_entry")] \
+            + [(i.get("text") if isinstance(i, dict) else i) for name in ("what_happened", "why_it_matters") for i in card.get(name) or []] \
+            + [f"{k.get('value')} {k.get('change') or ''}" for k in card.get("key_numbers") or [] if isinstance(k, dict)]:
+        if isinstance(t, str):
+            for raw, right in fixes.items():
+                t = re.sub(rf"(?<![\d.,]){re.escape(str(right))}(?=\s*(?:cr\b|crores?\b))", str(raw), t, flags=re.I)
+            texts.append(t)
+    trace: list[dict] = []
+    grounding.unit_slips(texts, text, trace=trace)
+    out = []
+    for raw in fixes:
+        hit = next((t for t in trace if t["raw"] == raw), None)
+        out.append(f"TRACE {raw} Cr: " + (f"reading {hit['reading']}" + (f" (declared unit {hit['unit']} per crore)" if hit.get("unit") else "")
+                                         + f" -> {hit['corrected']:g}; source: \"{hit['source']}\"" if hit else "not re-made from the stored text"))
+    return out
+
+
+def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None, text: str | None = None) -> dict:
     """unit_fix_scale: each unit correction the stored card records (`grounding.unit_fixes`, {as written: corrected}) that
     UNIT_FIX_SCALE_GUARD would refuse: the figure as written is at the company's own scale (within 3x of one of its latest
     quarters' figures in memory, either basis) and the correction is not (CDSL nse-106838164: 272 made 2.72)."""
@@ -506,7 +533,7 @@ def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None) -> dict:
         off.append(f"UNIT FIX {raw} Cr -> {right} Cr")
         refused = bool(scale) and P._at_scale(value, scale) and not P._at_scale(fixed, scale)
         on.append(f"UNIT FIX {raw} Cr kept (the company's scale)" if refused else f"UNIT FIX {raw} Cr -> {right} Cr")
-    return _record(row, card, off, on)
+    return _record(row, card, off, on, extra=unit_fix_trace(card, text))
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
@@ -1380,7 +1407,7 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         skipped[name]["no unit correction recorded"] += 1
                     else:
                         seen[name] += 1
-                        keep(name, check_unit_fix_scale(card, row, memory() or None))
+                        keep(name, check_unit_fix_scale(card, row, memory() or None, text))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "press_release_fold":
                     if not results:

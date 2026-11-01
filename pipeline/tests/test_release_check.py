@@ -264,3 +264,23 @@ def test_verdict_figure_lists_each_verdict_turned_to_not_judged():
     turned = rc.verdicts_turned([{"news_id": "n1", "symbol": "CANBK", "pdf_url": "u", "off_lines": off, "on_lines": on}])
     assert turned == [{"news_id": "n1", "symbol": "CANBK", "pdf_url": "u", "verdict": off[0],
                        "reason": "the filing's figure 1.33 meets the target (1.50%), so missed cannot stand."}]
+
+
+def test_unit_fix_trace_names_the_reading_and_its_source():
+    """Step A of the units fix (lead, 1 Nov 2026): which reading of unit_slips made a recorded correction, read only."""
+    rc = _script()
+    card = {"headline": "Acme Q2FY27 revenue ₹3.5 Cr", "takeaway": "", "key_numbers": [],
+            "grounding": {"unit_fixes": {"35": "3.5"}}}
+    text = "Statement of results (Rs. in lakh)\nRevenue from operations 350.00 300.00\nThe company signed an order of 35 million."
+    lines = rc.unit_fix_trace(card, text)
+    assert len(lines) == 1 and lines[0].startswith("TRACE 35 Cr: reading ") and "source:" in lines[0]
+    assert rc.unit_fix_trace(card, None) == [] and rc.unit_fix_trace({"grounding": {}}, text) == []
+
+
+def test_unit_fix_trace_reading_two_finds_the_unrounded_rupee_amount():
+    """Lead's review of #355: reading 2's source is the whole-rupee amount itself, not the rounded correction times 1e7."""
+    from bse_intel import grounding
+    trace: list = []
+    filing = "The Board approved a payment of Rs 11,10,59,061 to the vendor."
+    slips = grounding.unit_slips(["The company paid ₹111.06 Cr to the vendor."], filing, trace=trace)
+    assert slips and trace and trace[0]["reading"] == 2 and "11,10,59,061" in trace[0]["source"]

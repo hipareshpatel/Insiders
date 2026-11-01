@@ -91,7 +91,8 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
                           "adjusted_profit", "words_match_figures",
                           "filer_checks", "event_repeat",
-                          "press_release_fold"}
+                          "press_release_fold", "unit_fix_scale",
+                          "comparative_memory"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -211,3 +212,16 @@ def test_press_release_fold_pairs_a_release_with_its_quarters_first_card():
     pairs = rc.fold_pairs([first, later], [later])
     assert len(pairs) == 1 and pairs[0]["into"] == "nse-1"
     assert rc.fold_pairs([later], [later]) == []      # no earlier card: it stays the quarter's card
+
+
+def test_unit_fix_scale_keeps_a_figure_at_the_companys_own_scale():
+    """UNIT_FIX_SCALE_GUARD (CDSL nse-106838164): the deck's ₹272 Cr standalone revenue was "corrected" to ₹2.72 Cr."""
+    rc = _script()
+    row = {"news_id": "nse-106838164", "symbol": "CDSL", "scrip_code": "1", "pdf_url": "u"}
+    card = {"event_type": "CONCALL_PRESENTATION", "grounding": {"unit_fixes": {"272": "2.72", "45,582": "455.82"}}}
+    memory = {"financial_metrics": [{"metric": "revenue", "period": "Q2FY27", "value": 394.48},
+                                    {"metric": "pat", "period": "Q2FY27", "value": 173.85}]}
+    note = rc.check_unit_fix_scale(card, row, memory)
+    assert "UNIT FIX 272 Cr kept (the company's scale)" in note["on_lines"]
+    assert "UNIT FIX 45,582 Cr -> 455.82 Cr" in note["on_lines"]   # a correction onto its scale stays
+    assert not rc.changed_by_diff(rc.check_unit_fix_scale(card, row, None)["diff"])   # no memory: nothing refused

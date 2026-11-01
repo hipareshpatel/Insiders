@@ -371,6 +371,21 @@ def d20_dropped_file_period() -> bool:
     return _switch("D20_DROPPED_FILE_PERIOD")
 
 
+def card_comparative_matches_memory() -> bool:
+    """CARD_COMPARATIVE_MATCHES_MEMORY (default off; 1 Nov 2026, MASKINVEST nse-106838206): a results card read from the PDF alone
+    whose figure for a named earlier quarter contradicts memory's for that metric and quarter (comparative_memory) is held:
+    its columns were read out of order. On only after the on/off check over stored cards (release_check.py comparative_memory)."""
+    return _switch("CARD_COMPARATIVE_MATCHES_MEMORY")
+
+
+def unit_fix_scale_guard() -> bool:
+    """UNIT_FIX_SCALE_GUARD (default off; 1 Nov 2026, CDSL nse-106838164): the unit fixer leaves alone a card amount at the
+    company's own scale (within 3x of one of its latest quarters' revenue, EBITDA, PBT or PAT in memory, either basis) when its
+    "correction" would not be ("₹272 Cr" standalone revenue made ₹2.72 Cr beside a ₹394 Cr quarter). It lets fewer corrections
+    through: on only after the on/off check over stored cards (release_check.py unit_fix_scale) and a blind sample."""
+    return _switch("UNIT_FIX_SCALE_GUARD")
+
+
 def unit_slip_xbrl_guard() -> bool:
     """UNIT_SLIP_XBRL_GUARD (default off; owner, 1 Nov 2026: "a figure in the exchange's XBRL file must never be overruled by the
     PDF"): the unit fixer (grounding.unit_slips) leaves alone a card amount equal to any money fact of the filing's XBRL file

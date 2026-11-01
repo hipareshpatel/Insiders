@@ -33,12 +33,39 @@ def _metric_before(text: str, at: int) -> str | None:
     return best[0] if best else None
 
 
-def contradictions(texts: list[str], dossier: dict | None) -> list[str]:
-    """Each "metric period: card X vs memory Y" the card's words state against memory, when the switch is on."""
+_BASIS_WORD = re.compile(r"\b(standalone|consolidated)\b", re.I)
+
+
+def _memory_by_basis(dossier: dict | None) -> dict[tuple[str, str], dict[str | None, set[float]]]:
+    """{(metric, period): {basis or None: values}} from memory's figures."""
+    from .watch_code import _entry_basis
+
+    out: dict[tuple[str, str], dict[str | None, set[float]]] = {}
+    for m in (dossier or {}).get("financial_metrics") or []:
+        if isinstance(m, dict) and isinstance(m.get("value"), (int, float)) and m.get("period") and m.get("metric"):
+            b = _entry_basis(m)
+            out.setdefault((m["metric"], m["period"]), {}).setdefault(b.upper() if b else None, set()).add(float(m["value"]))
+    return out
+
+
+def _held(by_basis: dict[str | None, set[float]] | None, basis: str | None) -> float | None:
+    """Memory's one figure on ``basis`` (blind review of release check 41318733817: a standalone card figure was set against
+    consolidated memory, 1,274.46 vs 1,240.62); with the basis unknown, only a figure memory holds on one basis alone."""
+    if not by_basis:
+        return None
+    if basis:   # memory that labels no basis at all is read as before; a figure labelled another basis never is
+        values = by_basis.get(basis.upper()) or (by_basis.get(None, set()) if set(by_basis) == {None} else set())
+    else:
+        values = set().union(*by_basis.values()) if len(by_basis) == 1 else set()
+    return next(iter(values)) if len(values) == 1 else None
+
+
+def contradictions(texts: list[str], dossier: dict | None, basis: str | None = None) -> list[str]:
+    """Each "metric period: card X vs memory Y" the card's words state against memory, when the switch is on. Memory is read on
+    the basis the figure's clause names, else the card's ``basis``."""
     if not card_comparative_matches_memory():
         return []
-    memory = {(m["metric"], m["period"]): m["value"] for m in (dossier or {}).get("financial_metrics") or []
-              if isinstance(m, dict) and isinstance(m.get("value"), (int, float)) and m.get("period")}
+    memory = _memory_by_basis(dossier)
     if not memory:
         return []
     found = []
@@ -47,9 +74,12 @@ def contradictions(texts: list[str], dossier: dict | None) -> list[str]:
         for m in _AMOUNT_PERIOD.finditer(flat):
             metric = _metric_before(flat, m.start())
             period = canonical_period(re.sub(r"\s|'", "", m.group(2)).upper()) or m.group(2)
-            held = memory.get((metric, period)) if metric else None
+            clause = re.split(r";|\.\s", flat[:m.start()])[-1]
+            word = _BASIS_WORD.findall(clause)
+            on = word[-1].upper() if word else basis
+            held = _held(memory.get((metric, period)), on) if metric else None
             if held is None and metric == "pat":
-                held = memory.get(("pat_owners", period))
+                held = _held(memory.get(("pat_owners", period)), on)
             if held is None:
                 continue
             said = abs(float(m.group(1).replace(",", "")))

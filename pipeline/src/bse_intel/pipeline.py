@@ -4052,7 +4052,7 @@ class Pipeline:
             wrong = comparative_memory.contradictions(
                 [out.card.headline or "", out.card.takeaway or "", out.timeline_entry or ""]
                 + [f.text for f in out.card.what_happened] + [f"{k.label} {k.value} {k.change or ''}" for k in out.card.key_numbers],
-                dossier)
+                dossier, getattr(out.card, "basis", None))
             if wrong:
                 hide.append("Earlier quarters contradict memory, columns read out of order: " + "; ".join(wrong[:3])
                             + " (CARD_COMPARATIVE_MATCHES_MEMORY)")

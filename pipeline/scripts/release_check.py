@@ -487,7 +487,7 @@ def check_comparative_memory(card: dict, row: dict, dossier: dict | None) -> dic
              + [(i.get("text") if isinstance(i, dict) else i) or "" for i in card.get("what_happened") or []]
              + [f"{k.get('label')} {k.get('value')} {k.get('change') or ''}" for k in card.get("key_numbers") or [] if isinstance(k, dict)])
     with switches_on("CARD_COMPARATIVE_MATCHES_MEMORY"):
-        wrong = comparative_memory.contradictions(texts, dossier)
+        wrong = comparative_memory.contradictions(texts, dossier, card.get("basis"))
     off = [f"HEADLINE {card.get('headline') or ''}"]
     return _record(row, card, off, off + [f"HELD: {w}" for w in wrong])
 

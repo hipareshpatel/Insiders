@@ -332,6 +332,12 @@ def merge(dossier: dict, records: list[dict], cleared: list[tuple] = ()) -> int:
     return changed
 
 
+def _which(filing) -> str:
+    """A tried file in a reason: its filing date and subject (the 1 Nov 2026 dry run 41331722427 named 22 quarters "another
+    quarter's" with no way to tell which file was read, or what columns it proved)."""
+    return f"{str(getattr(filing, 'filed_at', '') or '')[:10]} \"{str(getattr(filing, 'subject', '') or getattr(filing, 'headline', '') or '')[:60]}\""
+
+
 def read_company(src, symbol: str, dossier: dict, quarters: int = 6, rejected: list | None = None,
                  screener: ScreenerStore | None = None) -> tuple[list[dict], list[tuple], list[str]]:
     """Read the results PDFs of a company's latest ``quarters`` quarters in memory and return (restated records, unchanged
@@ -352,10 +358,13 @@ def read_company(src, symbol: str, dossier: dict, quarters: int = 6, rejected: l
         for f in listed[:pr.MAX_CANDIDATES]:
             rows, why = src.rows(f.pdf_url)
             if not rows:         # a file with no results row (a notice, an auditor's letter) is not the results: try the next
-                misses.append(why or "no results row found")
+                misses.append(f"{why or 'no results row found'} [{_which(f)}]")
                 continue
             if not any(r.columns and pr.target_column(period) in r.columns for r in rows):
-                misses.append(f"no proven column for {period} (the file is another quarter's)")   # the next quarter's results are in the window too
+                # the next quarter's results are in the window too; the file and the columns it proves say which it was
+                seen = sorted({f"{kind} {end.isoformat()}" for r in rows if r.columns for kind, end in r.columns})
+                misses.append(f"no proven column for {period} (the file is another quarter's) [{_which(f)}; columns: "
+                              f"{', '.join(seen[:6]) or 'none proven'}]")
                 continue
             theirs = (lambda metric, p, _b=basis: screener.figure(symbol, _b, metric, p)) if screener is not None else None
             mine = find(dossier, rows, period, basis, f.news_id, f.pdf_url, rejected, theirs)

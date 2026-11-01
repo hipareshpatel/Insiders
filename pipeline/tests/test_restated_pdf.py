@@ -334,3 +334,19 @@ def test_a_rejected_reading_never_clears_an_older_restatement(monkeypatch):
 def test_comparatives_carry_the_rows_other_figures_for_the_joined_check():
     got = pr.figure_for(rows(), "Q3FY24", "revenue", "CONSOLIDATED")
     assert got["siblings"] and 791.74 in got["siblings"][0] and 629.79 not in got["siblings"][0]
+
+
+def test_a_quarter_not_read_names_the_file_tried_and_the_columns_it_proved():
+    """Dry run 41331722427 named 22 quarters "the file is another quarter's" with no way to tell which file was read: the reason
+    now carries the file's date, subject and the columns its header proved (read only; nothing else changes)."""
+    d = dossier()
+    d["financial_metrics"].append({**d["financial_metrics"][2], "period": "Q1FY25", "value": 800.0})
+    _, _, reasons = rp.read_company(_Src(rows()), "X", d, quarters=1)
+    assert len(reasons) == 1 and reasons[0].startswith("Q1FY25: no proven column for Q1FY25 (the file is another quarter's)")
+    assert '[2026-10-20 "Financial Results"; columns: ' in reasons[0] and "quarter 2024-03-31" in reasons[0]
+
+    class _Empty(_Src):
+        def rows(self, url):
+            return [], "no results row (revenue, profit or EPS with its figures) found"
+    _, _, reasons = rp.read_company(_Empty(rows()), "X", dossier(), quarters=1)
+    assert reasons == ['Q4FY24: no results row (revenue, profit or EPS with its figures) found [2026-10-20 "Financial Results"]']

@@ -90,7 +90,8 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
                           "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
                           "adjusted_profit", "words_match_figures",
-                          "filer_checks", "event_repeat"}
+                          "filer_checks", "event_repeat",
+                          "press_release_fold"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -192,3 +193,21 @@ def test_event_repeat_check_holds_a_second_card_on_one_order():
     note = rc.check_event_repeat(card, row, memory)
     assert rc.changed_by_diff(note["diff"]) and any(line.startswith("HELD: repeat of nse-106830824") for line in note["on_lines"])
     assert not rc.changed_by_diff(rc.check_event_repeat(card, row, {"timeline": []})["diff"])
+
+
+def test_press_release_fold_pairs_a_release_with_its_quarters_first_card():
+    """RESULTS_PRESS_RELEASE (TODO 135): a later same-quarter card whose file name says "PressRelease" (glued), with no exchange
+    file and no statement in its text, would be folded into the quarter's first card."""
+    rc = _script()
+    first = {"scrip": "1", "period": "Q2FY27", "news_id": "nse-1", "headline": "Acme Q2FY27 revenue ₹100 Cr",
+             "filed_at": "2026-10-28T15:00:00+05:30", "symbol": "ACME", "pdf_url": "u1"}
+    card = {"event_type": "RESULTS", "headline": "Acme Q2FY27: revenue up 12%"}
+    row = {"news_id": "nse-2", "pdf_url": "https://x/corporate/ACME_28102026_PressRelease_Q2.pdf"}
+    assert rc.release_candidate(card, row, "Acme reported revenue of Rs 100 crore, up 12%. " * 50)
+    assert rc.release_candidate(card, row, "Statement of unaudited financial results for the quarter ended") is None
+    assert rc.release_candidate(dict(card, xbrl={"url": "f.xml"}), row, None) is None       # its own file: a statement filing
+    assert rc.release_candidate(card, {"news_id": "nse-2", "pdf_url": "https://x/Outcome.pdf"}, "text") is None
+    later = dict(first, news_id="nse-2", filed_at="2026-10-28T16:00:00+05:30", why="x")
+    pairs = rc.fold_pairs([first, later], [later])
+    assert len(pairs) == 1 and pairs[0]["into"] == "nse-1"
+    assert rc.fold_pairs([later], [later]) == []      # no earlier card: it stays the quarter's card

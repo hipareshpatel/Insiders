@@ -80,6 +80,10 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      softens and the list items it drops. Complete.
   event_repeat       CARD_EVENT_REPEAT (S2, 1 Nov 2026): each ORDER_WIN or M_AND_A card against its company's memory timeline
                      (`event_repeats.match`); the cards it would hold as a repeat of an earlier entry, that entry named.
+  press_release_fold RESULTS_PRESS_RELEASE (TODO 135): each stored results card a fold would take (its headline or file name names a
+                     release, glued words too; no exchange file of its own; no results statement in its stored text), paired with
+                     the earliest results card of its company and quarter filed before it. No AI: the first card's re-run with the
+                     release text is not replayed; the pairs are for the owner's count and a blind look.
   filer_checks       XBRL_FILER_CHECKS (S3, TODO 111, F219): each results card's own exchange file (R2, 180 days) read twice by
                      `xbrl.parse`, off and on; the figures it changes or holds. Read only; over stored memory's source files.
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
@@ -139,7 +143,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
                 "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS",
-                "CARD_EVENT_REPEAT")
+                "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -150,7 +154,8 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"),
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
           ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
-          ("filer_checks", "XBRL_FILER_CHECKS"), ("event_repeat", "CARD_EVENT_REPEAT"))
+          ("filer_checks", "XBRL_FILER_CHECKS"), ("event_repeat", "CARD_EVENT_REPEAT"),
+          ("press_release_fold", "RESULTS_PRESS_RELEASE"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -346,6 +351,36 @@ def check_event_repeat(card: dict, row: dict, dossier: dict | None) -> dict:
                                     (dossier or {}).get("timeline"), row.get("news_id"))
     on = off + ([f"HELD: repeat of {found[0]}: {found[1]}"] if found else [])
     return _record(row, card, off, on)
+
+
+# RESULTS_PRESS_RELEASE's own test reads NSE's headline and subject (`pipeline._PRESS_RELEASE`); a stored card keeps neither, so the
+# card's headline and its file's name stand in, glued words too ("PressRelease", "Investor_Release")
+_RELEASE_NAME = re.compile(r"(?:press|media|investor|earnings|results)[\s_\-]*release", re.I)
+
+
+def release_candidate(card: dict, row: dict, text: str | None) -> str | None:
+    """Why a stored RESULTS card is one a fold would take (pipeline._fold_release's rules, no AI), else None: its headline or
+    file name names a release, it has no exchange file of its own, and its text (when stored) holds no results statement."""
+    name = f"{card.get('headline') or row.get('headline') or ''} {str(row.get('pdf_url') or '').rsplit('/', 1)[-1]}"
+    found = _RELEASE_NAME.search(name)
+    if not found or (card.get("xbrl") or {}).get("url"):
+        return None
+    if text is not None and (P._RESULTS_STATEMENT.search(text[:20000]) or not text.strip()):
+        return None
+    return f"'{found.group(0)}' in {'the file name' if found.group(0) not in str(card.get('headline') or '') else 'the headline'}"
+
+
+def fold_pairs(results_cards: list[dict], candidates: list[dict]) -> list[dict]:
+    """Each release candidate paired with the earliest other results card of its company and quarter filed before it: the
+    card whose re-run would take its text with RESULTS_PRESS_RELEASE on. A candidate with no earlier card stays a card."""
+    pairs = []
+    for c in candidates:
+        earlier = sorted((r for r in results_cards if r["scrip"] == c["scrip"] and r["period"] == c["period"]
+                          and r["news_id"] != c["news_id"] and str(r["filed_at"]) < str(c["filed_at"])),
+                         key=lambda r: str(r["filed_at"]))
+        if earlier:
+            pairs.append({**c, "into": earlier[0]["news_id"], "into_headline": earlier[0]["headline"]})
+    return pairs
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
@@ -974,6 +1009,8 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
         if sink_file:
             sink_file.write(json.dumps({"check": name, "record": rec}, ensure_ascii=False, default=str) + "\n")
 
+    fold_results: list[dict] = []      # press_release_fold: every results card's company, quarter and date
+    fold_candidates: list[dict] = []   # and the ones a fold would take, paired after the pass
     rows = iter(source.rows())
     while True:
         if _STOP:
@@ -1155,6 +1192,20 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         seen[name] += 1
                         keep(name, check_event_repeat(card, row, memory() or None))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "press_release_fold":
+                    if not results:
+                        skipped[name]["not a results card"] += 1
+                    elif not period:
+                        skipped[name]["no results quarter on the card"] += 1
+                    else:
+                        seen[name] += 1
+                        entry = {"scrip": scrip, "period": period, "news_id": row["news_id"], "headline": card.get("headline") or "",
+                                 "filed_at": row.get("filed_at") or card.get("filed_at") or "", "symbol": row.get("symbol"),
+                                 "pdf_url": row.get("pdf_url")}
+                        fold_results.append(entry)
+                        why = release_candidate(card, row, text)
+                        if why:
+                            fold_candidates.append({**entry, "why": why})
                 elif name == "filer_checks":
                     url = (card.get("xbrl") or {}).get("url")
                     if not results:
@@ -1187,6 +1238,13 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
         dead = dead + 1 if dead_card else 0
         if sink_file:
             sink_file.flush()   # this card's records are on disk before the next one is read
+    if "press_release_fold" in wanted:
+        for pair in fold_pairs(fold_results, fold_candidates):
+            row = {"news_id": pair["news_id"], "symbol": pair["symbol"], "pdf_url": pair["pdf_url"]}
+            keep("press_release_fold", _record(row, {"headline": pair["headline"]}, [f"CARD {pair['news_id']}: {pair['headline']}"],
+                                               [f"FOLDED into {pair['into']} ({pair['period']}): {pair['into_headline']}",
+                                                f"WHY {pair['why']}"]))
+            row_index[pair["news_id"]] = {"headline": pair["headline"], "pdf_url": pair["pdf_url"]}
     if sink_file:
         sink_file.close()
     return {"cards": cards, "records": records, "seen": seen, "skipped": skipped, "errors": errors, "stopped": stopped,

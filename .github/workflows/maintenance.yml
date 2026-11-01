@@ -2686,6 +2686,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          set -o pipefail   # the script's own exit (no PDFs, no vision key) must fail the step, not tee's (review of #331)
           mkdir -p "$RUNNER_TEMP/vbench"
           ls "$RUNNER_TEMP/decks" | wc -l
           ARGS=()

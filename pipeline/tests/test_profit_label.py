@@ -84,3 +84,71 @@ def test_another_profit_line_in_the_headline_is_not_pat(monkeypatch):
     card = copy.deepcopy(TI)
     card["headline"], card["key_numbers"] = "Acme Q2FY27 profit jumps to ₹68 Cr", []
     assert len(R.profit_label_card_json(card)) == 1   # a bare profit that is the headline's PAT is still compared
+
+
+def _headline(monkeypatch, text, results=None):
+    on(monkeypatch)
+    card = copy.deepcopy(TI)
+    card["headline"], card["key_numbers"] = text, []
+    if results is not None:
+        card["results"] = results
+    return card, R.profit_label_card_json(card)
+
+
+def test_the_earlier_periods_figure_is_not_labelled(monkeypatch):
+    for text in ("Acme Q2FY27 net profit of ₹68 Cr against net profit of ₹52 Cr a year earlier",
+                 "Acme Q2FY27 PAT rose to ₹68 Cr from ₹52 Cr",
+                 "Acme Q2FY27 net profit ₹52 Cr a year ago",
+                 "Acme Q2FY27 PAT of ₹68 Cr compared with ₹52 Cr last year",
+                 "Acme Q2FY27 PAT of ₹68 Cr versus ₹52 Cr in the previous quarter"):
+        card, notes = _headline(monkeypatch, text)
+        assert all("₹52" not in n for n in notes), text
+        assert "₹52 Cr (company" not in card["headline"], text
+    card, notes = _headline(monkeypatch, "Acme Q2FY27 net profit of ₹68 Cr against net profit of ₹52 Cr a year earlier")
+    assert "net profit of ₹68 Cr (company-reported" in card["headline"]   # the current figure is still compared
+
+
+def test_a_figure_after_on_is_the_base_not_profit(monkeypatch):
+    _, notes = _headline(monkeypatch, "Jubilant Q2FY27 PAT ₹22.27 Cr on ₹671.5 Cr revenue")
+    assert notes == []
+    _, notes = _headline(monkeypatch, "Acme Q2FY27 PAT on ₹671.5 Cr revenue")
+    assert notes == []
+
+
+def test_a_pat_of_zero_or_none_skips_the_card(monkeypatch):
+    for pat in ({"value": 0}, {"value": None}, None):
+        res = copy.deepcopy(TI["results"])
+        res["pat"] = pat
+        card, notes = _headline(monkeypatch, "Acme Q2FY27 PAT up 30% to ₹68 Cr", res)
+        assert notes == [] and "reported PAT" not in card["headline"]
+
+
+def test_a_year_nine_months_or_half_against_a_quarter_table_is_skipped(monkeypatch):
+    for text in ("Acme FY26 PAT at ₹68 Cr", "Acme 9M PAT at ₹68 Cr", "Acme 9MFY27 PAT at ₹68 Cr",
+                 "Acme nine months PAT at ₹68 Cr", "Acme H1FY27 PAT at ₹68 Cr", "Acme PAT at ₹68 Cr for 9M",
+                 "Acme PAT at ₹68 Cr in FY26"):
+        _, notes = _headline(monkeypatch, text)
+        assert notes == [], text
+
+
+def test_an_existing_bracketed_label_is_not_relabelled(monkeypatch):
+    text = "Acme Q2FY27 PAT ₹22.27 Cr (PAT from discontinued operations ₹68 Cr)"
+    card, notes = _headline(monkeypatch, text)
+    assert notes == [] and card["headline"] == text
+    on(monkeypatch)
+    key = copy.deepcopy(TI)
+    key["key_numbers"] = [{"label": "PAT (from discontinued operations)", "value": "₹68 Cr"}]
+    assert R.profit_label_card_json(key) == [] or key["key_numbers"][0]["label"] == "PAT (from discontinued operations)"
+    assert key["key_numbers"][0]["label"] == "PAT (from discontinued operations)"
+
+
+def test_any_of_total_owners_or_continuing_profit_is_not_other(monkeypatch):
+    on(monkeypatch)
+    mm = {"period": "Q2FY27", "pat": {"value": 5259.91}, "pat_owners": {"value": 4667.57}, "pat_continuing": {"value": 5100.0},
+          "lines": [{"key": "pat_owners", "label": "PAT"}]}
+    for value in ("₹5,259.91 Cr", "₹4,667.57 Cr", "₹5,100 Cr"):
+        card = copy.deepcopy(TI)
+        card["results"] = copy.deepcopy(mm)
+        card["headline"] = "Mahindra Q2FY27 net profit ₹%s Cr" % value[1:-3]
+        card["key_numbers"] = [{"label": "Net profit", "value": value}]
+        assert R.profit_label_card_json(card) == [], value

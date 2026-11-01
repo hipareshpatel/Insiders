@@ -89,7 +89,8 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
     assert set(total) == {"ebitda_v2", "same_definition", "consolidated_only", "two_parts", "quote_exact",
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
                           "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
-                          "adjusted_profit", "words_match_figures"}
+                          "adjusted_profit", "words_match_figures",
+                          "filer_checks"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -155,3 +156,26 @@ def test_words_figures_check_softens_a_word_the_figures_contradict():
     note = rc.check_words_figures(card, row, None)
     assert rc.changed_by_diff(note["diff"]) and "HEADLINE Acme Q2FY27 PAT rose to ₹50 Cr" in note["on_lines"]
     assert card["headline"] == "Acme Q2FY27 PAT doubled to ₹50 Cr"
+
+
+def test_filer_checks_reads_the_cards_own_file_off_and_on(monkeypatch):
+    """XBRL_FILER_CHECKS (S3, F219): the file read with the switch off and on; a figure the switch holds is a removed line."""
+    import os
+    from types import SimpleNamespace
+
+    from bse_intel import xbrl
+
+    rc = _script()
+
+    def fake_parse(_data):
+        on = os.environ.get("XBRL_FILER_CHECKS") == "1"
+        metrics = [SimpleNamespace(metric="revenue", period="Q4FY26", value=593.12 if not on else None),
+                   SimpleNamespace(metric="pat", period="Q4FY26", value=120.5)]
+        return SimpleNamespace(basis="CONSOLIDATED", metrics=metrics)
+
+    monkeypatch.setattr(xbrl, "parse", fake_parse)
+    row = {"news_id": "nse-1", "symbol": "APTUS", "scrip_code": "543335", "pdf_url": "u"}
+    note = rc.check_filer_checks({"event_type": "RESULTS"}, b"<xbrl/>", row)
+    assert "TABLE revenue Q4FY26 CONSOLIDATED: 593.12" in note["off_lines"]
+    assert "TABLE revenue Q4FY26 CONSOLIDATED: 593.12" not in note["on_lines"] and rc.changed_by_diff(note["diff"])
+    assert os.environ.get("XBRL_FILER_CHECKS") != "1"   # restored after

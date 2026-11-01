@@ -136,3 +136,20 @@ def test_mpsltd_a_cell_that_is_not_memorys_margin_is_never_taken(monkeypatch):
             "what_happened": [{"text": "EBITDA ₹12 Cr.", "quote": amount}],
             "notable_changes": [{"previous": "30.76% (Q4FY25)", "current": "32.9% (Q4FY26)", "quote": ratio}]}
     assert R.apply_card_json(card, memory) == [] and card["notable_changes"][0]["previous"] == "30.76% (Q4FY25)"
+
+
+
+def test_mpsltd_with_no_revenue_in_memory_the_line_stays(monkeypatch):
+    # review of #354: memory holds EBITDA but no revenue, so no margin proves the cell; the right "30.76% (Q3FY26)" stays
+    on(monkeypatch)
+    amount = "EBITDA 120 100 20.0% 110 9.1%"
+    ratio = "EBITDA Margin 32.9% 30.76% 2.14%"
+    memory = {"financial_metrics": [_m("ebitda", "Q4FY26", 12.0), _m("ebitda", "Q4FY25", 10.0), _m("ebitda", "Q3FY26", 11.0)]}
+    card = {"headline": "MPS Q4FY26 results", "basis": "CONSOLIDATED", "results": {"period": "Q4FY26"},
+            "what_happened": [{"text": "EBITDA ₹12 Cr.", "quote": amount}],
+            "notable_changes": [{"previous": "30.76% (Q3FY26)", "current": "32.9% (Q4FY26)", "quote": ratio}]}
+    assert R.apply_card_json(card, memory) == [] and card["notable_changes"][0]["previous"] == "30.76% (Q3FY26)"
+
+
+def test_an_operating_profit_row_is_not_read_as_ebitda():
+    assert R._MEMORY_METRIC.get(R._stem("Operating profit 120 100 20.0% 110 9.1%")) is None

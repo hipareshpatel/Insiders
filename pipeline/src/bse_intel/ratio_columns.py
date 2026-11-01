@@ -72,8 +72,9 @@ def comparison_columns(amount_row: str) -> tuple[int, int] | None:
     return (comparisons[0], comparisons[1]) if len(comparisons) >= 2 else None
 
 
+# the amount row's first word to memory's metric; "operating" (EBIT or EBITDA by company) and "gross" are not mapped (review of #354)
 _MEMORY_METRIC = {"ebitda": "ebitda", "ebit": "ebit", "revenue": "revenue", "sales": "revenue", "income": "total_income",
-                  "pat": "pat", "pbt": "pbt", "operating": "ebitda", "gross": "gross_profit"}
+                  "pat": "pat", "pbt": "pbt"}
 
 
 def _memory_value(dossier: dict | None, metric: str, period: str | None, basis: str | None) -> float | None:
@@ -249,8 +250,10 @@ def apply_card_json(card_json: dict, dossier: dict | None = None) -> list[str]:
             other = ratios[columns[1] if claim == "prev" else columns[0]]
             target = prior_quarter_period(period or "") if claim == "prev" else prior_year_period(period or "")
             margin = _memory_margin(dossier, _MEMORY_METRIC.get(_stem(_cells(amount_row)[0])), target, basis)
-            if right is None or (margin is not None and abs(right - margin) > 0.3):
-                kept.append(item)   # the cell taken is not memory's margin for that quarter: a change cell, or a column shifted
+            if right is None or margin is None or abs(right - margin) > 0.3:
+                # no margin in memory to prove the cell, or the cell taken is not memory's margin for that quarter (a change cell,
+                # a column shifted): the line stays (review of #354: MPSLTD's 2.14% change cell with no revenue in memory)
+                kept.append(item)
                 continue
             if any(abs(v - right) <= 0.05 for v in stated) or not any(abs(v - other) <= 0.05 for v in stated):
                 kept.append(item)   # the right column, or no sign of the shift

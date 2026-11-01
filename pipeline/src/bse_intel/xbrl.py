@@ -761,6 +761,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     if filer_checks:
         comprehensive_shares(values, ci)   # before filer_profit reads its share count from the owners' profit
         filer_profit(values)
+        total_tags(values)   # the whole-company EPS and profit where the kept ones are the continuing operations' only
     continuing_before_share(values)
     owners_share(values, minority)
     eps_fillers(values)
@@ -829,28 +830,49 @@ def _pbt_without_associates(values: dict, label: str) -> float | None:
 _OTHER_REVENUE = "_other_revenue_ops"
 
 
-def _lender_revenue(values: dict, check: bool) -> int:
-    """Take the helper key out of `values`; with `check` (XBRL_FILER_CHECKS), hold a lender's revenue that equals its total
-    income while "other income" is 0 or absent and "other revenue from operations" is above 0: the NBFC template's
-    RevenueFromOperations then holds the other income as well, and the file cannot settle it. Aptus Finance, Q4FY26 and
-    Q3FY26: 593.12 = Income, OtherIncome 0, OtherRevenueFromOperations 18.78 (the PDF's other income); the PDF's revenue
-    from operations is 574.34 (TODO 111, 27 Oct 2026). The other revenue must be at least 1% of revenue: LTF Q2FY27's 0.07 Cr
-    beside 5,484.23 cannot be a missing other income (facts-dump run 41323023287). Returns how many periods lost their revenue."""
-    held = 0
+def _lender_revenue(values: dict, check: bool = False) -> int:
+    """Take the helper key (other revenue from operations) out of `values`; nothing is held any more. The hold of a lender's
+    revenue equal to its total income beside other revenue from operations (Aptus, TODO 111) was wrong in general: the blind
+    review of release check 41324276371 (1 Nov 2026) found it removed true revenue on 6 cards, each the figure the filing prints
+    as revenue from operations with other income nil (MASTERTR 575.85 and 180.61, ARMANFIN 175.58, JSWHL 179.45 and 33.14,
+    BAJAJFINSV 42,036.90, HDBFS 9,943.18 and 5,005.32). ``check`` is kept for the callers; it no longer changes anything."""
     for key in [k for k in values if k[0] == _OTHER_REVENUE]:
-        other = values.pop(key)
-        label = key[1]
-        revenue, income = values.get(("revenue", label)), values.get(("total_income", label))
-        if (check and revenue and other >= 0.01 * abs(revenue) and other > 0 and income is not None and abs(revenue - income) <= 0.01
-                and not values.get(("other_income", label))):
-            del values[("revenue", label)]
-            held += 1
-    return held
+        values.pop(key)
+    return 0
 
 
 _CI_TOTAL, _CI_OTHER = "_ci_total", "_ci_other"
 _CI_TAGS = {"ComprehensiveIncomeForThePeriod": _CI_TOTAL, "OtherComprehensiveIncomeNetOfTaxes": _CI_OTHER,
             "OtherComprehensiveIncome": _CI_OTHER}
+
+
+def total_tags(values: dict) -> int:
+    """XBRL_FILER_CHECKS: in a period with a real discontinued figure, the whole-company figure where the file's kept one is the
+    continuing operations' only, in place (blind review of release check 41324276371, 1 Nov 2026). Returns how many it changed.
+
+    * `eps` kept from the continuing-operations tag while the file also tags the total EPS: the total is taken (TMPV FY26: -4.43
+      continuing, -0.61 total);
+    * an owners' profit equal to the continuing profit (less its minority share) beside a whole profit that holds the
+      discontinued figure, with no minority share adding it up: the owners' figure is left out, so the card falls back to the
+      whole profit (AURUM: owners -10.45, the continuing profit; the total +1.90)."""
+    changed = 0
+    for label in {p for m, p in values if m == "pat_discontinued"}:
+        if not values.get(("pat_discontinued", label)):
+            continue
+        eps, continuing_eps, total_eps = (values.get((m, label)) for m in ("eps", "eps_continuing", "eps_total"))
+        if eps is not None and continuing_eps is not None and total_eps is not None and eps == continuing_eps and total_eps != eps:
+            values[("eps", label)] = total_eps
+            changed += 1
+        owners, whole, continuing = (values.get((m, label)) for m in ("pat_owners", "pat", "pat_continuing"))
+        minority = values.get(("pat_minority", label)) or 0.0
+        if owners is None or whole is None or continuing is None:
+            continue
+        slack = max(0.02, 0.001 * abs(continuing))
+        if (abs(owners - continuing) <= slack or abs(owners - (continuing - minority)) <= slack) \
+                and abs(owners + minority - whole) > max(0.5, 0.01 * abs(whole)):
+            values.pop(("pat_owners", label))
+            changed += 1
+    return changed
 
 
 def comprehensive_shares(values: dict, ci: dict[tuple[str, str], float]) -> int:

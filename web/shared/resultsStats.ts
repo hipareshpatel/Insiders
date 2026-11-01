@@ -2,6 +2,7 @@
  *  view's figures. The Worker reads the rows from D1 and calls these, so every rule is tested under `node --test` (resultsStats.test.ts). */
 import { INDICES } from "./resultsTypes.ts";
 import type { Cut, GroupBy, GroupRow, KpiSummary, Kind, Momentum, Turn } from "./resultsTypes.ts";
+import { GROUP_RANK_MIN } from "./resultsTypes.ts";
 import { momentumClass, momentumPts, periodsBack, quarterDay } from "./resultsKpi.ts";
 import { industryParts } from "./industry.ts";
 
@@ -218,5 +219,8 @@ export function computeGroups(input: GroupsInput): GroupRow[] {
       trend_pat_median: trends.map((g) => median((g.get(id) ?? []).filter((r) => inCut(r.kind, cut) && sameBasis(r)).map((r) => pct(r.pat_yoy, r.pat_turn)).filter((v): v is number => v != null))),
     });
   }
-  return out.sort((a, b) => (a.pat_median == null ? 1 : 0) - (b.pat_median == null ? 1 : 0) || (b.pat_median ?? 0) - (a.pat_median ?? 0) || a.label.localeCompare(b.label));
+  // a group with fewer than GROUP_RANK_MIN companies reported is listed after the ranked ones (owner, 1 Nov 2026: Telecom Equipment
+  // +1,746% topped its tab on two companies); the page's lead line uses the same minimum (MIN_GROUP_SIZE in resultsView.ts)
+  const unranked = (r: GroupRow) => (r.pat_median == null ? 2 : r.reported < GROUP_RANK_MIN ? 1 : 0);
+  return out.sort((a, b) => unranked(a) - unranked(b) || (b.pat_median ?? 0) - (a.pat_median ?? 0) || a.label.localeCompare(b.label));
 }

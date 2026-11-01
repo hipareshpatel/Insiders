@@ -239,3 +239,11 @@ test("like for like: revenue, EBITDA and profit medians over the same ordinary c
   assert.ok((s.median_pat_yoy ?? 0) > 20);   // the tile median, over a different set, would have read "profit faster"
   assert.equal(summarise(rows.slice(0, 3)).like_for_like, null);   // too few companies to say
 });
+
+test("a group with fewer than 5 companies reported is listed after the ranked groups (owner, 1 Nov 2026)", () => {
+  const companies = [co("1", "I1", "Telecom > Equipment > X"),
+    ...["2", "3", "4", "5", "6"].map((n) => co(n, `I${n}`, "Auto > Cars > Y"))];
+  const rows = [stat("1", NOW, { pat_yoy: 1746 }), ...["2", "3", "4", "5", "6"].map((n) => stat(n, NOW, { pat_yoy: 12 }))];
+  const g = computeGroups({ quarter: NOW, by: "sector", cut: "all", rows, companies, members: [], withinIndex: null, withinMcap: null });
+  assert.deepEqual(g.map((x) => [x.id, x.reported]), [["Auto", 5], ["Telecom", 1]]);   // +12% on 5 companies ranks above +1,746% on one
+});

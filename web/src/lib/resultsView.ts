@@ -3,7 +3,7 @@
  *  The design is docs/design/results-kpi.md (Direction C, white theme). */
 
 import { cr, num } from "./format.ts";
-import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, NM_PCT, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
+import { GROUP_RANK_MIN, INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, NM_PCT, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
 import type { GroupBy, GroupRow, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
 
 export const GROWTH_STEPS = [0, 10, 20, 30, 50, 100] as const;   // "growth at least this much, per cent"
@@ -380,7 +380,7 @@ export const groupNoun = (by: GroupBy, plural = false) => GROUP_NOUN[by][plural 
 
 /** A group is ranked, or named as leading, only with this many companies reported (owner, 1 Nov 2026: on 31 Oct Diversified
  * +480% and Telecom Equipment +1,746% led their tabs on one or two companies). */
-export const MIN_GROUP_SIZE = 5;
+export const MIN_GROUP_SIZE = GROUP_RANK_MIN;
 const rankable = (r: GroupRow) => r.pat_median != null && r.reported >= MIN_GROUP_SIZE;
 
 /** "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%." */

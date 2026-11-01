@@ -346,9 +346,6 @@ _LED_BY_EARLIER = re.compile(r"\b(?:vs\.?|versus|against|from|compared\s+to)\b",
 _FOLLOWED_BY_EARLIER = re.compile(r"^\s*(?:\w+\s+){0,2}?(?:a\s+(?:year|quarter)\s+(?:earlier|ago)|year[- ]ago|quarter[- ]ago|last\s+year|"
                                   r"(?:the\s+)?previous\s+(?:quarter|year))\b", re.I)
 _AFTER_ON = re.compile(r"\bon\s*$", re.I)   # "PAT ₹100.7 Cr on ₹671.5 Cr revenue": the figure after "on" is the base
-_OWN_BASIS = re.compile(r"before exceptional items?|excluding exceptional items?|adjusted|underlying|normali[sz]ed|"
-                        r"pre[- ]?Ind[- ]?AS[- ]?116|non[- ]?GAAP", re.I)
-_PROFIT_ROWS = ("pat", "pat_owners", "pat_continuing")
 _LABELLED = re.compile(r"\s*\((?:company-reported|calculated from the statement)[^)]*\)")
 
 
@@ -377,71 +374,79 @@ def _year_of(period: str | None) -> list[str]:
     return [m[1], f"9M{m[1]}", f"H1{m[1]}"] if m else []
 
 
-def _memory_period(figure: float, period: str | None, dossier: dict | None) -> str | None:
-    """The year-sized period whose profit (whole or owners') in memory equals ``figure`` (within rounding), else None."""
+_MEMORY_PROFITS = ("pat", "pat_owners", "pat_continuing", "pat_before_minority")
+
+
+def _memory_rows(dossier: dict | None, basis: str | None) -> list[dict]:
+    """Memory's profit figures on the card's own basis (lead's review of #363: never a mix of the two blocks): a standalone card
+    reads the standalone block and main-block rows labelled standalone; any other card the main block's rows not labelled
+    standalone."""
+    from .watch_code import _entry_basis
+
+    d = dossier or {}
+    standalone = (basis or "").upper() == "STANDALONE"
+    rows = [m for m in d.get("financial_metrics") or [] if isinstance(m, dict)
+            and ((_entry_basis(m) or "").upper() == "STANDALONE") == standalone]
+    if standalone:
+        rows += [m for m in (d.get("standalone") or {}).get("metrics") or [] if isinstance(m, dict)]
+    return [m for m in rows if isinstance(m.get("value"), (int, float)) and m.get("metric") in _MEMORY_PROFITS]
+
+
+def _memory_period(figure: float, period: str | None, dossier: dict | None, basis: str | None = None) -> str | None:
+    """The year-sized period (year, nine months, half) whose profit in memory, any of the four lines on the card's basis, equals
+    ``figure`` (within rounding), else None (c17 of 41338082613: a nine-month 150 was set against the quarter's 43.05)."""
     wanted = _year_of(period)
-    for m in (dossier or {}).get("financial_metrics") or []:
-        if isinstance(m, dict) and m.get("metric") in ("pat", "pat_owners") and m.get("period") in wanted \
-                and isinstance(m.get("value"), (int, float)) and not _differs(abs(figure), abs(m["value"]), 0.015):
+    rows = _memory_rows(dossier, basis)
+    if any(m.get("period") == period and not _differs(abs(figure), abs(m["value"]), 0.015) for m in rows):
+        return None   # the quarter's own profit (Q2 100 beside H1 101.2 when Q1 was 1.2; lead's read of #363): no period tag
+    for m in rows:
+        if m.get("period") in wanted and not _differs(abs(figure), abs(m["value"]), 0.015):
             return m["period"]
     return None
 
 
 def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list[str]:
-    """CARD_ADJUSTED_PROFIT_LABEL: a profit figure in the headline, takeaway or a key number that matches none of the results
-    table's reported profit rows (total, owners', continuing; a loss by its size) is labelled "company-reported" with the
-    table's PAT, in the company's own words for its basis when the key number's quote states them ("before exceptional
-    items"). A label that already names a basis, another period, a guided figure or an earlier figure ("vs ₹52 Cr") is left
-    alone. Returns what was changed."""
+    """CARD_ADJUSTED_PROFIT_LABEL: a profit figure in the headline, takeaway or a key number of a quarter's card that is memory's
+    profit for the year, nine months or half the quarter belongs to (any of the whole, owners', continuing or before-minority
+    lines, on the card's own basis) gets that period's tag: "PAT (FY25)", eMUDHRA's year on its Q4 card. A label that already
+    names a basis or another period, a guided or earlier figure, and code's own lines are left alone.
+
+    No "company-reported" label any more (lead's review of #363): it was an inference from what memory lacked, and every version
+    leaked (the whole profit beside the owners' row, TECHM 1,609.7 against 1,585.6; a continuing profit; a year's figure against
+    the quarter's). A figure memory does not hold gets nothing. Returns what was changed."""
     results = card_json.get("results")
-    if not card_adjusted_profit_label() or not isinstance(results, dict):
+    if not card_adjusted_profit_label() or not isinstance(results, dict) or not results.get("period"):
         return []
-    shown = {s.get("key") for s in results.get("lines") or [] if isinstance(s, dict)}
-    reported = [abs(results[k]["value"]) for k in _PROFIT_ROWS
-                if isinstance(results.get(k), dict) and isinstance(results[k].get("value"), (int, float))]
-    reported += [abs(results[k]) for k in _PROFIT_ROWS if isinstance(results.get(k), (int, float)) and not isinstance(results[k], bool)]
-    pat = next((results[k]["value"] for k in ("pat", "pat_owners") if k in shown and isinstance(results.get(k), dict)
-                and isinstance(results[k].get("value"), (int, float))), None)
-    if not pat or not reported:   # no profit row, or a PAT of 0: nothing to set a figure against
-        return []
-    period = results.get("period")
+    period = results["period"]
+    basis = card_json.get("basis") or results.get("basis")
     notes: list[str] = []
-
-    def other(figure: float) -> bool:
-        return all(_differs(abs(figure), r, 0.015) for r in reported)
-
-    def tag(quote: str | None = None) -> str:
-        own = _OWN_BASIS.search(quote or "")
-        return f"company-reported{f', {own.group(0).strip()}' if own else ''}; reported PAT {_cr(pat)}"
-
     for key in [k for k in card_json.get("key_numbers") or [] if isinstance(k, dict)]:
         label = str(key.get("label") or "").strip()
         figure = _amount(key.get("value"))
         if not _KEY_PROFIT.fullmatch(label) or figure is None or _STATED.search(label) or _other_period(label, period):
             continue
         if _CODE_KEY.match(str(key.get("quote") or "")) or _BASIS_WORD.search(label):
-            continue   # code wrote it from memory or the file, or its label names its basis: not the company's own figure (triage of run 41318733817)
-        if other(figure):
-            year = _memory_period(figure, period, dossier)
-            if year:   # the year's (or nine months', or the half's) profit on a quarter's card: named as such, not "company-reported"
-                key["label"] = f"{label} ({year})"
-                notes.append(f"key_numbers {label}: {_cr(figure)} is memory's {year} profit, labelled {year}")
-                continue
-            key["label"] = f"{label} ({tag(key.get('quote'))})"
-            notes.append(f"key_numbers {label}: {_cr(figure)} is not the table's reported profit ({_cr(pat)}), labelled company-reported")
+            continue   # code wrote it from memory or the file, or its label names its basis (triage of run 41318733817)
+        year = _memory_period(figure, period, dossier, basis)
+        if year:   # the year's (or nine months', or the half's) profit on a quarter's card: named as such
+            key["label"] = f"{label} ({year})"
+            notes.append(f"key_numbers {label}: {_cr(figure)} is memory's {year} profit, labelled {year}")
     for attr in ("headline", "takeaway"):
         text = card_json.get(attr)
-        if not isinstance(text, str) or "reported PAT" in text or _GUIDANCE.search(text):
+        if not isinstance(text, str) or _GUIDANCE.search(text):
             continue
         if attr == "takeaway" and _CODE_TAKEAWAY.search(text):
             continue   # code's own takeaway from the file's profit bridge or figures
-        bare = _LABELLED.sub("", text)   # another figure's label ("(company-reported; results table ₹2,437.56 Cr)") names no basis here
+        bare = _LABELLED.sub("", text)
         for word, figure, stated, at in _headline_figures(bare, _PROFIT_WORD):
             end = re.compile(_FIG, re.I).match(bare, at).end()
-            if stated or _earlier_figure(bare, at, end) or _other_period(bare, period, at, end) or not other(figure):
+            if stated or _earlier_figure(bare, at, end) or _other_period(bare, period, at, end):
                 continue
-            where = text.find(bare[at:end], at) + (end - at)   # right after the figure: the labels of others only come later
-            card_json[attr] = f"{text[:where]} ({tag()}){text[where:]}"
-            notes.append(f"{attr}: {word} {_cr(figure)} is not the table's reported profit ({_cr(pat)}), labelled company-reported")
+            year = _memory_period(figure, period, dossier, basis)
+            if not year:
+                continue
+            where = text.find(bare[at:end], at) + (end - at)
+            card_json[attr] = f"{text[:where]} ({year}){text[where:]}"
+            notes.append(f"{attr}: {word} {_cr(figure)} is memory's {year} profit, labelled {year}")
             break
     return notes

@@ -316,10 +316,11 @@ def card_results_one_line() -> bool:
 
 
 def card_adjusted_profit_label() -> bool:
-    """CARD_ADJUSTED_PROFIT_LABEL (default off; 1 Nov 2026, TI nse-106837308): a profit figure in a results card's headline,
-    takeaway or key numbers that is none of its results table's reported profit rows is labelled "company-reported" with the
-    table's PAT (results_one_line.profit_label_card_json), never shown bare as "PAT". On only after the on/off check over
-    stored cards (release_check.py adjusted_profit) and a blind sample. Read at the call."""
+    """CARD_ADJUSTED_PROFIT_LABEL (default off; 1 Nov 2026, TI nse-106837308): a profit figure in a quarter card's headline,
+    takeaway or key numbers that is memory's profit for the year, nine months or half, on the card's basis, gets that period's
+    tag ("PAT (FY25)"); a figure memory does not hold gets nothing (no "company-reported" guess: reviews of #363;
+    results_one_line.profit_label_card_json). On only after the on/off check over stored cards (release_check.py
+    adjusted_profit) and a blind sample. Read at the call."""
     return _switch("CARD_ADJUSTED_PROFIT_LABEL")
 
 

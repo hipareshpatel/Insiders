@@ -69,6 +69,9 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      verdict hints) is for a reviewer to judge TRUE (supported, the drop loses true content) or FALSE.
   deck_period        DECK_DISCUSSED_PERIOD (1 Nov 2026, KRN nse-106836198): CONCALL_PRESENTATION cards only; `signals._promises`
                      replayed as in guidance_dated with CARD_GUIDANCE_DATED on in both and the switch off and on.
+  verdict_figure     CARD_VERDICT_NEEDS_FIGURE (1 Nov 2026 blind audit, 9 of 23 deck verdicts WRONG): `signals._promises` replayed
+                     as in guidance_dated on every card with guidance signals or memory, with CARD_GUIDANCE_DATED,
+                     DECK_DISCUSSED_PERIOD and CARD_WATCH_VERDICT on in both and the switch off and on.
   other_issuer       CARD_OTHER_ISSUER (1 Nov 2026, HEGAM nse-106837190): `pipeline.other_issuer_results` on each RESULTS card's
                      stored text with the company's former names from memory; a card whose statement is another company's
                      is read as OTHER and marked unverified. Complete (the type and the hold are code's, not the model's).
@@ -156,7 +159,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS", "CARD_FIGURE_MATCHES_FILE", "CARD_GUIDED_NOT_ACTUAL",
                 "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE",
                 "UNIT_FIX_SCALE_GUARD", "CARD_COMPARATIVE_MATCHES_MEMORY", "CARD_YEAR_AGO_LABEL",
-                "CARD_RATIO_COLUMNS")
+                "CARD_RATIO_COLUMNS", "CARD_VERDICT_NEEDS_FIGURE")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -171,7 +174,7 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("guided_not_actual", "CARD_GUIDED_NOT_ACTUAL"), ("event_repeat", "CARD_EVENT_REPEAT"),
           ("press_release_fold", "RESULTS_PRESS_RELEASE"), ("unit_fix_scale", "UNIT_FIX_SCALE_GUARD"),
           ("comparative_memory", "CARD_COMPARATIVE_MATCHES_MEMORY"), ("year_ago_label", "CARD_YEAR_AGO_LABEL"),
-          ("ratio_columns", "CARD_RATIO_COLUMNS"))
+          ("ratio_columns", "CARD_RATIO_COLUMNS"), ("verdict_figure", "CARD_VERDICT_NEEDS_FIGURE"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -723,11 +726,28 @@ def _stored_signal_line(s: dict) -> str:
     return f"SIGNAL {s.get('ref')}: {s.get('type')} {s.get('severity')} | {s.get('text')}"
 
 
-def check_guidance(card: dict, dossier: dict | None, row: dict, deck: bool = False) -> dict:
+def verdicts_turned(recs: list[dict]) -> list[dict]:
+    """verdict_figure: each verdict (off) whose line the switch turns into a 'Not judged' INFO line (on), with the verdict's own
+    words and the reason, by signal id."""
+    out = []
+    for r in recs:
+        on = {ln.split(":", 1)[0]: ln for ln in r.get("on_lines") or [] if ln.startswith("SIGNAL ")}
+        for ln in r.get("off_lines") or []:
+            ref = ln.split(":", 1)[0]
+            after = on.get(ref, "")
+            if ln.startswith("SIGNAL ") and " INFO | " not in ln and " INFO | " in after and "Not judged against this filing:" in after:
+                out.append({"news_id": r["news_id"], "symbol": r.get("symbol"), "pdf_url": r.get("pdf_url"), "verdict": ln,
+                            "reason": after.split("Not judged against this filing:", 1)[1].strip()})
+    return out
+
+
+def check_guidance(card: dict, dossier: dict | None, row: dict, deck: bool = False, figure: bool = False) -> dict:
     """guidance_dated: `signals._promises` (the real code) over memory before and after the filing, off and on; the
     refusal in `dossier.merge` counted from the same recorded updates. With `deck` (deck_period, DECK_DISCUSSED_PERIOD) the
-    comparison is CARD_GUIDANCE_DATED on in both, DECK_DISCUSSED_PERIOD off and on."""
-    base = ("CARD_GUIDANCE_DATED",) if deck else ()
+    comparison is CARD_GUIDANCE_DATED on in both, DECK_DISCUSSED_PERIOD off and on. With `figure` (verdict_figure,
+    CARD_VERDICT_NEEDS_FIGURE) the live verdict switches are on in both and the new switch off and on."""
+    base = ("CARD_GUIDANCE_DATED", "DECK_DISCUSSED_PERIOD", "CARD_WATCH_VERDICT") if figure else ("CARD_GUIDANCE_DATED",) if deck else ()
+    deck = deck or figure
     stored = [s for s in card.get("signals") or [] if isinstance(s, dict) and s.get("type") in GUIDANCE_SIGNALS]
     if not dossier:
         rec = _record(row, card, [], [])
@@ -746,7 +766,8 @@ def check_guidance(card: dict, dossier: dict | None, row: dict, deck: bool = Fal
                     event_type=card.get("event_type"))
     with switches_on(*base):
         off_sig = signals._promises(before, after, out, filing)
-    with switches_on(*(base + ("DECK_DISCUSSED_PERIOD",) if deck else ("CARD_GUIDANCE_DATED",))):
+    with switches_on(*(base + ("CARD_VERDICT_NEEDS_FIGURE",) if figure else base + ("DECK_DISCUSSED_PERIOD",) if deck
+                       else ("CARD_GUIDANCE_DATED",))):
         on_sig = signals._promises(before, after, out, filing)
     off, on = [_signal_line(s) for s in off_sig], [_signal_line(s) for s in on_sig]
     # dossier.merge: an update that memory recorded and the switch would have refused (the target stays as said)
@@ -1235,6 +1256,13 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_guidance(card, memory(), row, deck=True))
+                elif name == "verdict_figure":
+                    if not any(isinstance(x, dict) and x.get("type") in GUIDANCE_SIGNALS for x in card.get("signals") or []) \
+                            and not memory():
+                        skipped[name]["no guidance signal and no memory"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_guidance(card, memory() or None, row, figure=True))
                 elif name == "year_check":
                     if not results or not period:
                         skipped[name]["not a results card with a period"] += 1
@@ -1451,6 +1479,20 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
         notes.append("CONCALL_PRESENTATION cards only. `signals._promises` run as it is over memory before and after the filing, "
                      "CARD_GUIDANCE_DATED on in both, DECK_DISCUSSED_PERIOD off and on: a line that changes is a target the deck "
                      "now settles (or an INFO 'Not judged' line that becomes a verdict). Every changed card goes to the blind sample.")
+    if name == "verdict_figure":
+        turned = verdicts_turned(recs)
+        counts["verdicts_not_judged"] = len(turned)
+        notes.append("Every card with guidance signals or memory. `signals._promises` run as it is over memory before and after the "
+                     "filing, CARD_GUIDANCE_DATED, DECK_DISCUSSED_PERIOD and CARD_WATCH_VERDICT on in both, the switch off and on. "
+                     "Every verdict the switch turns into 'not judged' is listed with its own words in verdict_figure-turned.md "
+                     "(lead, 1 Nov 2026: the blind sample counts the true verdicts it loses).")
+        (out / f"{name}-turned.json").write_text(json.dumps(turned, ensure_ascii=False, indent=1), encoding="utf-8")
+        md_turned = [f"# {switch}: every verdict turned to 'not judged', {stamp}", "",
+                     "Judge each verdict against its filing: TRUE (the verdict was right; the switch loses it) or FALSE.", ""]
+        for i, t in enumerate(turned, 1):
+            md_turned += [f"## t{i:02d} {t['symbol']} {t['news_id']}", f"- pdf: {t['pdf_url']}", f"- verdict: `{t['verdict']}`",
+                          f"- reason: {t['reason']}", ""]
+        (out / f"{name}-turned.md").write_text("\n".join(md_turned), encoding="utf-8")
     if name == "year_check":
         notes.append("`results_snapshot` and `results_card.build` (over memory's file figures) rendered with the switch off and on; "
                      "a MEMORY line names each held figure the table reads, with its reason. Replayed: the results table and "

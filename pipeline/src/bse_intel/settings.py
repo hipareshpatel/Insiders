@@ -450,6 +450,17 @@ def deck_discussed_period() -> bool:
     return _switch("DECK_DISCUSSED_PERIOD")
 
 
+def card_verdict_needs_figure() -> bool:
+    """CARD_VERDICT_NEEDS_FIGURE (default off; blind audit of 1 Nov 2026, 9 of 23 stored deck guidance and watch verdicts WRONG):
+    a model's met / missed / delivered verdict that code did not decide stands only when its own words give a figure in the
+    target's unit (HERITGFOOD's farmer target "delivered" on procurement volumes), more than the target's own figure (CLEANMAX's
+    51 MWp "missed" on "including 51 MWp"), and, for a miss, a figure that does not meet the target (CANBK's GNPA 1.33% "missed"
+    a 1.50% ceiling) and no words saying it was met (SURYODAY "within the target"); else the dated "management said" line. A
+    target due in a quarter before the one the filing reports is "was due X, which has passed", not "not due" (SHAKTIPUMP).
+    ``verdict_figure.py``. It changes card text: on after release_check verdict_figure. Read at the call."""
+    return _switch("CARD_VERDICT_NEEDS_FIGURE")
+
+
 def annual_scale_fix() -> bool:
     """ANNUAL_SCALE_FIX (default off; 1 Nov 2026: TD Power and MSP Steel's annual reports state lakh with no scale, every money fact
     1e5 small, so the statements rebuild left their annual years out): an annual report whose year's Sales AND Net Profit are both

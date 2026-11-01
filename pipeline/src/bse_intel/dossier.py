@@ -26,7 +26,7 @@ from typing import Any
 from .scoring import calibration
 from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2, memory_file_only,
                        memory_restated, memory_screener, memory_year_check, metric_business_line)
-from . import business_line, footer_plausible, known_wrong
+from . import business_line, footer_plausible, guided_actual, known_wrong
 from .models import _PER_OTHER, Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -1255,6 +1255,12 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
 
     if delta.balance_sheet and not delta.balance_sheet.is_empty():
         snapshot = {k: v for k, v in delta.balance_sheet.model_dump().items() if v is not None}
+        # CARD_GUIDED_NOT_ACTUAL: a call's "peak net debt expected around 4,000" is not a balance (BIRLACORPN, 1 Nov 2026; off: nothing)
+        texts = [t.text for t in (output.card.call_takeaways if output.card is not None else [])] + \
+                [f"{g.statement or ''} {g.metric or ''} {g.target or ''}" for g in delta.guidance]
+        for field in guided_actual.guided_balance_fields(snapshot, doc, texts):
+            log.info("memory: %s %s from %s refused: the call words it as guided, not an actual", field, snapshot[field], news_id)
+            snapshot.pop(field)
         for field in _out_of_scale(snapshot, d.get("balance_sheet", []), news_id):
             log.info("memory: %s %s %s from %s refused: out of scale with the other sources for that date",
                      field, snapshot.get("period"), snapshot[field], news_id)
@@ -1835,8 +1841,9 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
                       "use the filing's own columns"] if withheld else None,
             "business_summary": summary["text"] if summary and before(summary) else None,
             "metrics": lines,
-            "balance_sheet": next(({k: v for k, v in b.items() if k in VIEW_BALANCE and v is not None} for b in reversed(balance)
-                                   if any(k.endswith("_cr") and isinstance(v, (int, float)) for k, v in b.items())), None),
+            "balance_sheet": guided_actual.view_balance(
+                bal := next((b for b in reversed(balance) if any(k.endswith("_cr") and isinstance(v, (int, float)) for k, v in b.items())), None),
+                {k: v for k, v in bal.items() if k in VIEW_BALANCE and v is not None} if bal else None),
             "previous_calls": previous_calls[:max(4, guidance_n)],
             "guidance": [g for g in guidance if g["status"] in ("OPEN", "ON_TRACK", "DELAYED", "REVISED")][-guidance_n:],
             "watchlist": watch[-guidance_n:],

@@ -14,6 +14,7 @@ from __future__ import annotations
 import re
 from datetime import date
 
+from . import guided_actual
 from .dossier import _deal_history, label
 from .no_eps import cut_text
 from .timeutil import now_iso
@@ -211,7 +212,8 @@ def _points(dossier: dict, calls: dict[str, dict]) -> list[dict]:
                 f"rated {s['credit_rating']}" if s.get("credit_rating") else None]
         bits = [b for b in bits if b]
         if bits:
-            add(("Balance sheet: " + ", ".join(bits))[:MAX_CHARS], "funding", s.get("source_news_id"), 1)
+            # CARD_GUIDED_NOT_ACTUAL: a call's figure with no period may be guidance (BIRLACORPN's "net debt ₹4,000 Cr"; off: as before)
+            add(("Balance sheet: " + ", ".join(bits) + guided_actual.summary_marker(s))[:MAX_CHARS], "funding", s.get("source_news_id"), 1)
     return out
 
 

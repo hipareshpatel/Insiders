@@ -90,7 +90,7 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
                           "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
                           "adjusted_profit", "words_match_figures",
-                          "filer_checks", "figure_matches_file"}
+                          "filer_checks", "figure_matches_file", "guided_not_actual"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1

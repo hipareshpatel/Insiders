@@ -139,7 +139,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
-                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS", "CARD_FIGURE_MATCHES_FILE")
+                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS", "CARD_FIGURE_MATCHES_FILE", "CARD_GUIDED_NOT_ACTUAL")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -150,7 +150,8 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"),
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
           ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
-          ("filer_checks", "XBRL_FILER_CHECKS"), ("figure_matches_file", "CARD_FIGURE_MATCHES_FILE"))
+          ("filer_checks", "XBRL_FILER_CHECKS"), ("figure_matches_file", "CARD_FIGURE_MATCHES_FILE"),
+          ("guided_not_actual", "CARD_GUIDED_NOT_ACTUAL"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -356,6 +357,24 @@ def check_figure_matches_file(card: dict, row: dict, text: str) -> dict:
     rec = _record(row, card, off, on)
     rec["info"], rec["unreplayable"] = {}, []
     return rec
+
+
+def check_guided_not_actual(card: dict, row: dict, dossier: dict | None) -> dict:
+    """guided_not_actual: `guided_actual.apply_card_json` on a copy of a stored card with CARD_GUIDED_NOT_ACTUAL off and on, over
+    memory as it stands (the dossier file); the list items it drops and the headline or takeaway it notes (BIRLACORPN)."""
+    from bse_intel import guided_actual
+
+    def lines(c: dict) -> list[str]:
+        out = [f"HEADLINE {c.get('headline') or ''}", f"TAKEAWAY {c.get('takeaway') or ''}"]
+        for name in ("what_happened", "why_it_matters", "notable_changes"):
+            out += [f"FACT {name}: {(i.get('text') if isinstance(i, dict) else i) or ''}" for i in c.get(name) or []]
+        return out
+
+    current = dossier_as_of(dossier, row["filed_at"]) if dossier else {}
+    on_card = copy.deepcopy(card)
+    with switches_on("CARD_GUIDED_NOT_ACTUAL"):
+        notes = guided_actual.apply_card_json(on_card, current)
+    return _record(row, card, lines(card), lines(on_card), extra=notes)
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
@@ -1152,6 +1171,14 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_figure_matches_file(card, row, text))
+
+
+                elif name == "guided_not_actual":
+                    if not memory():
+                        skipped[name]["no memory file for the company"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_guided_not_actual(card, row, memory()))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "unit_slip_guard":
                     url = (card.get("xbrl") or {}).get("url")

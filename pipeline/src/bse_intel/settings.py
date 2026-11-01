@@ -323,6 +323,17 @@ def card_adjusted_profit_label() -> bool:
     return _switch("CARD_ADJUSTED_PROFIT_LABEL")
 
 
+def card_guided_not_actual() -> bool:
+    """CARD_GUIDED_NOT_ACTUAL (default off; blind audit of 1 Nov 2026, BIRLACORPN nse-106838226 "Net debt was ₹4,000 Cr at the end
+    of FY26": 4,000 was management's expected peak net debt for FY27, said on the May call, and memory held it as a balance
+    sheet). On: a call's balance figure the same reading words as guided is not stored as one; a call's figure with no period is
+    shown to the AI and on the call summary as "stated on a call, may be guided, not an actual"; guidance lines say "guided
+    (expected, not an actual)"; a card point that states a guided figure as an actual is dropped (guided_actual.apply_card_json).
+    It changes card text and what the AI is shown: on only after the on/off check over stored cards (release_check.py
+    guided_not_actual) and a blind sample. Read at the call."""
+    return _switch("CARD_GUIDED_NOT_ACTUAL")
+
+
 def card_words_match_figures() -> bool:
     """CARD_WORDS_MATCH_FIGURES (default off; 1 Nov 2026, blind audit "arithmetic in words"): a card's comparison words
     (doubled, halved, accelerated, slowed, outpaced) are checked against its own results table and memory

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 
+from . import guided_actual
 from .dossier import judged_on, third_party_view, with_year_hold
 
 # Long-term scale shared by CRISIL, ICRA, CARE, India Ratings, Acuite, Brickwork and Infomerics, best first
@@ -312,7 +313,8 @@ def memory_context(before: dict | None, event_type: str, filed_at: str | None, n
     out: list[dict] = []
     for g in guidance_recall(before, event_type, filed_at):
         text = g["statement"] + (f" ({g['target']})" if g.get("target") and g["target"] not in g["statement"] else "")
-        out.append({"label": "Management said", "text": text + (f" · by {g['due']}" if g.get("due") else ""),
+        # CARD_GUIDED_NOT_ACTUAL: guidance is shown as guided, for its period, never bare (BIRLACORPN; off: "Management said")
+        out.append({"label": guided_actual.guided_label(), "text": text + (f" · by {g['due']}" if g.get("due") else ""),
                     "as_of": g.get("given_on")})
     metrics = [m for m in (with_year_hold(before) or {}).get("financial_metrics", []) if m.get("value") is not None
                and str(m.get("period", "")).startswith("Q") and m.get("metric") in ("revenue", "pat", "pat_owners")]

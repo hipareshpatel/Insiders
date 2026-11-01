@@ -75,7 +75,7 @@ from . import xbrl_facts, xbrl_store
 from . import statements
 from . import directions
 from . import results_card
-from . import footer_plausible, one_basis, results_one_line, words_figures
+from . import footer_plausible, guided_actual, one_basis, results_one_line, words_figures
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -4125,6 +4125,9 @@ class Pipeline:
         # a comparison word its own figures contradict is dropped or softened (CARD_WORDS_MATCH_FIGURES; off: nothing)
         if words_notes := words_figures.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["words_figures"] = words_notes
+        # a figure only memory's guidance holds, stated as an actual, is dropped (CARD_GUIDED_NOT_ACTUAL; off: nothing)
+        if guided_notes := guided_actual.apply_card_json(card_json, current):
+            card_json.setdefault("grounding", {})["guided_not_actual"] = guided_notes
         # the results table's rows are the exchange file's sheet (CARD_FACT_SHEET; off or no sheet: nothing); the card keeps what changed
         if results_sheet:
             card_json.setdefault("grounding", {})["fact_sheet"] = {

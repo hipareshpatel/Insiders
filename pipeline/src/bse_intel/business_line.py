@@ -49,11 +49,18 @@ def clean(line: str | None) -> str | None:
     return text
 
 
+# balance-sheet and capital items are the whole company's, never one line's (memory-split-lines dry run 1 Nov 2026: Eternal's
+# FY26 net worth, inventories and trade receivables would have been tagged "District" from the filing's headline)
+_BALANCE = re.compile(r"net_?worth|inventor|receivable|payable|borrowing|debt|cash|asset|liabilit|equity|reserve|investment|"
+                      r"capex|cwip|book_value|working_capital|share_capital|provision", re.I)
+
+
 def operating(metric: str | None) -> bool:
-    """Whether a figure may carry a line: no statement line (dossier.STATEMENT_FIGURES, whole-company from the exchange file)."""
+    """Whether a figure may carry a line: no statement line (dossier.STATEMENT_FIGURES, whole-company from the exchange file) and
+    no balance-sheet or capital item."""
     from .dossier import STATEMENT_FIGURES, _norm
 
-    return bool(metric) and _norm(metric) not in STATEMENT_FIGURES
+    return bool(metric) and _norm(metric) not in STATEMENT_FIGURES and not _BALANCE.search(str(metric))
 
 
 def known_lines(dossier: dict | None, segments: bool = True) -> list[str]:
@@ -169,12 +176,17 @@ def card_lines(rows: list[dict], dossier: dict | None) -> dict[str, str | None]:
     knows; None when the text names none or several."""
     out: dict[str, str | None] = {}
     for row in rows:
-        text = row.get("headline") or ""
+        text, body = row.get("headline") or "", ""
         try:
-            text += " " + str(json.loads(row.get("card_json") or "{}").get("headline") or "")
+            card = json.loads(row.get("card_json") or "{}")
+            text += " " + str(card.get("headline") or "")
+            # the headline may name only the company ("Eicher Motors May 2026 motorcycle sales"): its takeaway and points then
+            # decide ("Royal Enfield's domestic volumes grew ..."), still only when they name exactly one line
+            body = " ".join([str(card.get("takeaway") or "")] + [str(p.get("text") if isinstance(p, dict) else p)
+                                                                  for p in card.get("what_happened") or []])
         except ValueError:
             pass
-        out[row["news_id"]] = detect(text, dossier)
+        out[row["news_id"]] = detect(text, dossier) or (detect(body, dossier) if body else None)
     return out
 
 

@@ -228,3 +228,25 @@ def test_a_segment_name_is_never_read_as_a_line_from_the_headline(monkeypatch):
     from bse_intel import business_line
     d = {"segment_mix": [{"segment": "Cement", "period": "Q2FY27"}], "financial_metrics": []}
     assert business_line.detect("Acme: cement production and sales volumes for October", d) is None
+
+
+def test_balance_sheet_items_never_carry_a_line():
+    """memory-split-lines dry run 1 Nov 2026: Eternal's FY26 net worth, inventories, receivables were tagged "District"."""
+    from bse_intel import business_line
+    for m in ("net_worth", "inventories", "trade_receivables", "net_debt_cr", "cash_and_equivalents", "capex"):
+        assert not business_line.operating(m), m
+    assert business_line.operating("volumes") and business_line.operating("store_count")
+
+
+def test_a_card_whose_headline_names_no_line_is_read_from_its_takeaway(monkeypatch):
+    """Eicher's Royal Enfield May card: headline "Eicher Motors May 2026 motorcycle sales ...", takeaway "Royal Enfield's ..."."""
+    import json as _json
+    from bse_intel import business_line
+    d = {"identity": {"entities": [{"name": "Royal Enfield"}, {"name": "VECV"}]}, "financial_metrics": []}
+    rows = [{"news_id": "re", "headline": "Eicher Motors May 2026 motorcycle sales rise 15%",
+             "card_json": _json.dumps({"headline": "Eicher Motors May 2026 motorcycle sales rise 15%",
+                                       "takeaway": "Royal Enfield's domestic volumes grew 24% YoY"})},
+            {"news_id": "both", "headline": "Eicher Motors update",
+             "card_json": _json.dumps({"takeaway": "Royal Enfield and VECV both grew"})}]
+    got = business_line.card_lines(rows, d)
+    assert got["re"] == "Royal Enfield" and got["both"] is None

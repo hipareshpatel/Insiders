@@ -149,8 +149,11 @@ def _earlier_year_ends(year_ends: list[str], reports: set[str], cf: sv.CompanyFa
     nums = [sv._fy_num(fy) for fy in reports if sv._fy_num(fy) > 0]
     if not months or not nums:
         return []
-    first, last = 2000 + min(nums) - 2, min(int(ye[3:7]) for ye in year_ends)
-    return [f"YE:{y}-{m}" for y in range(first, last) for m in months if f"YE:{y}-{m}" not in year_ends]
+    first = 2000 + min(nums) - 2
+    # up to each month's own first stored year: a June company whose quarters start in September has YE:2025-09 first, and its
+    # YE:2025-06 is still wanted (review of #310)
+    return [f"YE:{y}-{m}" for m in months for y in range(first, min(int(ye[3:7]) for ye in year_ends if ye[-2:] == m) + 1)
+            if f"YE:{y}-{m}" not in year_ends]
 
 
 def _off_by_scale(values: dict, period: str, basis: str, cf: sv.CompanyFacts, fam: str, memo: dict) -> bool:

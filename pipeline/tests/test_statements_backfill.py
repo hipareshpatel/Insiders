@@ -371,6 +371,30 @@ def test_a_december_year_before_the_stored_quarters_comes_from_the_annual_report
             assert not got and "YE:2023-12" not in asked
 
 
+def test_a_june_year_whose_quarters_start_in_september_keeps_that_june(monkeypatch):
+    """Review of #310: quarters from Q2FY26 give YE:2025-09 as the first quarter end; YE:2025-06 (twelve months to June) is wanted."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    row = lambda v: SimpleNamespace(value=v)
+    years = ("YE:2024-06", "YE:2025-06", "YE:2026-06")
+
+    def ours(cf, fam, basis, table, period, memo):
+        if table == "quarters":
+            return {"Sales": row(100.0), "Net Profit": row(10.0)}, ""
+        if period in years and table == "annual":
+            return {"Sales": row(400.0), "Net Profit": row(40.0)}, ""
+        return None, ""
+
+    monkeypatch.setattr(sv, "_ours", ours)
+    quarters = ("Q2FY26", "Q3FY26", "Q4FY26", "Q1FY27")
+    cf = SimpleNamespace(results={(p, "STANDALONE"): p for p in quarters}, annual={("FY26", "STANDALONE"): "ar26"},
+                         family=lambda b: "corporate")
+    entries, _ = sb.company_entries(cf, {}, "t")
+    assert {e["period"] for e in entries if e["table"] == "annual" and e["period"].startswith("YE:")} == set(years)
+
+
 def test_a_re_read_results_file_keeps_the_rebuilds_sheet_and_years():
     """1 Nov 2026: the live run re-read RITES's and VINATIORGA's May results files and put the results file's FY26 cash flow and
     March sheet over the rebuild's, which reads the annual report first (RITES cash from operations 165.97 over 327.48, screener 327).

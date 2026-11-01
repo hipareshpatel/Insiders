@@ -4,7 +4,7 @@
 
 import { cr, num } from "./format.ts";
 import { GROUP_RANK_MIN, INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, NM_PCT, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
-import type { GroupBy, GroupRow, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
+import type { Cut, GroupBy, GroupRow, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
 
 export const GROWTH_STEPS = [0, 10, 20, 30, 50, 100] as const;   // "growth at least this much, per cent"
 export const MARGIN_STEPS = [0, 100, 200, 300, 500] as const;    // "margin up at least this many basis points"
@@ -384,7 +384,10 @@ export const MIN_GROUP_SIZE = GROUP_RANK_MIN;
 const rankable = (r: GroupRow) => r.pat_median != null && r.reported >= MIN_GROUP_SIZE;
 
 /** "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%." */
-export function groupsLead(rows: GroupRow[], by: GroupBy): Seg[] {
+/** The companies a By group view covers, as the lead names them (owner, 1 Nov 2026: on Financials the box read as if the tab did nothing). */
+const CUT_WORDS: Record<Cut, string> = { all: "", ex_financials: "Leaving out banks, NBFCs and insurers, ", financials: "Among banks, NBFCs and insurers, " };
+
+export function groupsLead(rows: GroupRow[], by: GroupBy, cut: Cut = "all"): Seg[] {
   const ranked = rows.filter(rankable).sort((a, b) => b.pat_median! - a.pat_median!);
   if (!ranked.length) {
     return [{ t: rows.some((r) => r.pat_median != null)
@@ -392,7 +395,7 @@ export function groupsLead(rows: GroupRow[], by: GroupBy): Seg[] {
       : `No ${groupNoun(by)} has a median yet: no company with a per cent change.` }];
   }
   const top = ranked[0];
-  const out: Seg[] = [{ t: `${top.label} leads the season: its median profit growth is ` }, { t: fmtPct(top.pat_median), tone: toneOf(top.pat_median) }];
+  const out: Seg[] = [{ t: `${CUT_WORDS[cut]}${top.label} leads the season: its median profit growth is ` }, { t: fmtPct(top.pat_median), tone: toneOf(top.pat_median) }];
   const ref = by === "index" ? ranked.find((r) => r.id === "NIFTY50" && r !== top) : undefined;
   const low = ref ?? (ranked.length > 1 ? ranked[ranked.length - 1] : undefined);
   if (low) out.push({ t: ref ? `, the ${low.label}'s ${fmtPct(low.pat_median)}.` : `; the lowest, ${low.label}, ${fmtPct(low.pat_median)}.` });
@@ -401,9 +404,17 @@ export function groupsLead(rows: GroupRow[], by: GroupBy): Seg[] {
 }
 
 /** The lines under the groups' headline, each from the rows' own numbers. */
-export function groupsBullets(rows: GroupRow[], by: GroupBy): string[] {
+export function groupsBullets(rows: GroupRow[], by: GroupBy, cut: Cut = "all"): string[] {
   const out: string[] = [];
-  const share = rows.filter((r) => r.financials_share_pct != null && r.pat_total_financials != null && r.pat_total_ex_financials != null)
+  if (cut === "financials") {
+    // the financials' own totals, by group: the share and revenue lines below are about the other companies (owner, 1 Nov 2026)
+    const fin = rows.filter((r) => r.pat_total_financials != null && r.reported >= MIN_GROUP_SIZE).sort((a, b) => b.pat_total_financials! - a.pat_total_financials!);
+    if (fin.length) out.push(`Total profit of banks, NBFCs and insurers grew most in the ${fin[0].label}: ${fmtPct(fin[0].pat_total_financials)}${fin.length > 1 ? `; least in the ${fin[fin.length - 1].label}: ${fmtPct(fin[fin.length - 1].pat_total_financials)}` : ""}.`);
+    const trendedFin = wellCovered(rows.filter((r) => r.trend_pat_median.some((v) => v != null)));
+    if (trendedFin.length) out.push(`${bestInEight(trendedFin)} of ${trendedFin.length} ${groupNoun(by, trendedFin.length !== 1)} show their best median in 8 quarters for these companies.`);
+    return out;
+  }
+  const share = cut === "all" && rows.filter((r) => r.financials_share_pct != null && r.pat_total_financials != null && r.pat_total_ex_financials != null)
     .sort((a, b) => b.financials_share_pct! - a.financials_share_pct!)[0];
   if (share && share.pat_total_financials! < share.pat_total_ex_financials!) {
     out.push(`Banks and other financials hold the ${share.label} back: they make ${Math.round(share.financials_share_pct!)}% of its profit and grew ${fmtPct(share.pat_total_financials)} in total, the rest ${fmtPct(share.pat_total_ex_financials)}.`);

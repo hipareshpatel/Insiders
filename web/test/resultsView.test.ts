@@ -103,6 +103,13 @@ test("groups in words", () => {
   const tiny = { ...mid, id: "TELECOM_EQ", label: "Telecom Equipment", reported: 2, of: null, pat_median: 1746 };
   assert.equal(text(groupsLead([tiny, ...idx], "index")), "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%.");
   assert.equal(text(groupsLead([tiny], "industry")), "No industry has 5 companies reported yet, so none is ranked.");
+  // the box follows the Companies choice (owner, 1 Nov 2026: on Financials it read as if the tab did nothing)
+  assert.match(text(groupsLead(idx, "index", "financials")), /^Among banks, NBFCs and insurers, /);
+  assert.match(text(groupsLead(idx, "index", "ex_financials")), /^Leaving out banks, NBFCs and insurers, /);
+  const finBullets = groupsBullets(idx, "index", "financials").join("|");
+  assert.match(finBullets, /Total profit of banks, NBFCs and insurers grew most in the /);
+  assert.doesNotMatch(finBullets, /companies other than financials|hold the .* back/);
+  assert.doesNotMatch(groupsBullets(idx, "index", "ex_financials").join("|"), /hold the .* back|Financials make/);
 });
 
 test("the spread chart: bar heights, the middle company's place, band widths", () => {

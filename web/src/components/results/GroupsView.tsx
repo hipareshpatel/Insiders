@@ -61,8 +61,8 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
               group squashed the scale and long names ran into the numbers) */}
           <div className="mt-7 grid gap-4 lg:grid-cols-[7fr_5fr]">
             <Panel title="What it says">
-              <p className="text-[19px] font-semibold leading-[1.32] tracking-[-0.01em] text-ink sm:text-[21px]"><Segs segs={groupsLead(rows, by)} /></p>
-              <ul className="mt-3.5 grid gap-2 text-[14px] text-ink-2">{groupsBullets(rows, by).map((t) => <li key={t}>· {t}</li>)}</ul>
+              <p className="text-[19px] font-semibold leading-[1.32] tracking-[-0.01em] text-ink sm:text-[21px]"><Segs segs={groupsLead(rows, by, cut)} /></p>
+              <ul className="mt-3.5 grid gap-2 text-[14px] text-ink-2">{groupsBullets(rows, by, cut).map((t) => <li key={t}>· {t}</li>)}</ul>
             </Panel>
             <Panel title="Median or total?" className="text-[15px] text-ink-2">
               <p><b className="text-ink">Median</b> is the middle value: every company counts the same. <b className="text-ink">Total</b> adds up all their

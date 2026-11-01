@@ -57,7 +57,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_slip_xbrl_guard, d20_dropped_file_period
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, card_other_issuer, d1_plan, memory_call_v2, results_needs_statement, results_press_release, unit_slip_xbrl_guard, d20_dropped_file_period
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -1370,6 +1370,56 @@ def subsidiary_results(filing: Filing, text: str) -> str | None:
     name = (tail.group(1) if tail else m.group("name")).strip(" ,.")
     own = re.sub(r"\W+|limited|ltd", "", (filing.company_name or "").lower())
     return None if own and own in re.sub(r"\W+|limited|ltd", "", name.lower()) else name
+
+
+# Another company's results filed by the listed one, named in the statement's heading or the covering letter but not
+# called a subsidiary (CARD_OTHER_ISSUER, blind audit 1 Nov 2026): HEG Advanced Materials (formerly HEG Limited) filed the
+# results of HEG Limited (formerly HEG Graphite Limited), the demerged graphite company, and the card headlined them as its
+# own. A former name is no proof: here the other company took it. The name the heading prints is read with its own
+# "(formerly ...)" clause; a company that was formerly something the listed company never was is another company.
+_COMPANY = r"[A-Z][A-Za-z0-9&.'\-]*(?:\s+(?:[A-Z][A-Za-z0-9&.'\-]*|of|and|&))*?\s+(?i:Limited|Ltd\.?)"
+_ISSUER_NAMED = re.compile(rf"(?P<name>{_COMPANY})(?:\s*\(\s*(?i:formerly|earlier)\s+(?i:known\s+as\s+)?(?P<former>{_COMPANY})\s*\))?")
+_RESULTS_OF = re.compile(rf"\b(?i:results)\s+of\s+(?P<name>{_COMPANY})(?:\s*\(\s*(?i:formerly|earlier)\s+(?i:known\s+as\s+)?"
+                         rf"(?P<former>{_COMPANY})\s*\))?")
+_COMPANY_FILLER = re.compile(r"\b(?:the|limited|ltd|private|pvt|company|co)\b|[^a-z0-9]+")
+
+
+def _bare_company(name: str | None) -> str:
+    return _COMPANY_FILLER.sub("", (name or "").lower())
+
+
+def other_issuer_results(filing: Filing, text: str, former_names: list[str] | None = None) -> str | None:
+    """The company whose results this filing carries when it is not the listed company (CARD_OTHER_ISSUER), else None.
+    Read from the name printed just above each results statement heading and from "results of <name>" in the covering
+    letter. Any heading in the listed company's own name means its own results. A name the listed company once had counts
+    as its own unless that heading names a former name the listed company never had (HEG Limited, formerly HEG Graphite)."""
+    own = _bare_company(filing.company_name)
+    if not own:
+        return None
+    formers = {_bare_company(n if isinstance(n, str) else (n or {}).get("name")) for n in former_names or []} - {""}
+    flat = " ".join((text or "")[:40000].split())
+
+    def owner(m: re.Match) -> tuple[str, bool]:
+        """(the issuer's name, whether it is the listed company)."""
+        tail = re.search(rf"({_COMPANY})$", m.group("name"))   # the last company name, not the words before it
+        name = (tail.group(1) if tail else m.group("name")).strip(" ,.")
+        name = re.sub(r"^(?:\S+[.:;]\s+)+(?=[A-Z])", "", name)   # "Board. HEG LIMITED": a sentence's end is no part of it
+        bare, former = _bare_company(name), _bare_company(m.group("former"))
+        if bare == own or (len(own) >= 4 and own in bare):
+            return name, True
+        if bare in formers and (not former or former == own or former in formers):
+            return name, True    # a filing from before the rename
+        return name, False
+
+    named = [owner(m) for m in _RESULTS_OF.finditer(flat[:6000])]   # the covering letter's own spelling first
+    for h in _RESULTS_STATEMENT.finditer(flat):
+        window = flat[max(0, h.start() - 400):h.start()]
+        found = list(_ISSUER_NAMED.finditer(window))
+        if found:
+            named.append(owner(found[-1]))
+    if not named or any(is_own for _, is_own in named):
+        return None
+    return named[0][0]
 
 
 _ESG = re.compile(r"\besg\b|sustainability\s+(?:rating|score)|environmental,?\s+social", re.I)
@@ -3583,6 +3633,10 @@ class Pipeline:
             filing = filing.model_copy(update={"event_type": "OTHER"})
             event_type = "OTHER"
         subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
+        other_issuer = None
+        if event_type == "RESULTS" and not subsidiary and card_other_issuer():
+            # another company's results, not called a subsidiary (HEGAM nse-106837190): the same path as a subsidiary's
+            other_issuer = subsidiary = other_issuer_results(filing, text, (dossier.get("identity") or {}).get("former_names"))
         if subsidiary:
             # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory
             log.info("%s passes on %s's results: an update, not the company's own results", filing.news_id, subsidiary)
@@ -3885,6 +3939,8 @@ class Pipeline:
         # a card whose figures are its own XBRL file's, every amount grounded: the garbled text layer cannot have
         # given it a wrong figure (held-card audit, 22 Oct 2026: 15 such holds, all false)
         checks.held += self._held_reasons(filing, text, xbrl_backed=bool(tagged) and not checks.amounts_ungrounded)
+        if other_issuer:
+            checks.held.append(f"The results in this filing are {other_issuer}'s, not {filing.company_name}'s own (CARD_OTHER_ISSUER)")
         unchecked: list[str] = []
         if checks.only_quotes:
             # the points whose quote does not carry them leave the face, behind a tap; the card is published, not held

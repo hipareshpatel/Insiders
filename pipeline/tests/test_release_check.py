@@ -92,7 +92,8 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "adjusted_profit", "words_match_figures",
                           "filer_checks", "figure_matches_file", "guided_not_actual", "event_repeat",
                           "press_release_fold", "unit_fix_scale",
-                          "comparative_memory", "year_ago_label"}
+                          "comparative_memory", "year_ago_label",
+                          "ratio_columns"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -236,3 +237,16 @@ def test_unit_fix_scale_keeps_a_figure_at_the_companys_own_scale():
     assert "UNIT FIX 272 Cr kept (the company's scale)" in note["on_lines"]
     assert "UNIT FIX 45,582 Cr -> 455.82 Cr" in note["on_lines"]   # a correction onto its scale stays
     assert not rc.changed_by_diff(rc.check_unit_fix_scale(card, row, None)["diff"])   # no memory: nothing refused
+
+
+def test_ratio_columns_check_lists_a_shifted_ratio_comparison():
+    """CARD_RATIO_COLUMNS (VIMTALABS nse-106836191): the year-ago margin taken for the previous quarter's."""
+    rc = _script()
+    row = {"news_id": "nse-106836191", "symbol": "VIMTALABS", "scrip_code": "1", "pdf_url": "u"}
+    card = {"headline": "Vimta Labs Q2FY27 revenue ₹112 Cr; EBITDA margin 35.5%",
+            "what_happened": [{"text": "EBITDA for Q2FY27 was ₹40.8 Cr.", "quote": "EBIDTA 408 411 -0.8% 369 10.5% 819 723 13.2%"}],
+            "why_it_matters": [{"text": "EBITDA margin of 35.5% in Q2FY27 is higher than the 35.3% in Q1FY27.",
+                                "quote": "EBIDTA (%) 35.5% 36.4% 35.3% 36.0% 35.5%"}]}
+    note = rc.check_ratio_columns(card, row)
+    assert rc.changed_by_diff(note["diff"]) and not any("35.3%" in line for line in note["on_lines"])
+    assert "35.3%" in card["why_it_matters"][0]["text"]   # the stored card is not changed

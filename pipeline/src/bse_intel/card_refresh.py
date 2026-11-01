@@ -26,12 +26,12 @@ from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
 from .nse import FileCapReached
-from . import footer_plausible, guided_actual, one_basis, ratio_columns, results_one_line, words_figures, year_ago_label
+from . import footer_plausible, guided_actual, one_basis, ratio_columns, results_face, results_one_line, words_figures, year_ago_label
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
 from .prices import point_in_time
 from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
-from .settings import card_adjusted_profit_label, card_footer_plausible, card_one_basis, card_results_one_line, card_ratio_columns, card_words_match_figures, card_year_ago_label
+from .settings import card_adjusted_profit_label, card_footer_plausible, card_one_basis, card_results_face_rebuild, card_results_one_line, card_ratio_columns, card_words_match_figures, card_year_ago_label
 
 log = logging.getLogger(__name__)
 
@@ -96,6 +96,12 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
         if end and not _discussed(end, _date.fromisoformat(filing.filed_at[:10])):
             new["results"] = None
     new["signals"] = [s for s in card.get("signals") or [] if s.get("type") not in SIGNALS_OFF]
+    if card_results_face_rebuild() and new.get("results"):
+        # a face made before V2 (two profit lines) gets today's headline, key numbers and takeaway, before the card-time checks
+        # that read them run again below (STATUS 17c; off: nothing)
+        new = copy.deepcopy(new)
+        if notes := results_face.apply_card_json(new, dossier, filing.filed_at, filing.company_name, printed or ""):
+            new["grounding"] = {**(new.get("grounding") or {}), "results_face": notes}
     if card_one_basis():
         # the table and the key numbers read against the card's stated basis, as at card time (F173; off: nothing). Before
         # 27 Oct 2026 the refresh never did this, so a refreshed card could show a table the live run would have removed
@@ -145,7 +151,7 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
             new["grounding"] = grounding
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
     changed += [k for k in ("headline", "takeaway", "key_numbers", "grounding", "what_happened", "why_it_matters", "notable_changes", "timeline_entry")
-                if (card_results_one_line() or card_one_basis() or card_adjusted_profit_label() or card_words_match_figures() or card_year_ago_label() or card_ratio_columns()
+                if (card_results_face_rebuild() or card_results_one_line() or card_one_basis() or card_adjusted_profit_label() or card_words_match_figures() or card_year_ago_label() or card_ratio_columns()
                     or guided_actual.card_guided_not_actual())
                 and k not in changed
                 and json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]

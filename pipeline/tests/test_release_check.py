@@ -93,7 +93,7 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "filer_checks", "figure_matches_file", "guided_not_actual", "event_repeat",
                           "press_release_fold", "unit_fix_scale",
                           "comparative_memory", "year_ago_label",
-                          "ratio_columns", "verdict_figure"}
+                          "ratio_columns", "verdict_figure", "results_face"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -284,3 +284,13 @@ def test_unit_fix_trace_reading_two_finds_the_unrounded_rupee_amount():
     filing = "The Board approved a payment of Rs 11,10,59,061 to the vendor."
     slips = grounding.unit_slips(["The company paid ₹111.06 Cr to the vendor."], filing, trace=trace)
     assert slips and trace and trace[0]["reading"] == 2 and "11,10,59,061" in trace[0]["source"]
+
+
+def test_results_face_lists_the_face_before_and_after():
+    """CARD_RESULTS_FACE_REBUILD (STATUS 17c): a pre-V2 card's two profit keys become one in the on lines; the off lines are as stored."""
+    from test_results_face import FILED, _card, _memory
+    rc = _script()
+    row = {"news_id": "nse-106596942", "symbol": "TATACOMM", "company_name": "Tata Communications Limited", "filed_at": FILED}
+    record = rc.check_results_face(_card(), row, _memory())
+    assert "KEY Net profit: ₹259.27 Cr" in record["off_lines"] and "KEY Net profit: ₹259.27 Cr" not in record["on_lines"]
+    assert any(x.startswith("TAKEAWAY Q4FY26 net profit to shareholders") for x in record["on_lines"])

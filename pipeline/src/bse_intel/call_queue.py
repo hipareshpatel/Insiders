@@ -29,6 +29,7 @@ log = logging.getLogger(__name__)
 
 QUEUE_DAYS = 14      # how far back the job looks; an older entry is left unread
 BACKLOG_TRIED = "callmem:backlog"   # {news_id: day queued} of every document `enqueue_backlog` queued (~2,000 at most)
+_EXHAUSTED = "__exhausted__"   # in BACKLOG_TRIED once a scan found fewer than asked: the backlog is drained
 MAX_ATTEMPTS = 3     # a transient failure leaves the filing queued; after this many it is given up with the reason
 _lock = threading.Lock()
 
@@ -138,7 +139,7 @@ def enqueue_backlog(sink, limit: int) -> list[str]:
     and would otherwise come back every QUEUE_DAYS days). Returns the ids."""
     from .memory_recall_export import EVENT, PAGE
 
-    if limit <= 0 or pending(sink):
+    if limit <= 0 or pending(sink) or _EXHAUSTED in _load(sink, BACKLOG_TRIED):
         return []
     rows, after = [], ["", ""]
     while True:   # export_cards only pages oldest first: every card is paged once, kept as a few bytes, newest first after
@@ -163,8 +164,10 @@ def enqueue_backlog(sink, limit: int) -> list[str]:
             continue
         enqueue(sink, news_id, scrip, filed_at)
         picked.append(news_id)
-    if picked:   # one writer: the queue job (its own concurrency group)
+    if picked or len(picked) < limit:   # one writer: the queue job (its own concurrency group)
         marks = _load(sink, BACKLOG_TRIED)
         marks.update({n: _day() for n in picked})
+        if len(picked) < limit:   # nothing older is left to read: later runs skip the scan of every card
+            marks[_EXHAUSTED] = _day()
         sink.kv_set(BACKLOG_TRIED, json.dumps(marks, ensure_ascii=False), _stamp())
     return picked

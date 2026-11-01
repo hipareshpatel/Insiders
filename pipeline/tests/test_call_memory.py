@@ -1325,3 +1325,20 @@ def test_backlog_never_queues_a_document_twice_after_its_queue_key_ages_out():
     for key in [k for k in sink.kv if k.startswith("callmem:q:") or k.startswith("callmem:s:")]:
         del sink.kv[key]   # QUEUE_DAYS later the day's keys are no longer read
     assert call_queue.enqueue_backlog(sink, 1) == ["older"]
+
+
+def test_backlog_pages_through_every_card_and_stops_scanning_once_drained(monkeypatch):
+    import bse_intel.memory_recall_export as mre
+    monkeypatch.setattr(mre, "PAGE", 2)
+    sink = BacklogSink([_card(f"d{m}", m) for m in range(1, 8)])
+    assert call_queue.enqueue_backlog(sink, 3) == ["d7", "d6", "d5"]   # newest first across four pages of two
+    for item in call_queue.pending(sink):
+        call_queue.settle(sink, item, "done")
+    assert call_queue.enqueue_backlog(sink, 3) == ["d4", "d3", "d2"]
+    for item in call_queue.pending(sink):
+        call_queue.settle(sink, item, "done")
+    assert call_queue.enqueue_backlog(sink, 3) == ["d1"]   # fewer than asked: drained
+    for item in call_queue.pending(sink):
+        call_queue.settle(sink, item, "done")
+    pages = sink.pages
+    assert call_queue.enqueue_backlog(sink, 3) == [] and sink.pages == pages   # no scan once drained

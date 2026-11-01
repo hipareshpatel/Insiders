@@ -15,6 +15,16 @@ CARD = {"headline": "Vimta Labs Q2FY27 revenue ₹112 Cr; EBITDA margin 35.5%",
         "notable_changes": [{"previous": "35.3% (Q1FY27)", "current": "35.5% (Q2FY27)", "quote": RATIO}]}
 
 
+# memory's figures for Vimta Labs (consolidated, crore): EBITDA Q2FY27 40.8, Q1FY27 41.1, Q2FY26 36.9; revenue so that the margins
+# are the deck's 36.4% (Q1FY27) and 35.3% (Q2FY26). The deck prints ₹ million, a tenth of memory's crore.
+def _m(metric, period, value):
+    return {"metric": metric, "period": period, "value": value, "basis": "CONSOLIDATED"}
+
+
+MEMORY = {"financial_metrics": [_m("ebitda", "Q2FY27", 40.8), _m("ebitda", "Q1FY27", 41.1), _m("ebitda", "Q2FY26", 36.9),
+                                _m("revenue", "Q2FY27", 114.93), _m("revenue", "Q1FY27", 112.91), _m("revenue", "Q2FY26", 104.53)]}
+
+
 def on(monkeypatch):
     monkeypatch.setenv("CARD_RATIO_COLUMNS", "1")
 
@@ -27,7 +37,7 @@ def test_the_amount_rows_own_changes_read_its_columns():
 def test_a_shifted_comparison_is_dropped_and_a_previous_value_corrected(monkeypatch):
     on(monkeypatch)
     card = copy.deepcopy(CARD)
-    notes = R.apply_card_json(card)
+    notes = R.apply_card_json(card, MEMORY)
     assert len(notes) == 2
     assert [i["text"][:20] for i in card["why_it_matters"]] == ["The company's strong"]
     assert card["notable_changes"][0]["previous"] == "36.4% (Q1FY27)"
@@ -39,7 +49,7 @@ def test_the_right_column_and_a_year_ago_comparison_are_kept(monkeypatch):
     card = copy.deepcopy(CARD)
     card["why_it_matters"][0]["text"] = "EBITDA margin of 35.5% is below the 36.4% in Q1FY27."
     card["notable_changes"][0]["previous"] = "35.3% (Q2FY26)"          # the year-ago column, named as such
-    assert R.apply_card_json(card) == []
+    assert R.apply_card_json(card, MEMORY) == []
 
 
 def test_off_by_default(monkeypatch):
@@ -75,3 +85,71 @@ def test_bps_and_nm_rows_are_left_alone(monkeypatch):
                               {"text": "Margin vs Q1FY27 not meaningful.", "quote": "EBIDTA (%) 35.5% NM 35.3%"}]
     card["notable_changes"] = []
     assert R.apply_card_json(card) == [] and len(card["why_it_matters"]) == 2
+
+
+
+# --- blind review of release check 41318733817: most decks print the year-ago column first --------------------------------------
+
+def test_without_memory_nothing_changes(monkeypatch):
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    assert R.apply_card_json(card) == [] and card == CARD
+
+
+# YASHO Q2FY27-like: Q2FY27, Q2FY26, YoY, Q1FY27, QoQ; the card's "18.2% in Q2 FY26" is right, the run made it 24.2%
+Y_AMOUNT = "EBITDA 2,100 1,820 15.4% 2,420 -13.2%"
+Y_RATIO = "EBITDA Margin (%) 21.0% 18.2% 24.2%"
+Y_MEMORY = {"financial_metrics": [_m("ebitda", "Q2FY27", 210.0), _m("ebitda", "Q2FY26", 182.0), _m("ebitda", "Q1FY27", 242.0),
+                                  _m("revenue", "Q2FY26", 1000.0), _m("revenue", "Q1FY27", 1000.0)]}
+
+
+def _yasho(previous, text):
+    return {"headline": "Yasho Q2FY27 results", "basis": "CONSOLIDATED",
+            "what_happened": [{"text": "EBITDA ₹210 Cr.", "quote": Y_AMOUNT}],
+            "why_it_matters": [{"text": text, "quote": Y_RATIO}],
+            "notable_changes": [{"previous": previous, "current": "21.0% (Q2FY27)", "quote": Y_RATIO}]}
+
+
+def test_yasho_a_deck_with_the_year_ago_column_first_is_read_right(monkeypatch):
+    on(monkeypatch)
+    right = _yasho("18.2% (Q2FY26)", "EBITDA margin of 21.0% expanded compared to 18.2% in Q2 FY26 but moderated from 24.2% in Q1 FY27.")
+    assert R.apply_card_json(right, Y_MEMORY) == []                       # main made it 24.2% (Q2FY26)
+    wrong = _yasho("24.2% (Q2FY26)", "EBITDA margin of 21.0% is above the 24.2% of a year ago.")
+    R.apply_card_json(wrong, Y_MEMORY)
+    assert wrong["notable_changes"][0]["previous"] == "18.2% (Q2FY26)"
+    # memory on the other basis does not tell the columns apart
+    other = copy.deepcopy(Y_MEMORY)
+    for e in other["financial_metrics"]:
+        e["basis"] = "STANDALONE"
+    still = _yasho("24.2% (Q2FY26)", "x")
+    assert R.apply_card_json(still, other) == [] and still["notable_changes"][0]["previous"] == "24.2% (Q2FY26)"
+
+
+def test_mpsltd_a_cell_that_is_not_memorys_margin_is_never_taken(monkeypatch):
+    # MPSLTD-like: the ratio row carries its own change cell (2.14%), so the position lands on it; memory's margin says no
+    on(monkeypatch)
+    amount = "EBITDA 120 100 20.0% 110 9.1%"
+    ratio = "EBITDA Margin 32.9% 30.76% 2.14%"
+    memory = {"financial_metrics": [_m("ebitda", "Q4FY26", 12.0), _m("ebitda", "Q4FY25", 10.0), _m("ebitda", "Q3FY26", 11.0),
+                                    _m("revenue", "Q4FY25", 32.51), _m("revenue", "Q3FY26", 35.0)]}
+    card = {"headline": "MPS Q4FY26 results", "basis": "CONSOLIDATED", "results": {"period": "Q4FY26"},
+            "what_happened": [{"text": "EBITDA ₹12 Cr.", "quote": amount}],
+            "notable_changes": [{"previous": "30.76% (Q4FY25)", "current": "32.9% (Q4FY26)", "quote": ratio}]}
+    assert R.apply_card_json(card, memory) == [] and card["notable_changes"][0]["previous"] == "30.76% (Q4FY25)"
+
+
+
+def test_mpsltd_with_no_revenue_in_memory_the_line_stays(monkeypatch):
+    # review of #354: memory holds EBITDA but no revenue, so no margin proves the cell; the right "30.76% (Q3FY26)" stays
+    on(monkeypatch)
+    amount = "EBITDA 120 100 20.0% 110 9.1%"
+    ratio = "EBITDA Margin 32.9% 30.76% 2.14%"
+    memory = {"financial_metrics": [_m("ebitda", "Q4FY26", 12.0), _m("ebitda", "Q4FY25", 10.0), _m("ebitda", "Q3FY26", 11.0)]}
+    card = {"headline": "MPS Q4FY26 results", "basis": "CONSOLIDATED", "results": {"period": "Q4FY26"},
+            "what_happened": [{"text": "EBITDA ₹12 Cr.", "quote": amount}],
+            "notable_changes": [{"previous": "30.76% (Q3FY26)", "current": "32.9% (Q4FY26)", "quote": ratio}]}
+    assert R.apply_card_json(card, memory) == [] and card["notable_changes"][0]["previous"] == "30.76% (Q3FY26)"
+
+
+def test_an_operating_profit_row_is_not_read_as_ebitda():
+    assert R._MEMORY_METRIC.get(R._stem("Operating profit 120 100 20.0% 110 9.1%")) is None

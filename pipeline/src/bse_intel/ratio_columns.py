@@ -72,6 +72,82 @@ def comparison_columns(amount_row: str) -> tuple[int, int] | None:
     return (comparisons[0], comparisons[1]) if len(comparisons) >= 2 else None
 
 
+# the amount row's first word to memory's metric; "operating" (EBIT or EBITDA by company) and "gross" are not mapped (review of #354)
+_MEMORY_METRIC = {"ebitda": "ebitda", "ebit": "ebit", "revenue": "revenue", "sales": "revenue", "income": "total_income",
+                  "pat": "pat", "pbt": "pbt"}
+
+
+def _memory_value(dossier: dict | None, metric: str, period: str | None, basis: str | None) -> float | None:
+    """Memory's figure of ``metric`` for ``period`` on the card's basis (an entry of another basis is not used; with the card's basis
+    unknown, only an entry whose basis memory does not split); None when there is none or more than one value."""
+    from .watch_code import _entry_basis
+
+    if not dossier or not period:
+        return None
+    found = set()
+    for e in dossier.get("financial_metrics") or []:
+        if not isinstance(e, dict) or e.get("metric") != metric or e.get("period") != period or not isinstance(e.get("value"), (int, float)):
+            continue
+        b = _entry_basis(e)
+        if basis and b and b.upper() != basis.upper():
+            continue
+        found.add(round(float(e["value"]), 4))
+    return found.pop() if len(found) == 1 else None
+
+
+def labelled_columns(amount_row: str, period: str | None, basis: str | None, dossier: dict | None) -> tuple[int, int] | None:
+    """(previous-quarter, year-ago) positions among the amount row's value cells: the comparison columns its own arithmetic finds,
+    told apart by memory's figure of the row's metric for the previous quarter and the year-ago quarter, on the card's basis
+    (blind review of release check 41318733817: most decks print the year-ago column first, and taking the first comparison column
+    as the previous quarter swapped them on 6 of 8 cards). None when memory cannot tell them apart."""
+    label, cells = _cells(amount_row)
+    metric = _MEMORY_METRIC.get(_stem(label))
+    prev_label = prior_quarter_period(period or "") if period else None
+    year_label = prior_year_period(period or "") if period else None
+    if not metric or not prev_label or not year_label:
+        return None
+    values: list[float] = []
+    comparisons: list[int] = []
+    for i, cell in enumerate(cells):
+        if cell.endswith("%"):
+            continue
+        value = _num(cell)
+        if value is None:
+            return None
+        values.append(value)
+        nxt = cells[i + 1] if i + 1 < len(cells) else ""
+        if nxt.endswith("%") and len(values) > 1 and values[-1]:
+            change = _num(nxt)
+            if change is not None and abs((values[0] / values[-1] - 1) * 100 - change) <= 0.5:
+                comparisons.append(len(values) - 1)
+    now = _memory_value(dossier, metric, period, basis)
+    prev, year = _memory_value(dossier, metric, prev_label, basis), _memory_value(dossier, metric, year_label, basis)
+    if len(comparisons) < 2 or not now or not values[0] or prev is None or year is None:
+        return None
+    scale = now / values[0]   # the deck's unit against memory's crore (₹ Mn, ₹ lakh): the same factor for every column
+    if not any(abs(scale / 10 ** k - 1) <= 0.01 for k in range(-3, 4)):
+        return None
+
+    def near(position: int, target: float) -> bool:
+        return abs(values[position] * scale - target) <= 0.01 * abs(target) + 0.05
+
+    a, b = comparisons[0], comparisons[1]
+    if near(a, prev) and near(b, year) and not (near(a, year) and near(b, prev)):
+        return a, b
+    if near(a, year) and near(b, prev) and not (near(a, prev) and near(b, year)):
+        return b, a
+    return None
+
+
+def _memory_margin(dossier: dict | None, metric: str | None, period: str | None, basis: str | None) -> float | None:
+    """Memory's ``metric`` over revenue for ``period``, in per cent, on the card's basis; None when memory lacks either."""
+    if not metric:
+        return None
+    top = _memory_value(dossier, "revenue", period, basis)
+    part = _memory_value(dossier, metric, period, basis)
+    return part / top * 100 if top and part is not None else None
+
+
 def _rows(card_json: dict) -> list[str]:
     rows = []
     for name in (*_LISTS, "key_numbers"):
@@ -131,11 +207,14 @@ def _pct_values(text: str) -> list[float]:
     return [float(m.group(1)) for m in re.finditer(r"(-?\d+(?:\.\d+)?)\s?%", text or "")]
 
 
-def apply_card_json(card_json: dict) -> list[str]:
-    """Correct or drop a ratio comparison read from a shifted column (VIMTALABS); the notes of what was changed."""
+def apply_card_json(card_json: dict, dossier: dict | None = None) -> list[str]:
+    """Correct or drop a ratio comparison read from a shifted column (VIMTALABS); the notes of what was changed. The amount row's
+    comparison columns are told apart by memory (``labelled_columns``) and the ratio cell taken must equal memory's margin for that
+    quarter when memory has both figures; without memory, nothing changes."""
     if not card_ratio_columns():
         return []
     period = _card_period(card_json)
+    basis = card_json.get("basis") or ((card_json.get("results") or {}).get("basis") if isinstance(card_json.get("results"), dict) else None)
     rows = _rows(card_json)
     notes: list[str] = []
     for name in _LISTS:
@@ -157,7 +236,7 @@ def apply_card_json(card_json: dict) -> list[str]:
                 kept.append(item)
                 continue
             ratios = [_num(c) for c in ratio_cells]
-            columns = comparison_columns(amount_row)
+            columns = labelled_columns(amount_row, period, basis, dossier)
             words = " ".join(str(item.get(k) or "") for k in ("text", "previous", "why"))
             figure = next((m for m in re.finditer(r"(-?\d+(?:\.\d+)?)\s?%", words) if float(m.group(1)) != ratios[0]), None)
             claim = _claim(words, period, figure.start() if figure else None)
@@ -169,6 +248,13 @@ def apply_card_json(card_json: dict) -> list[str]:
                 continue
             right = ratios[columns[0] if claim == "prev" else columns[1]]
             other = ratios[columns[1] if claim == "prev" else columns[0]]
+            target = prior_quarter_period(period or "") if claim == "prev" else prior_year_period(period or "")
+            margin = _memory_margin(dossier, _MEMORY_METRIC.get(_stem(_cells(amount_row)[0])), target, basis)
+            if right is None or margin is None or abs(right - margin) > 0.3:
+                # no margin in memory to prove the cell, or the cell taken is not memory's margin for that quarter (a change cell,
+                # a column shifted): the line stays (review of #354: MPSLTD's 2.14% change cell with no revenue in memory)
+                kept.append(item)
+                continue
             if any(abs(v - right) <= 0.05 for v in stated) or not any(abs(v - other) <= 0.05 for v in stated):
                 kept.append(item)   # the right column, or no sign of the shift
                 continue

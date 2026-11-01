@@ -133,7 +133,7 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
     if card_ratio_columns():
         # a ratio comparison read from a shifted column is corrected or dropped, as at card time (off: nothing)
         new = copy.deepcopy(new)
-        if notes := ratio_columns.apply_card_json(new):
+        if notes := ratio_columns.apply_card_json(new, dossier):
             new["grounding"] = {**(new.get("grounding") or {}), "ratio_columns": notes}
     if guided_actual.card_guided_not_actual():
         # a figure only memory's guidance holds, stated as an actual, is dropped, as at card time (off: nothing)

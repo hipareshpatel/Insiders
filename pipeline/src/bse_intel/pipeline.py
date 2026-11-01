@@ -4244,7 +4244,7 @@ class Pipeline:
         if year_notes := year_ago_label.apply_card_json(card_json):
             card_json.setdefault("grounding", {})["year_ago_label"] = year_notes
         # a ratio comparison read from a shifted column is corrected or dropped (CARD_RATIO_COLUMNS; off: nothing)
-        if ratio_notes := ratio_columns.apply_card_json(card_json):
+        if ratio_notes := ratio_columns.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["ratio_columns"] = ratio_notes
         # a figure only memory's guidance holds, stated as an actual, is dropped (CARD_GUIDED_NOT_ACTUAL; off: nothing)
         if guided_notes := guided_actual.apply_card_json(card_json, current):

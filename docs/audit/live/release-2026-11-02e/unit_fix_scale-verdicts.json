@@ -1,0 +1,187 @@
+{
+ "c01": {
+  "verdict": "Y BETTER",
+  "true_cr": "148.71",
+  "wrong_x": [
+   "148.71->1.49"
+  ],
+  "wrong_y": [],
+  "note": "Related-party table '(In Crores)' 148.71 purchase of goods; X conversion wrong"
+ },
+ "c02": {
+  "verdict": "Y BETTER",
+  "true_cr": "62.11 / 8.23? / 748.01 (inferred)",
+  "wrong_x": [
+   "62.11->6,211",
+   "82.3->823",
+   "748.01->74,801"
+  ],
+  "wrong_y": [
+   "82.3 Cr (filing has 82.34 million = 8.23 Cr; low confidence)"
+  ],
+  "note": "Filing is in INR millions, poor OCR scan. 7,480.10 mn = 748.01 Cr and 621.13 mn = 62.11 Cr match kept values; X's x100 conversions wrong. 82.3 not firmly located"
+ },
+ "c03": {
+  "verdict": "Y BETTER",
+  "true_cr": "1,026 (10,260 million revenue Q2FY26); 969,100",
+  "wrong_x": [
+   "1,026->1,026,000"
+  ],
+  "wrong_y": [],
+  "note": "1,026 Cr = Rs 10,260 mn revenue; 9,691 bn = 969,100 Cr right in both"
+ },
+ "c04": {
+  "verdict": "X BETTER",
+  "true_cr": "262.66",
+  "wrong_x": [],
+  "wrong_y": [
+   "262.66->2.63"
+  ],
+  "note": "Filing: investment Rs 26,265.71 lakh (= 262.66 Cr) wrongly shown as 262.66 lakh. Ambiguous whether card meant the erroneous 262.66 lakh (2.63 Cr); X favoured"
+ },
+ "c05": {
+  "verdict": "Y BETTER",
+  "true_cr": "19,978",
+  "wrong_x": [
+   "199.78"
+  ],
+  "wrong_y": [],
+  "note": "Wealth AUM INR 1,99,782 Mn = 19,978 Cr"
+ },
+ "c06": {
+  "verdict": "X BETTER",
+  "true_cr": "1.25",
+  "wrong_x": [],
+  "wrong_y": [
+   "1.25->125"
+  ],
+  "note": "Presentation in Cr; 1.25 appears as trade payables (Cr). Only other 1.25 is 1.25 billion condoms (not rupees), so 125 Cr wrong either way"
+ },
+ "c07": {
+  "verdict": "X BETTER",
+  "true_cr": "800 (inferred)",
+  "wrong_x": [],
+  "wrong_y": [
+   "800->0.8"
+  ],
+  "note": "Related-party limits INR 3000+2000+3000 million = 8000 mn = 800 Cr; literal 800 not in text, inferred"
+ },
+ "c08": {
+  "verdict": "Y BETTER",
+  "true_cr": "35",
+  "wrong_x": [
+   "35->3.5"
+  ],
+  "wrong_y": [],
+  "note": "'Invested ~35 Crs. towards expansion of API capacity' (other 35 is 35 mn vials, non-rupee)"
+ },
+ "c09": {
+  "verdict": "X BETTER",
+  "true_cr": "66.60 (6,660.01 lakh op cash flow); 30.18 not found",
+  "wrong_x": [],
+  "wrong_y": [
+   "66.60->0.07",
+   "30.18->301.8"
+  ],
+  "note": "Filing in Rs lakhs. 66.60 Cr confirmed; 30.18 not located (Y's x10 conversion has no basis)"
+ },
+ "c10": {
+  "verdict": "X BETTER",
+  "true_cr": "227.53",
+  "wrong_x": [],
+  "wrong_y": [
+   "2.28"
+  ],
+  "note": "Rs 2,27,53,28,966 = 227.53 Cr"
+ },
+ "c11": {
+  "verdict": "Y BETTER",
+  "true_cr": "125.23 240 107.26 220.32 113.05 170 96.5 73.5 96.5",
+  "wrong_x": [],
+  "wrong_y": [
+   "965.00 kept"
+  ],
+  "note": "Filing in Rs million; all conversions right, only difference is last 965.00 (X left it, true 96.5 Cr)"
+ },
+ "c12": {
+  "verdict": "X BETTER",
+  "true_cr": "311",
+  "wrong_x": [],
+  "wrong_y": [
+   "311->31.13"
+  ],
+  "note": "Slide says 'Rs. 311 Cr'"
+ },
+ "c13": {
+  "verdict": "X BETTER",
+  "true_cr": "~150 (149.99999)",
+  "wrong_x": [],
+  "wrong_y": [
+   "1,499.99"
+  ],
+  "note": "INR 149,99,99,987.50 = 150 Cr"
+ },
+ "c14": {
+  "verdict": "X BETTER",
+  "true_cr": "200",
+  "wrong_x": [],
+  "wrong_y": [
+   "2,000"
+  ],
+  "note": "Rating doc in INR million: 2,000 mn = 200 Cr (CP/term loan)"
+ },
+ "c15": {
+  "verdict": "X BETTER",
+  "true_cr": "2,921.78",
+  "wrong_x": [],
+  "wrong_y": [
+   "2.92"
+  ],
+  "note": "Fair value change account 292,178 lakh = 2,921.78 Cr"
+ },
+ "c16": {
+  "verdict": "X BETTER",
+  "true_cr": "10.36 (~10.4)",
+  "wrong_x": [],
+  "wrong_y": [
+   "104"
+  ],
+  "note": "Labour code impact Rs 103.57 million = 10.4 Cr; card's 104 mis-scaled"
+ },
+ "c17": {
+  "verdict": "Y BETTER",
+  "true_cr": "95.00",
+  "wrong_x": [
+   "950 kept"
+  ],
+  "wrong_y": [],
+  "note": "Amount raised Rs 95,00,40,000"
+ },
+ "c18": {
+  "verdict": "X BETTER",
+  "true_cr": "272,179,101,163",
+  "wrong_x": [],
+  "wrong_y": [
+   "all four converted"
+  ],
+  "note": "Investor presentation states 'All amounts in crore'"
+ },
+ "c19": {
+  "verdict": "Y BETTER",
+  "true_cr": "278.90",
+  "wrong_x": [
+   "2,789 kept"
+  ],
+  "wrong_y": [],
+  "note": "Total Rs 278,89,78,455"
+ },
+ "c20": {
+  "verdict": "Y BETTER",
+  "true_cr": "37.65 164.86 335.14",
+  "wrong_x": [
+   "all three kept"
+  ],
+  "wrong_y": [],
+  "note": "Tables in INR Million: 376.45 mn = 37.65 Cr etc."
+ }
+}

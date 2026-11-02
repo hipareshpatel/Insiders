@@ -1,0 +1,229 @@
+UNIT_FIX_SCALE_GUARD on/off (unit_fix_scale), release check
+
+- cards_in_store: 11350
+- cards_checked: 77
+- cards_changed: 35
+- lines_added: 44
+- lines_removed: 44
+- lines_changed: 0
+- skipped: {"no unit correction recorded": 11273}
+- errors: 0
+- not_remade: 25
+- refused: 19
+- kept_correction: 78
+
+
+## Changed cards (35)
+
+### HERITGFOOD d7ea9e10-c5d9-443d-a150-b5ca811c91c8
+- removed: UNIT FIX 2,334 Cr -> 233.4 Cr
+- added: UNIT FIX 2,334 Cr kept (not re-made: stored text lacks the source)
+- TRACE 9,471 Cr: reading 3 (declared unit 10 per crore) -> 947.1; source: "equity 9,007.22 7,571.00 Total equity - 9,471.20 8,034.98 LIABILITIES Non-current liabil"
+- TRACE 2,334 Cr: not re-made from the stored text
+
+### TARIL nse-106595647
+- removed: UNIT FIX 2,054 Cr -> 205.4 Cr
+- added: UNIT FIX 2,054 Cr kept (not proven by the filing)
+- TRACE 2,054 Cr: reading 1 -> 205.4; source: ""
+
+### MOTILALOFS nse-106604450 Q4FY26
+- removed: UNIT FIX 19.45 Cr -> 194.5 Cr
+- added: UNIT FIX 19.45 Cr kept (not re-made: stored text lacks the source)
+- TRACE 19.45 Cr: not re-made from the stored text
+
+### NIACL nse-106605682
+- removed: UNIT FIX 6,123 Cr -> 612.34 Cr
+- removed: UNIT FIX 1,805 Cr -> 180.52 Cr
+- added: UNIT FIX 6,123 Cr kept (not proven by the filing)
+- added: UNIT FIX 1,805 Cr kept (not proven by the filing)
+- TRACE 6,123 Cr: reading 2 -> 612.34; source: "x Department has issued a refund of Rs. 612,34,48,432/- for AY 2014-15 and AY 2017-18 this am"
+- TRACE 1,805 Cr: reading 2 -> 180.52; source: "18 this amount includes interest of Rs. 180,51,67,063/- ABHISHEK DigitallyABHISHEKsignedPAGA"
+
+### GANDHAR nse-106611844
+- removed: UNIT FIX 2.28 Cr -> 22.78 Cr
+- added: UNIT FIX 2.28 Cr kept (not proven by the filing)
+- TRACE 2.28 Cr: reading 2 -> 22.78; source: "53.55 decimals for consideration of Rs. 22,77,65,500/- 4. Shareholding, if any, in the entit"
+
+### SENORES nse-106623254
+- removed: UNIT FIX 950 Cr -> 95 Cr
+- added: UNIT FIX 950 Cr kept (not proven by the filing)
+- TRACE 950 Cr: reading 2 -> 95; source: "Funds March 28, 2026 Amount Raised Rs. 95,00,40,000 Report filed for Quarter ended March 31"
+
+### MEIL nse-106624393
+- removed: UNIT FIX 90.66 Cr -> 0.091 Cr
+- added: UNIT FIX 90.66 Cr kept (not re-made: stored text lacks the source)
+- TRACE 90.66 Cr: not re-made from the stored text
+
+### GSPCROP nse-106624576
+- removed: UNIT FIX 965.00 Cr -> 96.5 Cr
+- added: UNIT FIX 965.00 Cr kept (not re-made: stored text lacks the source)
+- TRACE 1,252.31 Cr: reading 3 (declared unit 10 per crore) -> 125.23; source: "ssions Total 2,400.00 2,400.00 1,147.69 1,252.31 ^Certificate dated April 23, 2026, issu"
+- TRACE 2,400 Cr: reading 1 -> 240; source: "Rs 4,000.00 million (Fresh issue of Rs 2,400.00 million (Refer Note below)) Note: A"
+- TRACE 1,072.64 Cr: reading 3 (declared unit 10 per crore) -> 107.26; source: "Statements Sub-total 2,203.17 2,203.17 1,072.64 1,130.53 The Company has utilized 3 Iss"
+- TRACE 2,203.17 Cr: reading 3 (declared unit 10 per crore) -> 220.32; source: "ss: Offer Expenses 196.83 Net Proceeds 2,203.17 *Crisil Ratings shall be monitoring t"
+- TRACE 1,130.53 Cr: reading 3 (declared unit 10 per crore) -> 113.05; source: "ts Sub-total 2,203.17 2,203.17 1,072.64 1,130.53 The Company has utilized 3 Issue expens"
+- TRACE 1,700 Cr: reading 1 -> 170; source: "or a No portion of certain revision 1 1,700.00 NA No Comments outstanding in the bor"
+- TRACE 965 Cr: reading 1 -> 96.5; source: "ards debt 1 outstanding 1700.00 1700.00 965.00 965.00 735.00 No Comments reduction of"
+- TRACE 735 Cr: reading 3 (declared unit 10 per crore) -> 73.5; source: "tstanding 1700.00 1700.00 965.00 965.00 735.00 No Comments reduction of borrowings Cas"
+- TRACE 965.00 Cr: not re-made from the stored text
+
+### CUPID nse-106625565 Q4FY26
+- removed: UNIT FIX 1.25 Cr -> 125 Cr
+- added: UNIT FIX 1.25 Cr kept (not re-made: stored text lacks the source)
+- TRACE 1.25 Cr: not re-made from the stored text
+
+### RUBICON nse-106625788
+- removed: UNIT FIX 376.45 Cr -> 37.65 Cr
+- removed: UNIT FIX 1,648.55 Cr -> 164.86 Cr
+- removed: UNIT FIX 3,351.45 Cr -> 335.14 Cr
+- added: UNIT FIX 376.45 Cr kept (not proven by the filing)
+- added: UNIT FIX 1,648.55 Cr kept (not proven by the filing)
+- added: UNIT FIX 3,351.45 Cr kept (not proven by the filing)
+- TRACE 376.45 Cr: reading 3 (declared unit 10 per crore) -> 37.65; source: "sue Statements. TOTAL 5,000.00 2,975.00 376.45 3,351.45 1,648.55 Note: The company has"
+- TRACE 1,648.55 Cr: reading 3 (declared unit 10 per crore) -> 164.86; source: "TOTAL 5,000.00 2,975.00 376.45 3,351.45 1,648.55 Note: The company has transferred the i"
+- TRACE 3,351.45 Cr: reading 3 (declared unit 10 per crore) -> 335.14; source: "tements. TOTAL 5,000.00 2,975.00 376.45 3,351.45 1,648.55 Note: The company has transfer"
+
+### TVSMOTOR nse-106627227
+- removed: UNIT FIX 1,933 Cr -> 193.31 Cr
+- added: UNIT FIX 1,933 Cr kept (not proven by the filing)
+- TRACE 1,933 Cr: reading 2 -> 193.31; source: ". 8. Cost of acquisition and/or the INR 193,31,19,436.71 price at which the shares are acquire"
+
+### JAYKAY nse-106645711 Q4FY26
+- removed: UNIT FIX 262.66 Cr -> 2.63 Cr
+- added: UNIT FIX 262.66 Cr kept (not re-made: stored text lacks the source)
+- TRACE 262.66 Cr: not re-made from the stored text
+
+### SICALLOG nse-106647998
+- removed: UNIT FIX 69.30 Cr -> 6.93 Cr
+- added: UNIT FIX 69.30 Cr kept (not proven by the filing)
+- TRACE 69.30 Cr: reading 3 (declared unit 100 per crore) -> 6.93; source: "ca March March Rights IN 9,303 bI 31., 693 7,000 lakhs) inRs. Funds prepaymentfora"
+
+### RBA nse-106652886
+- removed: UNIT FIX 1,499.99 Cr -> 150 Cr
+- added: UNIT FIX 1,499.99 Cr kept (not proven by the filing)
+- TRACE 1,499.99 Cr: reading 2 -> 150; source: "e Acquirer 1 has paid an amount of INR 149,99,99,987.50 (Indian Rupees One Hundred and Forty Ni"
+
+### PRAJIND nse-106653219 Q4FY26
+- removed: UNIT FIX 582.50 Cr -> 58.25 Cr
+- added: UNIT FIX 582.50 Cr kept (not re-made: stored text lacks the source)
+- TRACE 582.5 Cr: reading 1 -> 58.25; source: "at Rs. 15.4 million as compared to Rs. 582.5 million in the corresponding period las"
+- TRACE 582.50 Cr: not re-made from the stored text
+
+### TASTYBITE nse-106654023
+- removed: UNIT FIX 800 Cr -> 0.8 Cr
+- added: UNIT FIX 800 Cr kept (not re-made: stored text lacks the source)
+- TRACE 800 Cr: not re-made from the stored text
+
+### NEWGEN ee048089-d8ec-4e85-b37f-47f3df951cad Q1FY27
+- removed: UNIT FIX 190.10 Cr -> 19,010 Cr
+- added: UNIT FIX 190.10 Cr kept (not re-made: stored text lacks the source)
+- TRACE 190.10 Cr: not re-made from the stored text
+
+### NEWGEN af69ad36-1c3f-4f9e-b6d6-d4cb671659e5 Q1FY27
+- removed: UNIT FIX 362.7 Cr -> 36.27 Cr
+- added: UNIT FIX 362.7 Cr kept (not re-made: stored text lacks the source)
+- TRACE 362.7 Cr: not re-made from the stored text
+
+### PRSMJOHNSN 9bc50f5f-f424-4448-8719-2753f3b1ee6d
+- removed: UNIT FIX 2,000 Cr -> 200 Cr
+- added: UNIT FIX 2,000 Cr kept (not re-made: stored text lacks the source)
+- TRACE 2,000 Cr: not re-made from the stored text
+
+### AHLUCONT 1225fc63-22f3-418f-9286-188022ff5f5a
+- removed: UNIT FIX 299 Cr -> 2.99 Cr
+- added: UNIT FIX 299 Cr kept (not re-made: stored text lacks the source)
+- TRACE 299 Cr: not re-made from the stored text
+
+### GYFTR bc4ebe16-46fd-47eb-aacd-5d17f900d852
+- removed: UNIT FIX 148.71 Cr -> 1.49 Cr
+- added: UNIT FIX 148.71 Cr kept (not re-made: stored text lacks the source)
+- TRACE 148.71 Cr: not re-made from the stored text
+
+### SUNTECK nse-106794521
+- removed: UNIT FIX 594 Cr -> 59.44 Cr
+- added: UNIT FIX 594 Cr kept (not proven by the filing)
+- TRACE 594 Cr: reading 2 -> 59.44; source: "ed by Local Bodies, aggregating to Rs. 59,43,79,402/- (including amount of interest and pe"
+
+### SKIPPER nse-106805140
+- removed: UNIT FIX 2.28 Cr -> 227.53 Cr
+- added: UNIT FIX 2.28 Cr kept (not proven by the filing)
+- TRACE 2.28 Cr: reading 2 -> 227.53; source: "tember, 2026, proposing a demand of Rs. 2,27,53,28,966/- against the Company in relation to th"
+
+### ICICIGI nse-106817787 Q2FY27
+- removed: UNIT FIX 2,921.78 Cr -> 2.92 Cr
+- added: UNIT FIX 2,921.78 Cr kept (not re-made: stored text lacks the source)
+- TRACE 2,921.78 Cr: not re-made from the stored text
+
+### HERITGFOOD 527b6923-cd12-4d50-adbe-3c07f3c0e733 Q2FY27
+- removed: UNIT FIX 62.11 Cr -> 6,211 Cr
+- removed: UNIT FIX 82.3 Cr -> 823 Cr
+- removed: UNIT FIX 748.01 Cr -> 74,801 Cr
+- added: UNIT FIX 62.11 Cr kept (not proven by the filing)
+- added: UNIT FIX 82.3 Cr kept (not re-made: stored text lacks the source)
+- added: UNIT FIX 748.01 Cr kept (not re-made: stored text lacks the source)
+- TRACE 62.11 Cr: reading 3 (declared unit 10 per crore) -> 6211; source: "n-allocable items a Dairy 438.07 375.76 62113 813.83 1,127.03 182755 b. Renewable ene"
+- TRACE 82.3 Cr: not re-made from the stored text
+- TRACE 748.01 Cr: not re-made from the stored text
+
+### HDFCAMC nse-106818607
+- removed: UNIT FIX 1,026 Cr -> 1,026,000 Cr
+- added: UNIT FIX 1,026 Cr kept (not re-made: stored text lacks the source)
+- TRACE 1,026 Cr: not re-made from the stored text
+- TRACE 9,691 Cr: reading 1 -> 969100; source: "ERLY AVERAGE AUM² ₹9,210 bn ₹6,280 bn ₹9,691 bn ₹6,507 bn ₹6,908 bn Total closing A"
+
+### ICICIPRULI nse-106819229
+- removed: UNIT FIX 2,789 Cr -> 278.9 Cr
+- added: UNIT FIX 2,789 Cr kept (not proven by the filing)
+- TRACE 2,789 Cr: reading 2 -> 278.9; source: "st ₹ 40,96,103) Penalty: Nil Total: ₹ 278,89,78,455/- No adverse material impact on the f"
+
+### SOBHA nse-106822202 Q2FY27
+- removed: UNIT FIX 33.1 Cr -> 3.31 Cr
+- added: UNIT FIX 33.1 Cr kept (not re-made: stored text lacks the source)
+- TRACE 33.1 Cr: not re-made from the stored text
+
+### BETA nse-106824520 Q2FY27
+- removed: UNIT FIX 35 Cr -> 3.5 Cr
+- added: UNIT FIX 35 Cr kept (not re-made: stored text lacks the source)
+- TRACE 35 Cr: not re-made from the stored text
+
+### TINNARUBR nse-106824690 Q2FY27
+- removed: UNIT FIX 66.60 Cr -> 0.07 Cr
+- removed: UNIT FIX 30.18 Cr -> 301.8 Cr
+- added: UNIT FIX 66.60 Cr kept (not re-made: stored text lacks the source)
+- added: UNIT FIX 30.18 Cr kept (not re-made: stored text lacks the source)
+- TRACE 66.60 Cr: not re-made from the stored text
+- TRACE 30.18 Cr: not re-made from the stored text
+
+### CIEINDIA nse-106824978 Q2FY27
+- removed: UNIT FIX 104 Cr -> 10.4 Cr
+- added: UNIT FIX 104 Cr kept (not re-made: stored text lacks the source)
+- TRACE 104 Cr: not re-made from the stored text
+
+### MOREPENLAB nse-106830029 Q2FY27
+- removed: UNIT FIX 311 Cr -> 31.13 Cr
+- added: UNIT FIX 311 Cr kept (not proven by the filing)
+- TRACE 311 Cr: reading 2 -> 31.13; source: "ExecutionExecutionExecution Rs.Rs.Rs. 311311311 CrCrCr 52%+52%+52%+ 614614614 KLKLKL Rs"
+
+### EMKAY nse-106832905 Q2FY27
+- removed: UNIT FIX 199.78 Cr -> 19,978 Cr
+- added: UNIT FIX 199.78 Cr kept (not re-made: stored text lacks the source)
+- TRACE 199.78 Cr: not re-made from the stored text
+
+### ALIVUS nse-106835187
+- removed: UNIT FIX 278 Cr -> 27.8 Cr
+- added: UNIT FIX 278 Cr kept (not re-made: stored text lacks the source)
+- TRACE 278 Cr: not re-made from the stored text
+
+### CDSL nse-106838164 Q2FY27
+- removed: UNIT FIX 272 Cr -> 2.72 Cr
+- removed: UNIT FIX 179 Cr -> 1.79 Cr
+- removed: UNIT FIX 101 Cr -> 1.01 Cr
+- removed: UNIT FIX 163 Cr -> 1.63 Cr
+- added: UNIT FIX 272 Cr kept (not proven by the filing)
+- added: UNIT FIX 179 Cr kept (not proven by the filing)
+- added: UNIT FIX 101 Cr kept (not proven by the filing)
+- added: UNIT FIX 163 Cr kept (not re-made: stored text lacks the source)
+- TRACE 272 Cr: reading 3 (declared unit 100 per crore) -> 2.72; source: "DA w/o Dividend 233 205 339 179 168 272 255 247 212 101 165 Q2FY26 Q3FY26 Q4FY"
+- TRACE 179 Cr: reading 3 (declared unit 100 per crore) -> 1.79; source: "ITDA EBITDA w/o Dividend 233 205 339 179 168 272 255 247 212 101 165 Q2FY26 Q3"
+- TRACE 101 Cr: reading 3 (declared unit 100 per crore) -> 1.01; source: "233 205 339 179 168 272 255 247 212 101 165 Q2FY26 Q3FY26 Q4FY26 Q1FY27 Q2FY27"
+- TRACE 163 Cr: not re-made from the stored text

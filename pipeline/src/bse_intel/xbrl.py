@@ -759,11 +759,13 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     tagged_minority = {label for (m, label), v in values.items() if m == "pat_minority" and v}
     ci = {k: values.pop(k) for k in [k for k in values if k[0] in (_CI_TOTAL, _CI_OTHER)]}
     if filer_checks:
+        # first: the whole-company EPS and profit where the kept ones are the continuing operations' only, before filer_profit
+        # can hold the whole profit they are judged against (AURUM FY26: filer_profit took pat 0.71 first; lead's read of 41345924894)
+        total_tags(values)
         comprehensive_shares(values, ci)   # before filer_profit reads its share count from the owners' profit
         filer_profit(values)
-        total_tags(values)   # the whole-company EPS and profit where the kept ones are the continuing operations' only
     continuing_before_share(values)
-    owners_share(values, minority)
+    owners_share(values, minority, filer_checks)
     eps_fillers(values)
     eps_signs(values, tagged_minority, filer_checks, minority)
     # the two EPS variants go to memory only (F188), beside the owners' share: no table, prompt or card reads them
@@ -868,8 +870,12 @@ def total_tags(values: dict) -> int:
         if owners is None or whole is None or continuing is None:
             continue
         slack = max(0.02, 0.001 * abs(continuing))
-        if (abs(owners - continuing) <= slack or abs(owners - (continuing - minority)) <= slack) \
-                and abs(owners + minority - whole) > max(0.5, 0.01 * abs(whole)):
+        discontinued = values[("pat_discontinued", label)]
+        adds_up = abs(owners + minority - whole) <= max(0.5, 0.01 * abs(whole))
+        # the owners' share of continuing operations alone: with the discontinued figure it adds up to the whole profit (AURUM
+        # FY26: -10.45 - 1.19 + 12.35 = 0.71; lead's read of 41345924894)
+        continuing_share = abs(owners + minority + discontinued - whole) <= max(0.05, 0.01 * abs(whole))
+        if not adds_up and (abs(owners - continuing) <= slack or abs(owners - (continuing - minority)) <= slack or continuing_share):
             values.pop(("pat_owners", label))
             changed += 1
     return changed
@@ -909,6 +915,16 @@ def _fits_shares(profit: float | None, eps: float, refs: list[float]) -> bool:
     return 0.75 <= abs(profit / eps) / refs[len(refs) // 2] <= 1.33
 
 
+def _owners_sound(values: dict, label: str) -> bool:
+    """Whether a period's owners' profit can give a share count: no owners' figure, no real minority share, or one that adds up
+    with the minority share to the whole profit (with the minority's sign as tagged or flipped)."""
+    owners, minority, whole = (values.get((m, label)) for m in ("pat_owners", "pat_minority", "pat"))
+    if owners is None or not minority or whole is None:
+        return True
+    slack = max(0.5, 0.01 * abs(whole))
+    return abs(owners + minority - whole) <= slack or abs(owners - minority - whole) <= slack
+
+
 def filer_profit(values: dict) -> int:
     """XBRL_FILER_CHECKS (TODO 111): where a file's owners' and minority profit do not add up to its whole profit, the EPS
     share count of its other periods says whether the whole profit stands, in place. Returns how many periods it changed.
@@ -935,12 +951,17 @@ def filer_profit(values: dict) -> int:
             continue
         eps = values.get(("eps_total", label)) or values.get(("eps", label))
         metric_eps = "eps_total" if values.get(("eps_total", label)) else "eps"
-        refs = sorted(r for (m, other) in values if m == metric_eps and other != label
+        # a share count only from a period whose owners' profit is not itself in doubt (adds up with its minority share, either
+        # sign, or has none): NPST's Q4 and year both carry a filer's owners slip, and each set the other's count (facts-dump
+        # 41362651030)
+        refs = sorted(r for (m, other) in values if m == metric_eps and other != label and _owners_sound(values, other)
                       and (r := _implied_shares(values, metric_eps, other)) is not None)
         if not eps or not refs:
             continue
         sums_fit = _fits_shares(owners, eps, refs) or _fits_shares(total, eps, refs)
-        if _fits_shares(whole, eps, refs) and not sums_fit:
+        # held only when the share count contradicts the whole profit AND backs the owners' side; a whole profit nothing in the
+        # file contradicts stays (lead's read of 41345924894: PGIL's 270.03 and Centum's -2.75 were right and were removed)
+        if _fits_shares(whole, eps, refs) or not sums_fit:
             continue
         values.pop(("pat", label))
         values.pop(("pat_continuing", label), None)
@@ -967,7 +988,7 @@ def continuing_before_share(values: dict) -> int:
     return taken
 
 
-def owners_share(values: dict, kept: dict | None = None) -> int:
+def owners_share(values: dict, kept: dict | None = None, filer_checks: bool = False) -> int:
     """Drop, in place, an owners' profit that its own file's minority share does not add up to. Returns how many.
 
     Adani Ports' Q4FY26 file tags ₹1,238.67 Cr as the profit attributable to owners beside a ₹3,308.30 Cr profit and a
@@ -1000,6 +1021,14 @@ def owners_share(values: dict, kept: dict | None = None) -> int:
         if profit is None or owners is None or (minority == 0 and owners != 0):
             continue
         if abs(owners + minority - profit) > max(0.5, 0.01 * abs(profit)):
+            if filer_checks and minority and abs(owners - minority - profit) <= max(0.5, 0.01 * abs(profit)):
+                # XBRL_FILER_CHECKS: the minority share tagged with the wrong sign, the printed owners' row right (PGIL Q4FY26: owners
+                # 83.26, minority tagged +2.28 for the printed (2.28), whole 80.98; FY26 277.65 - 7.63 = 270.03; facts-dump run
+                # 41362651030): owners stay, the minority share is kept with its sign put right (lead's read of 41345924894)
+                proven.add(label)
+                if kept is not None:
+                    kept[("pat_minority", label)] = -minority
+                continue
             values.pop(("pat_owners", label))
             changed += 1
         elif minority != 0:   # a 0 is the template's filler, not a share

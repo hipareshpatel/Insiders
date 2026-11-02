@@ -399,6 +399,10 @@ on:
         description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned, xbrl-facts)
         type: boolean
         default: false
+      statement_pages:
+        description: restated-pdf and restated-pdf-trial only - PDF_STATEMENT_PAGES=1, a long filing's statement pages before its summary tables (A3)
+        type: boolean
+        default: false
       min_mcap_cr:
         description: memory-gaps-fill-bse only - fill only companies with at least this market cap (Rs Cr); empty means the universe's 500
         type: string
@@ -898,6 +902,7 @@ jobs:
         if: inputs.command == 'restated-pdf-trial'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PDF_STATEMENT_PAGES: ${{ inputs.statement_pages && '1' || '0' }}   # A3: statement pages before summary tables
           PLATFORM_TIMEOUT_S: "30"   # F216
           PLATFORM_ATTEMPTS: "3"
           IDS: ${{ inputs.ids }}
@@ -918,6 +923,7 @@ jobs:
         if: inputs.command == 'restated-pdf'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PDF_STATEMENT_PAGES: ${{ inputs.statement_pages && '1' || '0' }}   # A3: statement pages before summary tables
           PLATFORM_TIMEOUT_S: "30"   # F216
           PLATFORM_ATTEMPTS: "3"
           APPLY: ${{ inputs.apply }}     # through the environment, never pasted into the script

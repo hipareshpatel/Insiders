@@ -643,3 +643,47 @@ def test_a_june_year_companys_first_quarter_is_still_unsure():
     # without "year" over it, a 31 March column proves nothing either
     pdf = _q1_page("Particulars", ["30.06.2026", "31.03.2026", "30.06.2025", "31.03.2026"], "(Unaudited) (Audited) (Unaudited) (Audited)")
     assert "group words" in pr.figure_for(rows_of(pdf), "Q4FY26", "revenue", "STANDALONE")["unsure"]
+
+
+# --- restated-pdf dry run 41362613345 (A3): a long filing's summary tables crowd out its statement pages ------------------------
+
+def _long_filing(summary_pages: int) -> bytes:
+    """A press-release filing: ``summary_pages`` highlight pages that name the quarter and a results line with no date header
+    (INFY p5 "(after non-controlling interests) 817 839 -2.5%"), then the statement page."""
+    doc = pymupdf.open()
+    for k in range(summary_pages):
+        page = doc.new_page(width=900, height=842)
+        page.insert_text((20, 40), f"Highlights {k + 1}: quarter ended 30 June 2026", fontsize=8)
+        page.insert_text((20, 60), "Revenue from operations 817 839 -2.5% 819 -0.2%", fontsize=8)
+    statement = pymupdf.open("pdf", _q1_page("Quarter ended Year ended", ["30.06.2026", "31.03.2026", "30.06.2025", "31.03.2026"],
+                                              "(Unaudited) (Audited) (Unaudited) (Audited)"))
+    doc.insert_pdf(statement)
+    return doc.tobytes()
+
+
+def test_a_statement_page_comes_before_a_long_filings_summary_tables(monkeypatch):
+    """INFY (195 pages) and JSWSTEEL: more than twelve pages name the quarter and a results line, so the statement page past them
+    was never read and every restated column came back "no proven column"."""
+    from bse_intel.settings import get_settings
+
+    pdf = _long_filing(14)
+    monkeypatch.setenv("PDF_STATEMENT_PAGES", "0")
+    get_settings.cache_clear()
+    rows, _ = pr.read_document(pdf, ocr=False)
+    assert not pr.figure_for(rows or [], "Q4FY26", "revenue", "STANDALONE")["values"]       # off: the statement page is crowded out
+    monkeypatch.setenv("PDF_STATEMENT_PAGES", "1")
+    get_settings.cache_clear()
+    rows, _ = pr.read_document(pdf, ocr=False)
+    assert [v for v, _, _ in pr.figure_for(rows, "Q4FY26", "revenue", "STANDALONE")["values"]] == [9149.59]
+    get_settings.cache_clear()
+
+
+def test_a_statement_page_past_the_scan_limit_is_found_in_a_long_filing(monkeypatch):
+    from bse_intel.settings import get_settings
+
+    pdf = _long_filing(pr.MAX_SCAN_PAGES + 5)
+    monkeypatch.setenv("PDF_STATEMENT_PAGES", "1")
+    get_settings.cache_clear()
+    rows, _ = pr.read_document(pdf, ocr=False)
+    assert [v for v, _, _ in pr.figure_for(rows, "FY26", "revenue", "STANDALONE")["values"]] == [23958.0]
+    get_settings.cache_clear()

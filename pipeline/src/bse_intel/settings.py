@@ -679,6 +679,11 @@ class Settings:
     pdf_dates_2digit: bool = field(default_factory=lambda: _env("PDF_DATES_2DIGIT", "0") in ("1", "true", "yes"))
     pdf_page_rank: bool = field(default_factory=lambda: _env("PDF_PAGE_RANK", "0") in ("1", "true", "yes"))
     pdf_row_fixes: bool = field(default_factory=lambda: _env("PDF_ROW_FIXES", "0") in ("1", "true", "yes"))
+    # PDF_STATEMENT_PAGES (default off; restated-pdf dry run 41362613345, A3): the maintenance PDF reader (pdf_referee.read_document)
+    # puts a statement page, a results line under a header of three or more dates, before a summary or press-release table that
+    # also names a quarter, and looks past the first PDF_SCAN pages of a long filing (INFY's 195) until two statement pages are
+    # found. Not in pdf_reader_options(): the live card reader never sets it
+    pdf_statement_pages: bool = field(default_factory=lambda: _env("PDF_STATEMENT_PAGES", "0") in ("1", "true", "yes"))
     # An annual report's own XBRL from NSE, as a table in front of its text (annual_xbrl.py). Off where NSE is
     # not reachable or another run on the same address is already calling it (NSE limits by IP).
     nse_annual_xbrl: bool = field(default_factory=lambda: _env("NSE_ANNUAL_XBRL", "1") not in ("0", "false", "no"))

@@ -211,7 +211,7 @@ export function ResultsView() {
                   <div className="flex flex-col items-stretch gap-3 py-4 text-[13px] text-ink-3 sm:flex-row sm:items-center sm:justify-between sm:px-3">
                     <span className="hidden sm:inline">
                       Showing {fmtCount(rows.length)} of {fmtCount(total)}
-                      {view === "momentum" ? " · points = this quarter's growth vs a year ago minus last quarter's" : " · small grey line: amount this quarter · “was” = last quarter's growth vs a year ago"}
+                      {view === "momentum" ? " · points = this quarter's growth vs a year ago minus last quarter's" : view === "qoq" ? " · amounts in ₹ Cr, growth vs last quarter" : " · amounts in ₹ Cr, growth vs the same quarter a year ago"}
                     </span>
                     {(kpi.hasNextPage || kpi.isFetchNextPageError) && (
                       <Button className="h-12 justify-center rounded-[11px] border-0 bg-surface-2 font-semibold text-ink sm:h-[38px]" onClick={() => kpi.fetchNextPage()} disabled={kpi.isFetchingNextPage}>

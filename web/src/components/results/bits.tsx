@@ -1,10 +1,9 @@
 import { AlertTriangle, Check as CheckIcon } from "lucide-react";
 import { useEffect, useRef, type ReactNode, type RefObject } from "react";
 import type { KpiRow, Momentum, Turn } from "../../../shared/resultsTypes";
-import { industryLine } from "../../../shared/industry";
 import { cn } from "../../lib/cn";
+import { turnPill } from "../../lib/resultsPaired";
 import { fmtPct, growth, KIND_TAG, NM, type Seg, type Tone } from "../../lib/resultsView";
-import { Avatar } from "../Avatar";
 
 export const TONE_TEXT: Record<Tone, string> = { up: "text-pos", down: "text-neg", flat: "text-ink-2" };
 
@@ -88,21 +87,41 @@ export function Signals({ row, qoq = false }: { row: KpiRow; qoq?: boolean }) {
   );
 }
 
-/** The company cell: letter avatar, symbol with its kind (Bank, NBFC, Insurer), and the classification line. */
-export function CompanyCell({ row, compact = false }: { row: Pick<KpiRow, "symbol" | "scrip_code" | "company_name" | "industry" | "kind" | "basis">; compact?: boolean }) {
-  const line = industryLine(row.industry) ?? "Unclassified";
+/** A turn across a loss as a small labelled pill (no per cent exists across a sign change). */
+export function TurnPill({ turn, className }: { turn: Turn; className?: string }) {
+  const p = turnPill(turn);
+  if (!p) return null;
   return (
-    <span className="flex min-w-0 items-start gap-3">
-      <Avatar name={row.company_name ?? row.symbol ?? row.scrip_code} symbol={row.symbol} size={32} className="rounded-[10px] text-[14px]" />
-      <span className="min-w-0">
-        <span className="block text-[15px] font-bold leading-tight text-ink">
-          {row.symbol ?? row.scrip_code}
-          {KIND_TAG[row.kind] && <span className="ml-1.5 text-[12.5px] font-medium text-ink-3">{KIND_TAG[row.kind]}</span>}
-        </span>
-        <span className={cn("mt-0.5 block text-[13px] text-ink-3", compact && "truncate")} title={row.industry ?? undefined}>
-          {line}{row.basis === "STANDALONE" && " · standalone"}
-        </span>
+    <span title="A change across a loss has no per cent: shown in words"
+      className={cn("inline-block whitespace-nowrap rounded-md px-1.5 py-px text-[12px] font-semibold", p.tone === "up" ? "bg-pos-soft text-pos" : "bg-neg-soft text-neg", className)}>
+      {p.text}
+    </span>
+  );
+}
+
+/** One figure and its growth side by side: the amount (tabular numerals), then the growth (or the turn pill). */
+export function Paired({ amount, value, turn, noBase, className }: {
+  amount: string; value: number | null | undefined; turn?: Turn | null; noBase?: string; className?: string;
+}) {
+  return (
+    <span className={cn("inline-flex items-baseline justify-end gap-2", className)}>
+      <span className="num text-[14px] text-ink">{amount}</span>
+      {turn ? <TurnPill turn={turn} />
+        : value == null ? <span className="min-w-[58px] text-right font-medium text-ink-3" title={noBase}>—</span>
+        : <Growth value={value} className="min-w-[58px] text-right text-[13px]" />}
+    </span>
+  );
+}
+
+/** The company cell: the symbol (with its kind: Bank, NBFC, Insurer) and the company's name small under it. */
+export function CompanyCell({ row }: { row: Pick<KpiRow, "symbol" | "scrip_code" | "company_name" | "kind"> }) {
+  return (
+    <span className="block min-w-0">
+      <span className="block text-[15px] font-bold leading-tight text-ink">
+        {row.symbol ?? row.scrip_code}
+        {KIND_TAG[row.kind] && <span className="ml-1.5 text-[12.5px] font-medium text-ink-3">{KIND_TAG[row.kind]}</span>}
       </span>
+      {row.company_name && <span className="mt-0.5 block truncate text-[13px] text-ink-3" title={row.company_name}>{row.company_name}</span>}
     </span>
   );
 }

@@ -1,0 +1,20 @@
+{
+"c01":{"verdict":"Y BETTER","true_cr":"66.60","wrong_x":["66.60 Cr -> 0.07 Cr"],"wrong_y":[],"note":"Net cash from operating activities 6,660.01 lakh = 66.60 Cr. 30.18->301.8 line not checked (same both sides)."},
+"c02":{"verdict":"X BETTER","true_cr":"19,978","wrong_x":[],"wrong_y":["199.78 Cr kept"],"note":"Wealth AUM INR 1,99,782 Mn = 19,978 Cr."},
+"c03":{"verdict":"Y BETTER","true_cr":"90.66","wrong_x":["90.66 Cr -> 0.091 Cr"],"wrong_y":[],"note":"Unutilised IPO proceeds Rs 9,066 lakh = 90.66 Cr (OCR text garbled but matches)."},
+"c04":{"verdict":"Y BETTER","true_cr":"-79.4 (FY25 EBITDA INR -794 Mn)","wrong_x":["-794 Cr kept"],"wrong_y":[],"note":"Unit is INR Mn. Shared lines: 174->17.4, 84->8.4 right; -52 Mn = -5.2 Cr (sign shown as 5.2, same both sides)."},
+"c05":{"verdict":"X BETTER","true_cr":"62.11 and 748.01","wrong_x":[],"wrong_y":["62.11 Cr -> 6,211 Cr","748.01 Cr -> 74,801 Cr"],"note":"Filing in millions: 621.13 mn = 62.11 Cr; 7,480.10 mn = 748.01 Cr. 82.3->823 line not located (same both sides)."},
+"c06":{"verdict":"X BETTER","true_cr":"272, 179, 101, 163","wrong_x":[],"wrong_y":["272 Cr -> 2.72 Cr","179 Cr -> 1.79 Cr","101 Cr -> 1.01 Cr","163 Cr -> 1.63 Cr"],"note":"Presentation states 'All amounts in crore'."},
+"c07":{"verdict":"Y BETTER","true_cr":"193.31","wrong_x":["1,933 Cr kept"],"wrong_y":[],"note":"Acquisition cost INR 193,31,19,436.71 = 193.31 Cr."},
+"c08":{"verdict":"UNREAD","true_cr":"","wrong_x":[],"wrong_y":[],"note":"PDF fetched (annual report, amounts in lakh/million) but no unambiguous 299 / 2.99 figure found; nearest are 2,992.77 lakh (29.93 Cr) and 2,996.86 lakh (29.97 Cr)."},
+"c09":{"verdict":"UNREAD","true_cr":"","wrong_x":[],"wrong_y":[],"note":"INR million filing; no '104' figure. Candidates: 103.57 mn labour-code impact (10.36 Cr, would favour Y) or 1,038.99 mn Europe segment profit (103.9 Cr, would favour X). Cannot tell."},
+"c10":{"verdict":"X BETTER","true_cr":"1.31","wrong_x":[],"wrong_y":["13.07 Cr kept"],"note":"Exceptional items Rs 13.07 million = 1.307 Cr."},
+"c11":{"verdict":"X BETTER","true_cr":"2,921.78","wrong_x":[],"wrong_y":["2,921.78 Cr -> 2.92 Cr"],"note":"2,92,178 lakh = 2,921.78 Cr."},
+"c12":{"verdict":"UNREAD","true_cr":"","wrong_x":[],"wrong_y":[],"note":"Results in Rs lakh; 190.10 / 19,010 figure not found in text layer. Y's 19,010 Cr would exceed ~10x the company's total assets (~1,640 Cr), so implausible, but unverified."},
+"c13":{"verdict":"X BETTER","true_cr":"13,224.6","wrong_x":[],"wrong_y":["1,322.46 Cr kept"],"note":"Rs 132,246 Mn = 13,224.6 Cr."},
+"c14":{"verdict":"X BETTER","true_cr":"947.1 and 233.4","wrong_x":[],"wrong_y":["2,334 Cr kept"],"note":"Filing in millions: 9,471.20 mn = 947.12 Cr; 2,333.51 mn = 233.35 Cr."},
+"c15":{"verdict":"Y BETTER","true_cr":"152.87 and 10.77","wrong_x":["1,528.7 Cr kept"],"wrong_y":[],"note":"Annual report in lakh: income tax contingent 15,287 lakh = 152.87 Cr; GST 1,077 lakh = 10.77 Cr (same both sides)."},
+"c16":{"verdict":"X BETTER","true_cr":"27.8","wrong_x":[],"wrong_y":["278 Cr kept"],"note":"CDMO revenue Q2FY26 Rs 278 million = 27.8 Cr."},
+"c17":{"verdict":"X BETTER","true_cr":"1,026 and 969,100","wrong_x":[],"wrong_y":["1,026 Cr -> 1,026,000 Cr"],"note":"Revenue 10,260 mn = 1,026 Cr; QAAUM 9,691 bn = 969,100 Cr (same both sides)."},
+"c18":{"verdict":"X BETTER","true_cr":"33.1 (likely, PAT Q2FY27 331 mn)","wrong_x":[],"wrong_y":["33.1 Cr -> 3.31 Cr"],"note":"PAT 331 mn = 33.1 Cr. Caveat: if the card meant the contract collections (Rs 3.31 bn = 331 Cr), both are wrong (SAME)."}
+}

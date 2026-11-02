@@ -75,8 +75,8 @@ def test_a_figure_is_compared_at_its_printed_precision(monkeypatch):
     """c17: the card's whole-crore "₹3 Cr" is memory's 3.11."""
     on(monkeypatch)
     memory = {"financial_metrics": [_f("pat", "Q1FY27", 3.11, "CONSOLIDATED")]}
-    assert C.contradictions(["PAT of ₹4 Cr against ₹3 Cr in Q1FY27."], memory, "CONSOLIDATED") == []
-    assert C.contradictions(["PAT of ₹4 Cr against ₹3.50 Cr in Q1FY27."], memory, "CONSOLIDATED") != []   # a two-decimal figure is
+    assert C.contradictions(["Q2FY27 PAT of ₹4 Cr against ₹3 Cr in Q1FY27."], memory, "CONSOLIDATED") == []
+    assert C.contradictions(["Q2FY27 PAT of ₹4 Cr against ₹3.50 Cr in Q1FY27."], memory, "CONSOLIDATED") != []   # a two-decimal figure is
 
 
 def test_an_adjusted_figure_is_never_held(monkeypatch):
@@ -90,7 +90,7 @@ def test_a_segment_figure_given_as_revenue_is_still_held(monkeypatch):
     """c10, a right hold: the CDMO segment's 1,708 given as the company's revenue against the file's 2,752."""
     on(monkeypatch)
     memory = {"financial_metrics": [_f("revenue", "Q1FY27", 2752.0, "CONSOLIDATED")]}
-    assert C.contradictions(["Revenue of ₹1,900 Cr against ₹1,708 Cr in Q1FY27."], memory, "CONSOLIDATED") == [
+    assert C.contradictions(["Q2FY27 revenue of ₹1,900 Cr against ₹1,708 Cr in Q1FY27."], memory, "CONSOLIDATED") == [
         "revenue Q1FY27: the card says ₹1708 Cr, memory (the exchange's file) ₹2752 Cr"]
 
 
@@ -100,8 +100,8 @@ def test_a_source_stored_in_lakh_is_compared_in_crore(monkeypatch):
     row = _f("revenue", "Q1FY27", 500.0, "CONSOLIDATED")
     row["sources"][0]["unit"] = "INR_LAKH"
     memory = {"financial_metrics": [row]}
-    assert C.contradictions(["Revenue of ₹6 Cr against ₹5 Cr in Q1FY27."], memory, "CONSOLIDATED") == []
-    assert C.contradictions(["Revenue of ₹6 Cr against ₹50 Cr in Q1FY27."], memory, "CONSOLIDATED") == [
+    assert C.contradictions(["Q2FY27 revenue of ₹6 Cr against ₹5 Cr in Q1FY27."], memory, "CONSOLIDATED") == []
+    assert C.contradictions(["Q2FY27 revenue of ₹6 Cr against ₹50 Cr in Q1FY27."], memory, "CONSOLIDATED") == [
         "revenue Q1FY27: the card says ₹50 Cr, memory (the exchange's file) ₹5 Cr"]
 
 
@@ -115,3 +115,58 @@ def test_a_dollar_or_share_count_source_is_no_crore_figure(monkeypatch):
     row = _f("revenue", "Q1FY27", 500.0, "CONSOLIDATED")
     row["sources"][0]["unit"] = "INR_MN"
     assert C.contradictions(["Revenue of ₹60 Cr against ₹50 Cr in Q1FY27."], {"financial_metrics": [row]}, "CONSOLIDATED") == []
+
+
+# --- blind read of release check 41369856320: five right figures held -----------------------------------------------------------
+
+def test_the_cards_own_quarter_is_never_a_comparative(monkeypatch):
+    """ABCAPITAL nse-106608107: its own Q4FY26 consolidated PAT 1,124 (the company's figure) against the file's 1,164.72."""
+    on(monkeypatch)
+    memory = {"financial_metrics": [_f("pat", "Q4FY26", 1164.72, "CONSOLIDATED"), _f("pat", "Q3FY26", 900.0, "CONSOLIDATED")]}
+    assert C.contradictions(["Consolidated profit after tax grew 30% YoY to ₹1,124 crore in Q4 FY26."], memory, "CONSOLIDATED") == []
+    # an earlier quarter beside it is still compared
+    assert C.contradictions(["Consolidated PAT of ₹1,124 crore in Q4 FY26 against ₹800 crore in Q3FY26."], memory,
+                            "CONSOLIDATED") == ["pat Q3FY26: the card says ₹800 Cr, memory (the exchange's file) ₹900 Cr"]
+
+
+def test_net_sales_value_and_net_revenue_are_the_companys_own_measure(monkeypatch):
+    """UNITDSPR nse-106623104 (NSV 3,054 against the file's 6,855) and TI nse-106648311 ("net revenue" 384 against 881.18 gross of
+    excise)."""
+    on(monkeypatch)
+    memory = {"financial_metrics": [_f("revenue", "Q4FY25", 881.18, "CONSOLIDATED"), _f("revenue", "Q3FY26", 6600.0, "CONSOLIDATED")]}
+    for text in ("Net revenue reached ₹949 crore in Q4FY26 compared to ₹384 crore in Q4 FY25.",
+                 "Q4FY26 net sales value of ₹3,054 Cr against ₹2,950 Cr in Q3FY26.",
+                 "Q4FY26 NSV at ₹3,054 Cr against ₹2,950 Cr in Q3FY26."):
+        assert C.contradictions([text], memory, "CONSOLIDATED") == [], text
+
+
+def test_a_subsidiarys_figures_are_never_set_against_the_parents_memory(monkeypatch):
+    """VEDL nse-106599776: "HZL's Q4 consolidated revenue ... net profit of ₹5,033 Cr, compared to ₹3,003 Cr in Q4 FY25" against
+    Vedanta's own Q4FY25 PAT 4,961."""
+    on(monkeypatch)
+    memory = {"financial_metrics": [_f("pat", "Q4FY25", 4961.0, "CONSOLIDATED")]}
+    for text in ("HZL's Q4FY26 consolidated revenue reached ₹13,544 Cr with net profit of ₹5,033 Cr, compared to ₹3,003 Cr in Q4 FY25.",
+                 "The subsidiary's Q4FY26 net profit was ₹5,033 Cr against ₹3,003 Cr in Q4FY25."):
+        assert C.contradictions([text], memory, "CONSOLIDATED") == [], text
+    # the company's own words still hold, its own name's possessive too (lead, 2 Nov 2026)
+    assert C.contradictions(["Q4FY26 consolidated net profit ₹5,033 Cr against ₹3,003 Cr in Q4FY25."], memory, "CONSOLIDATED") != []
+    names = ("Vedanta Limited", "VEDL")
+    assert C.contradictions(["HZL's Q4FY26 net profit ₹5,033 Cr against ₹3,003 Cr in Q4 FY25."], memory, "CONSOLIDATED", names) == []
+    assert C.contradictions(["Vedanta's Q4FY26 net profit ₹5,033 Cr against ₹3,003 Cr in Q4FY25."], memory, "CONSOLIDATED", names) != []
+
+
+def test_the_cards_own_company_possessive_still_holds(monkeypatch):
+    """Lead, 2 Nov 2026: "Infosys's Q3FY26 PAT" on an Infosys card is its own figure; HZL's on it is not."""
+    on(monkeypatch)
+    memory = {"financial_metrics": [_f("pat", "Q3FY26", 6800.0, "CONSOLIDATED")]}
+    text = "Infosys's Q4FY26 PAT of ₹7,000 Cr against ₹6,500 Cr in Q3FY26."
+    assert C.contradictions([text], memory, "CONSOLIDATED", ("Infosys Limited", "INFY")) == [
+        "pat Q3FY26: the card says ₹6500 Cr, memory (the exchange's file) ₹6800 Cr"]
+    assert C.contradictions(["INFY's Q4FY26 PAT of ₹7,000 Cr against ₹6,500 Cr in Q3FY26."], memory, "CONSOLIDATED",
+                            ("Infosys Limited", "INFY")) != []
+    assert C.contradictions(["Wipro's Q4FY26 PAT of ₹7,000 Cr against ₹6,500 Cr in Q3FY26."], memory, "CONSOLIDATED",
+                            ("Infosys Limited", "INFY")) == []
+    assert C.contradictions([text], memory, "CONSOLIDATED") == []   # no names known: a named possessive is another's (safe side)
+    # "The Company's" is the card's own
+    assert C.contradictions(["The Company's Q4FY26 PAT of ₹7,000 Cr against ₹6,500 Cr in Q3FY26."], memory, "CONSOLIDATED") != []
+    assert C._own_names(("Hindustan Zinc Limited", "HINDZINC")) >= {"hindustan", "zinc", "hz", "hzl", "hindzinc"}

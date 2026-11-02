@@ -280,6 +280,14 @@ def _gap_months(a: date, b: date) -> int:
     return (a.year - b.year) * 12 + a.month - b.month
 
 
+def _year_column_in_march(dates: list[date]) -> bool:
+    """The header's year column, the last date of a four or five column layout, is 31 March: with the word "year" above it, the
+    page's year ends in March (BEL, HINDALCO, GRASIM and M&M write "Year ended" over a 31.03.2026 column and an audit-status line
+    under the dates, never "year ended 31 March" in words; restated-pdf dry run 41362613345). A June- or December-year company's
+    year column is no 31 March."""
+    return len(dates) in (4, 5) and dates[-1].month == 3 and dates[-1].day == 31
+
+
 def _pattern_kinds(dates: list[date], march_year_end: bool = False) -> list[str] | None:
     """The kind of each header date by the standard layout of Indian results, when the dates fit it exactly, else None.
 
@@ -615,7 +623,8 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
             if kinds is not None and len(set(zip(kinds, dates))) == len(dates):   # one word for all five: not a proof
                 break
             kinds = None
-        march = bool(_MARCH_YEAR.search("\n".join(shown[max(0, header - 12): header + 2])))
+        march = bool(_MARCH_YEAR.search("\n".join(shown[max(0, header - 12): header + 2]))) \
+            or ("year" in row.group_words and _year_column_in_march(dates))
         if kinds is None and (pattern := _pattern_kinds(dates, march)) is not None and row.group_words <= set(pattern):
             kinds = pattern
         if kinds is not None:

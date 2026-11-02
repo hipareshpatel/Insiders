@@ -114,3 +114,19 @@ CARD_VERDICT_NEEDS_FIGURE = true # a model's guidance/watch verdict with no figu
 # 4 ON vs 13 OFF. Residual: a second comparison line on the same card keeps its old label when memory lacks that line (GICRE
 # underwriting loss, HEGAM PBT), and two cards quote total income as revenue (a separate class) (docs/audit/live/release-2026-11-02/).
 CARD_YEAR_AGO_LABEL = true       # a year-ago label two years before the card's period, in a comparison, names the year-ago period
+# Turned on 2 Nov 2026 ~09:00 IST (lead): release check 41369856320 over 11,304 stored cards (after #370), 1,187 results cards
+# changed. Blind read of 20 by an independent reviewer from the filings: ON better 17, OFF better 1 (one net-loss line left out of
+# the key lines, both sides right), same 2. Every profit figure is on the card's own period and basis, and no per cent across a
+# sign change. Residual on both sides: JSWHL's associates' share called discontinued on a stored card (docs/audit/live/release-2026-11-02d/).
+CARD_RESULTS_FACE_REBUILD = true # a stored results card's code-written headline, key numbers and takeaway are rebuilt from file figures
+# Turned on 2 Nov 2026 ~09:00 IST (lead): release check 41369856320 (after #373), 81 cards changed. Blind read of 20 by an independent
+# reviewer from the filings: ON better 18, unread 2 (filings without EPS), OFF better 0. A total-comprehensive-income "owners' profit"
+# is dropped (ORIENTHOT 23.09). The 1 Nov residuals were checked in the change list: AURUM keeps pat 0.71, PGIL keeps pat and adds
+# owners 277.65 / 83.26, NPST no longer changes (docs/audit/live/release-2026-11-02d/).
+XBRL_FILER_CHECKS = true         # the filer's own XBRL checked against itself: comprehensive income is not profit, total EPS with total profit
+# Turned on 2 Nov 2026 ~09:10 IST (lead): release check 41369856320 (after #369), 38 cards changed. Blind read of 20 by an independent
+# reviewer from the filings: ON better 15 (a segment, a sub-line, pre-sales, another period or another basis shown as the company's
+# figure is held), OFF better 5 (a right figure held: c10 nse-106648311, c11 nse-106623104, STARHEALTH Q4FY26 loss 55.4, HINDZINC
+# Q4FY25 3,003, c18 nse-106608107); WRONG lines down, right figures lost on 5. The 5 are memory-side errors, traced by the reader
+# (docs/audit/live/release-2026-11-02d/).
+CARD_COMPARATIVE_MATCHES_MEMORY = true # a card figure the exchange file's own figure contradicts, same basis, beyond rounding, is held

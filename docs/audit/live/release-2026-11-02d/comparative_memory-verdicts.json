@@ -1,0 +1,177 @@
+{
+ "c01": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "pat Q2FY26 ₹65 Cr (published, not held)"
+  ],
+  "wrong_y": [],
+  "note": "LTM filing: net profit ₹13,799 Mn = ₹1,380 Cr; 65 is not PAT, hold right."
+ },
+ "c02": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "pat Q2FY26 ₹97.66 Cr"
+  ],
+  "wrong_y": [],
+  "note": "Filing: PAT 9,181 lakh = ₹91.81 Cr; 9,766 lakh is the APAG loss-of-control gain, not PAT."
+ },
+ "c03": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "revenue Q2FY25 ₹461.32 Cr"
+  ],
+  "wrong_y": [],
+  "note": "461.32 is the Sep-2025 quarter revenue (Q2FY26), not Q2FY25; Sep-2024 figure is not in the filing; hold right."
+ },
+ "c04": {
+  "verdict": "X BETTER",
+  "wrong_x": [
+   "HEADLINE revenue ₹637.81 Cr (standalone, in Rs million, read as Cr; consolidated Q4FY26 is ₹715.55 Cr)"
+  ],
+  "wrong_y": [
+   "HEADLINE revenue ₹637.81 Cr (same unit/basis error)",
+   "revenue Q4FY25 ₹583.84 Cr",
+   "pat Q4FY25 ₹266.32 Cr"
+  ],
+  "note": "583.84 and 266.32 are standalone Rs million figures; consolidated Q4FY25 revenue is 2,606.90 Mn = ₹260.69 Cr, so holds right. Headline wrong on both sides."
+ },
+ "c05": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "revenue Q4FY26 ₹159.7 Cr"
+  ],
+  "note": "Consolidated net sales Q4FY26 4,852 Mn = ₹485.2 Cr; 1,597 Mn is a segment (P&K Fertilizers); hold right."
+ },
+ "c06": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "pbt Q2FY26 ₹137.87 Cr (borderline: it is PBT before exceptional items; reported PBT is ₹2.00 Cr)"
+  ],
+  "note": "Press release: PBT before exceptional ₹137.87 Cr vs reported PBT ₹2.00 Cr in Q2FY26; a plain 'pbt' label at 137.87 is wrong, hold right but borderline."
+ },
+ "c07": {
+  "verdict": "X BETTER",
+  "wrong_x": [
+   "HEADLINE says net loss ₹0.02 Cr for Q2 and revenue ₹0.04 Cr (filing: Q2 revenue ₹2.61 lakh, profit ₹1.04 lakh)"
+  ],
+  "wrong_y": [
+   "HEADLINE same errors",
+   "revenue Q1FY27 ₹0.03 Cr",
+   "pat Q1FY27 ₹0.04 Cr"
+  ],
+  "note": "Filing in lakhs: Q1 (30.06.2026) revenue 2.24 lakh = ₹0.02 Cr, loss 2.45 lakh = ₹0.02 Cr; card values are wrong, hold right. Headline wrong on both sides."
+ },
+ "c08": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "revenue Q4FY26 ₹69.2 Cr",
+   "revenue Q4FY26 ₹89.4 Cr"
+  ],
+  "wrong_y": [],
+  "note": "69.2 (Enterprise) and 89.4 (Contract Mfg) are category breakdowns, not company revenue (total ~₹158.6 Cr); hold right."
+ },
+ "c09": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "revenue Q4FY26 ₹22.7 Cr",
+   "revenue Q3FY26 ₹15.62 Cr"
+  ],
+  "note": "22.70 and 15.62 are Other Operating Revenue; Sales are 178.08 and 177.82; hold right."
+ },
+ "c10": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "revenue Q4FY25 ₹384 Cr withheld although right"
+  ],
+  "note": "Press release: net revenue from operations ₹949 Cr vs ₹384 Cr in Q4FY25 (147.5% growth); 384 matches headline basis, memory 881.18 is the gross table figure; hold wrongly loses it."
+ },
+ "c11": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "revenue Q4FY26 ₹3,054 Cr withheld although right on company-reported basis (headline already caveats table ₹6,855 Cr)"
+  ],
+  "note": "Press release: reported NSV ₹3,054 Cr (+3.7%); figure is supported, so hold loses a right company-reported figure (minor, headline already carries it)."
+ },
+ "c12": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "revenue Q2FY26 ₹1,329 Cr"
+  ],
+  "note": "1,329 Cr is pre-sales in Q2FY26, not revenue; hold right."
+ },
+ "c13": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "revenue Q4FY26 ₹89 Cr"
+  ],
+  "wrong_y": [],
+  "note": "Revenue from operations Q4FY26 ₹585 Cr; 89 = Export US 39 + Non-US 50 segments; hold right."
+ },
+ "c14": {
+  "verdict": "Y BETTER",
+  "wrong_x": [
+   "revenue Q4FY26 ₹952 Cr",
+   "revenue Q4FY25 ₹840 Cr",
+   "revenue Q4FY25 ₹50 Cr"
+  ],
+  "wrong_y": [],
+  "note": "Operating revenue is ₹1,158 Cr (Q4FY25 ₹1,056 Cr); 952/840 are CDMO segment, 50 not a revenue; holds right."
+ },
+ "c15": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "pat Q2FY26 ₹0.3 Cr"
+  ],
+  "note": "Consolidated table: PAT Sep-2025 quarter 1,199 Mn = ₹119.9 Cr; 0.3 unsupported; hold right."
+ },
+ "c16": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "pat Q4FY26 ₹55 Cr withheld although supported (loss of ₹55.4 Cr, (5,540) lakh)"
+  ],
+  "note": "Filing: Q4FY26 PAT (5,540) lakh = loss ₹55.4 Cr and Q1FY27 54,973 lakh = ₹550 Cr; card figure is right, hold loses it."
+ },
+ "c17": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "pat Q4FY25 ₹3,003 Cr withheld although right"
+  ],
+  "note": "Consolidated HZL results: net profit Q4FY25 3,003, Q4FY26 5,033 (Rs crore); card figure right; hold loses it."
+ },
+ "c18": {
+  "verdict": "Y BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "pat Q4FY26 ₹1,124 Cr withheld although right"
+  ],
+  "note": "Media release states consolidated PAT grew 30% to ₹1,124 Cr in Q4FY26; card figure is the filing's stated PAT; hold loses it."
+ },
+ "c19": {
+  "verdict": "X BETTER",
+  "wrong_x": [
+   "HEADLINE 'consolidated' revenue ₹1,042 Cr and PAT ₹56.19 Cr are standalone (consolidated Q4FY26 revenue ₹1,416.93 Cr, PAT ₹97.53 Cr)"
+  ],
+  "wrong_y": [
+   "HEADLINE same error",
+   "revenue Q4FY25 ₹853.39 Cr (standalone, mixed basis)"
+  ],
+  "note": "Filing in lakhs: consolidated Q4FY25 revenue 1,13,288 lakh = ₹1,132.88 Cr; 853.39 is standalone; hold right. Headline wrong on both sides."
+ },
+ "c20": {
+  "verdict": "X BETTER",
+  "wrong_x": [],
+  "wrong_y": [
+   "revenue Q2FY27 ₹154 Cr"
+  ],
+  "note": "₹154 Cr is pre-sales, not revenue; hold right."
+ }
+}

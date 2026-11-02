@@ -900,8 +900,6 @@ def _window(filing: str, target: float, slack: float = 0.0) -> str:
     return ""
 
 
-_COUNT_NOUN = re.compile(r"\b(?:equity\s+)?(?:shares?|warrants?|options?|units?|securities|stocks?)\b", re.I)
-_CURRENCY_BEFORE = re.compile(r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s+)?$", re.I)
 _BOUNDARY = re.compile(r"[.;:|\t\n](?:\s|$)|[|\t\n]")
 # a label's head noun, longest phrase first (lead's review of #362): one figure proves another only under the same head
 _HEADS = [(re.compile(rf"\b(?:{words})\b", re.I), head) for words, head in (
@@ -944,22 +942,84 @@ def _card_head(text: str, pos: int) -> str | None:
     return _head(_BOUNDARY.split(text[:pos])[-1])
 
 
-def _proof_own_unit(filing: str, raw: str, head: str | None) -> bool:
-    """Reading 1's proof: the filing prints the card's exact figure with a currency before it, a unit word within three words
-    after it, no count in the rest of its clause ("₹13.07 million from sale of shares") and, on its own line, a label with the
-    card's head noun ("Loan of ₹13.07 million" proves no net profit; lead's review of #362)."""
-    if head is None:
-        return False
-    want = raw.replace(",", "")
+# a figure's own unit word right after it, a closing bracket or the amount spelt out between ("(₹794) Mn", "INR 3 (Three) Million")
+_OWN_UNIT_AFTER = re.compile(r"\)?\s*(?:\([A-Za-z][A-Za-z ,-]{0,60}\)\s*)?(lakhs?|lacs?|crores?|crs?|millions?|mn|billions?|bn|thousands?)(?![a-z])",
+                             re.I)
+# a page that says its figures are in crore, with or without the rupee sign ("All amounts in crore": CDSL's deck, nse-106838164)
+_CRORE_DECLARED = re.compile(r"\b(?:amounts?|figures?|numbers?|values?)\s+(?:are\s+)?in\s+(?:₹|rs\.?|inr)?\s*(?:crores?|crs?)\b"
+                             r"|(?:₹|\brs\.?|\binr)\s*(?:in\s+)?(?:crores?|crs?)(?![a-z])", re.I)
+_CRORE_WORD = re.compile(r"(?<![a-z])(?:crores?|crs?)(?![a-z])", re.I)
+
+
+def _printed_with_unit(filing: str) -> list[tuple[float, float, int]]:
+    """(crore value, figures per crore, position) of each figure the filing prints with its own unit word right after it."""
+    out = []
     for m in _ANY_NUMBER.finditer(filing):
-        if m.group(0).replace(",", "") != want or not _CURRENCY_BEFORE.search(filing[max(0, m.start() - 12):m.start()]):
+        unit = _OWN_UNIT_AFTER.match(filing, m.end())
+        if not unit:
             continue
-        rest = _BOUNDARY.split(filing[m.end():m.end() + 200])[0]
-        after = rest.split()[:3]
-        if not any(_UNIT_WORD.fullmatch(w.strip(".,;:()")) for w in after) or _COUNT_NOUN.search(rest):
+        word = unit.group(1).lower()
+        per = _PER_CRORE_WORD.get(word if word in _PER_CRORE_WORD else word[:-1])
+        try:
+            value = float(m.group(0).replace(",", ""))
+        except ValueError:
             continue
-        if _head(_row_label(filing, m.start())) == head:
-            return True
+        if per:
+            out.append((value / per, per, m.start()))
+    return out
+
+
+def _point_lost(filing: str, start: int, end: int) -> bool:
+    """A bare run of four or more digits among figures that carry decimals: its decimal point was lost (Heritage's "62113" between
+    "375.76" and "813.83" is 621.13, ₹ million; nse 527b6923)."""
+    token = filing[start:end]
+    if "," in token or "." in token or len(token) < 4:
+        return False
+    near = _ANY_NUMBER.findall(filing[max(0, start - 60):start] + " " + filing[end:end + 60])
+    return sum("." in n for n in near) >= 2
+
+
+def _heads_differ(head: str | None, filing: str, pos: int) -> bool:
+    """The card's label and the source figure's own row name two different things (EBITDA against a revenue row)."""
+    row = _head(_row_label(filing, pos))
+    return bool(head and row and head != row)
+
+
+def _verified(filing: str, reading: int, value: float, decimals: int, right: float, places: int, unit: float | None,
+              head: str | None, whole_proof: bool) -> bool:
+    """UNIT_FIX_SCALE_GUARD (lead's rule after the blind read of release check 41357717339): a correction goes through only when
+    the filing proves the card's figure was read at the wrong unit. Never when the card's figure is already the right crore value
+    of a figure printed with its own unit word (TINNARUBR "6,660 lakh" carded ₹66.60 Cr; ICICIGI "2,92,178 lakh", HDFCAMC "10,260
+    mn", SOBHA "331 mn"). Then: the correction, re-scaled, is a figure printed with its own unit word (MOBIKWIK "(₹794) Mn" ->
+    79.4, FIVESTAR "₹ 132,246 Mn" -> 13,224.6, EMKAY "1,99,782 Mn" -> 19,978); a whole-rupee amount under the card's own head
+    noun (TVSMOTOR "INR 193,31,19,436.71" -> 193.31); or, reading 3, a table figure in the declared unit whose window carries no
+    unit word of its own, on a page that does not say crore (CDSL's "All amounts in crore" deck), whose decimal point is not lost
+    (Heritage's "62113"). A source row naming another thing than the card's label never proves it."""
+    tolerance = 0.5 * 10 ** (-decimals) + 1e-9
+    printed = _printed_with_unit(filing)
+    if any(per != 1 and abs(crore - value) <= tolerance for crore, per, _ in printed):
+        return False   # the card's figure is already the right crore value of a printed figure: never converted
+    if reading == 2:
+        return whole_proof
+    slack = max(0.5 * 10 ** (-places), 1e-6 * abs(right)) + 1e-9
+    hit = next((pos for crore, per, pos in printed if per != 1 and abs(crore - right) <= slack), None)
+    if hit is not None:
+        return not _heads_differ(head, filing, hit)
+    if reading != 3 or not unit:
+        return False
+    for m in _ANY_NUMBER.finditer(filing):
+        raw = m.group(0).replace(",", "")
+        try:
+            v = float(raw)
+        except ValueError:
+            continue
+        if not v or abs(v - right * unit) > max(0.5 * 10 ** (-places) * unit, 1e-9):
+            continue
+        # the window's own unit words: a table's unit heading ("(₹ in Lakhs)") is the declared unit itself, not the figure's own
+        window = _DECLARED_UNIT.sub(" ", filing[max(0, m.start() - 40):m.end() + 40])
+        page = max(filing.rfind("--- Page", 0, m.start()), m.start() - 8000, 0)
+        return not (_UNIT_WORD.search(window) or _CRORE_WORD.search(window) or _CRORE_DECLARED.search(filing, page, m.start())
+                    or _point_lost(filing, m.start(), m.end()) or _heads_differ(head, filing, m.start()))
     return False
 
 
@@ -980,21 +1040,6 @@ def _proof_whole_rupees(filing: str, value: float, decimals: int, crore: float, 
         if _head(_row_label(filing, m.start())) == head:
             return True
     return False
-
-
-def _proof_table(filing: str, raw: str, right: float, places: int, unit: float, head: str | None) -> bool:
-    """Reading 3's proof: the filing prints the card's own figure nowhere (a card whose digits are printed may have copied them,
-    CDSL's deck "272"), and a table row under the card's head noun prints the correction times its unit, to the correction's
-    own rounding ("Revenue 2,720" in a lakh table proves no EBITDA of ₹272 Cr; lead's review of #362)."""
-    if head is None:
-        return False
-    value = float(raw.replace(",", ""))
-    numbers = [(m, float(m.group(0).replace(",", ""))) for m in _ANY_NUMBER.finditer(filing)
-               if m.group(0).replace(",", "").replace(".", "", 1).isdigit()]
-    if any(abs(v - value) <= 1e-9 for _, v in numbers):
-        return False
-    slack = max(0.5 * 10 ** (-places) * unit, 1e-9)
-    return any(abs(v - right * unit) <= slack and _head(_row_label(filing, m.start())) == head for m, v in numbers)
 
 
 def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace: list | None = None) -> list[tuple[str, float, int, float, int]]:
@@ -1042,7 +1087,7 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                 slips[raw] = (raw, value, decimals, *fits[0])
                 if trace is not None:
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 1, "source": _window(filing, value),
-                                  "proven": _proof_own_unit(filing, raw, _card_head(text or "", pos))})
+                                  "proven": _verified(filing, 1, value, decimals, *fits[0], None, _card_head(text or "", pos), False)})
                 continue
             # a bare table figure counts in the table's declared unit, never as crore when another unit is declared
             if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES):
@@ -1061,8 +1106,9 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                     found = next((w for w in (_window(filing, c * 1e7) for c in exact) if w), "") \
                         or next((w for k in (-3, -2, -1, 1, 2, 3) if (w := _window(filing, value * 10 ** (7 - k)))), "")
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 2, "source": found,
-                                  "proven": any(_proof_whole_rupees(filing, value, decimals, c, _card_head(text or "", pos))
-                                                for c in exact)})
+                                  "proven": _verified(filing, 2, value, decimals, *fits[0], None, _card_head(text or "", pos),
+                                                      any(_proof_whole_rupees(filing, value, decimals, c, _card_head(text or "", pos))
+                                                          for c in exact))})
                 continue
             if not unit or value < 10:
                 continue   # a small bare figure is ambiguous against a table's unit
@@ -1094,8 +1140,8 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
                 if trace is not None:
                     trace.append({"raw": raw, "corrected": fits[0][0], "reading": 3, "unit": unit,
                                   "source": _window(filing, fits[0][0] * unit, 0.5 * 10 ** (-fits[0][1]) * unit),
-                                  "proven": _proof_table(filing, raw, fits[0][0], fits[0][1], unit,
-                                                         _card_head(text or "", pos))})
+                                  "proven": _verified(filing, 3, value, decimals, *fits[0], unit, _card_head(text or "", pos),
+                                                      False)})
     return list(slips.values())
 
 

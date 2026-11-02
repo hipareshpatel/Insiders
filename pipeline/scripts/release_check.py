@@ -93,7 +93,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
   comparative_memory CARD_COMPARATIVE_MATCHES_MEMORY (1 Nov 2026, MASKINVEST nse-106838206): each PDF-read results card whose figure
                      for a named earlier quarter contradicts memory's; held with the switch on (columns read out of order).
   unit_fix_scale     UNIT_FIX_SCALE_GUARD (1 Nov 2026, CDSL nse-106838164): each unit correction a stored card records that the
-                     guard would refuse (the figure as written at the company's own scale in memory, the correction not).
+                     guard would refuse (today's fixer does not re-make it from the stored text with the filing's proof); one
+                     the stored text cannot re-make at all is labelled "not re-made" and counted apart (not_remade).
   press_release_fold RESULTS_PRESS_RELEASE (TODO 135): each stored results card a fold would take (its headline or file name names a
                      release, glued words too; no exchange file of its own; no results statement in its stored text), paired with
                      the earliest results card of its company and quarter filed before it. No AI: the first card's re-run with the
@@ -551,21 +552,25 @@ def unit_fix_trace(card: dict, text: str | None) -> list[str]:
 
 def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None, text: str | None = None) -> dict:
     """unit_fix_scale: each unit correction the stored card records (`grounding.unit_fixes`, {as written: corrected}) that
-    UNIT_FIX_SCALE_GUARD would refuse: the figure as written is at the company's own scale (within 3x of one of its latest
-    quarters' figures in memory, either basis) and the correction is not (CDSL nse-106838164: 272 made 2.72)."""
-    scale = P.scale_crore(dossier)
+    UNIT_FIX_SCALE_GUARD would refuse: one today's fixer, reading the stored filing text again, does not re-make with the filing's
+    proof (P.unit_fix_proven; CDSL nse-106838164: a deck's 272 made 2.72). ``dossier`` is unused (the guard no longer reads memory)."""
     trace = {t["raw"]: t for t in _unit_trace(card, text)}
     off, on = [], []
+    info = {"not_remade": 0, "refused": 0, "kept_correction": 0}
     for raw, right in ((card.get("grounding") or {}).get("unit_fixes") or {}).items():
-        try:
-            value, fixed = float(str(raw).replace(",", "")), float(str(right).replace(",", ""))
-        except ValueError:
-            continue
         off.append(f"UNIT FIX {raw} Cr -> {right} Cr")
-        # a correction its source proves is never refused (P.unit_fix_proven); one the stored text cannot re-make is judged by scale
-        refused = bool(scale) and not P.unit_fix_proven(trace.get(raw)) and P._at_scale(value, scale) and not P._at_scale(fixed, scale)
-        on.append(f"UNIT FIX {raw} Cr kept (the company's scale)" if refused else f"UNIT FIX {raw} Cr -> {right} Cr")
-    return _record(row, card, off, on, extra=unit_fix_trace(card, text))
+        hit = trace.get(raw)
+        if hit is None:
+            # counted apart, for the blind read to score apart (lead, 2 Nov 2026): the guard cannot judge what the text cannot re-make
+            info["not_remade"] += 1
+            on.append(f"UNIT FIX {raw} Cr kept (not re-made: stored text lacks the source)")
+        elif not (P.unit_fix_proven(hit) and f"{hit['corrected']:g}" == f"{float(str(right).replace(',', '')):g}"):
+            info["refused"] += 1
+            on.append(f"UNIT FIX {raw} Cr kept (not proven by the filing)")
+        else:
+            info["kept_correction"] += 1
+            on.append(f"UNIT FIX {raw} Cr -> {right} Cr")
+    return {**_record(row, card, off, on, extra=unit_fix_trace(card, text)), "info": info}
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:

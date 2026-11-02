@@ -43,6 +43,7 @@ def _file_figures(dossier: dict | None) -> dict[tuple[str, str, str], float]:
     """{(metric, period, basis): value} of memory's figures the exchange's own results file gave (a source labelled ``file``, on a
     named basis); a calculated or a model-read figure, or one with no basis, is none (blind read of 41345924894: IOB's 1,962.67
     and STARHEALTH's 111.33 were not in their filings)."""
+    from .dossier import _STORED_SCALE
     from .watch_code import _sources_of, _src_basis
 
     out: dict[tuple[str, str, str], float] = {}
@@ -52,8 +53,11 @@ def _file_figures(dossier: dict | None) -> dict[tuple[str, str, str], float]:
         for src in _sources_of(m):
             lab = src.get("lab") if isinstance(src.get("lab"), dict) else {}
             basis = _src_basis(src, m)
-            if lab.get("by") == "file" and basis and isinstance(src.get("value"), (int, float)):
-                out.setdefault((m["metric"], m["period"], basis.upper()), float(src["value"]))
+            unit = str(src.get("unit") or m.get("unit") or "INR_CR").upper()
+            if lab.get("by") != "file" or not basis or not isinstance(src.get("value"), (int, float)) or unit not in _STORED_SCALE:
+                continue   # a rate or per-share figure is no crore amount to set a card's "₹X Cr" against
+            # in crore, whatever unit the source was stored in (lead's review of #369: a lakh source of 500 is ₹5 Cr)
+            out.setdefault((m["metric"], m["period"], basis.upper()), float(src["value"]) * _STORED_SCALE[unit] / 1e7)
     return out
 
 

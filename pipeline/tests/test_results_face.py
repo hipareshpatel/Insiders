@@ -192,3 +192,52 @@ def test_an_eps_key_beside_a_profit_key_in_the_companys_words_adds_no_second_pro
                            {"label": "EPS", "value": "₹9.10", "quote": "- eps Q4FY26: 9.1 INR"}]
     F.apply_card_json(card, _memory(), FILED, "Tata Communications Limited")
     assert [k["label"] for k in card["key_numbers"]] == ["Profit after tax"]
+
+
+# --- blind read of release check 41345924894 (ON better 16, OFF 2; WRONG lines ON 5, OFF 4) ---------------------------------------
+
+def test_an_h1_face_beside_a_q2_table_is_rebuilt_for_the_half(monkeypatch):
+    """COALINDIA nse-106834917: the table is Q2FY27, the face H1FY27; the rebuild put Q2's profit on it."""
+    _on(monkeypatch)
+    rows = [("revenue", "H1FY27", 90433.54), ("revenue", "H1FY26", 80000.0), ("pat", "H1FY27", 15397.24), ("pat", "H1FY26", 10000.0),
+            ("pat_owners", "H1FY27", 15368.2), ("pat_owners", "H1FY26", 9990.0),
+            ("revenue", "Q2FY27", 44178.74), ("revenue", "Q2FY26", 40000.0), ("pat", "Q2FY27", 6547.43), ("pat", "Q2FY26", 4262.0),
+            ("pat_owners", "Q2FY27", 6540.0), ("pat_owners", "Q2FY26", 4255.0)]
+    memory = {"financial_metrics": [_e(m, p, v) for m, p, v in rows]}
+    card = _card()
+    card["results"]["period"] = "Q2FY27"
+    card["headline"] = "Coal India H1FY27: revenue ₹90,433.54 Cr, net profit ₹15,397.24 Cr"
+    card["key_numbers"][1:3] = [{"label": "Net profit", "value": "₹15,397.24 Cr", "quote": "- pat H1FY27: 15397.2 Cr"},
+                                {"label": "Net profit to shareholders", "value": "₹15,368.20 Cr", "quote": "pat_owners H1FY27: 15368.2 Cr"}]
+    F.apply_card_json(card, memory, FILED, "Coal India Limited")
+    profits = [k["value"] for k in card["key_numbers"] if k["label"].startswith("Net ")]
+    assert profits and all("6,547" not in v for v in profits) and profits[0].startswith("₹15,3")
+
+
+def test_a_loss_against_a_year_ago_profit_has_no_percentage(monkeypatch):
+    """c15 nse-106631998: "-2600.1% YoY" on a net loss against a year-ago profit."""
+    _on(monkeypatch)
+    memory = _memory(pat=-50.0, owners=-50.0, owners_ago=2.0)
+    for m in memory["financial_metrics"]:
+        if (m["metric"], m["period"]) == ("pat", "Q4FY25"):
+            m["value"] = m["sources"][0]["value"] = 2.0
+    card = _card()
+    F.apply_card_json(card, memory, FILED, "Tata Communications Limited")
+    key = next(k for k in card["key_numbers"] if k["label"].startswith("Net "))
+    assert key["label"].startswith("Net loss") and "%" not in str(key.get("change") or "")   # no "-2600.1% YoY"
+
+
+def test_an_owners_figure_no_file_backs_leaves_the_face(monkeypatch):
+    """ADANIPORTS nse-106605518: the headline's "net profit to shareholders ₹1,238.67 Cr" is memory's owners' figure with no file
+    source (a share of other comprehensive income); the whole profit 3,308.30 is the file's."""
+    _on(monkeypatch)
+    memory = _memory(pat=3308.3, owners=1238.67, owners_ago=3014.0)
+    for m in memory["financial_metrics"]:
+        if m["metric"] == "pat_owners":
+            m["sources"][0]["lab"]["by"] = "unknown"
+    card = _card()
+    card["headline"] = F._build(card, F.tagged_from_memory(memory, "Q4FY26", "CONSOLIDATED", any_source=True),
+                                "Adani Ports Limited", "", v2=False)["headline"]
+    assert "1,238.67" in card["headline"]                    # what the old code wrote from memory as it stood
+    F.apply_card_json(card, memory, FILED, "Adani Ports Limited")
+    assert "1,238.67" not in card["headline"] and "3,308.3" in card["headline"]

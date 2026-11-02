@@ -2533,6 +2533,24 @@ def cmd_memory_rerank(args, settings, sink) -> int:
     return 0
 
 
+def cmd_memory_owners_drop(args, settings, sink) -> int:
+    """Take out the owners' profit no file backs that its period's file figures contradict (memory_owners.py, ADANIPORTS
+    Q4FY26): a dry run by default, --apply backs each dossier up (backup.RunBackup) and writes. No AI, no exchange."""
+    from . import memory_owners
+
+    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()] or sink.list_dossiers()
+    outcome = memory_owners.run(sink, scrips, args.apply)
+    print(memory_owners.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["error"]:
+        print(f"memory-owners-drop: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each dossier up to backup/memory-owners-drop-<time>/, then writes)")
+    return 0
+
+
 def cmd_memory_drop_known_wrong(args, settings, sink) -> int:
     """Take the figures on the known-wrong list (known_wrong.py, F223) out of the stored dossiers: a dry run by default,
     --apply backs each dossier up (backup.RunBackup, before and after) and then writes it. No AI, no exchange."""
@@ -2913,6 +2931,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
     p.add_argument("--json", help="write the report to this file")
     p.set_defaults(func=cmd_memory_split_lines)
+    p = sub.add_parser("memory-owners-drop", help="take out the owners' profit no file backs (every source unknown) that its period's file profit and minority share contradict: dry run (default) or --apply (backs each dossier up first; no AI)")
+    p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_memory_owners_drop)
     p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")

@@ -23,6 +23,9 @@ _AMOUNT_PERIOD = re.compile(r"₹\s?(-?[\d,]+(?:\.\d+)?)\s*(?:cr|crore)\b[^.;₹
                             r"(Q[1-4]\s?FY\s?'?\d{2}|[1-4]Q\s?FY\s?\d{2})", re.I)
 
 
+_QUARTER = re.compile(r"\bQ[1-4]\s?FY\s?'?\d{2}\b|\b[1-4]Q\s?FY\s?\d{2}\b", re.I)
+
+
 def _metric_before(text: str, at: int) -> str | None:
     clause = re.split(r";|\b(?:while|whereas|but)\b", text[:at])[-1]
     best = None
@@ -34,6 +37,38 @@ def _metric_before(text: str, at: int) -> str | None:
 
 
 _BASIS_WORD = re.compile(r"\b(standalone|consolidated)\b", re.I)
+# a company's own measure, not the file's revenue line: net sales value and revenue net of excise (UNITDSPR's NSV 3,054 against the
+# file's 6,855; TI's "net revenue" 384 against 881.18 gross; blind read of 41369856320)
+_OWN_MEASURE = re.compile(r"\b(?:net\s+sales\s+value|NSV|net\s+revenue|net\s+of\s+excise|excluding\s+excise)\b", re.I)
+# another company's figures in the parent's card: a subsidiary's, a joint venture's or an associate's results (VEDL's card on
+# HZL: HZL's Q4FY25 PAT 3,003 against Vedanta's own 4,961; blind read of 41369856320), or another name's own figures ("HZL's")
+_OTHER_ENTITY = re.compile(r"\b(?:subsidiar(?:y|ies)|joint\s+venture|JV|associate\s+compan(?:y|ies))\b")
+_POSSESSIVE = re.compile(r"\b([A-Z][A-Za-z&.]{1,30})['’]s\b")
+_CORPORATE = {"ltd", "limited", "the", "india", "industries", "company", "co", "corporation", "corp", "of", "and", "&"}
+
+
+def _own_names(names) -> set[str]:
+    """The card's own company in the forms a card may write it: its symbol, its name's words (corporate words aside) and their
+    initials ("Infosys Limited" -> infosys; "Hindustan Zinc Limited" -> hindustan, zinc, hz, hzl)."""
+    own: set[str] = {"company", "group", "firm", "bank", "insurer", "lender", "management", "board"}   # "The Company's revenue"
+    for name in names or ():
+        words = [w for w in re.findall(r"[A-Za-z&]+", str(name or "")) if w]
+        if len(words) == 1 and words[0].isupper():
+            own.add(words[0].lower())   # a symbol ("TCS", "HINDZINC")
+        kept = [w for w in words if w.lower() not in _CORPORATE]
+        own |= {w.lower() for w in kept}
+        if len(kept) > 1:
+            own.add("".join(w[0] for w in kept).lower())
+            own.add("".join(w[0] for w in words if w.lower() not in {"the", "of", "and", "&"}).lower())
+    return own
+
+
+def _another_company(sentence: str, own: set[str]) -> bool:
+    """The sentence speaks of another company's figures: a subsidiary, joint venture or associate, or a possessive name that is
+    not the card's own company ("HZL's" on Vedanta's card; "Infosys's" on Infosys's card is its own; lead, 2 Nov 2026)."""
+    if _OTHER_ENTITY.search(sentence):
+        return True
+    return any(m.group(1).lower().rstrip(".") not in own for m in _POSSESSIVE.finditer(sentence))
 # an adjusted or non-GAAP figure is no reported line (BLUESTONE's adjusted EBITDA 147.4 against 125.74: blind read of 41345924894)
 _ADJUSTED = re.compile(r"\b(?:adjusted|underlying|normali[sz]ed|non[- ]?gaap|core|recurring|pre[- ]?ind[- ]?as|excluding|"
                        r"before\s+exceptional|ex[- ]exceptional)\b", re.I)
@@ -66,16 +101,26 @@ def _decimals(raw: str) -> int:
     return len(raw.split(".")[1]) if "." in raw else 0
 
 
-def contradictions(texts: list[str], dossier: dict | None, basis: str | None = None) -> list[str]:
+def contradictions(texts: list[str], dossier: dict | None, basis: str | None = None, names=()) -> list[str]:
     """Each "metric period: card X vs memory Y" the card's words state against memory, when the switch is on (blind read of release
     check 41345924894, 9 of 20 holds wrong): only on the card's own basis (the figure's clause names it, else the card's
     ``basis``; none known, no hold), only against a figure the exchange's own file gave for that quarter and basis, at the card's
-    printed precision ("₹3 Cr" is 3.11), and never for an adjusted figure."""
+    printed precision ("₹3 Cr" is 3.11), and never for an adjusted figure. Never for the card's own quarter (the latest it names),
+    a company's own measure (NSV, net revenue), or another company's figures (``names``: the card's own company, its symbol and
+    name, so its own possessive still counts)."""
     if not card_comparative_matches_memory():
         return []
     memory = _file_figures(dossier)
     if not memory:
         return []
+    from .periods import quarter_index
+
+    # the card's own quarter, the latest it names: only an earlier quarter's figure is a comparative (blind read of 41369856320:
+    # ABCAPITAL's own Q4FY26 PAT 1,124 and UNITDSPR's own NSV were held as comparatives)
+    named = [canonical_period(re.sub(r"\s|'", "", m.group(0)).upper()) or m.group(0)
+             for text in texts for m in _QUARTER.finditer((text or "").replace("**", ""))]
+    own = max((p for p in named if quarter_index(p) is not None), key=quarter_index, default=None)
+    own_names = _own_names(names)
     found = []
     for text in texts:
         flat = (text or "").replace("**", "")
@@ -83,7 +128,9 @@ def contradictions(texts: list[str], dossier: dict | None, basis: str | None = N
             metric = _metric_before(flat, m.start())
             period = canonical_period(re.sub(r"\s|'", "", m.group(2)).upper()) or m.group(2)
             clause = re.split(r";|\.\s", flat[:m.start()])[-1]
-            if not metric or _ADJUSTED.search(clause):
+            sentence = re.split(r"[.;]\s", flat[:m.start()])[-1]
+            if not metric or _ADJUSTED.search(clause) or period == own or _OWN_MEASURE.search(clause) \
+                    or _another_company(sentence, own_names):
                 continue
             word = _BASIS_WORD.findall(clause)
             on = (word[-1] if word else basis or "").upper()

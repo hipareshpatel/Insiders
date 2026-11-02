@@ -55,6 +55,12 @@ def predates_v2(card_json: dict, filed_at: str | None) -> bool:
     return two_profit_keys(card_json) or bool(when and when < V2_SINCE)
 
 
+def _file_source(src: dict) -> bool:
+    """A source the exchange's file gave (labelled file or calc, or under a synthetic ``xbrl:`` id)."""
+    lab = src.get("lab")
+    return (isinstance(lab, dict) and lab.get("by") in ("file", "calc")) or str(src.get("news_id") or "").startswith("xbrl:")
+
+
 def _from_file(entry: dict) -> bool:
     """A memory row the exchange's file gave (labelled file or calc, or under a synthetic ``xbrl:`` id)."""
     from .watch_code import _sources_of
@@ -66,12 +72,14 @@ def _from_file(entry: dict) -> bool:
         or str(entry.get("source_news_id") or "").startswith("xbrl:")
 
 
-def tagged_from_memory(dossier: dict, period: str, basis: str):
-    """An XbrlResult of memory's exchange-file figures (file or calc, never a model's) for ``period``, its year-ago, previous
-    quarter and the year-to-date periods beside them, on ``basis``; each with its YoY and QoQ worked out from memory."""
+def tagged_from_memory(dossier: dict, period: str, basis: str, any_source: bool = False):
+    """An XbrlResult of memory's exchange-file figures (file or calc, never a model's; ``any_source``: every figure, as the old code
+    read memory) for ``period``, its year-ago, previous quarter and the year-to-date periods beside them, on ``basis``; each with
+    its YoY and QoQ worked out from memory, none across a change of sign (a loss against a year-ago profit is no -2600%)."""
+    from .dossier import _NO_SCALE_UNITS, inr_crore
     from .models import FinancialMetric
     from .periods import prior_quarter_period, prior_year_period
-    from .watch_code import _entry_basis
+    from .watch_code import _entry_basis, _sources_of, _src_basis
     from .xbrl import PER_SHARE, PERCENT, XbrlResult, _change
 
     year_ago, prev_q = prior_year_period(period), prior_quarter_period(period)
@@ -80,24 +88,45 @@ def tagged_from_memory(dossier: dict, period: str, basis: str):
     if to_date:
         wanted |= {f"{to_date}{period[2:]}", f"{to_date}{(year_ago or '')[2:]}"}
     rows = [m for m in dossier.get("financial_metrics") or []
-            if isinstance(m, dict) and m.get("period") in wanted and isinstance(m.get("value"), (int, float)) and _from_file(m)]
+            if isinstance(m, dict) and m.get("period") in wanted and isinstance(m.get("value"), (int, float))
+            and (any_source or _from_file(m))]
     # the card's basis only: a row labelled another basis never; an unlabelled row only for a period memory labels nowhere
     # (lead's review of #358: a card of unknown basis took STANDALONE rows, ₹263.24 Cr made ₹131.62 Cr)
     labelled = {m["period"] for m in rows if _entry_basis(m)}
     values: dict[tuple[str, str], tuple[float, str | None]] = {}
     for m in rows:
         b = _entry_basis(m)
-        if (b.upper() == basis.upper()) if b else (m["period"] not in labelled):
-            values[(m["metric"], m["period"])] = (float(m["value"]), m.get("unit"))
+        if not ((b.upper() == basis.upper()) if b else (m["period"] not in labelled)):
+            continue
+        if any_source:
+            value, unit = m["value"], m.get("unit")
+        else:
+            # the file's own figure, never the merged one (lead's review of #370: a file source beside an unknown source's 1,238.67
+            # put 1,238.67 on the face)
+            src = next((s for s in _sources_of(m) if _file_source(s) and isinstance(s.get("value"), (int, float))
+                        and (_src_basis(s, m) or basis).upper() == basis.upper()), None)
+            if src is None:
+                continue
+            value, unit = src["value"], src.get("unit") or m.get("unit")
+        if m["metric"] in PER_SHARE or m["metric"] in PERCENT or str(unit or "").upper() in _NO_SCALE_UNITS:
+            values[(m["metric"], m["period"])] = (float(value), unit)
+            continue
+        # in crore, whatever rupee unit memory stored it in (lead's review of #370: a lakh row reached the face as crore); a dollar or
+        # share count is no rupee figure for the face
+        crore = inr_crore(value, unit)
+        if crore is not None:
+            values[(m["metric"], m["period"])] = (crore, "INR_CR")
     metrics = []
     for (metric, p), (value, unit) in values.items():
         yoy = qoq = None
         if metric not in PERCENT:
             before = values.get((metric, prior_year_period(p) or ""))
-            yoy = _change(value, before[0] if before else None)
+            # across a sign change no percentage: results_card writes "against a profit of ₹Y Cr a year earlier" (blind read of
+            # 41345924894, c15 nse-106631998: "-2600.1% YoY" on a loss against a year-ago profit)
+            yoy = _change(value, before[0]) if before and (value < 0) == (before[0] < 0) else None
             if p.startswith("Q"):
                 last = values.get((metric, prior_quarter_period(p) or ""))
-                qoq = _change(value, last[0] if last else None)
+                qoq = _change(value, last[0]) if last and (value < 0) == (last[0] < 0) else None
         metrics.append(FinancialMetric(metric=metric, period=p, value=round(value, 2), yoy_pct=yoy, qoq_pct=qoq,
                                        unit="INR" if metric in PER_SHARE else "PCT" if metric in PERCENT else unit or "INR_CR",
                                        by="file"))
@@ -116,6 +145,9 @@ def apply_card_json(card_json: dict, dossier: dict | None, filed_at: str | None,
     period = results.get("period") if isinstance(results, dict) else None
     if not period or not dossier or not predates_v2(card_json, filed_at):
         return []
+    # the face's own period, as code wrote it on the old profit keys or headline: an H1 card's face beside a Q2 table (blind read of
+    # 41345924894, COALINDIA nse-106834917: Q2's profit put on a card whose face is H1FY27)
+    period = _face_period(card_json) or period
     from .dossier import dossier_as_of
     from .periods import prior_year_period
 
@@ -132,7 +164,10 @@ def apply_card_json(card_json: dict, dossier: dict | None, filed_at: str | None,
     from pydantic import ValidationError
 
     try:
-        v1 = _build(card_json, tagged, company_name, text, v2=False)
+        # the old face from every figure memory holds, as the old code read it (ADANIPORTS nse-106605518: its "net profit to
+        # shareholders ₹1,238.67 Cr" is an owners' figure no file source backs, a share of other comprehensive income); the new
+        # one from the exchange's file only
+        v1 = _build(card_json, tagged_from_memory(current, period, basis, any_source=True), company_name, text, v2=False)
         v2 = _build(card_json, tagged, company_name, text, v2=True)
     except ValidationError:
         return []   # a stored card today's model no longer reads is left as it is
@@ -160,6 +195,20 @@ def apply_card_json(card_json: dict, dossier: dict | None, filed_at: str | None,
         notes.append("key_numbers: " + "; ".join(f"{k.get('label')} {k.get('value')}" for k in old_keys)
                      + f" -> {profit.get('label')} {profit.get('value')}")
     return notes
+
+
+_FACE_KEY = re.compile(r"^-?\s*pat(?:_owners)?\s+((?:Q[1-4]|H[12]|9M)?FY\d{2}):")
+_FACE_HEADLINE = re.compile(r"^.+? ((?:Q[1-4]|H[12]|9M)?FY\d{2}): ")
+
+
+def _face_period(card_json: dict) -> str | None:
+    """The period the old face states: an old profit key's file line ("- pat H1FY27: ..."), else a code headline's ("<name>
+    H1FY27: ...")."""
+    for k in card_json.get("key_numbers") or []:
+        if isinstance(k, dict) and _PROFIT_KEY.match(str(k.get("label") or "")) and (m := _FACE_KEY.match(str(k.get("quote") or ""))):
+            return m.group(1)
+    m = _FACE_HEADLINE.match(str(card_json.get("headline") or ""))
+    return m.group(1) if m else None
 
 
 def _build(card_json: dict, tagged, company_name: str | None, text: str, v2: bool) -> dict | None:

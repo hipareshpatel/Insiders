@@ -92,3 +92,26 @@ def test_a_segment_figure_given_as_revenue_is_still_held(monkeypatch):
     memory = {"financial_metrics": [_f("revenue", "Q1FY27", 2752.0, "CONSOLIDATED")]}
     assert C.contradictions(["Revenue of ₹1,900 Cr against ₹1,708 Cr in Q1FY27."], memory, "CONSOLIDATED") == [
         "revenue Q1FY27: the card says ₹1708 Cr, memory (the exchange's file) ₹2752 Cr"]
+
+
+def test_a_source_stored_in_lakh_is_compared_in_crore(monkeypatch):
+    """Lead's review of #369: a file source of 500 in lakh is ₹5 Cr, never ₹500 Cr."""
+    on(monkeypatch)
+    row = _f("revenue", "Q1FY27", 500.0, "CONSOLIDATED")
+    row["sources"][0]["unit"] = "INR_LAKH"
+    memory = {"financial_metrics": [row]}
+    assert C.contradictions(["Revenue of ₹6 Cr against ₹5 Cr in Q1FY27."], memory, "CONSOLIDATED") == []
+    assert C.contradictions(["Revenue of ₹6 Cr against ₹50 Cr in Q1FY27."], memory, "CONSOLIDATED") == [
+        "revenue Q1FY27: the card says ₹50 Cr, memory (the exchange's file) ₹5 Cr"]
+
+
+def test_a_dollar_or_share_count_source_is_no_crore_figure(monkeypatch):
+    """Lead's review of #370: USD_MN 5 was read as ₹50 Cr (USD_* and SHARES_* are in the stored-scale table)."""
+    on(monkeypatch)
+    for unit in ("USD_MN", "SHARES_CR", "PCT"):
+        row = _f("revenue", "Q1FY27", 5.0, "CONSOLIDATED")
+        row["sources"][0]["unit"] = unit
+        assert C.contradictions(["Revenue of ₹60 Cr against ₹50 Cr in Q1FY27."], {"financial_metrics": [row]}, "CONSOLIDATED") == [], unit
+    row = _f("revenue", "Q1FY27", 500.0, "CONSOLIDATED")
+    row["sources"][0]["unit"] = "INR_MN"
+    assert C.contradictions(["Revenue of ₹60 Cr against ₹50 Cr in Q1FY27."], {"financial_metrics": [row]}, "CONSOLIDATED") == []

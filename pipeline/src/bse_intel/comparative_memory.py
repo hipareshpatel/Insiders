@@ -43,6 +43,7 @@ def _file_figures(dossier: dict | None) -> dict[tuple[str, str, str], float]:
     """{(metric, period, basis): value} of memory's figures the exchange's own results file gave (a source labelled ``file``, on a
     named basis); a calculated or a model-read figure, or one with no basis, is none (blind read of 41345924894: IOB's 1,962.67
     and STARHEALTH's 111.33 were not in their filings)."""
+    from .dossier import inr_crore
     from .watch_code import _sources_of, _src_basis
 
     out: dict[tuple[str, str, str], float] = {}
@@ -52,8 +53,12 @@ def _file_figures(dossier: dict | None) -> dict[tuple[str, str, str], float]:
         for src in _sources_of(m):
             lab = src.get("lab") if isinstance(src.get("lab"), dict) else {}
             basis = _src_basis(src, m)
-            if lab.get("by") == "file" and basis and isinstance(src.get("value"), (int, float)):
-                out.setdefault((m["metric"], m["period"], basis.upper()), float(src["value"]))
+            # in crore, whatever rupee unit the source was stored in (lead's review of #369: a lakh source of 500 is ₹5 Cr); a rate,
+            # a per-share figure, dollars or shares are no crore amount to set a card's "₹X Cr" against (review of #370: USD_MN)
+            crore = inr_crore(src.get("value"), src.get("unit") or m.get("unit"))
+            if lab.get("by") != "file" or not basis or crore is None:
+                continue
+            out.setdefault((m["metric"], m["period"], basis.upper()), crore)
     return out
 
 

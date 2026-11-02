@@ -50,9 +50,15 @@ def test_neither_fitting_holds_the_whole_profit_and_no_eps_changes_nothing():
     assert filer_profit(values) == 0 and values[("pat", "Q")] == 50.0   # the whole profit fits, the sum does not: stays
     nothing = {("pat", "Q"): 50.0, ("pat_owners", "Q"): 10.0, ("pat_minority", "Q"): 5.0}
     assert filer_profit(nothing) == 0 and nothing[("pat", "Q")] == 50.0
+    # neither the whole profit nor the owners' side fits the share count: nothing backs the owners' side, so the whole profit
+    # stays (lead's read of 41345924894: Centum's right -2.75 was removed this way; it was held before)
     neither = {("pat", "Q"): 80.0, ("pat_owners", "Q"): 10.0, ("pat_minority", "Q"): 5.0, ("eps", "Q"): 0.5,
                ("pat", "P"): 50.0, ("eps", "P"): 0.5}
-    assert filer_profit(neither) == 1 and ("pat", "Q") not in neither
+    assert filer_profit(neither) == 0 and neither[("pat", "Q")] == 80.0
+    # the share count contradicts the whole profit AND backs the owners' sum: held (ABREL's shape)
+    backed = {("pat", "Q"): 80.0, ("pat_owners", "Q"): 45.0, ("pat_minority", "Q"): 5.0, ("eps", "Q"): 0.5,
+              ("pat", "P"): 50.0, ("eps", "P"): 0.5}
+    assert filer_profit(backed) == 1 and ("pat", "Q") not in backed
 
 
 def test_adani_ports_guard_still_holds_with_the_switch_on():
@@ -294,3 +300,58 @@ def test_aurum_owners_equal_to_the_continuing_profit_are_left_out(monkeypatch):
     ok = {("pat", "Q"): 100.0, ("pat_continuing", "Q"): 90.0, ("pat_discontinued", "Q"): 10.0, ("pat_owners", "Q"): 90.0,
           ("pat_minority", "Q"): 10.0}
     assert xbrl.total_tags(ok) == 0
+
+
+def _chain(values: dict) -> dict:
+    """The filer-check steps in xbrl.parse's order, the switch on; the minority shares kept beside them."""
+    kept: dict = {}
+    xbrl.total_tags(values)
+    filer_profit(values)
+    xbrl.continuing_before_share(values)
+    owners_share(values, kept, True)
+    return kept
+
+
+def test_aurum_the_right_whole_profit_stays_and_the_continuing_owners_share_goes(monkeypatch):
+    """AURUM nse-106598067 FY26, the file's own figures (facts-dump 41362651030): profit 0.71, continuing -7.75, discontinued 12.34,
+    owners -10.45 (their continuing share only: -10.45 - 1.18 + 12.34 = 0.71), minority -1.18. ON removed the right 0.71 and
+    kept -10.45 (lead's read of 41345924894)."""
+    _on(monkeypatch)
+    values = {("pat", "FY26"): 0.71, ("pat_continuing", "FY26"): -7.75, ("pat_discontinued", "FY26"): 12.34,
+              ("pat_owners", "FY26"): -10.45, ("pat_minority", "FY26"): -1.18, ("eps", "FY26"): 0.31,
+              ("pat", "Q4FY26"): 16.44, ("pat_continuing", "Q4FY26"): 5.24, ("pat_discontinued", "Q4FY26"): 13.05,
+              ("pat_owners", "Q4FY26"): 3.59, ("pat_minority", "Q4FY26"): -0.20, ("eps", "Q4FY26"): 2.69}
+    _chain(values)
+    assert values[("pat", "FY26")] == 0.71 and values[("pat_continuing", "FY26")] == -7.75
+    assert ("pat_owners", "FY26") not in values
+
+
+def test_pgil_a_minority_share_with_the_wrong_sign_keeps_both_profit_lines(monkeypatch):
+    """PGIL nse-106623374 (facts-dump 41362651030): owners 83.26 / 277.65 as printed, minority tagged +2.28 / +7.63 for the printed
+    losses, whole 80.98 / 270.03 (owners - minority). ON kept the owners' rows and removed both whole profits; both are right."""
+    _on(monkeypatch)
+    values = {("pat", "Q4FY26"): 80.98, ("pat_continuing", "Q4FY26"): 80.98, ("pat_owners", "Q4FY26"): 83.26,
+              ("pat_minority", "Q4FY26"): 2.28, ("eps", "Q4FY26"): 18.05,
+              ("pat", "FY26"): 270.03, ("pat_continuing", "FY26"): 270.03, ("pat_owners", "FY26"): 277.65,
+              ("pat_minority", "FY26"): 7.63, ("eps", "FY26"): 60.34}
+    kept = _chain(values)
+    assert values[("pat", "Q4FY26")] == 80.98 and values[("pat_owners", "Q4FY26")] == 83.26
+    assert values[("pat", "FY26")] == 270.03 and values[("pat_owners", "FY26")] == 277.65
+    assert kept[("pat_minority", "Q4FY26")] == -2.28   # its sign put right for memory
+    # off: the owners' rows go (they do not add up as tagged), the whole profit stays
+    plain = {("pat", "Q4FY26"): 80.98, ("pat_owners", "Q4FY26"): 83.26, ("pat_minority", "Q4FY26"): 2.28}
+    owners_share(plain)
+    assert ("pat_owners", "Q4FY26") not in plain and plain[("pat", "Q4FY26")] == 80.98
+
+
+def test_npst_an_owners_figure_two_signals_contradict_is_left_out(monkeypatch):
+    """NPST nse-106645418 (facts-dump 41362651030): whole 12.24 / 40.83, owners 18.37 / 46.94 printed, minority -0.02 / -0.01. The
+    owners do not add up with the minority share either way, and the EPS share count (Q2FY26: 9.84 / 5.00, about 1.97 crore
+    shares) fits the whole profit (12.24 / 6.17 = 1.98) and not the owners' (2.98): a filer's slip. The whole profit stays."""
+    _on(monkeypatch)
+    values = {("pat", "Q4FY26"): 12.24, ("pat_owners", "Q4FY26"): 18.37, ("pat_minority", "Q4FY26"): -0.02, ("eps", "Q4FY26"): 6.17,
+              ("pat", "FY26"): 40.83, ("pat_owners", "FY26"): 46.94, ("pat_minority", "FY26"): -0.01, ("eps", "FY26"): 20.58,
+              ("pat", "Q2FY26"): 9.84, ("pat_owners", "Q2FY26"): 9.84, ("pat_minority", "Q2FY26"): 0.004, ("eps", "Q2FY26"): 5.0}
+    _chain(values)
+    assert values[("pat", "Q4FY26")] == 12.24 and values[("pat", "FY26")] == 40.83
+    assert ("pat_owners", "Q4FY26") not in values and ("pat_owners", "FY26") not in values

@@ -181,6 +181,9 @@ def test_filer_checks_reads_the_cards_own_file_off_and_on(monkeypatch):
 
     from bse_intel import xbrl
 
+    # the check sets the switch off and on itself and puts back what it found: pinned off here, so the restore assertion holds
+    # whatever switches.toml says (lead's read of 41345924894)
+    monkeypatch.setenv("XBRL_FILER_CHECKS", "0")
     rc = _script()
 
     def fake_parse(_data):

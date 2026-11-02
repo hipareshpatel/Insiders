@@ -74,9 +74,16 @@ def test_an_owners_profit_the_eps_backs_stays_and_the_eps_keeps_its_sign():
 # ---------------------------------------------------------------- the EPS sign repair
 def test_an_eps_beside_a_profit_the_other_periods_contradict_is_left_out_and_the_profit_stays():
     """Anup Engineering FY25: -22.06 Cr beside EPS 59.25; the Q4 of the same file is 31.54 Cr on EPS 15.75 (2.0 crore shares)."""
+    from bse_intel.settings import xbrl_filer_checks
+
     got = _by(xbrl.parse(_file({PAT: 31.54, EPS: "15.75"}, {PAT: -22.06, EPS: "59.25"})))
     assert got[("pat", "Q1FY27")] == 31.54 and got[("eps", "Q1FY27")] == 15.75
-    assert ("eps", "FY26") not in got and got[("pat", "FY26")] == -22.06   # cards show profit: it stays, quarters not all there
+    if xbrl_filer_checks():
+        # XBRL_FILER_CHECKS: the EPS stays and the profit is held. The file's Q4 gives 2.0 crore shares, and 59.25 x 2.0 = 118.5 is
+        # the PDF's printed 118.30: the profit tag is the wrong figure, not the EPS (eps_signs' docstring; lead's read of 41345924894)
+        assert got[("eps", "FY26")] == 59.25 and ("pat", "FY26") not in got
+    else:
+        assert ("eps", "FY26") not in got and got[("pat", "FY26")] == -22.06   # cards show profit: it stays, quarters not all there
 
 
 def test_an_unsigned_eps_is_flipped_only_when_the_share_count_agrees_across_the_file():

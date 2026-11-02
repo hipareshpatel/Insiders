@@ -600,3 +600,46 @@ def test_resume_key_holds_the_compared_figures():
     a = {"scrip": "500001", "basis": "STANDALONE", "period": "Q1FY27", "metric": "revenue", "memory_value": "10",
          "screener_value": "11"}
     assert pair_key(a) == pair_key(dict(a)) and pair_key(a) != pair_key({**a, "memory_value": "12"})
+
+
+# --- restated-pdf dry run 41362613345 (A1): "Year ended" over a 31 March column, an audit-status line under the dates ------------
+
+Q1_COLUMNS = [430, 500, 570, 640]
+
+
+def _q1_page(group_words, dates, status, title="Statement of Standalone Unaudited Financial Results for the quarter ended 30 June 2026"):
+    return make_grid_pdf([(title, None), ("(Rs. in crore)", None), (group_words, None), ("Particulars", dates), (status, None),
+                          ("Revenue from operations", ["4,416.38", "9,149.59", "4,198.82", "23,958.00"])], columns=Q1_COLUMNS)
+
+
+def test_year_ended_over_a_31_march_column_proves_a_march_year():
+    """BEL, HINDALCO, GRASIM, M&M: the Q1 file's restated Q4 and year columns were "not proven" because the page never says
+    "year ended 31 March" in words; its "Year ended" stands over a 31.03.2026 column instead."""
+    for words, dates, status in (
+            ("Particulars Quarter ended Year ended", ["30.06.2026", "31.03.2026", "30.06.2025", "31.03.2026"],
+             "(Unaudited) (Refer note 6) (Unaudited) (Audited)"),                                                   # BEL
+            ("Quarter Ended Year Ended", ["30/06/2026", "31/03/2026", "30/06/2025", "31/03/2026"],
+             "(Unaudited) (Refer Note 4) (Unaudited) (Audited)"),                                                   # HINDALCO
+            ("Particulars Three Months Ended Year Ended", ["30-06-2026", "31-03-2026", "30-06-2025", "31-03-2026"],
+             "(Unaudited) (Audited) (Unaudited) (Audited) Refer Note 2"),                                           # GRASIM
+            ("Quarter ended Year ended", ["30.06.2026", "31.03.2026", "30.06.2025", "31.03.2026"],
+             "(Unaudited) (Audited) (Unaudited) (Audited) Refer note 5")):                                          # M&M
+        pdf = _q1_page(words, dates, status)
+        got = {p: revenue_of(pdf, p, "STANDALONE") for p in ("Q1FY27", "Q4FY26", "Q1FY26", "FY26")}
+        assert got == {"Q1FY27": [4416.38], "Q4FY26": [9149.59], "Q1FY26": [4198.82], "FY26": [23958.0]}, words
+
+
+def test_a_june_year_companys_first_quarter_is_still_unsure():
+    """A June-year company's Q1 (quarter to 30 September) beside its year to 30 June: no 31 March column, so no March year; the
+    four columns stay unproven."""
+    pdf = _q1_page("Quarter ended Year ended", ["30.09.2026", "30.06.2026", "30.09.2025", "30.06.2026"],
+                   "(Unaudited) (Audited) (Unaudited) (Audited)",
+                   title="Statement of Standalone Unaudited Financial Results for the quarter ended 30 September 2026")
+    rows = rows_of(pdf)
+    assert [r.columns for r in rows] == [None] and "group words" in rows[0].why
+    assert pr.figure_for(rows, "Q1FY27", "revenue", "STANDALONE")["values"] == []     # the 30 June column: never a quarter
+    assert pr.figure_for(rows, "FY27", "revenue", "STANDALONE")["values"] == []
+    assert pr._year_column_in_march(pr._dates_in("30.09.2026 30.06.2026 30.09.2025 30.06.2026")) is False
+    # without "year" over it, a 31 March column proves nothing either
+    pdf = _q1_page("Particulars", ["30.06.2026", "31.03.2026", "30.06.2025", "31.03.2026"], "(Unaudited) (Audited) (Unaudited) (Audited)")
+    assert "group words" in pr.figure_for(rows_of(pdf), "Q4FY26", "revenue", "STANDALONE")["unsure"]

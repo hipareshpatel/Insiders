@@ -1,0 +1,1612 @@
+[
+ {
+  "news_id": "nse-106824838",
+  "symbol": "SWIGGY",
+  "verdict": "WRONG",
+  "error_class": "wrong_period",
+  "reading_only": false,
+  "reason": "PDF is a 40-page shareholder letter (text layer readable). Headline figures (B2C GOV 24.6% to 20,793 Cr, adj revenue 7,909 Cr, adj EBITDA -760 Cr, food delivery 341 Cr, QC NOV 6,594 Cr, 1,240 stores) match. But the QC contribution-margin comparison is assigned to the wrong period (-0.2% is last quarter, not a year ago; YoY the margin improved 157 bps), and the results block's filing-EBITDA is the prior-year column (-695) instead of -760.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "why_it_matters[0]: 'QC contribution margin slipped to -1.0% of GOV from -0.2% a year ago' - filing: -1.0% is -82 bps QoQ and +157 bps YoY (so -0.2% is Q1FY27, a year ago was about -2.6%).",
+   "notable_changes[0]: previous '-0.2% of GOV (Q2FY26)' with change '-82 bps QoQ' - period label wrong (should be Q1FY27); its own quote says 'improved 157bps YoY'.",
+   "results block line 'Adjusted EBITDA (Filing)': value -695 is the Q2FY26 column of 'Adjusted EBITDA -695 -712 -652 -651 -760'; Q2FY27 is -760 (the card text itself says -760)."
+  ],
+  "pruned_points_true": [
+   "notable change 'Quick commerce Adjusted EBITDA' states 895: true (QC adjusted EBITDA loss INR 895 Cr, up 118 Cr QoQ; filing p.3 and 'Adjusted EBITDA -849 -908 -858 -778 -895'); pruned only for quote wording"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "QC take rate fell 140 bps QoQ, offset by cost efficiencies to an 80 bps contribution-margin hit; breakdown: 100 bps pricing/habit investment, 40 bps adverse mix, 60 bps operating leverage",
+    "source": "filing",
+    "where": "p.13 Q7"
+   },
+   {
+    "point": "Lynks sale to Udaan (about 500 Cr) comes with a separate 75 Cr primary investment giving a ~3.2% stake in Udaan",
+    "source": "filing",
+    "where": "p.15 Q11"
+   },
+   {
+    "point": "Guidance: contribution margin to stay within 0 to -100 bps in Q3FY27 and adjusted EBITDA margin to improve ~100 bps QoQ (only partly shown in track_next)",
+    "source": "filing",
+    "where": "p.13 Q8"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106818660",
+  "symbol": "HDFCLIFE",
+  "verdict": "MINOR",
+  "error_class": "standalone_consolidated",
+  "reading_only": null,
+  "reason": "508 Cr PAT (vs 447.15 Cr) is the standalone shareholders' account figure and is right, as are the NCD (up to 500 Cr, subordinated, private placement) and GIFT City IIO points. But the card is labelled CONSOLIDATED and the results block mixes bases: current 508 is standalone while prev_year 448.29 and prev_quarter 611.19 are consolidated (standalone 447.15 and 611.42). Consolidated PAT was 521.60 Cr vs 448.29 Cr. Also scale '2.8% of net worth' uses a base of 17,749.54 Cr while the card's own key number is 19,397.74 Cr (2.6%). Also EPS shown in key numbers, against the owner rule of no EPS on cards.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "basis 'CONSOLIDATED' / results block: pat 508.0 is standalone but prev_year 448.29 and prev_quarter 611.19 are consolidated; yoy 13.3% and qoq -16.9% therefore mix bases (standalone 13.6% / -16.9%; consolidated 16.4%).",
+   "why_it_matters[1]: 'The ₹500 Cr NCD issue is 2.8% of net worth' - net worth in the filing is 19,397.74 Cr, so 2.6%; 2.8% comes from a different base (17,749.54).",
+   "key_numbers EPS 2.34: breaks the no-EPS-on-cards rule (value itself matches filing)."
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Gross premium income about 22,402 Cr in Q2 (first-year 3,927, renewal 11,420, single 7,056 Cr), up about 16% YoY; net premium 21,727 Cr",
+    "source": "filing",
+    "where": "p.5 standalone results"
+   },
+   {
+    "point": "Solvency ratio 180% (vs 175% a year ago)",
+    "source": "filing",
+    "where": "standalone analytical ratios"
+   },
+   {
+    "point": "Consolidated PAT 521.6 Cr vs 448.3 Cr, and QoQ PAT decline from 611 Cr (card shows the YoY rise only in text)",
+    "source": "filing",
+    "where": "consolidated results p.24"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106834946",
+  "symbol": "CCCL",
+  "verdict": "MINOR",
+  "error_class": "wrong_column",
+  "reading_only": null,
+  "reason": "Consolidated revenue 126.34 Cr, loss 12.70 Cr, EBITDA -12.22 Cr, cost ratios, CFO -74.35 Cr, capex 1.76 Cr, borrowings 8.08 vs 0.30 Cr, work on hand 1,174.07 Cr and the qualified review conclusion all match. One slip: 'trade receivables ₹159 Cr' - the balance sheet line is 130.64 Cr (159 Cr only if non-current and current contract assets are added). Card never says receivables rose from 92.7 Cr, the main cause of the cash outflow.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "what_happened[5]: 'trade receivables ₹159 Cr' - consolidated balance sheet shows Trade Receivables 13,063.53 lakh = 130.64 Cr (Mar-26 92.66 Cr); 159 Cr includes contract assets."
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Trade receivables rose from 92.7 Cr to 130.6 Cr, driving the 74 Cr negative operating cash flow",
+    "source": "filing",
+    "where": "p.5-6 balance sheet and cash flow"
+   },
+   {
+    "point": "Cash and bank balances: cash 55.2 Cr vs 14.7 Cr but bank deposits fell from 89.8 to 74.0 Cr and investments of 28 Cr redeemed; net worth fell from 278.8 to 260.6 Cr",
+    "source": "filing",
+    "where": "p.5 balance sheet"
+   },
+   {
+    "point": "H1 loss of 18.2 Cr compares with last year's H1 profit of 62 Cr that was driven by a 75 Cr exceptional gain; exceptional items this quarter were small (-0.21 Cr)",
+    "source": "filing",
+    "where": "p.4 consolidated results"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106836783",
+  "symbol": "SMSPHARMA",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Every figure checks out: up to Rs 50 Cr unsecured loan in one or more tranches, executed 30 Oct 2026, nil outstanding, 99.99% stake, common directors, arm's length. Net worth 785.81 Cr, Q1 revenue 206.96 Cr and FY26 revenue 886.87 Cr agree with memory. GOVERNANCE is a fair type for a related-party loan to a subsidiary.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106818473",
+  "symbol": "SOUTHBANK",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Consolidated figures match the filing (OCR text layer, lakh): interest earned 2,79,570 (+16.1% YoY vs 2,40,705), operating profit 73,276, provisions 15,911 vs 6,327 and 8,434, PAT 42,634 vs 35,159 and 37,766, GNPA 1.24%, NNPA 0.09%, ROA 1.12%. Minor note: EPS 1.63 shown in key numbers, against the owner's no-EPS rule (figure itself right).",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Capital adequacy ratio (Basel III) 19.40%",
+    "source": "filing",
+    "where": "p.2 standalone results, analytical ratios"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106825198",
+  "symbol": "HATSUN",
+  "verdict": "WRONG",
+  "error_class": "arithmetic",
+  "reading_only": false,
+  "reason": "Standalone Q2 figures (revenue 2,897.64 Cr, EBITDA 331.43 Cr, PAT 115.69 Cr, QoQ moves) match the filing, but the card carries two wrong year-on-year figures and never gives the real YoY. The EPS quote says YoY -3.9% while the filing shows EPS 5.19 vs 4.92 (+5.5%); the missing-disclosure note cites '21.7% revenue growth' while revenue grew 19.4% (2,897.64 vs 2,427.59). Headline and block give only QoQ, so a reader sees falling profit when PAT was up 5.6% YoY, with margin down about 200 bps YoY. EPS also shown, against the owner's no-EPS rule.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "what_happened[3] and key_numbers EPS quote: 'eps Q2FY27: 5.19 ₹/share, YoY -3.9%' - filing EPS Q2FY26 4.92, so YoY +5.5%.",
+   "missing_disclosures[0]: 'the 21.7% revenue growth' - revenue 2,897.64 vs 2,427.59 is +19.4%.",
+   "results block has no prev_year column; no YoY on revenue/EBITDA/PAT, so the year-on-year picture (revenue +19.4%, PAT +5.6%, EBITDA margin 11.4% vs 13.4%) is absent."
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Revenue up 19.4% YoY (2,427.59 to 2,897.64 Cr) and PAT up 5.6% YoY (109.54 to 115.69 Cr)",
+    "source": "filing",
+    "where": "p.4 results table"
+   },
+   {
+    "point": "EBITDA margin fell to 11.4% from about 13.4% a year ago; raw material cost rose to 70.8% of revenue from 60.5%",
+    "source": "filing",
+    "where": "p.4 results table"
+   },
+   {
+    "point": "Finance cost fell to 30.98 Cr from 37.53 Cr YoY; H1 PAT 249.38 Cr vs 244.73 Cr",
+    "source": "filing",
+    "where": "p.4 results table"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106838618",
+  "symbol": "KIRLOSIND",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reading_only": true,
+  "reason": "Nothing stated is false, but the card ignores the content of the attached KFIL press release (tables are images, text layer garbled). 'Carrying no direct financial impact for the parent' is a doubtful reading: KFIL is a listed material subsidiary consolidated by the parent. A deal_value block (kind OTHER, stage COMPLETED, segment Iron & Steel) sits on a card that has no deal.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "why_it_matters[0]: 'carrying no direct financial impact for the parent company's standalone financials' - reading only; KFIL results are the main driver of the parent's consolidated numbers."
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "KFIL Q2FY27 standalone and consolidated revenue 2,046.7 Cr (+17% YoY), EBITDA 223.0 Cr (+4%), margin 10.9% vs 12.2%",
+    "source": "filing",
+    "where": "p.3-4 press release"
+   },
+   {
+    "point": "PBT 137.8 Cr (+15%) and PAT 97.6 Cr (+10%); H1 PAT 179.9 Cr vs 324.0 Cr (-44%) on last year's deferred tax effect",
+    "source": "filing",
+    "where": "p.3-4"
+   },
+   {
+    "point": "Record steel volume 26,606 MT; gross casting sales above 50,000 MT",
+    "source": "filing",
+    "where": "p.3"
+   },
+   {
+    "point": "Margin hit from coking coal price rise and rupee depreciation; plans to expand steel and casting capacity, new solar capacity commissioned",
+    "source": "filing",
+    "where": "p.3"
+   },
+   {
+    "point": "Prior-year figures restated after merger of Oliver Engineering and Adicca Energy into KFIL",
+    "source": "filing",
+    "where": "p.4 note"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106819942",
+  "symbol": "FEDERALBNK",
+  "verdict": "MINOR",
+  "error_class": "standalone_consolidated",
+  "reading_only": null,
+  "reason": "Consolidated interest earned 8,382.84 Cr (+16.2%), operating profit 2,475 Cr (+39.8%), provisions 353 Cr (-11.2%) and net profit for the period 1,564.06 Cr (+53.4%) match (checked on the page image; text layer is garbled). Issues: 1,564.06 is profit before minority interest, while the group profit is 1,498.65 Cr and the card's EPS 6.07 (+50.2%) is built on the latter, so PAT and EPS growth sit on different bases. GNPA 1.32% and NNPA 0.17% are standalone ratios on a card labelled consolidated. The ROA line (1.32%, prior quarter 0.3, +102 bps QoQ) mixes an annualised figure with the filing's un-annualised 0.30/0.33; the review says it was pruned but the block still holds it. EPS shown against the no-EPS rule.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "results.roa_pct: current 1.32 is annualised (0.33 x 4) but prev_quarter 0.3 is the un-annualised 0.30, so qoq_bps +102 is false (about +12 bps).",
+   "results/headline basis CONSOLIDATED: gnpa_pct 1.32 and nnpa_pct 0.17 come from the standalone table; consolidated NPA ratios are not in the filing.",
+   "Net profit 1,564.06 Cr is before minority interest (1,56,406 lakh); consolidated net profit of the group is 1,498.65 Cr (+51%)."
+  ],
+  "pruned_points_true": [
+   "why_it_matters[2] 'Tax rose 58% YoY to ₹557.94 Cr...': consolidated tax 55,794 vs 35,312 lakh is +58%, true"
+  ],
+  "pruned_points_false": [
+   "results.roa_pct: standalone ROA is printed as 0.33% (not annualised), prior quarter 0.30%; the card's 1.32% vs 0.3 comparison is not like for like"
+  ],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Other income rose 37.6% YoY to 1,520.57 Cr, a main driver of the 39.8% rise in operating profit",
+    "source": "filing",
+    "where": "p.11 consolidated results"
+   },
+   {
+    "point": "Capital adequacy (Basel III, standalone) 16.84% vs 15.71% a year ago",
+    "source": "filing",
+    "where": "p.4 standalone results"
+   },
+   {
+    "point": "ESOS accounting policy change raised employee cost by 39.6 Cr and cut group PAT by 29.6 Cr this period (note 8); group profit after minority 1,498.65 Cr",
+    "source": "filing",
+    "where": "p.13 note 8, p.11"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106818674",
+  "symbol": "HMAAGRO",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Every point matches the filing: board meeting 15 Oct 2026 approved Wajid Ahmed's request (received 3 Oct) under the Family Settlement Agreement of 20 Sep 2026, nil shareholding, no management/board/KMP role or special rights, five named promoters continue, subject to stock exchange approval, not done to meet minimum public shareholding. Not a duplicate in memory. GOVERNANCE fits.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106818537",
+  "symbol": "ORIENTELEC",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "All figures match the press release: revenue 879.3 Cr (+25.2% YoY, -7.4% QoQ), gross margin 29.0% (-251 bps), EBITDA margin 6.5% (+106 bps, 7.0% in Q1), PAT 27.1 Cr (+124.4%, -14.1% QoQ), BLDC fans +26%. Minor rounding in the block (EBITDA margin YoY 110 bps vs 106 stated). Net debt 12.8 Cr in the reading box is not in the filing (unchecked, balance-sheet basis). Standalone basis fits; RESULTS fits.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "H1 FY27: revenue 1,829.1 Cr (+24.3%), EBITDA 123.4 Cr (+46.9%), PAT 58.5 Cr (+97.9%); gross profit Q2 255.2 Cr (+15.2%)",
+    "source": "filing",
+    "where": "p.2 financial snapshot"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106832761",
+  "symbol": "JAGSNPHARM",
+  "verdict": "MINOR",
+  "error_class": "standalone_consolidated",
+  "reading_only": false,
+  "reason": "Figures tie to the filing (consolidated Q2 revenue 96.37 Cr, PAT 12.29 Cr, EBITDA 16.9 Cr, CFO 25.46 Cr, borrowings 0.9 Cr, Aequitas 85% for 20.8 Cr). The balance-sheet block compares consolidated Sep-2026 (first-time consolidation, includes Aequitas) with standalone Mar-2026 and shows +82% inventories and +118% receivables; standalone Sep vs Mar is about +33% and +57%. The card gives no basis for the jump and no note that there are no consolidated comparatives.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Balance sheet Q2FY27: inventories ₹26.59 Cr against ₹14.64 Cr at Q4FY26 (+82%); trade receivables ₹37.5 Cr against ₹17.19 Cr at Q4FY26 (+118%); borrowings ₹0.9 Cr. (consolidated Sep vs standalone Mar; the rise is mostly the acquired subsidiary)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Buyback of equity shares cost ₹40.1 Cr in H1 (consolidated cash flow, financing) and final dividend ₹26.4 Cr paid (₹4 a share)",
+    "source": "filing",
+    "where": "p13 and p14 note 5; memory nse-106652452"
+   },
+   {
+    "point": "Consolidated results are the first ever (Aequitas acquired 1 Jul 2026), so no YoY/QoQ comparison exists; standalone Q2 revenue was ₹81.4 Cr",
+    "source": "filing",
+    "where": "p14 note 8, p4"
+   },
+   {
+    "point": "Business Transfer Agreement of 23 Sep 2026 to buy the Group Pharmaceuticals wellness portfolio (slump sale), closed in October 2026",
+    "source": "filing",
+    "where": "p14 note 7"
+   },
+   {
+    "point": "Goodwill of ₹8.6 Cr and a ₹2.9 Cr put liability for the remaining 15% of Aequitas",
+    "source": "filing",
+    "where": "p14 note 6"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106829889",
+  "symbol": "INDOCO",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reading_only": false,
+  "reason": "Core numbers (PAT 19.47 Cr, owners 18.38 Cr vs loss 7.93 Cr, EBITDA 46.43 Cr, exceptional 37.14 Cr, Warren/FPP negative net worth 17.35/30.83 Cr) tie to the filing and the scanned auditor note. Two checked-face problems: (1) the cash-flow line shows H1 CFO 184.57 Cr (217% of PAT) and FCF 124.08 Cr, but 134.48 Cr of that is the exceptional line (property-sale gain) added inside operating cash; before exceptional items CFO is only 50.08 Cr, so conversion looks far better than it is; (2) 'Revenue from operations 520.17 Cr' is total income from operations including 13.25 Cr other operating income; reported revenue from operations is 506.92 Cr (company says +7.4%, card +7.3%).",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Cash flow H1FY27: cash from operations ₹184.57 Cr, 217% of net profit ₹84.92 Cr, capex ₹60.49 Cr, free cash flow ₹124.08 Cr.",
+   "Revenue from operations Q2FY27: ₹520.17 Cr. (includes ₹13.25 Cr other operating income; reported revenue from operations is ₹506.92 Cr)"
+  ],
+  "pruned_points_true": [
+   "notable change \"exceptional_items\" states 37.14, which its own quote does not (true: exceptional items Q2 3,714 lakh = 37.14 Cr)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "The Q2 exceptional gain is ₹36.63 Cr from sale of the Andheri property plus ₹0.51 Cr trademark licence fee; Q1 had ₹97.34 Cr exceptional",
+    "source": "filing",
+    "where": "p2 note 5/7, p8"
+   },
+   {
+    "point": "H1 operating cash flow before exceptional items was only ₹50.08 Cr; ₹134.48 Cr came from the exceptional (property sale) line",
+    "source": "filing",
+    "where": "p10"
+   },
+   {
+    "point": "Debt repaid about ₹65 Cr in H1 against a ₹140 Cr annual target; borrowings ₹976 Cr",
+    "source": "memory",
+    "where": "g_6c4fec64 / concall"
+   },
+   {
+    "point": "Regulated international formulations +21.1% in Q2, API +22.0% and Allied Services +27.4% in H1 (card has only the 21.1% in catalysts)",
+    "source": "filing",
+    "where": "p14 press release"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106819541",
+  "symbol": "AEGISLOG",
+  "verdict": "MINOR",
+  "error_class": "attribution",
+  "reading_only": true,
+  "reason": "Presentation facts check out: Pipavav ammonia terminal commissioned 10 Aug 2026 with 36,000 MT; FY26 normalized EBITDA 1,599 Cr and PAT 1,107 Cr (p6, p32). Faults are in the reading and unchecked part: the capex takeaway ($1.2 bn this fiscal year, $5 bn pipeline) is not in this filing (it is a May/Aug concall guidance in memory, g_89af9b77) yet is shown as 'reiterated' by the presentation, and flagged 'quote not in the filing'; and 'PAT of 1,107 Cr growing at a 26% CAGR' is wrong for PAT (672 to 1,107 is about 28%; 26% fits EBITDA/EPS). The biggest item in the deck is left out entirely.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Reiterates strong financial performance with FY26 PAT of ₹1,107 Cr, growing at a 26% CAGR. (PAT CAGR FY24-26 is about 28%; 26% belongs to EBITDA/EPS)",
+   "Cumulative capex targeted to reach approximately $1.2 billion this fiscal year with a $5 billion pipeline through FY31. (not in the presentation; memory concall)"
+  ],
+  "pruned_points_true": [
+   "\"The company highlighted its integrated logistics position ac...\" states 2.5 (true: c.2.5 mnKL liquid storage on p6/p7)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Proposed acquisition of c.89.8% of Tristar Holdings for US$809 mn equity, completion expected Q4 FY27 subject to antitrust approvals",
+    "source": "filing",
+    "where": "p29; memory 13 Oct cards"
+   },
+   {
+    "point": "Q1FY27 profit statement: revenue 2,357 Cr (+37%), normalized EBITDA 727 Cr (+184%), PAT 545 Cr (+211%) vs Q1FY26",
+    "source": "filing",
+    "where": "p31"
+   },
+   {
+    "point": "FY26 net cash of ₹3,523 Cr and liquidity reserves of ₹5,940 Cr; operating cash flow ₹2,028 Cr",
+    "source": "filing",
+    "where": "p24, p34"
+   },
+   {
+    "point": "LPG distribution record 754 KT in FY26 and 277 KT in Q1FY27 (vs 145); LPG static capacity 3,74,800 MT incl. upcoming 129 kMT at JNPT",
+    "source": "filing",
+    "where": "p6, p8"
+   },
+   {
+    "point": "Chemical parks and BHAVYA Rasayan demand tailwind (3 parks over FY27-31) as growth driver for liquids",
+    "source": "filing",
+    "where": "p18"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106836398",
+  "symbol": "SUDARSHAN",
+  "verdict": "MINOR",
+  "error_class": "attribution",
+  "reading_only": true,
+  "reason": "Facts on the face tie to the filing: up to 72,00,00,000 warrants, each convertible to 1 share of Re 1, preferential to promoters Hemal Mehta and Sachin Mehta, price per ICDR Reg 164, EGM and regulatory approval needed. Fault in 'Our reading': it says promoters 'are subscribing to the entire issue, signaling strong internal backing following the NSE Main Board migration', tagged FILING with a quote that does not support it (the migration is from memory/the Q2 results card; the board has only approved a proposal, not a subscription) and 'capital injection will support the balance sheet' is speculation. Card also gives no sense of scale: 72 Cr warrants against roughly 25 Cr shares now outstanding (market cap 954 Cr at Rs 37.48).",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Promoters are subscribing to the entire warrant issue, signaling strong internal backing following the company's recent NSE Main Board migration in October 2026. (board has only proposed it; migration not in this filing)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Warrants exceed the existing share count (72 Cr warrants vs about 25 Cr shares from market cap 953.76 Cr / price 37.48), so dilution potential is very large",
+    "source": "memory",
+    "where": "company record: market_cap_cr 953.76, last_price 37.48"
+   },
+   {
+    "point": "Board meeting ran 7.00 pm to 10.00 pm on 29 Oct and the EGM notice is to follow separately",
+    "source": "filing",
+    "where": "p1"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106825075",
+  "symbol": "UGROCAP",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reading_only": true,
+  "reason": "Facts on the face are right: NCLT Mumbai admitted the Profectus-into-UGRO amalgamation petition on 9 Oct 2026, hearing and final disposal 20 Nov 2026, CAA-3 notices with 30-day representation period, 10-day newspaper notice. Only fault is in 'Our reading': 'PFC and REC have exchange and RBI no-objections but await sanction' comes from other companies' cards, not this filing or UGRO's memory, and overstates (PFC's own filing says RBI approval and dues settlement are still pending and the scheme is not yet at NCLT). Net worth Rs 2,906 Cr is memory, not in the filing.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Peer NBFC mergers are also clearing procedural gates — PFC and REC have exchange and RBI no-objections but await sanction — so this is a sector-wide court-stage step, not a completed deal."
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106824721",
+  "symbol": "SHAKTIPUMP",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "All figures tie: Rs 12 Cr for 1,20,00,000 shares of Rs 10 in Shakti EV Mobility (wholly owned), consolidated investment Rs 92 Cr, subsidiary turnover FY26 24.25 Cr, FY25 3.73 Cr, FY24 4.30 Cr (lakh figures converted correctly), net worth 1,706 Cr from memory. Impact MODERATE is generous for 0.27% of market cap but not misleading.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Subsidiary total assets of Rs 128.57 Cr at 31 Mar 2026 (exceeds the Rs 92 Cr invested)",
+    "source": "filing",
+    "where": "p2 item 1"
+   },
+   {
+    "point": "EV business results expected to start showing in 6-12 months, vehicle trials ongoing, JBM Auto tie-up (management view in May)",
+    "source": "memory",
+    "where": "w_81058546"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106822486",
+  "symbol": "PFC",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Matches the NSE observation letter: no-objection from NSE and BSE on 19 Oct 2026, valid six months to file with NCLT, effective only on RBI approval and settlement of dues by a listed entity, shareholder/creditor approvals still needed. Memory references check out (RBI NOC 15 Oct card, 1 Apr 2027 target). BSE letter pages are scans, NSE letter is text and was read. The 'REC disclosed four days earlier' line is loose (REC and PFC both disclosed the RBI NOC on 15 Oct) but not misleading.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Any change to the share exchange ratio from issuing more securities to the Government of India needs exchange and SEBI approval",
+    "source": "filing",
+    "where": "p2 item 1(c)"
+   },
+   {
+    "point": "Scheme is effective only if the pre-conditions in Para 25(1) of the draft scheme are met; SEBI asks for disclosure of pending enforcement actions against the entities, promoters and directors",
+    "source": "filing",
+    "where": "p2 item 1(a),(b)"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106830586",
+  "symbol": "TCI",
+  "verdict": "WRONG",
+  "error_class": "invented",
+  "reading_only": false,
+  "reason": "The headline, takeaway, key-number label and timeline all say net profit of Rs 116.9 Cr 'includes Rs 21.7 Cr from discontinued operations; continuing operations Rs 95.2 Cr'. TCI reports no discontinued operations: the 21.7 Cr is share of profit of associates and JVs (memory: share_associates Q2FY27 21.7, Q2FY26 23.2, Q1FY27 18.4). Total PAT 116.9 Cr (+3.0%) matches the press release. Related issue: company's own EBITDA is Rs 175.9 Cr (+8.3%) including other income and JV share, while the card shows 144.3 Cr (+13.9%) on a different definition, labelled 'calculated'; the card's growth reads stronger than the company's. Cash flow, balance sheet and capex lines are not in the PDF (a 3-page press release) and could not be checked here.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Transport Q2FY27: revenue ₹1,388 Cr, net profit ₹116.9 Cr (+3.0% YoY) (includes ₹21.7 Cr from discontinued operations; continuing operations ₹95.2 Cr)",
+   "Net profit Q2FY27: ₹116.9 Cr (+3.0% YoY, +9.7% QoQ) (includes ₹21.7 Cr from discontinued operations; continuing operations ₹95.2 Cr).",
+   "Net profit (includes ₹21.7 Cr from discontinued operations; continuing operations ₹95.2 Cr) [key number label]"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Company-reported EBITDA Rs 1,759 Mn (+8.3% YoY) and H1 EBITDA +6.8%; H1 PAT only +1.3% against a 10-12% growth outlook",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Standalone Q2: revenue Rs 1,196 Cr (+12.3%), PAT Rs 91.7 Cr (+4.4%); H1 standalone PAT -0.2%",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Share of associates/JV profit Rs 21.7 Cr is the driver of the profit gap, not a one-off",
+    "source": "memory",
+    "where": "share_associates series"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106825150",
+  "symbol": "SVLL",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Matches the BSE notice: listing of 1,14,93,700 shares (Rs 10 each) on BSE 'B' group from 23 Oct 2026, demat only, lot of 1, physical certificates enfaced, lock-ins marked, letter LO\\DL\\PJ\\TP\\386\\2026-27 dated 22 Oct. Memory claims check out (in-principle approval letter 16 Oct, valid 45 days; open listing-formality watch items, listing-fee item marked PARTIAL). Annexure pages are scans and were not read (June-quarter results).",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [
+   "\"11,493,700 equity shares of ₹10 each fully paid up, distinct...\" states 544997 (true: BSE scrip code 544997, distinctive numbers 1 to 11493700)",
+   "key number \"Scrip code\" states 544997, 01017 (true: scrip code 544997, ISIN INE00CE01017)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Promoter holds 74.53% with about 1,300 retail holders, FII/DII under 1% (thin free float)",
+    "source": "memory",
+    "where": "ownership Q2FY27"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106826764",
+  "symbol": "DPABHUSHAN",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Matches the outcome letter and corrigendum: two non-promoter allottees (Vedcroft Ventures 6,995 shares, Deepak Gadia 4,200) replaced by five others; total shares 11,195 and consideration Rs 1.6 Cr unchanged, so 'without altering aggregate size' is true. EGM 29 Oct 2026 3 pm ok; 8,66,434 shares ok. Event type GOVERNANCE is defensible for a corrigendum although the substance is the fundraise amendment. The card omits the terms of the issue it is amending.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Equity issue price Rs 1,430 a share (premium Rs 1,420) for up to Rs 123.90 Cr",
+    "source": "filing",
+    "where": "p5 Item 1"
+   },
+   {
+    "point": "Same package also includes 30,35,711 fully convertible warrants (Item 2 of the EGM)",
+    "source": "filing",
+    "where": "p1"
+   },
+   {
+    "point": "Corrigendum also corrects the post-issue holding of Smruti Pratik Khara for 359 shares bought on 1 Oct 2026 and shifts shareholding categories",
+    "source": "filing",
+    "where": "p4"
+   },
+   {
+    "point": "Allottee mix is mostly Category II/III AIFs, HUFs and individuals, none from the promoter group",
+    "source": "filing",
+    "where": "p5-6"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106823714",
+  "symbol": "ASIANTILES",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reading_only": false,
+  "reason": "Facts and figures match the filing (440.96 Cr, 30 Cr working capital, 73.802 Cr new vendor, 0.285 Cr pending, May 2029 handover). Issues: headline/takeaway call the changes 'minor' although about Rs 79 Cr of allocations (Surfaces 32.17 Cr, Morbi display centre 37.23 Cr, working capital 9.4 Cr) were moved; the market-cap share is stated two ways (27.9% of 1,580 Cr in the text, 31.9% of 1,381 Cr in the scale block); Rs 39.4 Cr shown as 39 Cr.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "'minor deviations' / 'minor reallocations' (headline, takeaway): the filing shows allocations of AGL Surfaces (Rs 32.17 Cr) and the Morbi display centre (Rs 37.23 Cr) set to NIL and working capital cut 39.4 to 30 Cr, funding a 73.8 Cr Ahmedabad display centre and 5 Cr stock point; not minor against a 440.96 Cr raise",
+   "Scale block says 31.9% of market cap (base 1,381.28 Cr) while why_it_matters and signal say 27.9%/28% of 1,580 Cr: two different bases on one card",
+   "'from ₹39 Cr to ₹30 Cr': filing says Rs 39.4 Cr (394000000), rounding only"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "AGL Surfaces Pvt Ltd allocation (Rs 32.17 Cr) and Morbi display centre (Rs 37.23 Cr) modified to NIL; funds moved to Ahmedabad display centre (73.8 Cr) and stock point (5 Cr)",
+    "source": "filing",
+    "where": "p2-3"
+   },
+   {
+    "point": "Stock point: 5 Cr advance to wholly owned subsidiary in Q1FY27, 12-year lease after warehouse handover (construction under progress)",
+    "source": "filing",
+    "where": "p3-4"
+   },
+   {
+    "point": "Variation approved by shareholders on 30-03-2023; monitoring agency ICRA; audit committee and auditors had no comments",
+    "source": "filing",
+    "where": "p2"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106832284",
+  "symbol": "BANDHANBNK",
+  "verdict": "WRONG",
+  "error_class": "arithmetic",
+  "reading_only": false,
+  "reason": "Headline, points and key numbers match the deck (PAT 6.2 bn +455.7%, NII 29.6 bn, NIM 6.1% -9 bps, GNPA 3.1%, advances 1,583.7 bn; credit-cost guidance 1.6-1.8% is in memory g_212ad022). The results block's ROA row mixes bases: value 1.2% (annualised, as the deck) against prior year 0.06% and prior quarter 0.25% (un-annualised), giving +114 bps YoY / +95 bps QoQ; the deck says +97 bps YoY and +21 bps QoQ (prior year about 0.2%, prior quarter about 1.0%).",
+  "event_type_ok": true,
+  "wrong_points": [
+   "results block 'Return on assets': 1.2% vs prev_year 0.06% / prev_quarter 0.25%, +114 bps YoY, +95 bps QoQ: deck p6 gives ROA 1.2% (97 bps YoY & 21 bps QoQ); prior-period values are not on the same annualised basis",
+   "Minor: PAT YoY 455.8% in results block vs 455.7% in deck; QoQ NIM -10 bps in block vs -9 bps in deck; GNPA QoQ -4 bps vs -3 bps (rounding of unrounded figures)"
+  ],
+  "pruned_points_true": [
+   "Net Profit 620 Cr (+455.7% YoY): true by the deck (PAT 6.2 bn, 621.75 Cr by the results block); only the quote was not the filing's own words",
+   "PAT 1.1 bn (Q2FY26) to 6.2 bn (Q2FY27) +455.7%: true; deck gives PAT 6.2 bn up 455.7% YoY, 1.1 bn implied"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "CASA ratio fell to 26.7% (-125 bps YoY, -269 bps QoQ); deposits +9.2% YoY, slower than advances +13.1%",
+    "source": "filing",
+    "where": "p6, p16"
+   },
+   {
+    "point": "Capital adequacy: CRAR 18.3%, CET1 17.7%",
+    "source": "filing",
+    "where": "p5"
+   },
+   {
+    "point": "Cost/income 57.5%; ROE 9.3% (+753 bps YoY)",
+    "source": "filing",
+    "where": "p5-6"
+   },
+   {
+    "point": "Fresh slippages Rs 11.3 bn in the quarter; technical write-offs 6.1 bn; PCR 71.2%, 74.3% incl. security receipts",
+    "source": "filing",
+    "where": "p22"
+   },
+   {
+    "point": "EEB (microfinance) book flat at Rs 526.2 bn, share of loan book down to 33% from 36.9% a year ago; wholesale banking now 34% of book",
+    "source": "filing",
+    "where": "p10"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106830952",
+  "symbol": "MFSL",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Figures check against the investor release: consolidated PAT Rs 219 cr up 137%, H1 VNB 1,180 cr +21%, NBM 25.4% vs 23.3%, solvency 197% aided by 686 cr debt raise (subordinated NCDs per memory t_1b00bf8c), EV 31,437 cr vs 26,895 cr. Results block (Q2, 'interest earned' line for an insurer) is odd but not shown wrong.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [
+   "vnb_margin 23.3% to 25.4% (+210 bps): true by the filing (p5)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Q2 VNB 734 cr (+15% YoY), NBM 27.0%",
+    "source": "filing",
+    "where": "p4, p11"
+   },
+   {
+    "point": "Solvency down from 208% a year ago (194% at FY26 end); operating RoEV 17.3% vs 16.3%",
+    "source": "filing",
+    "where": "p12"
+   },
+   {
+    "point": "Annuity APE +125% to 772 cr; NPAR savings -41%; ULIP +11%; product mix shift",
+    "source": "filing",
+    "where": "p11"
+   },
+   {
+    "point": "Total APE 4,638 cr +11%, GWP 18,066 cr +17%, AUM 2.06 lakh cr",
+    "source": "filing",
+    "where": "p5"
+   },
+   {
+    "point": "Policyholder cost to GWP improved 165 bps to 24.5% (ex-GST 22.5%)",
+    "source": "filing",
+    "where": "p4"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106822599",
+  "symbol": "SUPREMEINF",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reading_only": false,
+  "reason": "Facts check (AGM 12 Nov 2026, cut-off 5 Nov, qualified opinion on standalone and consolidated, 1,51,347.85 lakh guarantees, 75,644.24 lakh receivables, going-concern uncertainty, prior-year qualification). Weakness: the only balance-sheet number is reported net worth Rs 237.23 Cr, with the auditor-adjusted figure of Rs -2,765.19 Cr (same quote) and the exceptional-gain nature of the year's profit left out, so an investor sees a positive net worth for a company the auditors say is negative after their adjustments. 'Severe financial stress' is stronger than the filing's wording.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Net Worth key number Rs 237.23 Cr 'Standalone reported': quote shows auditor-adjusted net worth (2,76,519.42) lakh i.e. about Rs -2,765 Cr, not shown on the card; labelled 'reported' so not false",
+   "core_catalyst 'under severe financial stress': filing reports positive equity and a Scheme of Arrangement partly implemented; wording is the AI's"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "FY26 net profit Rs 5,796.6 Cr driven by exceptional income of Rs 6,465.6 Cr (interest/principal reversal under the Scheme); adjusted per auditor Rs 2,794 Cr; adjusted net worth Rs -2,765 Cr",
+    "source": "filing",
+    "where": "p47, audit qualification annexure"
+   },
+   {
+    "point": "Accumulated losses Rs 994 Cr; pending settlement with 3 major lenders, no-dues certificates outstanding",
+    "source": "filing",
+    "where": "auditor's report, going concern para"
+   },
+   {
+    "point": "Two subsidiaries in CIRP (SIBPL admitted 22 May 2024, SPITPL 30 Aug 2024); recoverability of investments/receivables qualified",
+    "source": "filing",
+    "where": "p40-46"
+   },
+   {
+    "point": "Net worth moved from Rs -6,228 Cr (31 Mar 2025) to Rs +237 Cr",
+    "source": "filing",
+    "where": "notes"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106820054",
+  "symbol": "CGCL",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Matches the postal ballot notice: special resolution to raise up to Rs 4,000 Cr, e-voting 17 Oct to 15 Nov 2026, results by 17 Nov. 17.1% of market cap fits the price at filing (memory market cap 22,284 Cr today); scale vs net worth stated. Stage BOARD_APPROVED is fair (board approval 14 Oct per memory). Follows the 14 Oct board card as a separate step, not a duplicate.",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Stated uses of proceeds: investment in subsidiaries, repay borrowings, growth, working capital, acquisitions, general purposes",
+    "source": "filing",
+    "where": "p14"
+   },
+   {
+    "point": "Passes only as a Special Resolution (75% of votes); cut-off date 9 Oct 2026",
+    "source": "filing",
+    "where": "p1, p14"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106836663",
+  "symbol": "WEWORK",
+  "verdict": "MINOR",
+  "error_class": "standalone_consolidated",
+  "reading_only": false,
+  "reason": "Narrative figures match the call (revenue 768.7 cr +31.6%, EBITDA 162.9 cr +37.6%, PAT 65.8 cr +67.4%, FCFO 237.7 cr, net cash 23.1 cr, 145,300 desks, occupancy 83.7%). These are management's IGAAP-equivalent figures. The CFO says reported Ind AS PAT was Rs 20.5 cr (results block 20.28 cr, EBITDA 490 cr incl. lease effects). The headline and EBITDA key number carry a basis label, but the PAT key number (65.8 cr, +67.4%) does not, so the card shows PAT 65.8 cr in the key numbers and 20.28 cr (+222%) in the results block with no word that they differ by lease accounting and brokerage.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "key number 'PAT ₹65.8 Cr +67.4% YoY' has no basis label while the results block shows PAT 20.28 cr +222.4% YoY; the call says Ind AS reported PAT was 20.5 cr and the gap is Ind AS 116 and brokerage",
+   "why_it_matters 'FCFO 237.7 cr this quarter, fully funding capex': the call says H1 FCFO of 379.8 cr funded H1 capex of 363.8 cr (surplus 16 cr); Q2 capex is not stated as fully funded",
+   "call takeaway 'capex guided around ₹500 to ₹600 crores': transcript says 'between INR500-odd crores' (quote not in the filing; memory cp_e1fa789e backs the range)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "ROCE 34.5% (up 1,235 bps YoY); centre-level margin 28.4%, H1 28.1%",
+    "source": "filing",
+    "where": "p5-6"
+   },
+   {
+    "point": "H1: EBITDA 301.2 cr (+50.6%), PAT 119 cr (+149.5%), FCFO 379.8 cr, capex 363.8 cr (largest ever)",
+    "source": "filing",
+    "where": "p6"
+   },
+   {
+    "point": "Average cost of borrowing down 184 bps to 8.5%; rating upgraded A- to A+; net cash vs net debt 310.5 cr a year ago",
+    "source": "filing",
+    "where": "p6"
+   },
+   {
+    "point": "Renewals 80-85%, low churn; larger managed-office deals at about 3x revenue-to-rent with higher capex per sq ft; FY28 expansion plans",
+    "source": "filing",
+    "where": "Q&A p17-18"
+   },
+   {
+    "point": "Members up 32.5% to about 121,700; occupancy dipped 114 bps from Q1 as new capacity ramps",
+    "source": "filing",
+    "where": "p4"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106822004",
+  "symbol": "SOLEX",
+  "verdict": "MINOR",
+  "error_class": "invented",
+  "reading_only": false,
+  "reason": "Core facts match the one-page intimation (subsidiary Solex New Energy board, 19 Oct 2026, CCDs up to Rs 150 Cr in tranches, optional swap into parent shares subject to parent board approval). Net worth 252.95 Cr, net debt 193 Cr (269.21 less 76.39) and paid-up 10.8 Cr agree with memory. Small faults: a catalyst says conversion would bring in 150 Cr 'at a premium to market', but no price is given (the card itself says dilution cannot be sized); 'warrant-like' is the AI's description; the market-cap share is 22% of 684 Cr in the text and signal but 24.8% of 604.62 Cr in the scale block.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "track_next catalyst 'Conversion terms that bring in ₹150 Cr at a premium to market': filing gives no conversion price or premium",
+   "core_catalyst 'Warrant-like CCDs': the filing describes compulsorily convertible debentures with an investor's option to swap into parent shares; 'warrant-like' is the AI's label",
+   "Scale block 24.8% of market cap (604.62 Cr) vs why_it_matters/signal 22% of 684 Cr: two bases on one card"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106832518",
+  "symbol": "EIFFL",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Matches the company letter and the scanned Infomerics letter (pages 2-4, read as images): Rs 45.00 Cr bank facilities, long term IVR BBB-/Stable from IVR BB+/Stable, short term IVR A3 from IVR A4+, dated 27 Oct 2026. The rating_change block leaves 'before' empty although BB+/Stable is in the filing (incomplete, not wrong).",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [
+   "BBB- moves the facilities from speculative grade into investment grade: true on the rating scale (BBB- is the lowest investment grade), though the letter itself does not say so"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106822446",
+  "symbol": "GOCLCORP",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "Facts match the outcome letter: board noted the NCLT Amaravati order of 8 Oct 2026 directing meetings of equity shareholders and unsecured creditors, to be held 24 Nov 2026 at 11:00 IST by video. The results in the same filing are on a separate card (nse-106822445), and the 21 Oct card is a follow-up filing, not a duplicate. Mention of the NCLAT is supported by the notes (NCLAT allowed the appeal on 25 Sep 2026 and set aside the NCLT order of 30 Jul 2026).",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [
+   "The NCLT order follows NCLAT setting aside the earlier order: true by the results notes (NCLAT set aside the 30 Jul 2026 NCLT order on 25 Sep 2026; NCLT issued the 8 Oct order)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Auditor emphasis of matter: corporate guarantees of Rs 1,316 cr (HNPCL 1,096.4 cr, Hinduja Energy India 220 cr) were not processed as related party transactions; ratified later, post-facto shareholder approval 7 Jul 2026; applications to regulators pending. HNPCL is the merger target",
+    "source": "filing",
+    "where": "p3, notes"
+   },
+   {
+    "point": "Agreement to sell the Ecopolis (Yelahanka) property to Tata Realty SPVs for about Rs 815 cr; property held for sale, sale not yet executed",
+    "source": "filing",
+    "where": "results notes"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106838045",
+  "symbol": "MARATHON",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reading_only": false,
+  "reason": "Deal facts match Annexure I (additional 60% of SRTL from a non-related outgoing partner, up to Rs 135 cr cash plus Rs 200 cr bank guarantee, up to Rs 335 cr, completion two months after approvals, SRTL turnover 374.46/433.08/680.07 cr). The second why-it-matters point calls the deal 'arm's-length' and the project 'flagship luxury'; the filing says only that the seller is not a related party, and nothing about arm's length or luxury. The second Board item (material related party transactions for investment, loans and guarantees to SRTL, needing shareholder approval) is not in the points, only in pending approvals.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "'making it an arm's-length transaction to consolidate the company's flagship luxury project': filing says the outgoing partner is not a related party; no arm's-length statement and no 'flagship luxury' wording (marked basis FILING)",
+   "Headline/takeaway 'up to ₹335 Cr': only Rs 135 cr is cash; Rs 200 cr is a bank guarantee (stated in the first point, so not misleading)"
+  ],
+  "pruned_points_true": [
+   "Board approved acquiring an additional 60% stake of the outgoing partner in SRTL for up to Rs 335 cr: true by Annexure I (only the quote did not state 335)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Second board decision: material related party transactions to invest in, lend to or give guarantee/security for SRTL's loans, subject to shareholder approval",
+    "source": "filing",
+    "where": "p1"
+   },
+   {
+    "point": "Same event is carried again on a second same-day card (nse-106838545, 19:48 IST) that names the seller as Adani",
+    "source": "memory",
+    "where": "nse-106838545"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106838843",
+  "symbol": "HEROMOTOCO",
+  "verdict": "WRONG",
+  "error_class": "attribution",
+  "reading_only": false,
+  "reason": "Headline and a key number say VIDA EV dispatches rose 80% YoY. The press release gives 80% as VAHAN retail growth, and gives no YoY figure for dispatches (30,143 units). The what_happened bullet words it correctly, so the card contradicts itself. Everything else (7,34,403 vs 6,35,808, +16%; Domestic ICE 6,75,017, +14%; exports 29,319; VIDA share 13.6% vs 11.1%) matches the filing, and the memory references (May 5,70,068 units; FY27 high single digit industry guidance) are supported.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Headline: 'VIDA EV dispatches up 80%' - 80% is VAHAN retail growth, not dispatch growth",
+   "Key number 'VIDA Dispatches 30,143 units, +80% YoY' - same mix-up; the filing gives no YoY change for dispatches"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Exports fell YoY: 29,319 vs 30,979 (about -5%), while the card calls global business strong",
+    "source": "filing",
+    "where": "p2 dispatch table"
+   },
+   {
+    "point": "Scooters 104,603 vs 65,055 (+61%) and motorcycles 629,800 vs 570,753 (+10%): the mix behind the +16%",
+    "source": "filing",
+    "where": "p2 dispatch table"
+   },
+   {
+    "point": "YTD FY27 dispatches 4,279,878 vs 3,693,580 (+16%)",
+    "source": "filing",
+    "where": "p2 dispatch table"
+   },
+   {
+    "point": "VAHAN retail registrations 589,665 in October (retail vs dispatch gap)",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Two premium launches in the month: Xtreme 160R 4V and Xtreme 250R",
+    "source": "filing",
+    "where": "p2"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106821837",
+  "symbol": "ULTRACEMCO",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reading_only": null,
+  "reason": "All points match the 2-page intimation: board approval on 19 Oct 2026, guarantee up to USD 55 mn for associate UHG Holdings IFSC, Grasim 9% and Hindalco 50% holdings, arm's length, contingent liability. Deal block matches (counterparty, stage BOARD_APPROVED). The filing carries no further facts (no tenor, no loan size).",
+  "event_type_ok": true,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106818678",
+  "symbol": "IIFL",
+  "verdict": "WRONG",
+  "error_class": "arithmetic",
+  "reading_only": false,
+  "reason": "Headline, key numbers, gold loan and GNPA figures all match the press release. But the quantified_impact interpretation says the provision fall (Rs 219.5 Cr) 'exceeds the Rs 197.1 Cr YoY rise in PBT'. PBT rose from 556.7 to 1,073.7, which is Rs 517 Cr. The conclusion that lower credit cost 'more than accounts for the profit jump', repeated in why_it_matters ('provisions, not operations, drove the jump'), is false: PPOP rose about Rs 322.6 Cr (1,032.5 to 1,355.1) against a Rs 219.5 Cr provision saving. The results block also carries a revenue line with prev_year 3,305.11 / prev_quarter 3,919.15 and YoY -29.2% / QoQ -40.3% against a current 2,339.6; the filing's total income is 2,339.6 vs 1,902.7 (+23%) and 2,202.4 (+6%). The revenue line is not among the displayed lines, but is stored. Takeaway 'Profit more than doubled' is wrong for the quarter (+93%); only H1 doubled.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "quantified_impact: 'exceeds the ₹197.1 Cr YoY rise in PBT' - PBT rose ₹517.0 Cr (556.7 to 1,073.7)",
+   "why_it_matters[0]: 'The 44% fall in loan losses did most of the work ... provisions, not operations, drove the jump' - operating profit (PPOP +₹322.6 Cr) contributed more than the provision saving (₹219.5 Cr)",
+   "results block revenue: prev_year 3,305.11, prev_quarter 3,919.15, yoy -29.2%, qoq -40.3% - mixes bases; filing total income 1,902.7 and 2,202.4, +23% YoY",
+   "takeaway: 'Profit more than doubled' - PAT +93% YoY (only H1 more than doubled)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Liquidity of Rs 13,805 Cr and borrowings of Rs 83,794 Cr; net gearing 4.1x",
+    "source": "filing",
+    "where": "p2, p9, p11"
+   },
+   {
+    "point": "Management says gold loan growth is moderating and home loans and secured MSME should gain momentum",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "H1FY27 PAT Rs 1,518 Cr, more than double YoY, with loan losses down 43%",
+    "source": "filing",
+    "where": "p4"
+   },
+   {
+    "point": "Home Finance AUM Rs 43,070 Cr (+4% QoQ), GNPA 1.38%; MSME secured AUM +11% QoQ to Rs 11,948 Cr",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Provision coverage 91% and book value Rs 351.5",
+    "source": "filing",
+    "where": "p2"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106819997",
+  "symbol": "THOMASCOOK",
+  "verdict": "WRONG",
+  "error_class": "invented",
+  "reading_only": false,
+  "reason": "Headline calls Vanyatara Tadoba Sterling's 'third wildlife destination'. The filing says only that Sterling has 'a presence across many of India's leading wildlife destinations' and is already in Pench and Tipeshwar; its resort list also names Corbett, Kanha, Ranthambore, Gir, Jawai and Sariska. 'Third' is not stated and is misleading. The rest (18 keys, five safari gates subject to permits, Pench-Tadoba-Tipeshwar circuit, 4,000+ keys, 70+ destinations, partners named) matches; the Jawai memory reference (14 Oct) is supported by memory. Memory files similar resort openings as PRODUCT_LAUNCH, while this card uses OTHER.",
+  "event_type_ok": false,
+  "wrong_points": [
+   "Headline: 'its third wildlife destination' - the filing gives no count; it says Sterling is present at 'many' wildlife destinations"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106823881",
+  "symbol": "360ONE",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reading_only": false,
+  "reason": "Call figures are correct against the transcript (AUM about 9 lakh Cr +31%, ARR AUM 3,53,000 Cr +19.7%, ARR net flows 12,482 vs 10,815, revenue from operations 896 +17.5%, PBT 391, PAT 302 vs 316, dividend 7.5, ARR retention 79 vs 74 bps and 67 ex-carry). The cost-to-income takeaway that the grounding check marked unverified is in fact in the transcript (Bhagat: move 48 towards 46-47 over 12-18 months). Small issues: the results block shows revenue 1,143.83 (+2.6% YoY) beside the point 'revenue from operations 896, +17.5%', two revenue bases with no label, and PAT 300.11 vs the call's 302; the takeaway says 'stable retentions' when ARR retention rose; core_catalyst says inflows offset the MTM hit, but PAT still fell 4.4% YoY.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Results block revenue 1,143.83, +2.6% YoY vs card text revenue from operations 896, +17.5% - different bases, not explained",
+   "takeaway 'stable retentions' - ARR retention improved to 79 bps from 74",
+   "core_catalyst 'inflows ... offsetting negative MTM' - PAT was still down YoY"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [
+   "call_takeaway shows the checker note '12 is not in its quote or the memory it cites' although the claim is in the transcript"
+  ],
+  "missed_key_points": [
+   {
+    "point": "Negative other income of Rs 44 Cr is mainly the NSE listing fair-value change on fund investments, about Rs 110-120 Cr",
+    "source": "filing",
+    "where": "p5 (Q&A)"
+   },
+   {
+    "point": "Operating PBT up 19.7% to Rs 434 Cr; total costs Rs 462 Cr (+15.5%), employee costs +19.9% with Rs 9 Cr one-time restructuring",
+    "source": "filing",
+    "where": "p3"
+   },
+   {
+    "point": "Cost-to-operating income improved to 51.5% from 54.3% in Q1",
+    "source": "filing",
+    "where": "p3"
+   },
+   {
+    "point": "Carried interest of about Rs 60 Cr from third-party funds lifted ARR retention",
+    "source": "filing",
+    "where": "p3"
+   },
+   {
+    "point": "UBS collaboration: about $300-325 mn of flows exchanged in three months; target $600-650 mn by March",
+    "source": "filing",
+    "where": "p6"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106833090",
+  "symbol": "HEROMOTOCO",
+  "verdict": "MINOR",
+  "error_class": "standalone_consolidated",
+  "reading_only": false,
+  "reason": "Consolidated revenue 14,971 Cr (+23%), PAT 1,861 Cr (+41%), Rs 397 Cr associate gain, volume 18.68 lakh (+10%), EBITDA margin 13.4%, standalone PAT 1,456 Cr (+5%), scooters 2.40 lakh (+47%), VIDA retail 66,531 (+76%) and the Rs 300 Cr investment all match the press release. Small faults: the key number 'Standalone Revenue Rs 14,687 Cr' carries +23% YoY, which is the consolidated rate; the filing says standalone grew 21%. The Rs 300 Cr investment in HMCL Netherlands (to fund its Colombia and Brazil subsidiaries) is typed CAPEX and the scale signal calls it 'capex', which it is not. The notable-change row 'EBITDA margin' compares 13.34% (consolidated) with 13.4% (standalone) of the same quarter, which is no change at all.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Key number 'Standalone Revenue (company-reported...) ₹14,687 Cr, +23% YoY' - filing says standalone revenue from operations grew 21%; 23% is the consolidated rate",
+   "Signal/scale: '₹300 Cr capex' - it is an investment in a wholly owned subsidiary for onward investment in Colombia and Brazil units, not capex",
+   "Notable change ebitda_margin previous 13.34 (Q2FY27) vs current 13.4 (Q2FY27 standalone) - same quarter, consolidated vs standalone, not a change"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Excluding the Rs 397 Cr associate gain, consolidated PAT growth is far lower; standalone PBT-level profit grew only 5% while revenue grew 21%",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "H1FY27: consolidated revenue Rs 28,097 Cr (+28%), PAT Rs 3,278 Cr (+8%); standalone EBITDA Rs 3,694 Cr (+15%), margin 13.3%",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Consolidated EBITDA margin fell to 13.34% from 15.26% a year ago (results block shows it, text says 'held steady')",
+    "source": "memory",
+    "where": "results block / memory Q2FY26"
+   },
+   {
+    "point": "Domestic ICE scooter dispatches +35% with share up to 7.3%; 100cc motorcycle share 84.4%; PAM revenue Rs 1,941 Cr (+27%)",
+    "source": "filing",
+    "where": "p2-p3"
+   },
+   {
+    "point": "Cumulative investment of over Rs 3,200 Cr announced in Andhra Pradesh and second Global Parts Centre in Tirupati",
+    "source": "filing",
+    "where": "p3"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106825290",
+  "symbol": "DLF",
+  "verdict": "WRONG",
+  "error_class": "other",
+  "reading_only": false,
+  "reason": "Call facts are largely right: Q2 collections 2,780 Cr, operating cash flow 1,858 Cr, net cash 15,100 Cr after 1,980 Cr dividend, 40,000 Cr margin and 42,500 Cr cash potential, ~75,000 Cr inflection in FY27-28, DCCDL exit rental ~6,800 Cr, 36-acre Sector 61 parcel and ~350 Cr land payments, FY30 for Mall of India. But the card leaves out the one fact that explains the quarter: consolidated revenue of 2,298 Cr includes a one-time 738 Cr valuation gain on a JV investment booked as other income, and net profit of over 1,300 Cr rests on it. Instead it shows a DISTRESS warning (EBIT/interest -0.8x, 'operating profit does not cover interest at all') and a LOW_QUALITY_BEAT warning (other income 103% of PBT). The first is an artefact of the XBRL EBITDA of 23 Cr (which leaves out other income and JV profit): management states EBITDA of 1,060 Cr and net cash of 15,100 Cr, so the distress label is false for this company. The 'against memory's 7,300-7,500 Cr' comparison in why_it_matters is not like for like: DCCDL 6,800 Cr plus DLF portfolio ~750 Cr (also said on the call) is about 7,550 Cr, in line with the group guidance, not short of it. 'Lifting the net cash' implies a rise the call does not state.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Signal DISTRESS 'EBIT/interest -0.8x: operating profit does not cover interest at all' - false in substance: management reports EBITDA 1,060 Cr and net cash 15,100 Cr; the figure comes from an EBITDA that excludes other income and JV share of profit",
+   "what_happened[0] 'lifting the net cash position to ₹15,100 Cr' - the call gives no prior level; it says net cash held despite the dividend",
+   "why_it_matters[2] 'DCCDL exit rental ₹6,800 Cr against memory's group-level ₹7,300-7,500 Cr' - mixes entities; with DLF's ~₹750 Cr the total is ~₹7,550 Cr, in line"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Revenue of Rs 2,298 Cr includes a one-time Rs 738 Cr gain on valuation of a JV investment booked as other income; net profit over Rs 1,300 Cr includes it",
+    "source": "filing",
+    "where": "p3"
+   },
+   {
+    "point": "Aureva retirement housing launch sold out (about Rs 1,900 Cr of Rs 1,985 Cr potential booked in Q2); new sales bookings about Rs 3,800 Cr",
+    "source": "filing",
+    "where": "p3-p4"
+   },
+   {
+    "point": "Rental portfolio 50 msf at record occupancy of 96% by area and 97% by value; DLF rental exit run rate Rs 175-180 Cr a quarter (~Rs 750 Cr)",
+    "source": "filing",
+    "where": "p3, p6"
+   },
+   {
+    "point": "DCCDL consolidated revenue Rs 2,014 Cr, EBITDA Rs 1,537 Cr, net profit over Rs 750 Cr (+17% YoY)",
+    "source": "filing",
+    "where": "p3"
+   },
+   {
+    "point": "Cyber City and Atrium Place (about Rs 2,000 Cr and Rs 150-175 Cr revenue a quarter) are not consolidated despite 67% control; Dahlias price up about 10%, over Rs 1 lakh per sq ft realisation, about 276 units sold",
+    "source": "filing",
+    "where": "p4-p5, p11"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106820008",
+  "symbol": "RENTOMOJO",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reading_only": true,
+  "reason": "Checked by hand against the annual report: figures are right (annual report is in Rs million, so 3,869.88 = Rs 386.99 Cr; PAT 104.32 Cr; equity 295.84 Cr; GST claims 2.45 Cr; operating cash flow 172.88 Cr; capex 175.83 Cr; borrowings 187.59 Cr; loan to the trust 4.86 Cr; Rs 5 Cr sanctioned for Liber; CMD pay 2.40 Cr fixed, up to 5.00 Cr), auditor Deloitte, unmodified opinion and CARO listing for the parent and Liber all match. Faults sit in the interpretation: why_it_matters says CARO remarks are 'not on ... lender default', yet the card itself lists clause ix(a)(A), which is a one-day delay in a Rs 0.15 Cr principal payment to Unity Small Finance Bank (and clause vii(a) records delays in statutory dues); and 'growth is being funded by borrowings' is a stretch when operating cash flow nearly covers capex and borrowings rose only about Rs 33 Cr.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "why_it_matters[0]: CARO remarks are 'not on going concern, fraud or lender default' - clause ix(a)(A) is a one-day delay of a Rs 0.15 Cr term-loan principal payment (trivial, but it is a repayment delay)",
+   "why_it_matters[1]: 'growth is being funded by borrowings' - operating cash flow Rs 172.9 Cr vs capex Rs 175.8 Cr; the filing does not say borrowings fund growth"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Company listed via IPO in March 2026 (ESOP 2026 pre-listing, ratification sought at the AGM)",
+    "source": "filing",
+    "where": "AGM notice resolution 9"
+   },
+   {
+    "point": "CARO clause (vii)(a): undisputed statutory dues (including GST, PF) not regularly deposited, delays not serious; clause (xvii) remark for subsidiary Liber Designs",
+    "source": "filing",
+    "where": "auditor's annexure, p65-66, p141"
+   },
+   {
+    "point": "CARO (i)(a)(A): unique asset ID and location records being updated for assets of gross Rs 160.92 mn / Rs 46.91 mn",
+    "source": "filing",
+    "where": "p64"
+   },
+   {
+    "point": "Standalone PBT and the Rs 36.64 Cr deferred tax credit share of PAT (PAT 104.32 Cr includes it; net profit ratio 26.96%)",
+    "source": "filing",
+    "where": "ratio note"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106821934",
+  "symbol": "CEIGALL",
+  "verdict": "MINOR",
+  "error_class": "event_type",
+  "reading_only": false,
+  "reason": "The facts match the one-page letter: TSA signed on 19 Oct 2026 by Jam Khambhaliya Jamnagar Power Transmission Limited, a wholly owned subsidiary, with CTUIL for an inter-state transmission system for Lakadia Phase-II 7.5 GW, Khambhaliya Phase-II 5.5 GW and Jamnagar Phase-I 1 GW (Part B). Memory supports the Rs 18.40 Cr SPV purchase from RECPDCL on 12 Oct and the pending licence and CERC approval. The card is typed ORDER_WIN with the 'ORDER WIN' tag although its own text says the TSA is 'not a new order or revenue'; it fits an M&A follow-up or other better. The core_catalyst's '14 GW evacuation scheme' is the AI's sum of three capacity figures and suggests the SPV carries 14 GW; the filing only names the schemes that the system evacuates.",
+  "event_type_ok": false,
+  "wrong_points": [
+   "event_type ORDER_WIN / tag 'ORDER WIN' - card itself says it is not a new order or revenue",
+   "core_catalyst '14 GW evacuation scheme' - sum made by the AI; filing gives 7.5, 5.5 and 1 GW as the schemes served by 'Part B', not the SPV's size"
+  ],
+  "pruned_points_true": [
+   "Pruned key number 'SPV acquisition (12 Oct) 18.40': the figure is true by memory (acquired for Rs 18.40 Cr) though not stated in this filing"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106818847",
+  "symbol": "BUILDPRO",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reading_only": true,
+  "reason": "The face matches the CRISIL letter: A-/Stable to A/Stable, A2+ to A1, facilities Rs 745 Cr to Rs 820 Cr, valid till 31 Mar 2027, 8 cash credit lines, four banks on non-fund and working-capital limits, ICICI Rs 120 Cr largest. Memory (Q4FY26 net worth 545.64 Cr, gross debt 60.81 Cr, cash 62.83 Cr, inventory 480.97 Cr) matches. Faults are in the reading: 'the upgrade covers most of the company's borrowing base' is wrong, since gross debt is only about Rs 61 Cr against Rs 820 Cr of sanctioned lines (the next bullet says this itself); the takeaway that the upgrade 'lowers the cost of the borrowings that fund its Rs 481 Cr inventory' is not stated in the filing. The rating_change block shows before=null though the letter gives A-/Stable.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "why_it_matters[0] 'the upgrade covers most of the company's borrowing base' - gross debt ~₹60.81 Cr (memory) vs ₹820 Cr limits; limits are mostly undrawn headroom",
+   "takeaway 'which lowers the cost of the borrowings that fund its ₹481 Cr inventory' - the filing gives no pricing effect",
+   "rating_change block: before and before_outlook null while the letter states A-/Stable"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106836496",
+  "symbol": "IOC",
+  "verdict": "WRONG",
+  "error_class": "invented",
+  "reading_only": false,
+  "reason": "Headline, takeaway, key number, what_happened and timeline say the Rs 21,407.87 Cr profit 'includes Rs 648.51 Cr from discontinued operations; continuing operations Rs 21,854.11 Cr'. The consolidated statement (p15) has no discontinued operations: 648.51 is Share of Profit of Associates and JVs, and 21,854.11 is in no table. Also results block PBT prior year is 10,392.42 (the pre-associates PBT) where the filing's PBT for 30.09.2025 is 11,103.71 (p15, p20), so PBT yoy +171.3% is overstated (about +153.9%).",
+  "event_type_ok": true,
+  "wrong_points": [
+   "Headline/takeaway/key_numbers/what_happened: 'includes Rs 648.51 Cr from discontinued operations; continuing operations Rs 21,854.11 Cr' - 648.51 is share of profit of associates and JVs; no discontinued operations; 21,854.11 not in filing",
+   "results.pbt prev_year 10,392.42 / yoy +171.3% - filing PBT Q2FY26 is 11,103.71 (p20 segment total, p15)",
+   "notable_changes inventories why: 'Seasonal inventory build-up ahead of peak demand quarters' - no cause stated in filing",
+   "core_catalyst 'Higher refining margins' - no refining margin figure in filing; only LPG compensation (note 4) and segment profit stated"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Board has no independent directors since 28 Mar 2026; Audit Committee, NRC and CSR committees discontinued and not reconstituted (auditors flag it)",
+    "source": "filing",
+    "where": "p3, p18"
+   },
+   {
+    "point": "LPG under-recovery compensation Rs 7,243.02 Cr (Apr-Sep 2026) recognised in revenue; cumulative negative LPG buffer Rs 32,505.69 Cr",
+    "source": "filing",
+    "where": "p18 note 4"
+   },
+   {
+    "point": "Segment result: Petroleum products PBIT Rs 27,626.82 Cr vs Rs 12,308.02 Cr; Gas Rs 1,237.67 Cr vs 243.49 Cr",
+    "source": "filing",
+    "where": "p20"
+   },
+   {
+    "point": "H1 operating cash flow fell to Rs 10,214.67 Cr from Rs 32,567.72 as working capital absorbed Rs 26,548 Cr (inventories -37,651)",
+    "source": "filing",
+    "where": "p17"
+   },
+   {
+    "point": "Dividend paid H1 Rs 4,666.67 Cr; refinery throughput standalone 18.108 MMT vs 17.608",
+    "source": "filing",
+    "where": "p17, p4"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106825259",
+  "symbol": "CHEVIOT",
+  "verdict": "MINOR",
+  "error_class": "event_type",
+  "reading_only": false,
+  "reason": "Facts and figures match the filing (Rs 19 Cr approx on past supplies Jan 2021-Dec 2023; 11.1% of Q1FY27 revenue 170.55 and 3.2% of TTM 598.23 correct). But this is a regulator's retrospective price revision, not an order win: event_type ORDER_WIN, deal_value kind ORDER/stage CONTRACT and the scale/signal text 'Rs 19 Cr order' mislabel it. Headline and takeaway describe it correctly, so it does not mislead on the money.",
+  "event_type_ok": false,
+  "wrong_points": [
+   "scale block noun 'order' and signal 'Rs 19 Cr order = 11% of Q1FY27 revenue' - it is an expected increase in sales realisation, not an order",
+   "event_type ORDER_WIN / deal_value kind ORDER stage CONTRACT - price revision on existing contracts"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106820488",
+  "symbol": "DLF",
+  "verdict": "WRONG",
+  "error_class": "standalone_consolidated",
+  "reading_only": false,
+  "reason": "Press-release facts are right (sales bookings 3,800, net cash 15,084, dividend 1,980, PAT 1,301, OCF 1,858, DCCDL figures). But the notable_changes block says net cash went from Rs 947.08 Cr (Jun-2026) to Rs 15,084 Cr: memory's 947.08 is the Q2FY27 (Sep-2026) standalone-type row (gross debt 44.95), not Jun-2026 and not consolidated; the real prior consolidated net cash is Rs 14,155 Cr (Mar-2026), so the 'surge' is false (timeline_entry also says 'surge in net cash'). Signals DISTRESS 'EBIT/interest -0.8x' and LOW_QUALITY_BEAT 'other income 103% of PBT' come from the same standalone memory row (revenue 1,260.58 vs consolidated 2,298) and are spurious for a company with Rs 15,084 Cr net cash. '33.1% of net worth' divides consolidated net cash by that standalone net worth.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "notable_changes: previous 'Rs 947.08 Cr net cash (Jun-2026)' - memory value is Q2FY27 standalone; prior consolidated net cash was Rs 14,155 Cr (Mar-2026)",
+   "timeline_entry 'surge in net cash to Rs 15,084 Cr' - no surge",
+   "signals DISTRESS 'EBIT/interest -0.8x: operating profit does not cover interest' - not true for DLF consolidated; derived from standalone row",
+   "signals LOW_QUALITY_BEAT 'Other income 1036.72 Cr is 103% of PBT' - standalone figures on a consolidated card",
+   "fundamentals revenue Q2FY27 1,260.58 / memory_context contradicts the card's own consolidated revenue 2,298",
+   "'33.1% of net worth' mixes consolidated net cash with a standalone net worth"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Consolidated EBITDA Rs 1,060 Cr and gross margin 47%",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Rental portfolio ~50 msf and development potential 275 msf; The Dahlias super-luxury demand",
+    "source": "filing",
+    "where": "p2-3"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106823921",
+  "symbol": "NBCC",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reading_only": false,
+  "reason": "Card matches the corrigendum (14 Oct 2026, paras corrected, board approval 14.07.2026, other terms unchanged, merger still proposed). The one stretch: track_next pending approval 'Sanction ... by the National Company Law Tribunal' - the filing names no NCLT, only the MCA application u/s 230-232; the card flags it as 'not stated in this filing'. Low-news procedural filing, impact LOW.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "track_next.pending_approvals: 'Sanction of the Scheme ... by the National Company Law Tribunal' - NCLT not mentioned in the filing"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [],
+  "coverage": "FULL"
+ },
+ {
+  "news_id": "nse-106818767",
+  "symbol": "ABCAPITAL",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reading_only": true,
+  "reason": "All filing facts right (40,000 NCDs, Rs 400 Cr, 15 Oct 2026, 300 Cr base + 700 Cr green shoe, tenors 1,142/701 days, maturity 15 Sep 2028; 1.2% of net worth 34,423; net debt 1,76,476 = 178,879.65 - 2,403.33 from memory). Faults are interpretation only: core_catalyst 'to fund the lending book' while the card itself says use of proceeds is not stated; the peers sentence (Capri Global Rs 160 Cr, SMC Global Rs 15 Cr) is not in the filing or ABCAPITAL's memory and those firms are not its listed peers. Also 'the filing gives no coupon rate' - coupon is 'Fixed' with per-debenture flows of 7,295.90 (about 7.3%).",
+  "event_type_ok": true,
+  "wrong_points": [
+   "core_catalyst 'to fund the lending book' - use of proceeds not stated in filing",
+   "why_it_matters peers: 'Capri Global Rs 160 Cr subordinated NCDs, SMC Global Rs 15 Cr' - unverifiable from filing or memory; not company peers",
+   "'filing gives no coupon rate' - coupon type Fixed and annual coupon 7,295.90 per Rs 1 lakh given (about 7.3%)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Security: first pari passu hypothecation over receivables, securities and current assets; implied coupon about 7.3% a year from 7,295.90 per debenture",
+    "source": "filing",
+    "where": "p2"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106821983",
+  "symbol": "TATVA",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reading_only": false,
+  "reason": "Scanned results (read from page images). Consolidated figures all match: revenue 2,173.20 mn (+75.9% vs 1,235.16; +30.1% QoQ), EBITDA 40.69 Cr (289.40+27.09+107.94-17.54), PBT 28.94, PAT 21.45 (+116.2% vs 9.92), debt 169.995 Cr, net worth 814.65, OCF negative H1 (-36.76 mn). Only issue: key_numbers carries an EPS line (Rs 9.17 per share), which the owner rule forbids on cards; the figure itself is right. 'Net profit' and 'Net profit to shareholders' are shown twice with the same number (no NCI), mild repetition.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "key_numbers: 'EPS Rs 9.17 per share +116.3% YoY' - figure correct (9.17 vs 4.24) but EPS must not appear on cards (owner rule 26 Oct 2026)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "H1 operating cash flow negative (Rs -3.68 Cr) as inventories (+52.8 Cr) and receivables (+63.9 Cr) built; only a risk line mentions it",
+    "source": "filing",
+    "where": "p6 cash flow"
+   },
+   {
+    "point": "H1FY27 capex Rs 30.8 Cr and short-term borrowings up from Rs 115.4 Cr to Rs 165.5 Cr (net proceeds Rs 50.1 Cr)",
+    "source": "filing",
+    "where": "p5, p6-7"
+   },
+   {
+    "point": "H1 net profit Rs 37.4 Cr vs 16.6 Cr; Q1 exceptional item Rs 1.32 Cr",
+    "source": "filing",
+    "where": "p4"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106824435",
+  "symbol": "BETA",
+  "verdict": "WRONG",
+  "error_class": "wrong_period",
+  "reading_only": false,
+  "reason": "Core figures match the scanned consolidated results and MD&A (revenue 137.49, EBITDA 30.28 calculated, PBT 25.78, PAT 19.28 incl NCI, H1 OCF 28.00, capex 22.63, inventories 81.89, receivables 167.43, borrowings 27.83+20.86=48.69). But the results block adds an 'EBITDA (Filing)' line of Rs 61 Cr vs 47 Cr in the Q2FY27 table: the MD&A figure is for H1 FY27 vs H1 FY26, so a half-year number sits beside the quarter's 30.28 and looks like a doubling. Also no YoY at all although the filing has the Q2FY26 column (revenue 103.39 so about +33%, PAT 12.22 so about +58%); headline and takeaway give bare numbers.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "results.lines 'EBITDA (Filing)' 61.0 vs prior-year 47.0 shown in the Q2FY27 block - it is H1FY27 vs H1FY26 EBITDA (MD&A p2), not the quarter",
+   "core_catalyst/headline carry no YoY although the Q2FY26 comparatives are in the filing (revenue 103.39 Cr, PAT 12.22 Cr)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "H1FY27 consolidated revenue +29.2% to Rs 263.04 Cr; gross margin +486 bps to 56.21%; EBITDA margin 23.18%",
+    "source": "filing",
+    "where": "p2-3 MD&A"
+   },
+   {
+    "point": "FY27 outlook: revenue Rs 535+ Cr, EBITDA margin 23-24%, stronger H2",
+    "source": "filing",
+    "where": "p3"
+   },
+   {
+    "point": "Segment drivers: CMO +21%, exports +95% in Q2, Branded Oncology +17% held back by plant shutdown and platinum API supply constraints (orders moved to H2)",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Net cash Rs 55 Cr, OCF about 50% of EBITDA; capacity sufficient for FY29/30 targets",
+    "source": "filing",
+    "where": "p4"
+   },
+   {
+    "point": "Minority share: Nivian 66.09% owned, NCI profit Rs 0.73 Cr in the quarter (PAT to owners 18.55 Cr)",
+    "source": "filing",
+    "where": "p6-7"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106822095",
+  "symbol": "ARMEE",
+  "verdict": "WRONG",
+  "error_class": "wrong_period",
+  "reading_only": false,
+  "reason": "Headline, key numbers and order book are right for Q1FY27 (consolidated revenue 275.79 vs 271.29, EBITDA 6.95 vs 3.04, PAT 1.82 vs -0.35, order book 2,609.41, RE order book 2,300.01). But the results block is labelled Q2FY27 / prev year Q2FY26 and shows 'previous quarter revenue 275.79, QoQ 0.0%, PAT 1.82 QoQ 0.0%' (the same Q1 figure twice), and fundamentals revenue is tagged Q2FY27 and memory_context 'Latest quarter Q2FY27'. The presentation is for the quarter ended 30 June 2026 (Q4FY26 revenue was 825.11, not 275.79), so the block states a wrong period and a false flat QoQ.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "results block period 'Q2FY27', prev_year_period 'Q2FY26' - the filing covers Q1FY27 (quarter ended 30 June 2026)",
+   "results.revenue prev_quarter 275.79, qoq 0.0% and pat prev_quarter 1.82, qoq 0.0% - the previous quarter (Q4FY26) was revenue 825.11, PAT 45.13",
+   "fundamentals.revenue period Q2FY27 and memory_context 'Latest quarter, Q2FY27 revenue 275.79' - should be Q1FY27"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Post-quarter: Rs 300 Cr IPO raised for expansion, working capital and repaying borrowings; ArMee MH One Renewable Energy incorporated 15 Oct 2026",
+    "source": "filing",
+    "where": "p5"
+   },
+   {
+    "point": "Order book split: renewable Rs 2,300.01 Cr (PPA 1,186.72, BESS 595.18, EPC 518.11), IT infra 166.26, managed services 143.14; about 1.88 years of FY26 revenue",
+    "source": "filing",
+    "where": "p15"
+   },
+   {
+    "point": "Order book is as of 30 Jun 2026, before the Rs 740.97 Cr Bondada EPC LOA was terminated (15 Oct, in memory), so visibility is overstated",
+    "source": "memory",
+    "where": "memory card 15 Oct 2026"
+   },
+   {
+    "point": "FY26 consolidated OCF Rs 12.48 Cr on PAT 45.47 Cr, debt-to-equity 0.96x vs 0.35x, finance cost Rs 24.94 Cr",
+    "source": "filing",
+    "where": "p17-18"
+   }
+  ],
+  "coverage": "THIN"
+ },
+ {
+  "news_id": "nse-106838434",
+  "symbol": "RAMBHAJO",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reading_only": false,
+  "reason": "Every figure matches the press release (total income 5,910.44 lakh, EBITDA 1,642.83, net profit 1,275.91, margin 21.59% +68 bps). Only fault: themes tag 'Infra / EPC' for a handcrafted jewellery manufacturer. Takeaway and catalyst are generic but drawn from the CMD's remarks. Thin: nothing on the new Delhi store or festive pipeline.",
+  "event_type_ok": true,
+  "wrong_points": [
+   "themes: 'Infra / EPC' - company is a Kundan/Polki jewellery maker, wrong sector tag"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Leased commercial space in New Delhi, operations to start Q4 FY27 (retail expansion)",
+    "source": "filing",
+    "where": "p2"
+   },
+   {
+    "point": "Festive and wedding season order pipeline described as encouraging; plans for calibrated retail expansion and international markets",
+    "source": "filing",
+    "where": "p2"
+   }
+  ],
+  "coverage": "PARTIAL"
+ },
+ {
+  "news_id": "nse-106818531",
+  "symbol": "INDIANB",
+  "verdict": "WRONG",
+  "error_class": "unsupported_cause",
+  "reading_only": false,
+  "reason": "Headline numbers match the deck (net profit 3,462, +14.7%; NII 7,719; GNPA 1.61 vs 2.60; NNPA 0.14; advances 7.22 lakh Cr +16.39%; domestic NIM 3.42 vs 3.34; PSL 48.67%). But: (1) notable change says non-interest income +59% was 'driven by forex income and recovery of bad debts' - the table (p17) shows the jump is profit on revaluation of investments (1,123 vs -68, about +1,191 of the +1,466 Cr rise); forex added 162 and recovery of bad debts only 13 (502 vs 489, down 34% QoQ); (2) risk says 'rising cost of deposits, increased 22 bps YoY in H1' - cost of deposits fell (H1 4.85% vs 5.07%, Q2 4.89% vs 5.01%); (3) why-it-matters says GNPA 1.61% is 'better than the guided 1.50-1.60%', but 1.61% is above that range (the card's own signal says the KPI check missed); (4) 'Revenue' in the results block and fundamentals is NII (7,719), not total income (23,059).",
+  "event_type_ok": true,
+  "wrong_points": [
+   "notable_changes why: 'Driven by a sharp jump in Forex income and recovery of bad debts' - real driver is Rs 1,123 Cr profit on revaluation of investments",
+   "track_next risk: 'Rising cost of deposits, which increased 22 bps YoY in H1' - cost of deposits fell 22 bps (5.07% to 4.85%)",
+   "why_it_matters: 'Asset quality is now better than the guided FY27 GNPA range of 1.50-1.60%' - 1.61% is above the range",
+   "results.revenue 7,719 / fundamentals revenue labelled Revenue but is net interest income (total income 23,059)",
+   "track_next pending_approvals 'Shareholder approval for re-appointment of Independent Directors' - not in the presentation",
+   "notable_changes provisions why: 'increase in provisions for standard advances' - cause not stated; credit cost actually fell to 0.22%"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "missed_key_points": [
+   {
+    "point": "Operating profit +46.6% to Rs 7,090 Cr while PBT grew only 18.8%: Rs 1,123 Cr revaluation gain flattered income and provisions tripled (2,222 vs 739)",
+    "source": "filing",
+    "where": "p16-17"
+   },
+   {
+    "point": "CRAR fell to 16.21% from 17.31% a year ago (17.58% in Jun); memory also shows RBI ISE cut Mar-2026 CRAR",
+    "source": "filing",
+    "where": "p24-25"
+   },
+   {
+    "point": "Cost-to-income 39.25% vs 46.48%; RoA 1.31%; RoE 19.66%",
+    "source": "filing",
+    "where": "p22-23"
+   },
+   {
+    "point": "Slippage ratio 0.69%, credit cost 0.22%, PCR 98.22%, fresh slippages Rs 1,136 Cr; deposits +14.22% to 15.96 lakh Cr, CD ratio 82.6% vs guided about 80%",
+    "source": "filing",
+    "where": "p4, p27-28, p47"
+   },
+   {
+    "point": "FY27 guidance table: deposits 11-12%, NNPA 0.15-0.20%, RoA 1.20-1.30%, AUC Rs 1,200-1,500 Cr",
+    "source": "filing",
+    "where": "p47"
+   }
+  ],
+  "coverage": "THIN"
+ }
+]

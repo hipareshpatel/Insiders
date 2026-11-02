@@ -1,0 +1,123 @@
+UNIT_FIX_SCALE_GUARD on/off (unit_fix_scale), release check
+
+- cards_in_store: 11089
+- cards_checked: 75
+- cards_changed: 18
+- lines_added: 22
+- lines_removed: 22
+- lines_changed: 0
+- skipped: {"no unit correction recorded": 11014}
+- errors: 0
+
+
+## Changed cards (18)
+
+### HERITGFOOD d7ea9e10-c5d9-443d-a150-b5ca811c91c8
+- removed: UNIT FIX 2,334 Cr -> 233.4 Cr
+- added: UNIT FIX 2,334 Cr kept (the company's scale)
+- TRACE 9,471 Cr: reading 3 (declared unit 10 per crore) -> 947.1; source: "equity 9,007.22 7,571.00 Total equity - 9,471.20 8,034.98 LIABILITIES Non-current liabil"
+- TRACE 2,334 Cr: not re-made from the stored text
+
+### FIVESTAR nse-106603286 Q4FY26
+- removed: UNIT FIX 1,322.46 Cr -> 13,224.6 Cr
+- added: UNIT FIX 1,322.46 Cr kept (the company's scale)
+- TRACE 1,322.46 Cr: reading 3 (declared unit 10 per crore) -> 13224.6; source: "ment Loan Portfolio 844 ₹ 12,133 Mn ₹ 132,246 Mn +9 +96 +24% -17% +2% +11% Gross"
+
+### MOBIKWIK nse-106618046
+- removed: UNIT FIX -794 Cr -> 79.4 Cr
+- added: UNIT FIX -794 Cr kept (the company's scale)
+- TRACE 174 Cr: reading 1 -> 17.4; source: "2 Mn Key Highlights • EBITDA at INR 174 Mn in Q4 FY26 - second profitable quart"
+- TRACE -52 Cr: reading 1 -> 5.2; source: "(₹376) Mn (₹705) Mn Growth 23% 16% 6% 52% ₹700 Mn ₹790 Mn Swing Swing FY26 Ful"
+- TRACE -794 Cr: reading 1 -> 79.4; source: "1,159 Bn ₹24,774 Mn ₹11,925 Mn ₹3,616 (₹794) Mn (₹1,215) Mn Growth 57% 31% (3%) 2"
+- TRACE 84 Cr: reading 1 -> 8.4; source: "n ₹17,378 Mn ₹5,933 Mn ₹2,639 ₹ 324 Mn ₹84 Mn H1 FY26 ₹816 Bn ₹15,002 Mn ₹5,609"
+
+### MEIL nse-106624393
+- removed: UNIT FIX 90.66 Cr -> 0.091 Cr
+- added: UNIT FIX 90.66 Cr kept (the company's scale)
+- TRACE 90.66 Cr: not re-made from the stored text
+
+### TVSMOTOR nse-106627227
+- removed: UNIT FIX 1,933 Cr -> 193.31 Cr
+- added: UNIT FIX 1,933 Cr kept (the company's scale)
+- TRACE 1,933 Cr: reading 2 -> 193.31; source: ". 8. Cost of acquisition and/or the INR 193,31,19,436.71 price at which the shares are acquire"
+
+### NEWGEN ee048089-d8ec-4e85-b37f-47f3df951cad Q1FY27
+- removed: UNIT FIX 190.10 Cr -> 19,010 Cr
+- added: UNIT FIX 190.10 Cr kept (the company's scale)
+- TRACE 190.10 Cr: not re-made from the stored text
+
+### GOODYEAR 3c2d45df-e9d5-4ebc-9917-d559d6105345
+- removed: UNIT FIX 1,528.7 Cr -> 152.87 Cr
+- added: UNIT FIX 1,528.7 Cr kept (the company's scale)
+- TRACE 1,528.7 Cr: reading 3 (declared unit 100 per crore) -> 152.87; source: "ome tax matters* (refer note (i) below) 15,287 14,525 C. Sales tax matters 9 9 D. Go"
+- TRACE 1,077 Cr: reading 3 (declared unit 100 per crore) -> 10.77; source: "e Goods & Goods and First Level 2017-18 1,077 1,015 Services Tax services tax Author"
+
+### AHLUCONT 1225fc63-22f3-418f-9286-188022ff5f5a
+- removed: UNIT FIX 299 Cr -> 2.99 Cr
+- added: UNIT FIX 299 Cr kept (the company's scale)
+- TRACE 299 Cr: not re-made from the stored text
+
+### ICICIGI nse-106817787 Q2FY27
+- removed: UNIT FIX 2,921.78 Cr -> 2.92 Cr
+- added: UNIT FIX 2,921.78 Cr kept (the company's scale)
+- TRACE 2,921.78 Cr: not re-made from the stored text
+
+### HERITGFOOD 527b6923-cd12-4d50-adbe-3c07f3c0e733 Q2FY27
+- removed: UNIT FIX 62.11 Cr -> 6,211 Cr
+- removed: UNIT FIX 748.01 Cr -> 74,801 Cr
+- added: UNIT FIX 62.11 Cr kept (the company's scale)
+- added: UNIT FIX 748.01 Cr kept (the company's scale)
+- TRACE 62.11 Cr: reading 3 (declared unit 10 per crore) -> 6211; source: "n-allocable items a Dairy 438.07 375.76 62113 813.83 1,127.03 182755 b. Renewable ene"
+- TRACE 82.3 Cr: not re-made from the stored text
+- TRACE 748.01 Cr: not re-made from the stored text
+
+### HDFCAMC nse-106818607
+- removed: UNIT FIX 1,026 Cr -> 1,026,000 Cr
+- added: UNIT FIX 1,026 Cr kept (the company's scale)
+- TRACE 1,026 Cr: not re-made from the stored text
+- TRACE 9,691 Cr: reading 1 -> 969100; source: "ERLY AVERAGE AUM² ₹9,210 bn ₹6,280 bn ₹9,691 bn ₹6,507 bn ₹6,908 bn Total closing A"
+
+### SOBHA nse-106822202 Q2FY27
+- removed: UNIT FIX 33.1 Cr -> 3.31 Cr
+- added: UNIT FIX 33.1 Cr kept (the company's scale)
+- TRACE 33.1 Cr: not re-made from the stored text
+
+### TINNARUBR nse-106824690 Q2FY27
+- removed: UNIT FIX 66.60 Cr -> 0.07 Cr
+- added: UNIT FIX 66.60 Cr kept (the company's scale)
+- TRACE 66.60 Cr: not re-made from the stored text
+- TRACE 30.18 Cr: not re-made from the stored text
+
+### CIEINDIA nse-106824978 Q2FY27
+- removed: UNIT FIX 104 Cr -> 10.4 Cr
+- added: UNIT FIX 104 Cr kept (the company's scale)
+- TRACE 104 Cr: not re-made from the stored text
+
+### ACEVECTOR nse-106828931 Q2FY27
+- removed: UNIT FIX 13.07 Cr -> 1.31 Cr
+- added: UNIT FIX 13.07 Cr kept (the company's scale)
+- TRACE 13.07 Cr: reading 1 -> 1.31; source: "leted its Initial Public Offer (IPO) of 13 I,250,000 equity shares of face value"
+
+### EMKAY nse-106832905 Q2FY27
+- removed: UNIT FIX 199.78 Cr -> 19,978 Cr
+- added: UNIT FIX 199.78 Cr kept (the company's scale)
+- TRACE 199.78 Cr: not re-made from the stored text
+
+### ALIVUS nse-106835187
+- removed: UNIT FIX 278 Cr -> 27.8 Cr
+- added: UNIT FIX 278 Cr kept (the company's scale)
+- TRACE 278 Cr: not re-made from the stored text
+
+### CDSL nse-106838164 Q2FY27
+- removed: UNIT FIX 272 Cr -> 2.72 Cr
+- removed: UNIT FIX 179 Cr -> 1.79 Cr
+- removed: UNIT FIX 101 Cr -> 1.01 Cr
+- removed: UNIT FIX 163 Cr -> 1.63 Cr
+- added: UNIT FIX 272 Cr kept (the company's scale)
+- added: UNIT FIX 179 Cr kept (the company's scale)
+- added: UNIT FIX 101 Cr kept (the company's scale)
+- added: UNIT FIX 163 Cr kept (the company's scale)
+- TRACE 272 Cr: reading 3 (declared unit 100 per crore) -> 2.72; source: "DA w/o Dividend 233 205 339 179 168 272 255 247 212 101 165 Q2FY26 Q3FY26 Q4FY"
+- TRACE 179 Cr: reading 3 (declared unit 100 per crore) -> 1.79; source: "ITDA EBITDA w/o Dividend 233 205 339 179 168 272 255 247 212 101 165 Q2FY26 Q3"
+- TRACE 101 Cr: reading 3 (declared unit 100 per crore) -> 1.01; source: "233 205 339 179 168 272 255 247 212 101 165 Q2FY26 Q3FY26 Q4FY26 Q1FY27 Q2FY27"
+- TRACE 163 Cr: not re-made from the stored text

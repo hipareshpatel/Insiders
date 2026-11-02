@@ -3,12 +3,13 @@ import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { Link } from "wouter";
 import type { KpiRow, View } from "../../../shared/resultsTypes";
 import { cn } from "../../lib/cn";
-import { companyPath, cr } from "../../lib/format";
+import { companyPath } from "../../lib/format";
+import { ebitdaSlot, fmtCrAmount, marginLine } from "../../lib/resultsPaired";
 import {
-  blankNote, filedDay, NBFC_EBITDA_NOTE, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, oneOff as oneOffOf, wholeProfit, type Sort,
+  blankNote, filedDay, NBFC_EBITDA_NOTE, fmtGrowth, fmtPts, MOMENTUM_TEXT, notComparableText, sharedScale, type Sort,
 } from "../../lib/resultsView";
-import { CompanyCell, Growth, MomentumMark, NfoFlag, Signals, Skeleton } from "./bits";
-import { Dumbbell, Spark } from "./charts";
+import { CompanyCell, Growth, Paired, Skeleton, TurnPill } from "./bits";
+import { Dumbbell } from "./charts";
 
 export const rowKey = (r: Pick<KpiRow, "symbol" | "scrip_code">) => r.symbol || r.scrip_code;
 
@@ -41,74 +42,33 @@ function Th({ children, hint, title, sortKey, sort, dir, onSort, left, className
   );
 }
 
-/** The quiet second line under a figure. */
-const Sm = ({ children, italic }: { children: ReactNode; italic?: boolean }) => (
-  <div className={cn("num mt-0.5 text-[13px] text-ink-3", italic && "italic")}>{children}</div>
-);
-const Blank = ({ note }: { note?: string }) => (<><span className="font-medium text-ink-3">—</span>{note && <Sm>{note}</Sm>}</>);
-/** A growth cell with no figure says why (U4, 31 Oct 2026: UDS, DIAMONDYD and JNPR showed "—" in every growth cell with no reason). */
+/** The quiet second line under a figure (the pace columns). */
+const Sm = ({ children }: { children: ReactNode }) => <div className="num mt-0.5 text-[13px] text-ink-3">{children}</div>;
+const Muted =({ children, title }: { children: ReactNode; title?: string }) => <span className="text-[13px] text-ink-3" title={title}>{children}</span>;
+/** A growth with no figure says why on hover (U4, 31 Oct 2026). */
 const NO_BASE = (qoq?: boolean) => (qoq ? "No prior-quarter figure to compare" : "No year-ago figure to compare");
 
 function RevenueCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
-  const label = lineLabels(r.kind).revenue;
-  if (!label || (r.revenue == null && r.revenue_yoy == null)) return <Blank note={blankNote(r.kind, "revenue")} />;
-  return (
-    <>
-      <Growth value={qoq ? r.revenue_qoq : r.revenue_yoy} className="text-[15px]" />
-      <Sm>{qoq ? cr(r.revenue) : wasLine(r.revenue == null ? null : cr(r.revenue), r.revenue_prev_yoy)}</Sm>
-      {(qoq ? r.revenue_qoq : r.revenue_yoy) == null && <Sm italic>{NO_BASE(qoq)}</Sm>}
-      {label !== "Revenue" && <Sm italic>{label}</Sm>}
-    </>
-  );
+  if (r.kind === "insurer" || (r.revenue == null && (qoq ? r.revenue_qoq : r.revenue_yoy) == null)) return <Muted title={blankNote(r.kind, "revenue") || undefined}>—</Muted>;
+  return <Paired amount={fmtCrAmount(r.revenue)} value={qoq ? r.revenue_qoq : r.revenue_yoy} noBase={NO_BASE(qoq)} />;
 }
 
+/** EBITDA beside its growth with the margin under it; a bank or insurer says "no EBITDA"; an NBFC's slot is its financing profit. */
 function EbitdaCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
-  const label = lineLabels(r.kind).ebitda;
-  if (!label || (r.ebitda == null && r.ebitda_yoy == null && !r.ebitda_turn)) return <Blank note={blankNote(r.kind, "ebitda")} />;
+  if (ebitdaSlot(r.kind) === "none") return <Muted title={r.kind === "bank" ? "Banks have no EBITDA; their financing profit is in the quick look" : undefined}>no EBITDA</Muted>;
+  const turn = qoq ? null : r.ebitda_turn;
+  const margin = marginLine(r, qoq);
+  if (r.ebitda == null && (qoq ? r.ebitda_qoq : r.ebitda_yoy) == null && !turn) return <Muted>—</Muted>;
   return (
     <>
-      <Growth value={qoq ? r.ebitda_qoq : r.ebitda_yoy} turn={qoq ? null : r.ebitda_turn} className="text-[15px]" />
-      <Sm>{qoq ? cr(r.ebitda) : wasLine(r.ebitda == null ? null : cr(r.ebitda), r.ebitda_prev_yoy)}</Sm>
-      {(qoq ? r.ebitda_qoq : r.ebitda_yoy) == null && !(qoq ? false : r.ebitda_turn) && <Sm italic>{NO_BASE(qoq)}</Sm>}
-      {label !== "EBITDA" && <Sm italic><span title={r.kind === "nbfc" || r.kind === "bank" ? NBFC_EBITDA_NOTE : undefined}>{label}{(r.kind === "nbfc" || r.kind === "bank") && <sup aria-hidden> *</sup>}</span></Sm>}
-    </>
-  );
-}
-
-function MarginCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
-  const label = lineLabels(r.kind).margin;
-  const bps = qoq ? r.opm_qoq_bps : r.opm_yoy_bps;
-  if (!label || (r.opm == null && bps == null)) return <span className="font-medium text-ink-3" title="No EBITDA margin for this kind of company">—</span>;
-  // no bp where a margin is past +-100% or the base EBITDA is a loss (results_table.py); NM when a year-ago (or last-quarter) figure exists
-  const hadBase = qoq ? r.ebitda_qoq != null : r.ebitda_yoy != null || r.ebitda_turn != null;
-  return (
-    <>
-      {bps == null && r.opm != null && hadBase
-        ? <span className="num whitespace-nowrap text-[15px] font-semibold text-ink-2" title="Not meaningful: a margin outside −100%…+100%, or a loss in the base period">{NM}</span>
-        : <Growth value={bps} unit="bp" className="text-[15px]" />}
-      <Sm>{r.kind === "nbfc" || r.kind === "bank" ? "margin" : "now"} <span title={r.opm != null && Math.abs(r.opm) > 100 ? `Not meaningful: ${r.opm.toFixed(1)}%` : undefined}>{fmtMargin(r.opm)}</span></Sm>
+      <Paired amount={fmtCrAmount(r.ebitda)} value={qoq ? r.ebitda_qoq : r.ebitda_yoy} turn={turn} noBase={NO_BASE(qoq)} />
+      {margin && <span className="num mt-0.5 block text-[12.5px] text-ink-3" title={r.kind === "nbfc" ? NBFC_EBITDA_NOTE : "100 bp = 1 percentage point"}>{margin}</span>}
     </>
   );
 }
 
 function ProfitCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
-  const turn = qoq ? r.pat_qoq_turn : r.pat_turn;
-  const amount = r.pat == null ? null : `${cr(r.pat)}${turn ? (r.pat >= 0 ? " profit" : " loss") : ""}`;
-  const oneOff = qoq ? null : oneOffOf(r);   // the year-ago comparison only: its growth is a year-on-year one
-  const whole = qoq ? null : wholeProfit(r);
-  return (
-    <>
-      <span className="whitespace-nowrap">
-        <Growth value={qoq ? r.pat_qoq : r.pat_yoy} turn={turn} className="text-[16.5px] font-bold" />
-        {!qoq && <MomentumMark m={r.momentum} />}
-      </span>
-      <Sm>{qoq ? amount ?? "—" : wasLine(amount, r.pat_prev_yoy, r.pat_prev_turn)}</Sm>
-      {(qoq ? r.pat_qoq : r.pat_yoy) == null && !turn && <Sm italic>{NO_BASE(qoq)}</Sm>}
-      {oneOff && <Sm><span title={oneOff.title}>{oneOff.text}</span></Sm>}
-      {whole && <Sm><span title={whole.title}>{whole.text}</span></Sm>}
-      {r.nfo && <div className="mt-1.5"><NfoFlag /></div>}
-    </>
-  );
+  return <Paired amount={fmtCrAmount(r.pat)} value={qoq ? r.pat_qoq : r.pat_yoy} turn={qoq ? r.pat_qoq_turn : r.pat_turn} noBase={NO_BASE(qoq)} className="font-semibold" />;
 }
 
 function Filed({ r }: { r: KpiRow }) {
@@ -156,12 +116,12 @@ function QuickActions({ r, onPeek }: { r: KpiRow; onPeek: () => void }) {
 }
 
 /** The table's narrowest width: below it the table scrolls inside its own box, never the page (U1: it overlapped itself at 1024 px). */
-const MIN_WIDTH: Record<View, string> = { yoy: "min-w-[1280px]", momentum: "min-w-[1040px]", qoq: "min-w-[1260px]" };
+const MIN_WIDTH: Record<View, string> = { yoy: "min-w-[820px]", momentum: "min-w-[1040px]", qoq: "min-w-[820px]" };
 
 const COLS: Record<View, number[]> = {
-  yoy: [18.5, 7, 14.5, 14.5, 9.5, 15.5, 6.5, 8, 6],
+  yoy: [22, 21, 25, 21, 11],
   momentum: [21, 20, 13, 12, 13, 12, 9],
-  qoq: [23, 7.5, 15, 15, 11, 15, 7.5, 6],
+  qoq: [22, 21, 25, 21, 11],
 };
 
 /** The companies as a table: one row per company, the columns of the chosen view. Keyboard: j and k move, Enter opens the side
@@ -170,6 +130,7 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
   const body = useRef<HTMLTableSectionElement>(null);
   const [, setCursor] = useState(0);
   const th = { sort, dir, onSort };
+  const q = view === "qoq";
   const focusRow = (i: number) => {
     const n = Math.max(0, Math.min(rows.length - 1, i));
     setCursor(n);
@@ -191,21 +152,17 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
     <table className={cn("w-full table-fixed border-collapse text-[14px]", MIN_WIDTH[view])}>
       <colgroup>{COLS[view].map((w, i) => <col key={i} style={{ width: `${w}%` }} />)}</colgroup>
       <thead>
-        {view === "yoy" ? (
+        {view !== "momentum" ? (
           <tr>
-            <Th {...th} left sortKey="company" hint="Sector › industry" className="pl-3">Company</Th>
-            <Th {...th} left hint="Rev · EBITDA · Profit">Signals</Th>
-            <Th {...th} sortKey="revenue_yoy">Revenue</Th>
-            <Th {...th} sortKey="ebitda_yoy">EBITDA</Th>
-            <Th {...th} sortKey="opm_yoy_bps" title="100 bp = 1 percentage point" hint="EBITDA margin">Margin change</Th>
-            <Th {...th} sortKey="pat_yoy" title="PAT: profit after tax" hint="⇡ faster / ⇣ slower than last qtr">Profit (PAT)</Th>
-            <Th {...th} title="Profit growth in the last 8 quarters, on its own scale" hint="own scale">Profit trend</Th>
-            <Th {...th} sortKey="mcap">Market cap</Th>
-            <Th {...th} sortKey="filed" className="pr-3">Filed</Th>
+            <Th {...th} left sortKey="company" className="pl-3">Company</Th>
+            <Th {...th} sortKey={q ? "revenue_qoq" : "revenue_yoy"} hint={q ? "vs last quarter" : "vs year ago"}>Revenue</Th>
+            <Th {...th} sortKey={q ? "ebitda_qoq" : "ebitda_yoy"} title="100 bp = 1 percentage point" hint="margin, change">EBITDA · margin</Th>
+            <Th {...th} sortKey={q ? "pat_qoq" : "pat_yoy"} title="PAT: profit after tax">Net profit</Th>
+            <Th {...th} sortKey="mcap" className="pr-3">Mcap ₹ Cr</Th>
           </tr>
         ) : view === "momentum" ? (
           <tr>
-            <Th {...th} left sortKey="company" hint="Sector › industry" className="pl-3">Company</Th>
+            <Th {...th} left sortKey="company" className="pl-3">Company</Th>
             <Th {...th} left hint={
               <span className="flex justify-between gap-2">
                 <span><i aria-hidden className="inline-block h-[9px] w-[9px] rounded-full align-[-1px] ring-[1.5px] ring-inset ring-ink-2" /> last quarter{" "}
@@ -218,18 +175,7 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
             <Th {...th}>Verdict</Th>
             <Th {...th} sortKey="filed" className="pr-3">Filed</Th>
           </tr>
-        ) : (
-          <tr>
-            <Th {...th} left sortKey="company" hint="Sector › industry" className="pl-3">Company</Th>
-            <Th {...th} left hint="vs last quarter">Signals</Th>
-            <Th {...th} sortKey="revenue_qoq">Revenue</Th>
-            <Th {...th} sortKey="ebitda_qoq">EBITDA</Th>
-            <Th {...th} sortKey="opm_qoq_bps" title="100 bp = 1 percentage point" hint="EBITDA margin">Margin change</Th>
-            <Th {...th} sortKey="pat_qoq" title="PAT: profit after tax">Profit (PAT)</Th>
-            <Th {...th} sortKey="mcap">Market cap</Th>
-            <Th {...th} sortKey="filed" className="pr-3">Filed</Th>
-          </tr>
-        )}
+        ) : null}
       </thead>
       <tbody ref={body}>
         {rows.map((r, i) => {
@@ -241,20 +187,12 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
               className={cn("group cursor-pointer outline-none focus-visible:[&>td]:bg-accent-soft hover:[&>td]:bg-[#f7f8fa]",
                 sel && "[&>td]:!bg-accent-soft [&>td:first-child]:shadow-[inset_3px_0_0_var(--accent)]")}>
               <td className={cn(td, "relative pl-3 text-left")}><CompanyCell row={r} /><QuickActions r={r} onPeek={() => onSelect(r)} /></td>
-              {view === "yoy" && (
+              {view !== "momentum" && (
                 <>
-                  <td className={cn(td, "text-left")}><Signals row={r} /></td>
-                  <td className={td}><RevenueCell r={r} /></td>
-                  <td className={td}><EbitdaCell r={r} /></td>
-                  <td className={td}><MarginCell r={r} /></td>
-                  <td className={td}><ProfitCell r={r} /></td>
-                  <td className={cn(td, "pt-4")}>
-                    <span className="inline-flex justify-end">
-                      <Spark vals={r.series_pat} lo={sharedScale([r.series_pat], true)[0]} hi={sharedScale([r.series_pat], true)[1]} w={64} h={26} title={`Profit growth, last 8 quarters: ${r.series_pat.map((v) => fmtPct(v)).join(", ")}`} />
-                    </span>
-                  </td>
-                  <td className={cn(td, "num whitespace-nowrap text-ink-2")}>{cr(r.market_cap_cr)}</td>
-                  <td className={cn(td, "pr-3")}><Filed r={r} /></td>
+                  <td className={td}><RevenueCell r={r} qoq={view === "qoq"} /></td>
+                  <td className={td}><EbitdaCell r={r} qoq={view === "qoq"} /></td>
+                  <td className={td}><ProfitCell r={r} qoq={view === "qoq"} /></td>
+                  <td className={cn(td, "num whitespace-nowrap pr-3 text-ink-2")}>{fmtCrAmount(r.market_cap_cr)}</td>
                 </>
               )}
               {view === "momentum" && (
@@ -276,17 +214,6 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
                   <td className={cn(td, "pr-3")}><Filed r={r} /></td>
                 </>
               )}
-              {view === "qoq" && (
-                <>
-                  <td className={cn(td, "text-left")}><Signals row={r} qoq /></td>
-                  <td className={td}><RevenueCell r={r} qoq /></td>
-                  <td className={td}><EbitdaCell r={r} qoq /></td>
-                  <td className={td}><MarginCell r={r} qoq /></td>
-                  <td className={td}><ProfitCell r={r} qoq /></td>
-                  <td className={cn(td, "num whitespace-nowrap text-ink-2")}>{cr(r.market_cap_cr)}</td>
-                  <td className={cn(td, "pr-3")}><Filed r={r} /></td>
-                </>
-              )}
             </tr>
           );
         })}
@@ -296,33 +223,45 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
   );
 }
 
-/** The phone list: one block per company, profit growth on the right, the other two lines under it. */
+function PhoneCell({ label, amount, value, turn, none, title }: {
+  label: string; amount?: string; value?: number | null; turn?: KpiRow["pat_turn"]; none?: string; title?: string;
+}) {
+  return (
+    <span className="flex min-w-0 flex-col gap-0.5" title={title}>
+      <span className="text-[12.5px] text-ink-3">{label}</span>
+      {none ? <span className="text-[13.5px] text-ink-3">{none}</span> : (
+        <>
+          <span className="num text-[14px] text-ink">{amount}</span>
+          {turn ? <TurnPill turn={turn} className="self-start" /> : <Growth value={value} className="text-[13px]" />}
+        </>
+      )}
+    </span>
+  );
+}
+
+/** The phone list: one small card per company. Symbol and market cap on top, then Revenue, EBITDA (Fin. profit for a lender, none for a bank)
+ *  and Net profit, each amount over its growth (or the turn pill). The whole card opens the quick look. */
 export function PhoneList({ rows, onSelect }: { rows: KpiRow[]; onSelect: (r: KpiRow) => void }) {
   return (
-    <ul>
+    <ul className="flex flex-col gap-2 py-1">
       {rows.map((r) => {
-        const labels = lineLabels(r.kind);
-        const amount = r.pat == null ? null : `${cr(r.pat)}${r.pat_turn ? (r.pat >= 0 ? " profit" : " loss") : ""}`;
+        const slot = ebitdaSlot(r.kind);
         return (
-          <li key={`${r.scrip_code}-${r.period}`} className="border-b border-line">
-            <button type="button" onClick={() => onSelect(r)} className="block min-h-11 w-full py-3.5 text-left">
-              <span className="flex items-start gap-3">
-                <span className="min-w-0 flex-1"><CompanyCell row={r} compact /></span>
-                <span className="shrink-0 text-right">
-                  <Growth value={r.pat_yoy} turn={r.pat_turn} className="text-[19px] font-bold" />
-                  <span className="num block text-[12.5px] text-ink-3">{wasLine(amount, r.pat_turn ? null : r.pat_prev_yoy)}</span>
-                </span>
+          <li key={`${r.scrip_code}-${r.period}`}>
+            <button type="button" onClick={() => onSelect(r)} aria-label={`${rowKey(r)}: open quick look`}
+              className="block min-h-11 w-full rounded-xl border border-line bg-surface px-3.5 py-3 text-left focus-visible:outline-2 focus-visible:outline-accent">
+              <span className="flex items-baseline justify-between gap-3">
+                <span className="min-w-0 flex-1"><CompanyCell row={r} /></span>
+                <span className="num shrink-0 text-[13px] text-ink-3">₹{fmtCrAmount(r.market_cap_cr)} Cr</span>
               </span>
-              <span className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 pl-11 text-[13.5px] text-ink-2">
-                <Signals row={r} />
-                {labels.revenue ? (
-                  <span>{labels.revenue === "Revenue" ? "Rev" : labels.revenue} <Growth value={r.revenue_yoy} arrowClass="hidden" /></span>
-                ) : <span className="text-ink-3">No revenue (insurer)</span>}
-                {labels.ebitda ? (
-                  <span>{labels.ebitda === "EBITDA" ? "EBITDA" : "Fin. profit"} <Growth value={r.ebitda_yoy} turn={r.ebitda_turn} arrowClass="hidden" /></span>
-                ) : null}
+              <span className="mt-2.5 grid grid-cols-3 gap-2">
+                {r.kind === "insurer" || (r.revenue == null && r.revenue_yoy == null)
+                  ? <PhoneCell label="Revenue" none="—" />
+                  : <PhoneCell label="Revenue" amount={fmtCrAmount(r.revenue)} value={r.revenue_yoy} />}
+                {slot === "none" ? <PhoneCell label="EBITDA" none="none" />
+                  : <PhoneCell label={slot === "financing" ? "Fin. profit" : "EBITDA"} amount={fmtCrAmount(r.ebitda)} value={r.ebitda_yoy} turn={r.ebitda_turn} />}
+                <PhoneCell label="Net profit" amount={fmtCrAmount(r.pat)} value={r.pat_yoy} turn={r.pat_turn} />
               </span>
-              {r.nfo && <span className="mt-2 block pl-11"><NfoFlag /></span>}
             </button>
           </li>
         );

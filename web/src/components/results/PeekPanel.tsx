@@ -5,9 +5,9 @@ import type { KpiRow } from "../../../shared/resultsTypes";
 import { industryLine } from "../../../shared/industry";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
-import { fmtMargin, fmtPct, lineLabels, NBFC_EBITDA_NOTE, oneOff as oneOffOf, paceSentence, wholeProfit, quarterLabel, quarterSeries } from "../../lib/resultsView";
+import { fmtGrowth, fmtMargin, fmtPct, lineLabels, MOMENTUM_TEXT, NBFC_EBITDA_NOTE, oneOff as oneOffOf, paceSentence, TURN_TEXT, wholeProfit, quarterLabel, quarterSeries } from "../../lib/resultsView";
 import { Avatar } from "../Avatar";
-import { Growth } from "./bits";
+import { Growth, Signals } from "./bits";
 import { AXIS_CLIP, LineChart } from "./charts";
 
 const KIND_NOTE: Record<KpiRow["kind"], string | null> = {
@@ -129,6 +129,18 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
                 : labels.margin && row.opm != null && (row.ebitda_yoy != null || row.ebitda_turn != null)
                   ? <span className="font-semibold text-ink-2" title="Not meaningful: a margin outside −100%…+100%, or a loss in the base period">NM <span className="font-normal text-ink-3">to {fmtMargin(row.opm)}</span></span>
                   : <span className="text-ink-3">—</span>}
+            </dd>
+            <dt className="text-ink-2" title="Revenue, EBITDA and profit: up or down against a year ago">Signals</dt>
+            <dd className="flex justify-end"><Signals row={row} /></dd>
+            <dt className="text-ink-2">Pace of profit growth</dt>
+            <dd className="text-right font-semibold text-ink">{row.momentum === "not_comparable" ? "Not comparable" : MOMENTUM_TEXT[row.momentum]}</dd>
+            <dt className="text-ink-2">Last quarter's growth</dt>
+            <dd className="num text-right text-ink">
+              {[
+                labels.revenue ? `${labels.revenue === "Revenue" ? "Revenue" : "Income"} ${fmtGrowth(row.revenue_prev_yoy)}` : null,
+                labels.ebitda ? `${labels.ebitda === "EBITDA" ? "EBITDA" : "Fin. profit"} ${fmtGrowth(row.ebitda_prev_yoy)}` : null,
+                `Profit ${row.pat_prev_turn ? TURN_TEXT[row.pat_prev_turn].toLowerCase() : fmtGrowth(row.pat_prev_yoy)}`,
+              ].filter(Boolean).join(" · ")}
             </dd>
             <dt className="text-ink-2">Market cap</dt><dd className="num text-right text-ink">{cr(row.market_cap_cr)}</dd>
             <dt className="text-ink-2">Filed</dt>

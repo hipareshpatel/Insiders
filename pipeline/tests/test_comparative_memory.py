@@ -170,3 +170,34 @@ def test_the_cards_own_company_possessive_still_holds(monkeypatch):
     # "The Company's" is the card's own
     assert C.contradictions(["The Company's Q4FY26 PAT of ₹7,000 Cr against ₹6,500 Cr in Q3FY26."], memory, "CONSOLIDATED") != []
     assert C._own_names(("Hindustan Zinc Limited", "HINDZINC")) >= {"hindustan", "zinc", "hz", "hzl", "hindzinc"}
+
+
+# --- STARHEALTH nse-106715707: insurers moved to Ind AS 117 in FY27 (facts-dump 41383638958) ------------------------------------
+
+def _filed(metric, period, value, url, basis="STANDALONE"):
+    row = _f(metric, period, value, basis)
+    row["sources"][0]["lab"]["file_url"] = url
+    return row
+
+
+GI_Q4FY26 = "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GI_1660681_28042026085314_WEB.xml"
+IND_AS_Q1FY27 = "https://nsearchives.nseindia.com/corporate/xbrl/IF_INS_COM_IND_AS_19799_WebXMLFile_20261020_191249443.xml"
+
+
+def test_an_insurers_igaap_figure_is_never_set_against_its_ind_as_restatement(monkeypatch):
+    """The Q4FY26 GI file states PAT 111.33 Cr (ProfitLossAfterTax); the Q1FY27 Ind AS filing restates the quarter as a loss of
+    ₹55.4 Cr. Both are right, under two standards."""
+    on(monkeypatch)
+    memory = {"financial_metrics": [_filed("pat", "Q4FY26", 111.33, GI_Q4FY26)]}
+    text = "Star Health Q1FY27 PAT of ₹549.7 Cr against a loss of ₹55.4 Cr in Q4FY26."
+    assert C.contradictions([text], memory, "STANDALONE") == []
+    # a card of FY26 itself against the same file is still compared
+    assert C.contradictions(["Star Health Q4FY26 PAT of ₹200 Cr against ₹55.4 Cr in Q3FY26."],
+                            {"financial_metrics": [_filed("pat", "Q3FY26", 128.22, GI_Q4FY26)]}, "STANDALONE") != []
+
+
+def test_an_ind_as_to_ind_as_comparison_still_holds(monkeypatch):
+    on(monkeypatch)
+    memory = {"financial_metrics": [_filed("pat", "Q1FY27", 549.73, IND_AS_Q1FY27)]}
+    assert C.contradictions(["Star Health Q2FY27 PAT of ₹264.8 Cr against ₹600 Cr in Q1FY27."], memory, "STANDALONE") == [
+        "pat Q1FY27: the card says ₹600 Cr, memory (the exchange's file) ₹549.73 Cr"]

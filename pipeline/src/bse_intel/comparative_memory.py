@@ -74,6 +74,29 @@ _ADJUSTED = re.compile(r"\b(?:adjusted|underlying|normali[sz]ed|non[- ]?gaap|cor
                        r"before\s+exceptional|ex[- ]exceptional)\b", re.I)
 
 
+# an insurer's Indian-GAAP results file (the GI/LI templates until FY26): from Q1FY27 insurers file under Ind AS 117, and a later
+# card's FY26 comparatives are restated under it (STARHEALTH Q4FY26: the GI file's ProfitLossAfterTax 111.33 Cr, the Q1FY27
+# filing's restated loss (5,540) lakh; facts-dump 41383638958)
+_IGAAP_INSURER = re.compile(r"INTEGRATED_FILING_(?:GI|LI)_", re.I)
+_IND_AS_INSURERS_FROM = "Q1FY27"
+
+
+def _igaap_insurer_keys(dossier: dict | None) -> set[tuple[str, str, str]]:
+    """(metric, period, basis) whose exchange-file figure in memory comes from an insurer's Indian-GAAP template."""
+    from .watch_code import _sources_of, _src_basis
+
+    keys = set()
+    for m in (dossier or {}).get("financial_metrics") or []:
+        if not isinstance(m, dict) or not m.get("period") or not m.get("metric"):
+            continue
+        for src in _sources_of(m):
+            lab = src.get("lab") if isinstance(src.get("lab"), dict) else {}
+            basis = _src_basis(src, m)
+            if lab.get("by") == "file" and basis and _IGAAP_INSURER.search(str(lab.get("file_url") or "")):
+                keys.add((m["metric"], m["period"], basis.upper()))
+    return keys
+
+
 def _file_figures(dossier: dict | None) -> dict[tuple[str, str, str], float]:
     """{(metric, period, basis): value} of memory's figures the exchange's own results file gave (a source labelled ``file``, on a
     named basis); a calculated or a model-read figure, or one with no basis, is none (blind read of 41345924894: IOB's 1,962.67
@@ -121,6 +144,9 @@ def contradictions(texts: list[str], dossier: dict | None, basis: str | None = N
              for text in texts for m in _QUARTER.finditer((text or "").replace("**", ""))]
     own = max((p for p in named if quarter_index(p) is not None), key=quarter_index, default=None)
     own_names = _own_names(names)
+    # a card from Q1FY27 on sets no figure against an insurer's Indian-GAAP file: its comparatives are restated under Ind AS 117
+    # (lead, 2 Nov 2026: by the file's template, not the industry, which would also take insurers already on Ind AS)
+    igaap = _igaap_insurer_keys(dossier) if own and quarter_index(own) >= quarter_index(_IND_AS_INSURERS_FROM) else set()
     found = []
     for text in texts:
         flat = (text or "").replace("**", "")
@@ -136,9 +162,12 @@ def contradictions(texts: list[str], dossier: dict | None, basis: str | None = N
             on = (word[-1] if word else basis or "").upper()
             if not on:
                 continue
-            held = memory.get((metric, period, on))
-            if held is None and metric == "pat":
-                held = memory.get(("pat_owners", period, on))
+            key = (metric, period, on)
+            if key not in memory and metric == "pat":
+                key = ("pat_owners", period, on)
+            if key in igaap:
+                continue
+            held = memory.get(key)
             if held is None:
                 continue
             raw = m.group(1).replace(",", "")

@@ -1034,6 +1034,18 @@ _FIGURE = re.compile(r"(\d[\d,]*(?:\.\d+)?)\s*")
 # what one of a stored figure's unit is: crore and lakh amounts and counts; per-unit and per-cent figures are 1
 _STORED_SCALE = {"INR_CR": 1e7, "CR": 1e7, "INR_LAKH": 1e5, "LAKH": 1e5, "INR_MN": 1e6, "INR_M": 1e6, "INR_BN": 1e9,
                  "USD_MN": 1e6, "USD_M": 1e6, "USD_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5}
+# A rupee amount's unit to crore (lead's review of #370: USD_MN and SHARES_CR are in _STORED_SCALE, and a US$ 5 Mn or 5 crore
+# shares is no "₹50 Cr"); any other unit is no rupee amount
+_INR_TO_CRORE = {"INR_CR": 1.0, "CR": 1.0, "CRORE": 1.0, "INR_CRORE": 1.0, "INR_LAKH": 0.01, "LAKH": 0.01, "INR_MN": 0.1,
+                 "INR_M": 0.1, "INR_MILLION": 0.1, "INR_BN": 100.0, "INR_BILLION": 100.0}
+
+
+def inr_crore(value, unit: str | None) -> float | None:
+    """``value`` stored in ``unit`` (crore when none is stored) as rupees crore; None for a unit that is no rupee amount."""
+    scale = _INR_TO_CRORE.get(str(unit or "INR_CR").upper())
+    return float(value) * scale if scale is not None and isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
 _NO_SCALE_UNITS = {"PCT", "%", "BPS", "X", "TIMES", "RATIO", "INR_PER_SHARE", "INR", "DAYS"}   # a rate, a ratio or a per-unit figure
 # A target this many times from its figure was read in another unit: a scale slip is a factor of 1,000 or more (lakh
 # against tonnes is 1e5); a real beat or miss is rarely 50x (net debt 100 against a 1,200 target is 12x, a 30% growth

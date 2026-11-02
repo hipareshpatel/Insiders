@@ -55,6 +55,12 @@ def predates_v2(card_json: dict, filed_at: str | None) -> bool:
     return two_profit_keys(card_json) or bool(when and when < V2_SINCE)
 
 
+def _file_source(src: dict) -> bool:
+    """A source the exchange's file gave (labelled file or calc, or under a synthetic ``xbrl:`` id)."""
+    lab = src.get("lab")
+    return (isinstance(lab, dict) and lab.get("by") in ("file", "calc")) or str(src.get("news_id") or "").startswith("xbrl:")
+
+
 def _from_file(entry: dict) -> bool:
     """A memory row the exchange's file gave (labelled file or calc, or under a synthetic ``xbrl:`` id)."""
     from .watch_code import _sources_of
@@ -70,9 +76,10 @@ def tagged_from_memory(dossier: dict, period: str, basis: str, any_source: bool 
     """An XbrlResult of memory's exchange-file figures (file or calc, never a model's; ``any_source``: every figure, as the old code
     read memory) for ``period``, its year-ago, previous quarter and the year-to-date periods beside them, on ``basis``; each with
     its YoY and QoQ worked out from memory, none across a change of sign (a loss against a year-ago profit is no -2600%)."""
+    from .dossier import _NO_SCALE_UNITS, inr_crore
     from .models import FinancialMetric
     from .periods import prior_quarter_period, prior_year_period
-    from .watch_code import _entry_basis
+    from .watch_code import _entry_basis, _sources_of, _src_basis
     from .xbrl import PER_SHARE, PERCENT, XbrlResult, _change
 
     year_ago, prev_q = prior_year_period(period), prior_quarter_period(period)
@@ -89,8 +96,26 @@ def tagged_from_memory(dossier: dict, period: str, basis: str, any_source: bool 
     values: dict[tuple[str, str], tuple[float, str | None]] = {}
     for m in rows:
         b = _entry_basis(m)
-        if (b.upper() == basis.upper()) if b else (m["period"] not in labelled):
-            values[(m["metric"], m["period"])] = (float(m["value"]), m.get("unit"))
+        if not ((b.upper() == basis.upper()) if b else (m["period"] not in labelled)):
+            continue
+        if any_source:
+            value, unit = m["value"], m.get("unit")
+        else:
+            # the file's own figure, never the merged one (lead's review of #370: a file source beside an unknown source's 1,238.67
+            # put 1,238.67 on the face)
+            src = next((s for s in _sources_of(m) if _file_source(s) and isinstance(s.get("value"), (int, float))
+                        and (_src_basis(s, m) or basis).upper() == basis.upper()), None)
+            if src is None:
+                continue
+            value, unit = src["value"], src.get("unit") or m.get("unit")
+        if m["metric"] in PER_SHARE or m["metric"] in PERCENT or str(unit or "").upper() in _NO_SCALE_UNITS:
+            values[(m["metric"], m["period"])] = (float(value), unit)
+            continue
+        # in crore, whatever rupee unit memory stored it in (lead's review of #370: a lakh row reached the face as crore); a dollar or
+        # share count is no rupee figure for the face
+        crore = inr_crore(value, unit)
+        if crore is not None:
+            values[(m["metric"], m["period"])] = (crore, "INR_CR")
     metrics = []
     for (metric, p), (value, unit) in values.items():
         yoy = qoq = None

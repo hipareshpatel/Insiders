@@ -241,3 +241,39 @@ def test_an_owners_figure_no_file_backs_leaves_the_face(monkeypatch):
     assert "1,238.67" in card["headline"]                    # what the old code wrote from memory as it stood
     F.apply_card_json(card, memory, FILED, "Adani Ports Limited")
     assert "1,238.67" not in card["headline"] and "3,308.3" in card["headline"]
+
+
+def _value(tagged, metric, period):
+    return next((m.value for m in tagged.metrics if (m.metric, m.period) == (metric, period)), None)
+
+
+def test_the_face_takes_the_file_sources_own_figure_never_the_merged_one(monkeypatch):
+    """Lead's review of #370: a row with a file source beside an unknown source whose 1,238.67 is the merged value put 1,238.67 on
+    the rebuilt face."""
+    _on(monkeypatch)
+    memory = _memory()
+    row = next(m for m in memory["financial_metrics"] if (m["metric"], m["period"]) == ("pat_owners", "Q4FY26"))
+    file_src = row["sources"][0]
+    file_src["value"] = 1250.0
+    row["value"] = 1238.67
+    row["sources"] = [{**file_src, "news_id": "nse-1", "value": 1238.67, "lab": {"by": "unknown", "basis": "CONSOLIDATED"}}, file_src]
+    assert _value(F.tagged_from_memory(memory, "Q4FY26", "CONSOLIDATED"), "pat_owners", "Q4FY26") == 1250.0
+    assert _value(F.tagged_from_memory(memory, "Q4FY26", "CONSOLIDATED", any_source=True), "pat_owners", "Q4FY26") == 1238.67
+    # the file source on the other basis is none for this card
+    file_src["basis"] = file_src["lab"]["basis"] = "STANDALONE"
+    assert _value(F.tagged_from_memory(memory, "Q4FY26", "CONSOLIDATED"), "pat_owners", "Q4FY26") is None
+
+
+def test_a_lakh_row_reaches_the_face_in_crore_and_a_dollar_row_never(monkeypatch):
+    """Lead's review of #370: tagged_from_memory put a lakh figure on the face as crore."""
+    _on(monkeypatch)
+    memory = _memory()
+    row = next(m for m in memory["financial_metrics"] if (m["metric"], m["period"]) == ("revenue", "Q4FY26"))
+    row["value"] = row["sources"][0]["value"] = 655415.0
+    row["unit"] = row["sources"][0]["unit"] = "INR_LAKH"
+    for any_source in (False, True):
+        tagged = F.tagged_from_memory(memory, "Q4FY26", "CONSOLIDATED", any_source=any_source)
+        revenue = next(m for m in tagged.metrics if (m.metric, m.period) == ("revenue", "Q4FY26"))
+        assert (revenue.value, revenue.unit) == (6554.15, "INR_CR")
+    row["unit"] = row["sources"][0]["unit"] = "USD_MN"
+    assert _value(F.tagged_from_memory(memory, "Q4FY26", "CONSOLIDATED"), "revenue", "Q4FY26") is None

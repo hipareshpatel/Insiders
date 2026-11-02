@@ -87,6 +87,8 @@ EXTRA_VERDICTS = ("pdf_disagree", "pdf_scanned_lead")
 MAX_CANDIDATES = 4          # results PDFs tried for one period
 MAX_PAGES = 12              # candidate table pages read in one PDF
 MAX_SCAN_PAGES = 60         # pages looked at for them (PDF_ROW_FIXES: the first twelve that name a quarter are no longer all)
+MAX_STATEMENT_SCAN = 250    # PDF_STATEMENT_PAGES: a long filing is looked through this far for its statement pages
+STATEMENT_PAGES_WANTED = 2  # PDF_STATEMENT_PAGES: the scan goes past MAX_SCAN_PAGES until this many statement pages are found
 _RESULTS_LINE = re.compile(r"revenue\s+from\s+operations|net\s+sales|total\s+income|profit\s+(?:for\s+the|after)\s+(?:period|year|quarter|tax)|interest\s+earned", re.I)
 WINDOW_DAYS = 120           # a period's results are filed within this many days after its end
 MAX_PDF_BYTES = 40_000_000
@@ -166,6 +168,11 @@ _DATE_LOOSE_2 = re.compile(_DATE_LOOSE.pattern + r"|(?<![\w./,])\d{1,2}(?:st|nd|
 def _row_fixes() -> bool:
     from .settings import pdf_option
     return pdf_option("pdf_row_fixes")
+
+
+def _statement_pages() -> bool:
+    from .settings import get_settings
+    return bool(get_settings().pdf_statement_pages)
 
 
 def _two_digit() -> bool:
@@ -889,18 +896,24 @@ def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6,
             sample["pages"] = doc.page_count
         texts: dict[int, str] = {}
         rowish: set[int] = set()        # pages that name a results line (PDF_ROW_FIXES: these come first, below)
+        statements: set[int] = set()    # PDF_STATEMENT_PAGES: a results line under a header of three or more dates
+        by_statement = _statement_pages()
         for i in range(doc.page_count):
             layer = doc.page_text(i, figures=False)
             if re.search(r"months?\s+ended|quarter|year\s+ended", layer, re.I) or doc.is_scanned(i):
                 texts[i] = layer
                 if _RESULTS_LINE.search(layer):
                     rowish.add(i)
-            if len(texts) >= MAX_PAGES and (not _row_fixes() or i >= MAX_SCAN_PAGES):
+                    if by_statement and any(len(_dates_in(line)) >= 3 for line in layer.splitlines()):
+                        statements.add(i)
+            if len(texts) >= MAX_PAGES and (not _row_fixes() or i >= MAX_SCAN_PAGES) \
+                    and not (by_statement and len(statements) < STATEMENT_PAGES_WANTED and i < MAX_STATEMENT_SCAN):
                 break
-        if _row_fixes() and len(texts) > MAX_PAGES:
+        if (_row_fixes() or by_statement) and len(texts) > MAX_PAGES:
             # an auditor's letter or a long note also names a quarter: the statements of a long filing (Persistent's consolidated page is
-            # the 19th) were crowded out by the first twelve pages that did. Pages with a results line first, then the rest, in page order.
-            keep = sorted(texts, key=lambda i: (i not in rowish, i))[:MAX_PAGES]
+            # the 19th) were crowded out by the first twelve pages that did. Pages with a results line first, then the rest, in page order;
+            # with PDF_STATEMENT_PAGES a statement page before a summary table (INFY's press release, JSWSTEEL's highlights; A3)
+            keep = sorted(texts, key=lambda i: (i not in statements, i not in rowish, i))[:MAX_PAGES]
             texts = {i: texts[i] for i in sorted(keep)}
         if not texts:
             return None, "no page names a quarter or year ended"

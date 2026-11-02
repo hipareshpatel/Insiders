@@ -69,7 +69,7 @@ blind review and a measurement; a switch then decides whether the rule acts on l
 | CARD_GUIDANCE_DATED | A guidance verdict (met / missed) only from a dated target due this period | Decide in the card work | **On** (owner, 30 Oct 2026, ~00:40 IST) |
 | CARD_EPS_WHOLE | EPS line on the whole company (EPS is not shown on cards, so memory only) | Later | Yes / No / Later |
 | LINE_MAP | Row names mapped by one table for changes that would alter output | Keep off | Yes / No / Later |
-| SLIP_CHECK_NUMFIRST, PDF_SHADOW | The new PDF reader in the unit check; its shadow run | Off until the PDF work resumes | Yes / No / Later |
+| SLIP_CHECK_NUMFIRST, PDF_SHADOW | The new PDF reader in the unit check; its shadow run (shadow dropped by the owner 2 Nov 2026) | Off until the PDF work resumes | Yes / No / Later |
 | MEMORY_SCREENER | Screener's figures read as memory | Keep off: screener is for checking only | Yes / No / Later |
 | CRITIC | A second AI reviewing each card | Keep off (D41) | Yes / No / Later |
 
@@ -144,7 +144,7 @@ Every list was swept: this section 3 (the lead's list and the 31 Oct table below
 | S2 | Same event, different documents (results + deck + release; buyback + letter of offer): duplicates.py matches identical bodies only, D20 covers RESULTS only | cards | read-only count of stored non-results repeats, then the event-level rule with its on/off |
 | S3 | `XBRL_FILER_CHECKS` (TODO 111, F219; built, off; owner "after BSE", BSE done) | data | on/off over stored memory, then owner's call. **Release check 1 Nov ~21:00 IST (run 41312277167, after #336): FAIL** - 28 cards change; the whole PAT is held on 22 and an owners' figure shown, including ADANIPORTS' 1,238.67 (the TCI share #336 meant to drop): #336's check does not fire on the real files. Stays off; the reader root-causes from the files |
 | S4 | TODO 128 steps 2-3 (the "may be" memory link behind a mover) | cards | blocked on call memory (row 16) |
-| S5 | TODO 121 PDF shadow check (#237): every scheduled run skipped, repository variable PDF_SHADOW not "on" | owner | set it on, or drop it after the reader's FAIL (row 15) |
+| S5 | TODO 121 PDF shadow check (#237) | closed | **Dropped (owner, 2 Nov 2026 ~06:00 IST: "drop")** after the reader's FAIL (row 15): `pdf-shadow.yml` removed, so no schedule or dispatch is left. `pdf_shadow.py` and the Worker's optional SHADOW_TOKEN stay; both are inert without the workflow. Bring them back only if a reader passes its bar |
 | S6 | `fill-trades` remainder: 656 insider-trade filings unread; deals history 27 Apr - 21 Aug only (OPS 23 Oct) | data | one `fill-trades` run when the memory chain is idle |
 | S10 | History gap: discovered only through 2026-06-08 (`/api/system`, measured 1 Nov); queue at its 1,000 cap pauses discovery | data | **DeepSeek drain ON to 3 Nov 14:15 IST** (#325, owner Yes). **6-hour report (1 Nov ~20:40 IST):** 9 runs, 376 filings analysed, 112 high-confidence cards; ~150 DeepSeek requests, all answered, no errors; tokens are not logged, so spend is not measured (estimate a dollar or two; the owner reads the DeepSeek balance page); DeepSeek served ~1 in 5 requests; discovered_through unmoved (the backlog over the cap must clear first; run time, not AI, is the limit). Owner told; left to run to its end |
 | S7 | TODO 123 reader cleanup (`drop_twin_rows`, `tail_label` still in pdf_numbers_first.py) | reader | low while the reader set fails |

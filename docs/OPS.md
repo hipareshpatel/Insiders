@@ -109,6 +109,8 @@ step did not install `requests`; fixed in #179.)
 
 ## 29 Oct 2026: PDF shadow check built (TODO 121), off until the owner switches it on
 
+**2 Nov 2026 ~06:00 IST: dropped (owner: "drop").** The reader failed its bar (STATUS row 15). `pdf-shadow.yml` is removed; the text below is history.
+
 `pdf-shadow.yml` reads the PDF of each results card filed in the last 3 hours with the numbers-first reader and logs, per
 headline figure, agrees / disagrees / unknown against the card (R2 `meta/pdf-shadow/<day>.csv`, artifact `pdf-shadow`). Read only:
 no card, memory or site change, no AI. **To switch it on (owner):** set the repository variable `PDF_SHADOW` to `on`

@@ -79,8 +79,8 @@ def test_another_profit_line_in_the_headline_is_not_pat(monkeypatch):
         card["headline"], card["key_numbers"] = headline, []
         assert R.profit_label_card_json(card, MEM) == [], headline
     card = copy.deepcopy(TI)
-    card["headline"], card["key_numbers"] = "Acme Q2FY27 profit jumps to ₹60 Cr", []
-    assert len(R.profit_label_card_json(card, MEM)) == 1   # a bare profit that is memory's H1 is still tagged
+    card["headline"], card["key_numbers"] = "Acme profit jumps to ₹60 Cr", []
+    assert len(R.profit_label_card_json(card, MEM)) == 1   # a bare profit that is memory's H1 is still tagged (no own quarter named)
 
 
 def _headline(monkeypatch, text, results=None):
@@ -101,8 +101,8 @@ def test_the_earlier_periods_figure_is_not_labelled(monkeypatch):
         card, notes = _headline(monkeypatch, text)
         assert all("₹52" not in n for n in notes), text
         assert "₹52 Cr (company" not in card["headline"], text
-    card, notes = _headline(monkeypatch, "Acme Q2FY27 net profit of ₹60 Cr against net profit of ₹52 Cr a year earlier")
-    assert "net profit of ₹60 Cr (H1FY27)" in card["headline"]   # the current figure is still compared
+    card, notes = _headline(monkeypatch, "Acme net profit of ₹60 Cr against net profit of ₹52 Cr a year earlier")
+    assert "net profit of ₹60 Cr (H1FY27)" in card["headline"]   # the current figure is still compared (no own quarter named)
 
 
 def test_a_figure_after_on_is_the_base_not_profit(monkeypatch):
@@ -279,9 +279,52 @@ def test_the_other_blocks_figure_never_tags_a_card(monkeypatch):
 def test_a_headline_figure_that_is_memorys_half_gets_the_half_tag(monkeypatch):
     on(monkeypatch)
     card = copy.deepcopy(TI)
-    card["headline"], card["key_numbers"] = "Acme Q2FY27 PAT at ₹60 Cr", []
+    card["headline"], card["key_numbers"] = "Acme PAT at ₹60 Cr", []
     notes = R.profit_label_card_json(card, MEM)
-    assert card["headline"] == "Acme Q2FY27 PAT at ₹60 Cr (H1FY27)" and len(notes) == 1
+    assert card["headline"] == "Acme PAT at ₹60 Cr (H1FY27)" and len(notes) == 1
+    # a figure in a sentence that names the card's own quarter is never re-tagged (lead, 2 Nov 2026): a mislabelled half's
+    # figure cannot be told from a quarter's figure that matches the half by chance (Syngene), and an untagged figure does less
+    # harm than a wrong tag
+    card["headline"] = "Acme Q2FY27 PAT at ₹60 Cr"
+    assert R.profit_label_card_json(card, MEM) == [] and card["headline"] == "Acme Q2FY27 PAT at ₹60 Cr"
+
+
+# --- blind read of release check 41359858007 (c02 SYNGENE nse-106604469) -------------------------------------------------------
+
+def test_syngene_a_q4_figure_near_the_half_is_never_tagged_h1(monkeypatch):
+    """The Q4FY26 headline's ₹153 Cr (PAT before exceptional items) sat within 1.5% of memory's H1FY26 and got "(H1FY26)"."""
+    on(monkeypatch)
+    memory = {"financial_metrics": [{"metric": "pat", "period": "Q4FY26", "value": 180.0},
+                                    {"metric": "pat", "period": "H1FY26", "value": 155.0},
+                                    {"metric": "pat", "period": "9MFY26", "value": 153.5}]}
+    for headline in ("Syngene PAT before exceptional items fell 16% to ₹153 Cr",     # a growth % bound to it
+                     "Syngene Q4 FY26: PAT before exceptional items ₹153 Cr",        # its own quarter named
+                     "Syngene PAT before exceptional items at ₹153 Cr"):             # a Q4 card: no H1 or 9M tag at all
+        card = copy.deepcopy(TI)
+        card["results"]["period"], card["headline"], card["key_numbers"] = "Q4FY26", headline, []
+        assert R.profit_label_card_json(card, memory) == [] and card["headline"] == headline, headline
+
+
+def test_each_quarter_is_tagged_only_with_the_period_it_closes(monkeypatch):
+    on(monkeypatch)
+    assert [R._year_of(p) for p in ("Q1FY27", "Q2FY27", "Q3FY27", "Q4FY26", "FY26", None)] == \
+        [[], ["H1FY27"], ["9MFY27"], ["FY26"], [], []]
+    # Heritage's shape: a Q3 card's nine-month figure keeps its 9M tag
+    card = _card("Q3FY27", 43.05, "PAT", "₹150.00 Cr", "PAT of Rs 150 crore")
+    R.profit_label_card_json(card, {"financial_metrics": [{"metric": "pat", "period": "Q3FY27", "value": 43.05},
+                                                          {"metric": "pat", "period": "9MFY27", "value": 150.0}]})
+    assert card["key_numbers"][0]["label"] == "PAT (9MFY27)"
+    # c12 nse-106626769: the year's PAT 606 on a Q4 card keeps its FY tag
+    card = _card("Q4FY26", 150.0, "PAT", "₹606.00 Cr", "PAT of Rs 606 crore")
+    R.profit_label_card_json(card, {"financial_metrics": [{"metric": "pat", "period": "Q4FY26", "value": 150.0},
+                                                          {"metric": "pat", "period": "FY26", "value": 606.0}]})
+    assert card["key_numbers"][0]["label"] == "PAT (FY26)"
+    # a Q1 card is never tagged; a key labelled with the card's own quarter neither
+    card = _card("Q1FY27", 20.0, "PAT", "₹60.00 Cr", "PAT of Rs 60 crore")
+    assert R.profit_label_card_json(card, {"financial_metrics": [{"metric": "pat", "period": "Q1FY27", "value": 20.0},
+                                                                 {"metric": "pat", "period": "FY26", "value": 60.0}]}) == []
+    card = _card("Q2FY27", 22.27, "Q2FY27 PAT", "₹60.00 Cr", "PAT of Rs 60 crore")
+    assert R.profit_label_card_json(card, MEM) == []
 
 
 def test_the_quarters_own_profit_near_its_half_gets_no_tag(monkeypatch):

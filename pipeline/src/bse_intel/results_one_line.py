@@ -368,10 +368,29 @@ _BASIS_WORD = re.compile(r"\b(?:standalone|consolidated)\b", re.I)
 
 
 def _year_of(period: str | None) -> list[str]:
-    """The year-sized periods a quarter's card can state beside it: its year, nine months and half ("Q4FY26" -> FY26, 9MFY26,
-    H1FY26)."""
-    m = re.fullmatch(r"Q[1-4](FY\d{2})", period or "")
-    return [m[1], f"9M{m[1]}", f"H1{m[1]}"] if m else []
+    """The one cumulative period a quarter's card closes, the only one its figure may be tagged with: Q2 its half, Q3 its nine
+    months, Q4 its year, Q1 none (lead's blind read of 41359858007, c02 SYNGENE nse-106604469: a Q4 card's ₹153 Cr, the quarter's
+    own, sat within 1.5% of memory's H1FY26 and was tagged "(H1FY26)")."""
+    m = re.fullmatch(r"Q([1-4])(FY\d{2})", period or "")
+    return [{"2": f"H1{m[2]}", "3": f"9M{m[2]}", "4": m[2]}[m[1]]] if m and m[1] != "1" else []
+
+
+# a growth percentage bound to the figure: "fell 16% to ₹153 Cr", "₹153 Cr, down 16%", "₹153 Cr (+16% YoY)"
+_GROWTH_BEFORE = re.compile(r"\d+(?:\.\d+)?\s*%\s*(?:yoy|qoq|y-o-y|q-o-q)?\s*(?:to|at)\s*$", re.I)
+_GROWTH_AFTER = re.compile(r"^\s*[,(]?\s*(?:up|down|higher|lower|rising|falling|[+-])?\s*\d+(?:\.\d+)?\s*%", re.I)
+_SENTENCE = re.compile(r"[.!?;](?:\s|$)")
+
+
+def _own_quarter_or_growth(text: str, period: str | None, at: int, end: int) -> bool:
+    """The figure at ``at``..``end`` sits in a sentence that names the card's own quarter, or carries a growth percentage: the
+    quarter's own figure, never re-tagged with a cumulative period. A mislabelled half's figure cannot be told from a quarter's
+    figure that matches the half by chance (Syngene), and an untagged figure does less harm than a wrong tag (lead, 2 Nov 2026)."""
+    start = max([m.end() for m in _SENTENCE.finditer(text, 0, at)], default=0)
+    stop = next((m.start() for m in _SENTENCE.finditer(text, end)), len(text))
+    own = (_periods(period or "") or [None])[0]
+    if own and any(p[1] == "Q" and not _differs_from(p, own) for p in _periods(text[start:stop])):
+        return True
+    return bool(_GROWTH_BEFORE.search(text[start:at]) or _GROWTH_AFTER.match(text[end:stop]))
 
 
 _MEMORY_PROFITS = ("pat", "pat_owners", "pat_continuing", "pat_before_minority")
@@ -427,6 +446,8 @@ def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list
             continue
         if _CODE_KEY.match(str(key.get("quote") or "")) or _BASIS_WORD.search(label):
             continue   # code wrote it from memory or the file, or its label names its basis (triage of run 41318733817)
+        if _own_quarter_or_growth(label, period, len(label), len(label)):
+            continue   # its label names the card's own quarter: the quarter's figure (lead, 2 Nov 2026)
         year = _memory_period(figure, period, dossier, basis)
         if year:   # the year's (or nine months', or the half's) profit on a quarter's card: named as such
             key["label"] = f"{label} ({year})"
@@ -440,7 +461,8 @@ def profit_label_card_json(card_json: dict, dossier: dict | None = None) -> list
         bare = _LABELLED.sub("", text)
         for word, figure, stated, at in _headline_figures(bare, _PROFIT_WORD):
             end = re.compile(_FIG, re.I).match(bare, at).end()
-            if stated or _earlier_figure(bare, at, end) or _other_period(bare, period, at, end):
+            if stated or _earlier_figure(bare, at, end) or _other_period(bare, period, at, end) \
+                    or _own_quarter_or_growth(bare, period, at, end):
                 continue
             year = _memory_period(figure, period, dossier, basis)
             if not year:

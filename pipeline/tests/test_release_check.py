@@ -231,17 +231,27 @@ def test_press_release_fold_pairs_a_release_with_its_quarters_first_card():
     assert rc.fold_pairs([later], [later]) == []      # no earlier card: it stays the quarter's card
 
 
-def test_unit_fix_scale_keeps_a_figure_at_the_companys_own_scale():
-    """UNIT_FIX_SCALE_GUARD (CDSL nse-106838164): the deck's ₹272 Cr standalone revenue was "corrected" to ₹2.72 Cr."""
+def test_unit_fix_scale_keeps_a_correction_the_filing_does_not_prove():
+    """UNIT_FIX_SCALE_GUARD (CDSL nse-106838164): the deck's ₹272 Cr, on a page "All amounts in crore", was "corrected" to ₹2.72
+    Cr from another page's lakh declaration; a correction today's fixer cannot re-make from the stored text is kept too."""
     rc = _script()
     row = {"news_id": "nse-106838164", "symbol": "CDSL", "scrip_code": "1", "pdf_url": "u"}
-    card = {"event_type": "CONCALL_PRESENTATION", "grounding": {"unit_fixes": {"272": "2.72", "45,582": "455.82"}}}
-    memory = {"financial_metrics": [{"metric": "revenue", "period": "Q2FY27", "value": 394.48},
-                                    {"metric": "pat", "period": "Q2FY27", "value": 173.85}]}
-    note = rc.check_unit_fix_scale(card, row, memory)
-    assert "UNIT FIX 272 Cr kept (the company's scale)" in note["on_lines"]
-    assert "UNIT FIX 45,582 Cr -> 455.82 Cr" in note["on_lines"]   # a correction onto its scale stays
-    assert not rc.changed_by_diff(rc.check_unit_fix_scale(card, row, None)["diff"])   # no memory: nothing refused
+    card = {"event_type": "CONCALL_PRESENTATION", "what_happened": [{"text": "EBITDA ₹2.72 Cr in Q2FY27."}],
+            "grounding": {"unit_fixes": {"272": "2.72"}}}
+    deck = ("--- Page 1\nSegment revenue (₹ in Lakhs) 1,200.00 1,100.00\n--- Page 2\nAll amounts in crore\n"
+            "EBITDA w/o Dividend 233 205 339 179 168 272 255 247 212 101 165 Q2FY26 Q3FY26\n")
+    note = rc.check_unit_fix_scale(card, row, None, deck)
+    assert note["on_lines"] == ["UNIT FIX 272 Cr kept (not proven by the filing)"] and note["off_lines"] == ["UNIT FIX 272 Cr -> 2.72 Cr"]
+    assert note["info"]["refused"] == 1
+    # MOBIKWIK nse-106618046: "(₹794) Mn" proves the card's ₹794 Cr loss is ₹79.4 Cr
+    card = {"what_happened": [{"text": "Net loss of ₹79.4 Cr in FY26."}], "grounding": {"unit_fixes": {"794": "79.4"}}}
+    note = rc.check_unit_fix_scale(card, row, None, "Key highlights\nPAT (₹794) Mn (₹1,215) Mn Growth 57%\n")
+    assert note["on_lines"] == ["UNIT FIX 794 Cr -> 79.4 Cr"]
+    assert note["info"] == {"not_remade": 0, "refused": 0, "kept_correction": 1}
+    # the stored text cannot re-make it: labelled and counted apart (lead, 2 Nov 2026)
+    note = rc.check_unit_fix_scale(card, row, None, "Annual report text with no such figure.\n")
+    assert note["on_lines"] == ["UNIT FIX 794 Cr kept (not re-made: stored text lacks the source)"]
+    assert note["info"] == {"not_remade": 1, "refused": 0, "kept_correction": 0}
 
 
 def test_ratio_columns_check_lists_a_shifted_ratio_comparison():

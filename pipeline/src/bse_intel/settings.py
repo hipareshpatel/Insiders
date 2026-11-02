@@ -415,10 +415,10 @@ def card_comparative_matches_memory() -> bool:
 
 
 def unit_fix_scale_guard() -> bool:
-    """UNIT_FIX_SCALE_GUARD (default off; 1 Nov 2026, CDSL nse-106838164): the unit fixer leaves alone a card amount at the
-    company's own scale (within 3x of one of its latest quarters' revenue, EBITDA, PBT or PAT in memory, either basis) when its
-    "correction" would not be ("₹272 Cr" standalone revenue made ₹2.72 Cr beside a ₹394 Cr quarter). It lets fewer corrections
-    through: on only after the on/off check over stored cards (release_check.py unit_fix_scale) and a blind sample."""
+    """UNIT_FIX_SCALE_GUARD (default off; 1 Nov 2026, CDSL nse-106838164: a deck's "₹272 Cr" made ₹2.72 Cr): the unit fixer makes
+    only a correction the filing proves (pipeline.unit_fix_proven; the lead's rule after the blind read of release check
+    41357717339, which replaced the company-scale test). It lets fewer corrections through: on only after the on/off check over
+    stored cards (release_check.py unit_fix_scale) and a blind sample."""
     return _switch("UNIT_FIX_SCALE_GUARD")
 
 
